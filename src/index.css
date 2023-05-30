@@ -1,13 +1,55 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+        'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+        sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+@font-face {
+    font-family: 'FOT-UDMarugo_Large Pr6N';
+    src: url('./fonts/light.otf');
+    font-weight: 300;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'FOT-UDMarugo_Large Pr6N';
+    src: url('./fonts/medium.otf');
+    font-weight: 500;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'FOT-UDMarugo_Large Pr6N';
+    src: url('./fonts/medium.otf');
+    font-weight: 500;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'FOT-UDMarugo_Large Pr6N';
+    src: url('./fonts/semi-bold.otf');
+    font-weight: 600;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'FOT-UDMarugo_Large Pr6N';
+    src: url('./fonts/bold.otf');
+    font-weight: 700;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'FOT-UDMarugo_Large Pr6N';
+    src: url('./fonts/extra-bold.otf');
+    font-weight: 800;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'FOT-UDMarugo_Large Pr6N';
+    src: url('./fonts/black.otf');
+    font-weight: 900;
+    font-style: normal;
 }
