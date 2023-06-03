@@ -8,7 +8,7 @@ module.exports = {
     theme: {
         extend: {
             fontFamily: {
-                main: ['FOT-UDMarugo_Large Pr6N', ...defaultTheme.fontFamily.sans],
+                main: ['Inter', ...defaultTheme.fontFamily.sans], // 'FOT-UDMarugo_Large Pr6N'
             },
             padding: {
                 main: '0.5rem'
@@ -17,20 +17,29 @@ module.exports = {
                 transparent: 'transparent',
                 base: {
                     0: '#FFFFFF',
-                    100: '#E7E9EF'
+                    100: '#FAFAFA'
                 },
                 reverse: {
-                    0: '#151313',
+                    0: '#000000',
                     100: '#0B0A0A'
                 },
+                divider: ''
             },
             borderRadius: {
                 main: '2rem',
                 small: '1rem'
             },
             borderWidth: {
-                main: '16px',
+                main: '2px',
+                thick: '16px',
                 thin: '1px'
+            },
+            backdropBlur: {
+                main: '48px'
+            },
+            backdropBrightness: {
+                light: '1.25',
+                dark: '1.03'
             },
             boxShadow: {
                 main: [

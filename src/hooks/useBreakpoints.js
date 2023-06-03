@@ -19,13 +19,18 @@ function useBreakpoints() {
                 const width = getWidth()
                 const newBreakpoints = [false, false, false]
                 for (let i = 0; i < breakPoints.length; i++) {
-                    if (i !== 0) {
-                        if ((width < points[i]) && (width > points[i - 1])) {
+                    if (i === 0) {
+                        if (width < points[i + 1]) {
+                            newBreakpoints[i] = true
+                        }
+                    }
+                    else if (i === breakPoints.length - 1) {
+                        if (width >= points[i]) {
                             newBreakpoints[i] = true
                         }
                     }
                     else {
-                        if (width < points[i]) {
+                        if ((width >= points[i]) && (width < points[i + 1])) {
                             newBreakpoints[i] = true
                         }
                     }

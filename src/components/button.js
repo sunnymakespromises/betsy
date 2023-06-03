@@ -9,7 +9,8 @@
  */
 export default function Button({ preset = 'main', styles, classes, onClick, children, ...extras }) {
     let options = {
-        'main': 'transition-all ease-in-out w-min h-min hover:scale-[1.03] p-4'
+        'main': 'transition-all bg-base-0 hover:bg-base-100 rounded-main p-4 border-thin cursor-pointer flex flex-row justify-center items-center gap-2',
+        'signout': 'transition-all ease-in-out bg-reverse-0 rounded-full p-4'
     }
 
     const getOption = () => {

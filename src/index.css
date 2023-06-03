@@ -1,6 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
 
 html {
     width: 100%;
@@ -11,6 +12,23 @@ html {
 #root {
     width: 100%;
     height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-image: url('/public//images/light/bg.png');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+@media (prefers-color-scheme: dark) {
+    #root {
+        background-image: url('/public//images/dark/bg.png');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    }
 }
 
 body {
