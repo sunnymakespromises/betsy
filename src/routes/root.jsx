@@ -1,74 +1,32 @@
-import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom'
+import { Link, Outlet } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { RootProvider as Provider } from '../contexts/root'
 import { useBreakpoints } from '../hooks/useBreakpoints'
 import { useTheme } from '../hooks/useTheme'
-import { useCookies } from 'react-cookie'
-import { useEffect, useState } from 'react'
+import { useAuthorize } from '../hooks/useAuthorize'
+import { useDatabase } from '../hooks/useDatabase'
 import Image from '../components/image'
-import getUser from '../lib/getUser'
+import Page from '../components/page'
 
 export default function Root() {
     const navigate = useNavigate()
     const location = useLocation()
     const [sm, md, lg] = useBreakpoints()
     const isDarkMode = useTheme()
-    const [cookies, setCookie, removeCookie] = useCookies()
-    const [user, setUser] = useState()
-    const [refreshToken, setRefreshToken] = useState()
-    const [isNewUser, setIsNewUser] = useState(false)
-    const context = { sm, md, lg, isDarkMode, setCookie, removeCookie, navigate, user, setUser, isNewUser, setIsNewUser, refreshToken, setRefreshToken }
-
-    function upkeep() {
-        if (cookies['oauth-refresh-token']) {
-            setRefreshToken(cookies['oauth-refresh-token'])
-        }
-        if (cookies['user']) {
-            setUser(cookies['user'])
-        }
-        else {
-            getUser(cookies['oauth-refresh-token'], setUser, setCookie, removeCookie, setIsNewUser)
-        }
-    }
-
-    useEffect(() => {
-        upkeep()
-    }, [])
-
-    useEffect(() => {
-        if (location.pathname === '/') {
-            navigate(user ? '/home' : '/login')
-        }
-    }, [location])
-
-    useEffect(() => {
-        upkeep()
-    }, [refreshToken])
-
-    useEffect(() => {
-        function route() {
-            if (user === null) {
-                navigate('/login')
-            }
-            else {
-                if (isNewUser) {
-                    navigate('/settings#favorites')
-                    setIsNewUser(false)
-                }
-            }
-        }
-
-        route()
-    }, [user])
+    const [user, refreshUser, signout, login] = useAuthorize()
+    const [insert, query, update, remove] = useDatabase()
+    const context = { sm, md, lg, isDarkMode, navigate, location, user, refreshUser, signout, login, insert, query, update, remove }
 
     return (
         <Provider value = {context}>
-            <header className = 'transition-[height] flex flex-row w-full h-16 md:h-20 pt-4 pl-4'>
-                <Link to = {'/home'}>
-                    <Image path = {'images/' + (isDarkMode ? 'dark' : 'light') + '/logo.svg'} classes = 'h-full aspect-[2.4]'/>
-                </Link>
-            </header>
-            <div id = 'body' className = 'w-full h-full'>
-                <Outlet/>
+            {location.pathname !== '/login' ?
+            <header className = {'transition-all duration-main ease-in-out flex flex-row justify-center items-center h-24 w-full'}>
+                <Image path = {'images/' + (isDarkMode ? 'dark' : 'light') + '/logo.svg'} classes = 'h-[80%] aspect-[2.4] cursor-pointer'  onClick = {() => navigate('/home')}/>
+            </header>:null}
+            <div id = 'body' className = 'transition-all duration-main ease-in-out w-full h-full flex flex-col items-center justify-center px-4 pb-4'>
+                <Page id = 'page' fill = {location.pathname === '/login' ? false : true}>
+                    <Outlet/>
+                </Page>
             </div>
         </Provider>
     )

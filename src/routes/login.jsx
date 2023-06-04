@@ -1,46 +1,31 @@
 import { useRootContext } from '../contexts/root'
 import { Helmet } from 'react-helmet'
-import { useGoogleLogin } from '@react-oauth/google'
 import Text from '../components/text'
 import Image from '../components/image'
 import Button from '../components/button'
-import getRefreshToken from '../lib/getRefreshToken'
+import Divider from '../components/divider'
 
 
 export default function Login() {
-    const { sm, setCookie, setRefreshToken, user, navigate } = useRootContext()
-    const login = useGoogleLogin({
-        onSuccess: (res) => {
-            getRefreshToken(res.code, setRefreshToken, setCookie)
-        },
-        onError: (err) => console.log('Login Failed:', err),
-        flow: 'auth-code',
-        accessType: 'offline'
-    })
+    const { sm, login, isDarkMode } = useRootContext()
 
-    if (!user) {
-        return (
-            <div id = 'login-page' className = 'w-full h-full flex flex-col items-center justify-center'>
-                <Helmet>
-                    <title>login | betsy</title>
-                </Helmet>
-                <div id = 'login-container' className = 'h-min w-min rounded-main dark:backdrop-brightness-light backdrop-brightness-dark flex flex-col items-center gap-4 p-8'>
-                    <Text preset = 'login-title'>
-                        login with
-                    </Text>
-                    <Button classes = 'h-16 w-16 md:w-full' onClick = {() => login()}>
-                        {!sm ? (
-                        <Text preset = 'button' classes = 'md:justify-between'>
-                            google
-                        </Text>
-                        ):null}
-                        <Image path = 'images/google-logo.svg' classes = 'h-full aspect-square'/>
-                    </Button>
-                </div>
+    return (
+        <div id = 'login-page' className = 'flex flex-col gap-6'>
+            <Helmet>
+                <title>login | betsy</title>
+            </Helmet>
+            <div id = 'login-intro' className = 'w-min h-min flex flex-col items-center'>
+                <Image path = {'images/' + (isDarkMode ? 'dark' : 'light') + '/logo.svg'} classes = 'w-48 md:w-60 aspect-[2.4]'/>
+                <Text classes = '!text-sm md:!text-lg text-center'>
+                    the free sports betting app for casual fans.
+                </Text>
             </div>
-        )
-    }
-    else {
-        navigate('/home')
-    }
+            <div className='w-full border-thin border-reverse-0 border-opacity-5 dark:border-opacity-10 rounded-full'/>
+            <div id = 'login-form' className = 'w-full h-min flex flex-col items-center gap-2'>
+                <Button classes = 'h-16 w-16 md:w-full' onClick = {() => login()}>
+                    <Image path = 'images/google-logo.svg' classes = 'h-full aspect-square'/>
+                </Button>
+            </div>
+        </div>
+    )
 }

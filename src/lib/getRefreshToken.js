@@ -1,4 +1,9 @@
-async function getRefreshToken(code, setRefreshToken, setCookie) {
+async function getRefreshToken(code) {
+    const response = {
+        status: false,
+        message: '',
+        refreshToken: null
+    }
     const params = {
         client_id: process.env.REACT_APP_CLIENT_ID,
         client_secret: process.env.REACT_APP_CLIENT_SECRET,
@@ -10,12 +15,20 @@ async function getRefreshToken(code, setRefreshToken, setCookie) {
         method: 'POST',
         body: JSON.stringify(params)  
     }
-    fetch('https://oauth2.googleapis.com/token', options)
+    await fetch('https://oauth2.googleapis.com/token', options) // sends the authorization code to OAuth2 to get the refresh token.
     .then(async (res) => {
-        const response = await res.json()
-        setRefreshToken(response.refresh_token)
-        setCookie('oauth-refresh-token', response.refresh_token)
+        if (res.status === 200) {
+            res = await res.json()
+            response.status = true
+            response.refreshToken = res.refresh_token
+        }
+        else {
+            res = await res.json()
+            response.message = res.message
+        }
     })
+
+    return response
 }
 
 export default getRefreshToken

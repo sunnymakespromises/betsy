@@ -8,11 +8,12 @@
  */
 export default function Text({ preset = 'main', styles, classes, children, ...extras }) {
     let options = {
-        'main': 'select-none transition-all ease-in-out font-main font-semibold text-3xl md:text-3xl text-reverse-0',
-        'title': 'whitespace-nowrap select-none transition-all ease-in-out font-main font-extrabold text-5xl md:text-6xl text-reverse-0',
-        'login-title': 'whitespace-nowrap select-none transition-all ease-in-out font-main font-extrabold text-4xl md:text-6xl text-reverse-0',
-        'button': 'whitespace-nowrap select-none font-main font-semibold text-2xl md:text-2xl text-gray-400',
-        'settings-title': 'whitespace-nowrap select-none font-main font-semibold text-2xl md:text-2xl text-gray-400',
+        'main': 'select-none transition-all duration-main ease-in-out font-main font-semibold tracking-tighter text-3xl md:text-3xl text-reverse-0',
+        'title': 'whitespace-nowrap select-none transition-all duration-main ease-in-out font-main font-bold tracking-tighter text-3xl md:text-4xl text-reverse-0',
+        'login-title': 'whitespace-nowrap select-none transition-all duration-main ease-in-out font-main font-semibold tracking-tighter text-2xl md:text-2xl text-reverse-0',
+        'button': 'whitespace-nowrap select-none font-main font-semibold tracking-tighter text-2xl md:text-2xl text-gray-400',
+        'settings-title': 'whitespace-nowrap select-none font-main font-semibold tracking-tighter text-2xl md:text-2xl text-reverse-0',
+        'settings-error': 'whitespace-nowrap select-none font-main font-medium tracking-tighter text-xs md:text-sm text-reverse-0',
     }
 
     const getOption = () => {

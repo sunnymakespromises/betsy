@@ -1,4 +1,9 @@
-async function getUser(refresh_token, setUser, setCookie, removeCookie, setIsNewUser) {
+async function getUser(refresh_token) {
+    const response = {
+        status: false,
+        user: null,
+        message: ''
+    }
     if (refresh_token !== undefined) {
         const params = {
             refresh_token: refresh_token,
@@ -11,24 +16,20 @@ async function getUser(refresh_token, setUser, setCookie, removeCookie, setIsNew
         .then(async (lambdaResponse) => {
             if (lambdaResponse.status === 200) {
                 lambdaResponse = await lambdaResponse.json()
-                setCookie('user', lambdaResponse.user)
-                setUser(lambdaResponse.user)
-                if (lambdaResponse.isNewUser) {
-                    setIsNewUser(true)
-                }
+                response.status = true
+                response.user = lambdaResponse.user
             }
             else {
                 lambdaResponse = await lambdaResponse.json()
-                console.log(lambdaResponse.message)
-                removeCookie('user')
-                setUser(null)
+                response.message = lambdaResponse.message
             }
         })
     }
     else {
-        removeCookie('user')
-        setUser(null)
+        response.message = 'invalid login attempt.'
     }
+
+    return response
 }
 
 export default getUser

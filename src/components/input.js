@@ -12,15 +12,15 @@
 export default function Input({ value, status, type = 'text', preset = 'main', styles, classes, onChange, ...extras }) {
     let options = {
         'main': {
-            classes: 'font-main w-min transition-all ease-in-out text-base-0 text-3xl bg-black bg-opacity-30 focus:outline-none px-3 py-2 rounded-xl',
+            classes: 'font-main w-min transition-all duration-main ease-in-out text-base-0 text-3xl bg-black bg-opacity-30 focus:outline-none px-3 py-2 rounded-xl',
             true: 'bg-emerald-50 border border-emerald-500 text-emerald-900',
             false: 'bg-rose-900 border border-4 border-rose-500',
             null: 'border border-4 border-transparent'
         },
-        'login': {
-            classes: 'font-main font-semibold w-min transition-all ease-in-out italic text-reverse-0 dark:text-base-0 text-8xl placeholder:italic placeholder:text-reverse-400 placeholder:dark:text-base-0 bg-transparent focus:outline-none',
-            true: 'bg-emerald-50 border border-emerald-500 text-emerald-900',
-            false: 'bg-rose-900 border border-4 border-rose-500',
+        'settings': {
+            classes: 'text-center font-main font-bold w-min transition-all duration-main ease-in-out text-reverse-0 tracking-tighter text-3xl md:text-3xl rounded-xl placeholder:dark:text-gray-500 placeholder:text-gray-300 bg-transparent focus:outline-none',
+            true: '',
+            false: '',
             null: ''
         }
     }
