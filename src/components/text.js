@@ -11,9 +11,9 @@ export default function Text({ preset = 'main', styles, classes, children, ...ex
         'main': 'select-none transition-all duration-main ease-in-out font-main font-semibold tracking-tighter text-3xl md:text-3xl text-reverse-0',
         'title': 'whitespace-nowrap select-none transition-all duration-main ease-in-out font-main font-bold tracking-tighter text-3xl md:text-4xl text-reverse-0',
         'login-title': 'whitespace-nowrap select-none transition-all duration-main ease-in-out font-main font-semibold tracking-tighter text-2xl md:text-2xl text-reverse-0',
-        'button': 'whitespace-nowrap select-none font-main font-semibold tracking-tighter text-2xl md:text-2xl text-gray-400',
-        'settings-title': 'whitespace-nowrap select-none font-main font-semibold tracking-tighter text-2xl md:text-2xl text-reverse-0',
-        'settings-error': 'whitespace-nowrap select-none font-main font-medium tracking-tighter text-xs md:text-sm text-reverse-0',
+        'button': 'transition-all duration-main ease-in-out whitespace-nowrap select-none font-main font-semibold tracking-tighter text-lg md:text-2xl text-light-0 dark:text-light-100',
+        'profile-title': 'transition-all duration-main ease-in-out whitespace-nowrap select-none font-main font-semibold tracking-tighter text-2xl md:text-2xl text-reverse-0',
+        'profile-error': 'transition-all duration-main ease-in-out whitespace-nowrap select-none font-main font-semibold tracking-tighter text-xs md:text-xs text-reverse-0',
     }
 
     const getOption = () => {

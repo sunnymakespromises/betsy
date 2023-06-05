@@ -9,8 +9,8 @@
  */
 export default function Button({ preset = 'main', styles, classes, onClick, children, ...extras }) {
     let options = {
-        'main': 'transition-all duration-main ease-in-out bg-base-0 hover:bg-base-100 rounded-main p-4 border-thin cursor-pointer flex flex-row justify-center items-center gap-2',
-        'signout': 'transition-all duration-main ease-in-out  bg-reverse-0 rounded-full p-4'
+        'main': 'transition-all duration-main ease-in-out bg-base-0 hover:bg-base-100 rounded-main p-4 border-thin border-divide-0 dark:border-divide-100 cursor-pointer flex justify-center items-center',
+        'signout': 'transition-all duration-main ease-in-out bg-reverse-0 rounded-full p-4'
     }
 
     const getOption = () => {

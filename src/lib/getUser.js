@@ -1,3 +1,7 @@
+import authenticateUser from './authenticateUser'
+import getItem from './aws/db/getItem'
+import insertItem from './aws/db/insertItem'
+
 async function getUser(refresh_token) {
     const response = {
         status: false,
@@ -5,28 +9,29 @@ async function getUser(refresh_token) {
         message: ''
     }
     if (refresh_token !== undefined) {
-        const params = {
-            refresh_token: refresh_token,
-        }
-        const options = {
-            method: 'POST',
-            body: JSON.stringify(params)
-        }
-        await fetch(process.env.REACT_APP_API_URL + 'log-user', options) // Send user info to AWS to either log user in or register them.
-        .then(async (lambdaResponse) => {
-            if (lambdaResponse.status === 200) {
-                lambdaResponse = await lambdaResponse.json()
+        await authenticateUser(refresh_token, async (user) => {
+            const userWithGivenID = await getItem('Users', user.id) // get the user in the db from the user's id
+            if (userWithGivenID) {
                 response.status = true
-                response.user = lambdaResponse.user
+                userWithGivenID.picture = userWithGivenID.picture + '?random=' + new Date().getTime()
+                response.user = userWithGivenID
             }
             else {
-                lambdaResponse = await lambdaResponse.json()
-                response.message = lambdaResponse.message
+                const item = {
+                    'id': user.id,
+                    'username': user.name.replace(/[^A-Za-z0-9-_.]/g, '').substring(0, ),
+                    'email': user.email,
+                    'picture': user.picture + '?random=' + new Date().getTime(),
+                    'bankruptcies': 0
+                }
+                await insertItem('Users', item)
+                response.status = true
+                response.user = item
             }
         })
     }
     else {
-        response.message = 'invalid login attempt.'
+        response.message = 'invalid refresh token.'
     }
 
     return response

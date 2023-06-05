@@ -7,7 +7,6 @@ import getRefreshToken from '../lib/getRefreshToken'
 
 function useAuthorize() {
     const [user, setUser] = useState()
-    const [refreshToken, setRefreshToken] = useState()
     const [cookies, setCookie, removeCookie] = useCookies()
     const navigate = useNavigate()
     const location = useLocation()
@@ -26,9 +25,6 @@ function useAuthorize() {
 
     useEffect(() => {
         async function initial() {
-            if (cookies['oauth-refresh-token']) {
-                setRefreshToken(cookies['oauth-refresh-token'])
-            }
             if (cookies['user']) {
                 setUser(cookies['user'])
             }
@@ -60,7 +56,6 @@ function useAuthorize() {
     const login = useGoogleLogin({
         onSuccess: async (res) => {
             const { status, message, refreshToken } = await getRefreshToken(res.code)
-            setRefreshToken(refreshToken)
             if (status) {
                 setCookie('oauth-refresh-token', refreshToken)
                 const { status, message, user } = await getUser(refreshToken)
@@ -89,7 +84,6 @@ function useAuthorize() {
         removeCookie('user')
         setUser(null)
         removeCookie('oauth-refresh-token')
-        setRefreshToken(null)
         navigate('/login')
     }
 

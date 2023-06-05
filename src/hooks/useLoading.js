@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-function useLoader() {
+function useLoading() {
     const [isLoading, setIsLoading] = useState(false)
 
     async function execute(fn) {
@@ -12,4 +12,4 @@ function useLoader() {
     return [isLoading, execute]
 }
 
-export { useLoader }
+export { useLoading }

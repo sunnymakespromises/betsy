@@ -17,20 +17,27 @@ module.exports = {
                 transparent: 'transparent',
                 base: {
                     0: '#FFFFFF',
-                    100: '#FAFAFA'
+                    100: '#F6F6F6'
                 },
                 reverse: {
                     0: '#000000',
                     100: '#0B0A0A'
                 },
-                divider: ''
+                light: {
+                    0: '#A1A1AA',
+                    100: '#52525B'
+                },
+                divide: {
+                    light: 'rgba(255, 255, 255, 0.7)',
+                    dark: 'rgba(255, 255, 255, 0.5)'
+                }
             },
             borderRadius: {
                 main: '2rem',
                 small: '1rem'
             },
             borderWidth: {
-                main: '2px',
+                main: '1px',
                 thick: '16px',
                 thin: '1px'
             },

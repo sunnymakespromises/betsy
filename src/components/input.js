@@ -13,12 +13,12 @@ export default function Input({ value, status, type = 'text', preset = 'main', s
     let options = {
         'main': {
             classes: 'font-main w-min transition-all duration-main ease-in-out text-base-0 text-3xl bg-black bg-opacity-30 focus:outline-none px-3 py-2 rounded-xl',
-            true: 'bg-emerald-50 border border-emerald-500 text-emerald-900',
-            false: 'bg-rose-900 border border-4 border-rose-500',
-            null: 'border border-4 border-transparent'
+            true: '',
+            false: '',
+            null: ''
         },
-        'settings': {
-            classes: 'text-center font-main font-bold w-min transition-all duration-main ease-in-out text-reverse-0 tracking-tighter text-3xl md:text-3xl rounded-xl placeholder:dark:text-gray-500 placeholder:text-gray-300 bg-transparent focus:outline-none',
+        'profile': {
+            classes: 'text-center font-main font-bold w-full transition-all duration-main ease-in-out text-reverse-0 tracking-tighter text-3xl md:text-3xl rounded-xl placeholder:dark:text-light-100 placeholder:text-light-0 bg-transparent focus:outline-none',
             true: '',
             false: '',
             null: ''

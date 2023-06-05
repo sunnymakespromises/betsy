@@ -7,9 +7,7 @@ export default function Home() {
 
     return (
         <div className = 'w-full h-full'>
-            <Helmet>
-                <title>dashboard | betsy</title>
-            </Helmet>
+            <Helmet><title>dashboard | betsy</title></Helmet>
         </div>
     )
 }

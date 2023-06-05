@@ -2,7 +2,7 @@ import Root from './root'
 import Home from './home'
 import Login from './login'
 import ErrorPage from '../errorPage'
-import Settings from './settings'
+import Profile from './profile'
 
 const routes = [
     {
@@ -19,8 +19,8 @@ const routes = [
                 element: <Login />
             },
             {
-                path: '/settings',
-                element: <Settings />
+                path: '/profile',
+                element: <Profile />
             }
         ]
     }
