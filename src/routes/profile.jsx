@@ -19,7 +19,7 @@ export default function Profile() {
     const [isLoading, execute] = useLoading()
     const [statuses, setStatus, clearAllStatuses] = useStatuses(['username', 'picture'])
     const [inputs, clearInput, clearAllInputs, onInputChange] = useProfileInputs(['username', 'picture'], setStatus)
-    const context = { isEditing, setIsEditing, isLoading, execute, statuses, setStatus, clearAllStatuses, clearInput, clearAllInputs, onInputChange }
+    const context = { isEditing, isLoading, execute, statuses, setStatus, clearAllStatuses, inputs, clearInput, clearAllInputs, onInputChange }
 
     useEffect(() => {
         console.log(statuses)
@@ -40,9 +40,9 @@ export default function Profile() {
                     <Text classes = 'cursor-pointer !text-2xl' onClick = {() => isLoading ? null : setIsEditing(!isEditing)}>{isEditing || isLoading ? 'done' : 'edit'}</Text>
                 </div>
                 <div id = 'profile' className = 'w-full h-full flex flex-col items-center gap-2'>
-                    <Picture input = {inputs?.picture} picture = {user?.picture}/>
-                    <Username input = {inputs?.username} username = {user?.username}/>
-                    <Action inputs = {inputs}/>
+                    <Picture picture = {user?.picture}/>
+                    <Username username = {user?.username}/>
+                    <Action/>
                 </div>
             </div>
         </Provider>
@@ -54,13 +54,13 @@ export default function Profile() {
 
 
 
-function Username({input, username}) {
-    const { statuses, isLoading, isEditing, onInputChange } = useProfileContext()
+function Username({username}) {
+    const { inputs, statuses, isLoading, isEditing, onInputChange } = useProfileContext()
 
     if (isEditing || isLoading) {
         return (
             <div id = 'profile-username-input-container' className = 'flex flex-col items-center'>
-                <Input id = 'profile-username-input' preset = 'profile' status = {statuses?.username} value = {input} onChange = {(e) => onChange(e)} placeholder = {username} autoComplete = 'off'/>
+                <Input id = 'profile-username-input' preset = 'profile' status = {statuses?.username} value = {inputs?.username} onChange = {(e) => onChange(e)} placeholder = {username} autoComplete = 'off'/>
                 <Text preset = 'profile-error'>{statuses?.username?.message}</Text>
             </div>
         )
@@ -83,11 +83,11 @@ function Username({input, username}) {
 
 
 
-function Picture({input, picture}) {
-    const { clearInput, statuses, isLoading, isEditing, onInputChange } = useProfileContext()
+function Picture({picture}) {
+    const { inputs, clearInput, statuses, isLoading, isEditing, onInputChange } = useProfileContext()
     const pictureInput = useRef(null)
     const [isCropping, setIsCropping] = useState(false)
-    const [params, onCrop, croppedImage] = useCropper(input)
+    const [params, onCrop, croppedImage] = useCropper(inputs?.picture)
 
     useEffect(() => {
         if (croppedImage) {
@@ -99,7 +99,7 @@ function Picture({input, picture}) {
     return (
         <div id = 'profile-picture-container' className = 'flex flex-col items-center h-48 gap-2'>
             <input style = {{ display: 'none' }} type = 'file' onChange = {(e) => onUpload(e)} ref = {pictureInput} accept = '.jpg, .jpeg, .png, .gif, .webp'/>
-            <Image id = 'profile-picture' path = {(isCropping || !input) ? picture : input} classes = {'transition-all duration-main h-full aspect-square rounded-full border-thin border-divide-light dark:border-divide-dark' + (isEditing ? ' brightness-90 hover:brightness-75 cursor-pointer' : '')} mode = 'cover' onClick = {() => onPictureClick()}/>
+            <Image id = 'profile-picture' path = {(isCropping || !inputs?.picture) ? picture : inputs?.picture} classes = {'transition-all duration-main h-full aspect-square rounded-full border-thin border-divide-light dark:border-divide-dark' + (isEditing ? ' cursor-pointer' : '')} mode = 'cover' onClick = {() => onPictureClick()}/>
             {isCropping ? (
             <div id = 'profile-picture-cropper-container' className = 'transition-all duration-main flex flex-col items-center justify-center absolute top-0 left-0 w-full h-full bg-reverse-0 bg-opacity-30 dark:bg-opacity-60 rounded-main p-8'>
                 <div id = 'profile-picture-cropper' className = 'transition-all duration-main relative w-[90%] md:w-[50%] h-min bg-base-0 rounded-main border-main border-divide-0 dark:border-divide-100 p-8 flex flex-col items-center gap-2 overflow-hidden shadow-main'>
@@ -125,10 +125,11 @@ function Picture({input, picture}) {
     )
 
     function onUpload(event) {
-        if (!isLoading) {
+        if (!isLoading && event.target.files[0]) {
             setIsCropping(true)
             onInputChange('picture', event.target.files[0])
         }
+        event.currentTarget.value = null
     }
 
     function onPictureClick() {
@@ -148,13 +149,17 @@ function Picture({input, picture}) {
 
 
 
-function Action({inputs}) {
+function Action() {
     const { user, refreshUser, signout } = useRootContext()
     const { updateProfile } = useDatabase()
-    const { setStatus, isLoading, execute, isEditing, setIsEditing } = useProfileContext()
+    const { inputs, statuses, setStatus, isLoading, execute, isEditing } = useProfileContext()
+    const changes = {
+        username: inputs?.username !== user?.username && inputs?.username !== '',
+        picture: inputs?.picture
+    }
 
     return (
-        <Button id = 'profile-button' classes = 'min-w-[20%]' onClick = {() => onClick()}>
+        <Button id = 'profile-button' classes = {'min-w-[20%]' + (statuses?.username?.status === false || statuses?.picture?.status === false ? ' shake' : (!(statuses?.username?.status === false) && !(statuses?.picture?.status === false)) && (statuses?.username?.status || statuses?.picture?.status) ? ' nod' : '')} onClick = {() => onClick()}>
             {isLoading ? 
             <Image path = 'images/loading.gif' classes = 'h-6 aspect-square m-1'/>
             :
@@ -166,15 +171,11 @@ function Action({inputs}) {
 
     async function submitChanges() {
         if (!isLoading) {
-            const changes = {
-                username: inputs?.username !== user?.username && inputs?.username !== '',
-                picture: inputs?.picture
-            }
             Object.keys(changes).forEach(async (input) => {
                 if (changes[input]) {
                     await execute(async () => {
                         const { status, message } = await updateProfile(input, inputs[input])
-                        setStatus(input, status, message)
+                        setStatus(input, status, message, 3000)
                         if (status) {
                             await refreshUser()
                         }

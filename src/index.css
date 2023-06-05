@@ -43,6 +43,38 @@ body {
     -moz-osx-font-smoothing: grayscale;
 }
 
+.shake {
+    animation: shake 0.5s 1;
+}
+
+@keyframes shake {
+    10%, 90% {
+      transform: translate3d(-2px, 0, 0);
+    }
+    
+    20%, 80% {
+      transform: translate3d(3px, 0, 0);
+    }
+  
+    30%, 50%, 70% {
+      transform: translate3d(-3px, 0, 0);
+    }
+  
+    40%, 60% {
+      transform: translate3d(3px, 0, 0);
+    }
+}
+
+.nod {
+    animation: nod 1s 1;
+}
+
+@keyframes nod {
+    0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+	40% {transform: translateY(-4px);}
+	60% {transform: translateY(-2px);}
+}
+
 @font-face {
     font-family: 'FOT-UDMarugo_Large Pr6N';
     src: url('./fonts/light.otf');

@@ -19,10 +19,17 @@ function useStatuses(list) {
         initializeStatuses()
     }
 
-    function setStatus(key, status, message) {
+    function setStatus(key, status, message, duration = null) {
         let copy = {...statuses}
         copy[key] = {status: status, message: message}
         setStatuses(copy)
+        if (duration) {
+            setTimeout(() => {
+                let copy = {...statuses}
+                copy[key] = {status: null, message: ''}
+                setStatuses(copy)
+            }, duration)
+        }
     }
 
     function clearStatus() {
