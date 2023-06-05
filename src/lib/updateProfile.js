@@ -13,7 +13,7 @@ async function updateProfile(refresh_token, key, value) {
             switch (key) {
                 case 'username':
                     response.message = validate((value === ''), 'username cannot be empty.', response.message)
-                    response.message = validate((value.length < 6 || value.length > 15), 'username must be between 5 and 16 characters.', response.message)
+                    response.message = validate((value.length < 6 || value.length > 9), 'username must be between 5 and 10 characters.', response.message)
                     response.message = validate((!(/^[a-zA-Z0-9-_.]+$/.test(value))), 'username cannot contain any special characters.', response.message)
                     response.message = validate(((await queryTable('Users', { username: value })).length > 0), 'username already taken.', response.message)
                     if (response.message === '') {

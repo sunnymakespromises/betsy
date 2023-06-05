@@ -27,6 +27,10 @@ module.exports = {
                     0: '#A1A1AA',
                     100: '#52525B'
                 },
+                dark: {
+                    0: '#363036',
+                    100: '#413A41'
+                },
                 divide: {
                     light: 'rgba(255, 255, 255, 0.7)',
                     dark: 'rgba(255, 255, 255, 0.5)'
@@ -51,6 +55,9 @@ module.exports = {
             boxShadow: {
                 main: [
                     '0 10px 15px -3px rgb(0 0 0 / 0.1)', '0 4px 6px -4px rgb(0 0 0 / 0.1)'
+                ],
+                small: [
+                    '0 5px 7px -1px rgb(0 0 0 / 0.05)', '0 2px 3px -2px rgb(0 0 0 / 0.05)'
                 ]
             },
             transitionDuration: {

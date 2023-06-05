@@ -22,9 +22,6 @@ export default function Profile() {
     const context = { isEditing, isLoading, execute, statuses, setStatus, clearAllStatuses, inputs, clearInput, clearAllInputs, onInputChange }
 
     useEffect(() => {
-        console.log(statuses)
-    }, [statuses])
-    useEffect(() => {
         if (isEditing === false) {
             clearAllInputs()
             clearAllStatuses()
@@ -99,22 +96,22 @@ function Picture({picture}) {
     return (
         <div id = 'profile-picture-container' className = 'flex flex-col items-center h-48 gap-2'>
             <input style = {{ display: 'none' }} type = 'file' onChange = {(e) => onUpload(e)} ref = {pictureInput} accept = '.jpg, .jpeg, .png, .gif, .webp'/>
-            <Image id = 'profile-picture' path = {(isCropping || !inputs?.picture) ? picture : inputs?.picture} classes = {'transition-all duration-main h-full aspect-square rounded-full border-thin border-divide-light dark:border-divide-dark' + (isEditing ? ' cursor-pointer' : '')} mode = 'cover' onClick = {() => onPictureClick()}/>
+            <Image external id = 'profile-picture' path = {(isCropping || !inputs?.picture) ? picture : inputs?.picture} classes = {'transition-all duration-main h-full aspect-square rounded-full shadow-main' + (isEditing ? ' cursor-pointer' : '')} mode = 'cover' onClick = {() => onPictureClick()}/>
             {isCropping ? (
-            <div id = 'profile-picture-cropper-container' className = 'transition-all duration-main flex flex-col items-center justify-center absolute top-0 left-0 w-full h-full bg-reverse-0 bg-opacity-30 dark:bg-opacity-60 rounded-main p-8'>
-                <div id = 'profile-picture-cropper' className = 'transition-all duration-main relative w-[90%] md:w-[50%] h-min bg-base-0 rounded-main border-main border-divide-0 dark:border-divide-100 p-8 flex flex-col items-center gap-2 overflow-hidden shadow-main'>
+            <div id = 'profile-picture-cropper-container' className = 'transition-all duration-main flex flex-col items-center justify-center absolute top-0 left-0 w-full h-full bg-reverse-0 bg-opacity-30 dark:bg-opacity-30 rounded-main p-8'>
+                <div id = 'profile-picture-cropper' className = 'transition-all duration-main relative w-[90%] md:w-[50%] h-min bg-base-0 rounded-main p-8 flex flex-col items-center gap-2 overflow-hidden shadow-main'>
                     <div className = 'relative transition-all duration-main w-full aspect-square'>
                         <Cropper {...params}/>
                     </div>
                     <Text preset = 'profile-error'>{statuses?.picture?.message}</Text>
                     <div className = 'w-full flex flex-row justify-between'>
-                        <Button classes = '!p-2' onClick = {() => onCancel()}>
-                            <Text preset = 'button'>
+                        <Button preset = 'profile-picture-crop' onClick = {() => onCancel()}>
+                            <Text preset = 'profile-picture-button'>
                                 cancel
                             </Text>
                         </Button>
-                        <Button classes = '!border-reverse-0 !p-2' onClick = {() => onCrop()}>
-                            <Text preset = 'button' classes = '!text-reverse-0'>
+                        <Button preset = 'profile-picture-crop' onClick = {() => onCrop()}>
+                            <Text preset = 'profile-picture-button'>
                                 save image
                             </Text>
                         </Button>
@@ -159,7 +156,7 @@ function Action() {
     }
 
     return (
-        <Button id = 'profile-button' classes = {'min-w-[20%]' + (statuses?.username?.status === false || statuses?.picture?.status === false ? ' shake' : (!(statuses?.username?.status === false) && !(statuses?.picture?.status === false)) && (statuses?.username?.status || statuses?.picture?.status) ? ' nod' : '')} onClick = {() => onClick()}>
+        <Button id = 'profile-button' classes = {'min-w-[20%] shadow-small' + (statuses?.username?.status === false || statuses?.picture?.status === false ? ' shake' : (!(statuses?.username?.status === false) && !(statuses?.picture?.status === false)) && (statuses?.username?.status || statuses?.picture?.status) ? ' nod' : '')} onClick = {() => onClick()}>
             {isLoading ? 
             <Image path = 'images/loading.gif' classes = 'h-6 aspect-square m-1'/>
             :

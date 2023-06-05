@@ -8,7 +8,7 @@ export default async function queryTable(table, query) {
         let filterExpression = ''
         let expressionAttributeValues = {}
         for (let updateKey of Object.keys(query)) {
-            let comma = Object.keys(query).indexOf(updateKey) !== Object.keys(query).length - 1 ? ', ' : ''
+            let comma = Object.keys(query).indexOf(updateKey) !== Object.keys(query).length - 1 ? ' and ' : ''
             filterExpression += updateKey + ' = :' + letters[letterIndex] + comma
             expressionAttributeValues[':' + letters[letterIndex]] = query[updateKey]
             letterIndex++

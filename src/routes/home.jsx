@@ -1,4 +1,3 @@
-import Page from '../components/page'
 import { useRootContext } from '../contexts/root'
 import { Helmet } from 'react-helmet'
 
