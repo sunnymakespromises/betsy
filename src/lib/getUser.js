@@ -21,8 +21,7 @@ async function getUser(refresh_token) {
                     'id': user.id,
                     'username': user.name.replace(/[^A-Za-z0-9-_.]/g, '').substring(0, ),
                     'email': user.email,
-                    'picture': user.picture + '?random=' + new Date().getTime(),
-                    'bankruptcies': 0
+                    'picture': user.picture + '?random=' + new Date().getTime()
                 }
                 await insertItem('Users', item)
                 response.status = true

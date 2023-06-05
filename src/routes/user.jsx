@@ -20,15 +20,6 @@ export default function User() {
         }
     }, [username])
 
-    if (data === false) {
-        return (
-            <div id = 'user-page' className = 'transition-all duration-main w-full h-full flex flex-col items-center'>
-                <Text>
-                    User not found.
-                </Text>
-            </div>
-        )
-    }
     return (
         <div id = 'user-page' className = 'transition-all duration-main w-full h-full flex flex-col items-center md:flex-row md:items-start gap-4 md:gap-12'>
             <Helmet><title>{username} | betsy</title></Helmet>
@@ -36,7 +27,7 @@ export default function User() {
                 <div id = 'profile-picture-container' className = 'relative flex flex-col items-center w-full aspect-square'>
                     <Image id = 'profile-picture' external = {data ? true : false} path = {data ? data.user.picture : 'images/placeholder.png'} classes = 'transition-all duration-main h-full aspect-square rounded-full shadow-main' mode = 'cover'/>
                 </div>
-                <Text id = 'profile-username' classes = {'!font-bold !text-3xl md:!text-4xl' + (data ? '' : ' w-full h-9 md:h-10')}>
+                <Text id = 'profile-username' classes = {'!font-bold h-9 md:h-10' + (data ? ' !text-3xl md:!text-4xl opacity-1' : ' !text-0 md:!text-0 w-full opacity-0')}>
                     {data ? data.user.username : ''}
                 </Text>
                 <div id = 'follows-container' className = 'w-full flex flex-row justify-between'>
@@ -44,16 +35,16 @@ export default function User() {
                         <Text id = {'followers-text'} classes = '!font-medium !text-base md:!text-xl'>
                             followers
                         </Text>
-                        <Text id = {'followers-value'} classes = '!font-extrabold !text-3xl md:!text-5xl'>
-                            {data ? data.follows.followers.length : 0}
+                        <Text id = {'followers-value'} classes = {'!font-extrabold h-9 md:h-12' + (data ? ' !text-3xl md:!text-5xl opacity-1' : ' text-0 md:text-0 opacity-0')}>
+                            {data ? data.follows.followers.length : ''}
                         </Text>
                     </div>
                     <div id = {'following-container'} className = 'flex flex-col items-center'>
                         <Text id = {'following-text'} classes = '!font-medium !text-base md:!text-xl'>
                             following
                         </Text>
-                        <Text id = {'following-value'} classes = '!font-extrabold !text-3xl md:!text-5xl'>
-                            {data ? data.follows.following.length : 0}
+                        <Text id = {'following-value'} classes = {'!font-extrabold h-9 md:h-12' + (data ? ' !text-3xl md:!text-5xl opacity-1' : ' text-0 md:text-0 opacity-0')}>
+                            {data ? data.follows.following.length : ''}
                         </Text>
                     </div>
                 </div>

@@ -34,7 +34,7 @@ export default function Profile() {
                 <Helmet><title>my profile | betsy</title></Helmet>
                 <div id = 'profile-header' className = 'w-full flex flex-row justify-between items-center'>
                     <Text preset = 'title'>my profile</Text>
-                    <Text classes = 'cursor-pointer !text-2xl' onClick = {() => isLoading ? null : setIsEditing(!isEditing)}>{isEditing || isLoading ? 'done' : 'edit'}</Text>
+                    <Text classes = '!cursor-pointer !text-2xl' onClick = {() => isLoading ? null : setIsEditing(!isEditing)}>{isEditing || isLoading ? 'done' : 'edit'}</Text>
                 </div>
                 <div id = 'profile' className = 'w-full h-full flex flex-col items-center gap-2'>
                     <Picture picture = {user?.picture}/>
