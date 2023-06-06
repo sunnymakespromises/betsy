@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 
-function useProfileInputs(list, setStatus) {
+function useInputs(list) {
     const [inputs, setInputs] = useState()
 
     function initializeInputs() {
@@ -15,9 +15,9 @@ function useProfileInputs(list, setStatus) {
         }
     }, [])
 
-    const onInputChange = (category, value) => {
-        if (category === 'picture') {
-            if (value && value !== inputs.picture) {
+    const onInputChange = (category, value, type = 'text') => {
+        if (type === 'image') {
+            if (value) {
                 let newInputs = inputs
                 newInputs[category] = URL.createObjectURL(value)
                 setInputs({...newInputs})
@@ -43,4 +43,4 @@ function useProfileInputs(list, setStatus) {
     return [inputs, clearInput, clearAllInputs, onInputChange]
 }
 
-export { useProfileInputs }
+export { useInputs }

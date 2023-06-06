@@ -24,8 +24,8 @@ function useCropper(picture) {
         const canvas = document.createElement('canvas')
         const ctx = canvas.getContext('2d')
 
-        canvas.width = 250
-        canvas.height = 250
+        canvas.width = 196
+        canvas.height = 196
 
         ctx.drawImage(
             image,

@@ -61,7 +61,9 @@ module.exports = {
                 ]
             },
             transitionDuration: {
-                main: '350ms',
+                main: '500ms',
+                fast: '150ms',
+                slow: '750ms'
             }
         },
     },

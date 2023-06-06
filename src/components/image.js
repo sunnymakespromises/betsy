@@ -14,6 +14,6 @@ export default function Image({ path, external = false, styles, classes, mode = 
         return mode === 'contain' ? 'bg-contain' : mode === 'cover' ? 'bg-cover' : ''
     }
     return (
-        <div className = {'bg-center ' + getMode() + ' bg-no-repeat' + (classes ? ' ' + classes : '')} style = {{ backgroundImage: 'url(' + (!external ? '/' : '') + path + ')', ...styles}} {...extras}/>
+        <div className = {'bg-center ' + getMode() + ' bg-no-repeat' + (classes ? ' ' + classes : '')} style = {{ backgroundImage: 'url(' + (!external ? '/' : '') + path + ')', ...styles}} {...extras} referrerPolicy = 'no-referrer'/>
     )
 }

@@ -1,6 +1,6 @@
 import queryTable from './aws/db/queryTable'
 
-async function getUserBy(key, value) {
+async function getUserBy(column, value) {
     const response = {
         status: false,
         data: {
@@ -13,23 +13,21 @@ async function getUserBy(key, value) {
         },
         message: ''
     }
-    const users = await queryTable('Users', { [key]: value })
+    const users = await queryTable('Users', { [column]: value })
     if (users.length > 0) {
         const user = users[0]
-        const followers = (await queryTable('Follows', { followee: user.id }))
-        const following = (await queryTable('Follows', { follower: user.id }))
         response.status = true
         response.data = {
             user: users[0],
             follows: {
-                followers: followers,
-                following: following,
+                followers: (await queryTable('Follows', { followee: user.id })),
+                following: (await queryTable('Follows', { follower: user.id })),
             },
             slips: []
         }
     }
     else {
-        response.message = 'no user found with that ' + key + '.'
+        response.message = 'no user found with that ' + column + '.'
     }
 
     return response

@@ -7,11 +7,11 @@
  */
 export default function Page({ fill = false, classes, children, ...extras }) {
     function getSize() {
-        return fill ? 'min-w-full min-h-full' : 'min-w-0 min-h-0'
+        return fill ? 'min-w-full min-h-full max-w-full max-h-full' : 'min-w-0 min-h-0'
     }
 
     return (
-        <div className = {'page transition-all duration-main ease-in-out rounded-main dark:backdrop-brightness-light backdrop-brightness-dark p-8 shadow-xl ' + getSize() + (classes ? ' ' + classes : '')} {...extras}>
+        <div className = {'page transition-all duration-main ease-in-out rounded-main dark:backdrop-brightness-light backdrop-brightness-dark p-8 ' + getSize() + (classes ? ' ' + classes : '')} {...extras}>
             {children}
         </div>
     )

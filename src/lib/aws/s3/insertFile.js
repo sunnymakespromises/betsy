@@ -9,11 +9,9 @@ export default async function insertFile(S3_BUCKET, file) {
         Key: file.name
     }
 
-    bucket.putObject(params)
-        .on('httpUploadProgress', (evt) => {
-            
-        })
-        .send((err) => {
-            if (err) console.log(err)
-        })
+    return await bucket.putObject(params).promise().then(function(data) {
+        if (data) {
+            return true
+        }
+    })
 }

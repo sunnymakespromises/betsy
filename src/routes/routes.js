@@ -1,7 +1,7 @@
 import Root from './root'
 import Home from './home'
 import Login from './login'
-import User from './user'
+import User from '../components/user'
 import Users from './users'
 import ErrorPage from '../errorPage'
 import Profile from './profile'
@@ -26,11 +26,13 @@ const routes = [
             },
             {
                 path: '/users',
-                element: <Users />
-            },
-            {
-                path: '/users/:username',
-                element: <User />
+                element: <Users />,
+                children: [
+                    {
+                        path: '/users/:username',
+                        element: <User />
+                    }
+                ]
             }
         ]
     }

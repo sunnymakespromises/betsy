@@ -8,7 +8,7 @@ import Input from '../components/input'
 import { useRef, useEffect, useState } from 'react'
 import { useLoading } from '../hooks/useLoading'
 import { useStatuses } from '../hooks/useStatuses'
-import { useProfileInputs } from '../hooks/useProfileInputs'
+import { useInputs } from '../hooks/useInputs'
 import { useCropper } from '../hooks/useCropper'
 import Cropper from 'react-easy-crop'
 import { useDatabase } from '../hooks/useDatabase'
@@ -18,7 +18,7 @@ export default function Profile() {
     const [isEditing, setIsEditing] = useState()
     const [isLoading, execute] = useLoading()
     const [statuses, setStatus, clearAllStatuses] = useStatuses(['username', 'picture'])
-    const [inputs, clearInput, clearAllInputs, onInputChange] = useProfileInputs(['username', 'picture'], setStatus)
+    const [inputs, clearInput, clearAllInputs, onInputChange] = useInputs(['username', 'picture'], setStatus)
     const context = { isEditing, isLoading, execute, statuses, setStatus, clearAllStatuses, inputs, clearInput, clearAllInputs, onInputChange }
 
     useEffect(() => {
@@ -89,7 +89,7 @@ function Picture({picture}) {
     useEffect(() => {
         if (croppedImage) {
             setIsCropping(false)
-            onInputChange('picture', croppedImage)
+            onInputChange('picture', croppedImage, 'image')
         }
     }, [croppedImage])
 
@@ -124,7 +124,7 @@ function Picture({picture}) {
     function onUpload(event) {
         if (!isLoading && event.target.files[0]) {
             setIsCropping(true)
-            onInputChange('picture', event.target.files[0])
+            onInputChange('picture', event.target.files[0], 'image')
         }
         event.currentTarget.value = null
     }

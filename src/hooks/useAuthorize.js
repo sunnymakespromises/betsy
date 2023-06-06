@@ -2,7 +2,7 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { useCookies } from 'react-cookie'
 import { googleLogout, useGoogleLogin } from '@react-oauth/google'
-import getUser from '../lib/getUser'
+import getCurrentUser from '../lib/getCurrentUser'
 import getRefreshToken from '../lib/getRefreshToken'
 
 function useAuthorize() {
@@ -12,7 +12,7 @@ function useAuthorize() {
     const location = useLocation()
 
     async function refreshUser() {
-        const { status, message, user } = await getUser(cookies['oauth-refresh-token'])
+        const { status, message, user } = await getCurrentUser(cookies['oauth-refresh-token'])
         setUser(user)
         if (status) {
             setCookie('user', user)
@@ -29,7 +29,9 @@ function useAuthorize() {
                 setUser(cookies['user'])
             }
             else {
-                await refreshUser()
+                if (cookies['oauth-refresh-token']) {
+                    await refreshUser()
+                }
             }
         }
 
@@ -58,7 +60,7 @@ function useAuthorize() {
             const { status, message, refreshToken } = await getRefreshToken(res.code)
             if (status) {
                 setCookie('oauth-refresh-token', refreshToken)
-                const { status, message, user } = await getUser(refreshToken)
+                const { status, message, user } = await getCurrentUser(refreshToken)
                 setUser(user)
                 if (status) {
                     setCookie('user', user)

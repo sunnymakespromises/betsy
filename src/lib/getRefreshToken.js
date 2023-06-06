@@ -15,7 +15,7 @@ async function getRefreshToken(code) {
         method: 'POST',
         body: JSON.stringify(params)  
     }
-    await fetch('https://oauth2.googleapis.com/token', options) // send auth code to OAuth2 to get the refresh token
+    await fetch('https://oauth2.googleapis.com/token', options)
     .then(async (res) => {
         if (res.status === 200) {
             res = await res.json()
