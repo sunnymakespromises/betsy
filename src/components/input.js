@@ -18,7 +18,7 @@ export default function Input({ value, status, type = 'text', preset = 'main', s
             null: ''
         },
         'profile': {
-            classes: 'text-center font-main font-bold w-full transition-all duration-main ease-in-out text-reverse-0 tracking-tighter text-3xl md:text-3xl rounded-xl placeholder:dark:text-light-100 placeholder:text-light-0 bg-transparent focus:outline-none',
+            classes: 'text-ellipsis overflow-hidden font-main font-bold w-full transition-all duration-main ease-in-out text-reverse-0 tracking-tighter text-3xl md:text-4xl rounded-xl placeholder:opacity-faint bg-transparent focus:outline-none',
             true: '',
             false: '',
             null: ''

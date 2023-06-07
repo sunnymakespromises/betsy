@@ -11,7 +11,7 @@ export default function Page({ fill = false, classes, children, ...extras }) {
     }
 
     return (
-        <div className = {'page transition-all duration-main ease-in-out rounded-main dark:backdrop-brightness-light backdrop-brightness-dark p-8 ' + getSize() + (classes ? ' ' + classes : '')} {...extras}>
+        <div className = {'page transition-all duration-main ease-in-out md:rounded-main md:dark:backdrop-brightness-lighter md:backdrop-brightness-darker px-8 md:py-8 ' + getSize() + (classes ? ' ' + classes : '')} {...extras}>
             {children}
         </div>
     )

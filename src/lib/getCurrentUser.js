@@ -9,7 +9,6 @@ async function getCurrentUser(refresh_token) {
         message: ''
     }
     const authUser = await authenticateUser(refresh_token)
-    console.log(authUser)
     if (authUser) {
         const betsyUser = await getItem('Users', authUser.id)
         if (betsyUser) {

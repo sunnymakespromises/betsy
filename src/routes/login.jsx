@@ -17,7 +17,7 @@ export default function Login() {
                     the free sports betting app for casual fans.
                 </Text>
             </div>
-            <div className='w-full border-thin border-reverse-0 border-opacity-5 dark:border-opacity-10 rounded-full'/>
+            <div className = 'w-full border-thin border-reverse-0 border-opacity-5 dark:border-opacity-10 rounded-full'/>
             <div id = 'login-form' className = 'w-full h-min flex flex-col items-center gap-2'>
                 <Button classes = 'h-16 w-16 md:w-full' onClick = {() => login()}>
                     <Image path = 'images/google-logo.svg' classes = 'h-full aspect-square'/>

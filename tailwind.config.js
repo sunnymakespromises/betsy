@@ -49,8 +49,8 @@ module.exports = {
                 main: '48px'
             },
             backdropBrightness: {
-                light: '1.25',
-                dark: '1.03'
+                lighter: '1.25',
+                darker: '1.03'
             },
             boxShadow: {
                 main: [
@@ -59,6 +59,10 @@ module.exports = {
                 small: [
                     '0 5px 7px -1px rgb(0 0 0 / 0.05)', '0 2px 3px -2px rgb(0 0 0 / 0.05)'
                 ]
+            },
+            opacity: {
+                main: '60%',
+                faint: '40%'
             },
             transitionDuration: {
                 main: '500ms',

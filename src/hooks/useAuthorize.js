@@ -32,6 +32,9 @@ function useAuthorize() {
                 if (cookies['oauth-refresh-token']) {
                     await refreshUser()
                 }
+                else {
+                    setUser(null)
+                }
             }
         }
 

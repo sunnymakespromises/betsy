@@ -1,4 +1,4 @@
-import { Outlet } from 'react-router-dom'
+import { Outlet, Link } from 'react-router-dom'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useCookies } from 'react-cookie'
 import { RootProvider as Provider } from '../contexts/root'
@@ -15,22 +15,23 @@ export default function Root() {
     const navigate = useNavigate()
     const location = useLocation()
     const [cookies, setCookie, removeCookie] = useCookies()
-    const [user, refreshUser, signout, login] = useAuthorize()
-    const context = { sm, md, lg, isDarkMode, navigate, location, cookies, setCookie, removeCookie, user, refreshUser, signout, login }
+    const [currentUser, refreshCurrentUser, signout, login] = useAuthorize()
+    const context = { sm, md, lg, isDarkMode, navigate, location, cookies, setCookie, removeCookie, currentUser, refreshCurrentUser, signout, login }
 
     return (
         <Provider value = {context}>
-            {location.pathname !== '/login' ?
-            <header className = {'transition-all duration-main ease-in-out flex flex-row justify-center items-center h-16 w-full'}>
-                <Image path = {'images/' + (isDarkMode ? 'dark' : 'light') + '/logo.svg'} classes = 'h-[80%] aspect-[2.4] cursor-pointer'  onClick = {() => navigate('/home')}/>
-            </header>:null}
-            <div id = 'body' className = 'transition-all duration-main ease-in-out w-full h-full flex flex-col items-center justify-center px-4 pb-4 md:px-8 md:pb-8'>
-                <Page id = 'page' fill = {location.pathname === '/login' ? false : true}>
+            <header className = {'transition-all duration-main ease-in-out w-full flex flex-row md:justify-start justify-center items-center pl-8 ' + (location.pathname !== 'login' ? ' h-16 md:h-20' : ' h-0')}>
+                <Link to = '/home' className = 'h-[60%] aspect-[2.4]'>
+                    <Image path = {'images/' + (isDarkMode ? 'dark' : 'light') + '/logo.svg'} classes = 'h-full w-full cursor-pointer'/>
+                </Link>
+            </header>
+            <div id = 'body' className = 'transition-all duration-main ease-in-out w-full h-full flex flex-col items-center justify-center md:px-8 md:pb-8'>
+                <Page id = 'page' fill = {location.pathname === '/login' || location.pathname === '/settings' ? false : true}>
                     <Outlet/>
                 </Page>
             </div>
-            <div className = 'w-full flex flex-row justify-center mb-2'>
-                <Text classes = '!text-sm !text-light-0'>
+            <div className = 'transition-all duration-main absolute bottom-0 w-full flex flex-row justify-center mb-2 md:mb-10'>
+                <Text classes = '!text-sm opacity-faint'>
                     betsy v0.1.0
                 </Text>
             </div>

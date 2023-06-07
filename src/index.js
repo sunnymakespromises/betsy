@@ -10,7 +10,7 @@ const router = createBrowserRouter(routes)
 
 const root = ReactDOM.createRoot(document.getElementById('root'))
 root.render(
-    <GoogleOAuthProvider clientId = '1075586122703-gpv4qeqdi0igs4pshrb6i8rorhi1ubk8.apps.googleusercontent.com'>
+    <GoogleOAuthProvider clientId = {process.env.REACT_APP_GOOGLE_OAUTH_CLIENT_ID}>
         <CookiesProvider>
             <RouterProvider router = {router}/>
         </CookiesProvider>

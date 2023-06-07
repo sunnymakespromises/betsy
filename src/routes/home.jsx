@@ -2,7 +2,7 @@ import { useRootContext } from '../contexts/root'
 import { Helmet } from 'react-helmet'
 
 export default function Home() {
-    const { user } = useRootContext()
+    const { currentUser } = useRootContext()
 
     return (
         <div className = 'w-full h-full'>
