@@ -65,9 +65,9 @@ module.exports = {
                 faint: '40%'
             },
             transitionDuration: {
-                main: '500ms',
+                main: '300ms',
                 fast: '150ms',
-                slow: '750ms'
+                slow: '500ms'
             }
         },
     },
