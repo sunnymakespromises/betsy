@@ -22,7 +22,7 @@ export default function User() {
     const [statuses, setStatus, clearAllStatuses] = useStatuses(['username', 'picture'])
     const [inputs, clearInput, clearAllInputs, onInputChange] = useInputs(['username', 'picture'])
     const { username, user } = useUsersContext()
-    const isCurrentUser = currentUser?.id === user?.user?.id
+    const isCurrentUser = currentUser?.id === user?.id
     const context = { isCurrentUser, isEditing, setIsEditing, isLoading, execute, statuses, setStatus, clearAllStatuses, inputs, clearInput, clearAllInputs, onInputChange }
 
     useEffect(() => {
@@ -35,10 +35,10 @@ export default function User() {
     return (
         <Provider value = {context}>
             <div id = 'user' className = {'absolute transition-all duration-main w-full h-full flex flex-col items-center md:flex-row md:items-start gap-4 md:gap-8' + (username ? ' translate-x-0 opacity-1' : ' translate-x-[100%] opacity-0')}>
-                <div id = 'user-profile' className = {'transition-all duration-main flex flex-col items-start md:items-center gap-4 md:gap-4 w-full h-44 md:w-64 md:h-full origin-top'}>
-                    <Username username = {user?.user?.username}/>
+                <div id = 'user-profile' className = 'transition-all duration-main flex flex-col items-start md:items-center gap-4 md:gap-4 w-full h-44 md:w-64 md:h-full origin-top'>
+                    <Username username = {user?.username}/>
                     <div id = 'user-profile-idek-tbh' className = 'w-full flex flex-row md:flex-col gap-4'>
-                        <Picture picture = {user?.user?.picture}/>
+                        <Picture picture = {user?.picture}/>
                         <Follows/>
                     </div>
                 </div>
@@ -68,17 +68,20 @@ function Username({username}) {
 
     if (isEditing || isLoading) {
         return (
-            <div id = 'user-profile-username-input-container' className = 'flex flex-col items-center'>
-                <Input id = 'user-profile-username-input' preset = 'profile' status = {statuses?.username} value = {inputs?.username} onChange = {(e) => onChange(e)} placeholder = {username} autoComplete = 'off'/>
-                <Text id = 'user-profile-username-input-error' preset = 'profile-error'>{statuses?.username?.message}</Text>
+            <div id = 'user-profile-username-input-container' className = 'w-full flex flex-col items-center'>
+                <div id = 'user-profile-username-input-input-container' className = 'w-full flex flex-row items-center gap-2'>
+                    <FaAngleLeft id = 'user-profile-username-input-icon' onClick = {() => navigate(-1)} className = 'w-8 h-8 cursor-pointer opacity-faint'/>
+                    <Input id = 'user-profile-username-input' preset = 'profile' status = {statuses?.username} value = {inputs?.username} onChange = {(e) => onChange(e)} placeholder = {username} autoComplete = 'off'/>
+                </div>
+                {statuses?.username?.message ? <Text id = 'user-profile-username-input-error' preset = 'profile-error'>{statuses?.username?.message}</Text> : null}
             </div>
         )
     }
     else {
         return (
-            <div id = 'user-profile-username-container' className = 'w-full flex flex-row items-center gap-4'>
-                <FaAngleLeft onClick = {() => navigate(-1)} id = 'user-profile-back-button' className = 'w-8 h-8 cursor-pointer opacity-faint'/>
-                <Text id = 'user-profile-username' classes = 'text-ellipsis overflow-hidden !font-extrabold h-9 md:h-10 !text-3xl md:!text-4xl w-full opacity-main'>
+            <div id = 'user-profile-username-container' className = 'w-full flex flex-row items-center gap-2'>
+                <FaAngleLeft id = 'user-profile-username-icon' onClick = {() => navigate(-1)} className = 'w-8 h-8 cursor-pointer opacity-faint'/>
+                <Text id = 'user-profile-username' classes = 'text-ellipsis overflow-hidden !font-extrabold h-9 md:h-10 md:!text-4xl w-full opacity-main'>
                     {username}
                 </Text>
             </div>

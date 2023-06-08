@@ -35,7 +35,7 @@ export default function Users() {
     async function getUser() {
         const fetchedUser = (await getUserBy('username', username))
         if (fetchedUser.status) {
-            return fetchedUser.data
+            return fetchedUser.user
         }
         else {
             return false
@@ -51,10 +51,10 @@ export default function Users() {
     async function onFollowButtonClick() {
         if (user) {
             if (user.follows.followers.filter((follow) => follow.follower === currentUser.id).length === 0) {
-                if ((await follow(user.user.id)).status) { setUser(await getUser()) }
+                if ((await follow(user.id)).status) { setUser(await getUser()) }
             }
             else {
-                if ((await unfollow(user.user.id)).status) { setUser(await getUser()) }
+                if ((await unfollow(user.id)).status) { setUser(await getUser()) }
             }
         }
     }

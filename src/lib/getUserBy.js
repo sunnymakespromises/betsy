@@ -3,13 +3,12 @@ import queryTable from './aws/db/queryTable'
 async function getUserBy(column, value) {
     const response = {
         status: false,
-        data: {
-            user: null,
+        user: {
             follows: {
                 followers: null,
-                following: null
+                following: null,
             },
-            slips: [],
+            slips: []
         },
         message: ''
     }
@@ -17,8 +16,8 @@ async function getUserBy(column, value) {
     if (users.length > 0) {
         const user = users[0]
         response.status = true
-        response.data = {
-            user: users[0],
+        response.user = {
+            ...users[0],
             follows: {
                 followers: (await queryTable('Follows', { followee: user.id })),
                 following: (await queryTable('Follows', { follower: user.id })),

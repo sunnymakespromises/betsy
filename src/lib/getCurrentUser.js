@@ -1,6 +1,7 @@
 import authenticateUser from './authenticateUser'
 import getItem from './aws/db/getItem'
 import insertItem from './aws/db/insertItem'
+import queryTable from './aws/db/queryTable'
 
 async function getCurrentUser(refresh_token) {
     const response = {
@@ -24,7 +25,14 @@ async function getCurrentUser(refresh_token) {
             }
             await insertItem('Users', item)
             response.status = true
-            response.user = item
+            response.user = {
+                ...item,
+                follows: {
+                    followers: (await queryTable('Follows', { followee: authUser.id })),
+                    following: (await queryTable('Follows', { follower: authUser.id })),
+                },
+                slips: []
+            }
         }
     }
     else {
