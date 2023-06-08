@@ -95,7 +95,7 @@ function Group({classes, direction, children}) {
 
 function Panel({path, title, classes, children}) {
     return (
-        <div id = {'home-panel-' + title + '-container'} className = {'home-panel transition-all duration-main w-full flex flex-col gap-2 rounded-main shadow-main p-4 bg-base-0' + (classes ? ' ' + classes : '')}>
+        <div id = {'home-panel-' + title + '-container'} className = {'home-panel transition-all duration-main w-full flex flex-col gap-2 rounded-main shadow-main p-4 bg-transparent dark:backdrop-brightness-lighter backdrop-brightness-darker' + (classes ? ' ' + classes : '')}>
             <Link to = {path} id = {'home-panel-' + title + '-link'} className = 'home-panel-link transition-all duration-fast flex flex-row items-center gap-1 hover:gap-2'>
                 <Text id = {'home-panel-' + title + '-link-text'} classes = '!text-xl md:!text-3xl !font-bold !cursor-pointer opacity-main'>
                     {title}

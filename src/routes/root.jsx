@@ -6,8 +6,6 @@ import { useBreakpoints } from '../hooks/useBreakpoints'
 import { useTheme } from '../hooks/useTheme'
 import { useAuthorize } from '../hooks/useAuthorize'
 import Image from '../components/image'
-import Page from '../components/page'
-import Text from '../components/text'
 
 export default function Root() {
     const [sm, md, lg] = useBreakpoints()
@@ -25,10 +23,10 @@ export default function Root() {
                     <Image path = {'images/' + (isDarkMode ? 'dark' : 'light') + '/logo.svg'} classes = 'h-full w-full cursor-pointer'/>
                 </Link>
             </header>
-            <div id = 'body' className = 'transition-all duration-main ease-in-out w-full h-full flex flex-col items-center justify-center md:px-8 pb-8'>
-                <Page id = 'page' fill = {location.pathname === '/login' || location.pathname === '/settings' ? false : true}>
+            <div id = 'body' className = 'transition-all duration-main ease-in-out w-full h-full flex flex-col items-center justify-center px-8 pb-8'>
+                <div id = 'container' className = {'transition-all duration-main ease-in-out ' + (location.pathname !== '/home' ? 'md:rounded-main md:dark:backdrop-brightness-lighter md:backdrop-brightness-darker px-8 md:py-8 ' : '') + (location.pathname === '/login' || location.pathname === '/settings' ? 'min-w-0 min-h-0' : 'min-w-full min-h-full max-w-full max-h-full')}>
                     <Outlet/>
-                </Page>
+                </div>
             </div>
         </Provider>
     )
