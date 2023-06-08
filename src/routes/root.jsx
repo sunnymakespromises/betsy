@@ -30,11 +30,6 @@ export default function Root() {
                     <Outlet/>
                 </Page>
             </div>
-            <div className = 'transition-all duration-main absolute bottom-0 w-full flex flex-row justify-center mb-2 md:mb-10'>
-                <Text classes = '!text-sm opacity-faint'>
-                    betsy v0.1.0
-                </Text>
-            </div>
         </Provider>
     )
 }
