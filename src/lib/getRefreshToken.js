@@ -15,12 +15,10 @@ async function getRefreshToken(code) {
         method: 'POST',
         body: JSON.stringify(params)  
     }
-    console.log(params)
     await fetch('https://oauth2.googleapis.com/token', options)
     .then(async (res) => {
         if (res.status === 200) {
             res = await res.json()
-            console.log(res)
             response.status = true
             response.refreshToken = res.refresh_token
         }

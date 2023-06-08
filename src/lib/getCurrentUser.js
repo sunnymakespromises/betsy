@@ -14,7 +14,14 @@ async function getCurrentUser(refresh_token) {
         const betsyUser = await getItem('Users', authUser.id)
         if (betsyUser) {
             response.status = true
-            response.user = betsyUser
+            response.user = {
+                ...betsyUser,
+                follows: {
+                    followers: (await queryTable('Follows', { followee: authUser.id })),
+                    following: (await queryTable('Follows', { follower: authUser.id })),
+                },
+                slips: []
+            }
         }
         else {
             const item = {

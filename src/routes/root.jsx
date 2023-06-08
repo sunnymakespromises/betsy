@@ -25,7 +25,7 @@ export default function Root() {
                     <Image path = {'images/' + (isDarkMode ? 'dark' : 'light') + '/logo.svg'} classes = 'h-full w-full cursor-pointer'/>
                 </Link>
             </header>
-            <div id = 'body' className = 'transition-all duration-main ease-in-out w-full h-full flex flex-col items-center justify-center md:px-8 md:pb-8'>
+            <div id = 'body' className = 'transition-all duration-main ease-in-out w-full h-full flex flex-col items-center justify-center md:px-8 pb-8'>
                 <Page id = 'page' fill = {location.pathname === '/login' || location.pathname === '/settings' ? false : true}>
                     <Outlet/>
                 </Page>

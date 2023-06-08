@@ -4,16 +4,17 @@ import { useRootContext } from '../contexts/root'
 import { Helmet } from 'react-helmet'
 import Text from '../components/text'
 import { FaAngleRight } from '@react-icons/all-files/fa/FaAngleRight'
+import Image from '../components/image'
 
 
 export default function Home() {
-    const { currentUser, navigate } = useRootContext()
+    const { sm } = useRootContext()
     const context = {}
 
     //slips, wallet, stats, profile, settings
     return (
         <Provider value = {context}>
-            <div id = 'home-page' className = 'w-full h-full flex flex-row gap-4'>
+            <div id = 'home-page' className = 'w-full h-full flex flex-row gap-4 md:gap-8'>
                 <Helmet><title>dashboard | betsy</title></Helmet>
                 <Group direction = 'vertical' classes = 'w-[50%]'>
                     <Slips/>
@@ -21,7 +22,7 @@ export default function Home() {
                 </Group>
                 <Group direction = 'vertical' classes = 'w-[50%]'>
                     <Wallet/>
-                    <Group direction = 'horizontal' classes = 'h-[30%]'>
+                    <Group direction = {sm ? 'vertical' : 'horizontal'} classes = 'h-[50%]'>
                         <Users/>
                         <Profile/>
                     </Group>
@@ -50,7 +51,7 @@ function Stats() {
 
 function Wallet() {
     return (
-        <Panel path = '/wallet' title = 'wallet' classes = 'h-[40%]'>
+        <Panel path = '/wallet' title = 'wallet' classes = 'grow'>
 
         </Panel>
     )
@@ -58,7 +59,7 @@ function Wallet() {
 
 function Users() {
     return (
-        <Panel path = '/users' title = 'users' classes = 'w-[50%]'>
+        <Panel path = '/users' title = 'users' classes = 'h-[50%] w-full md:w-[50%] md:h-full'>
 
         </Panel>
     )
@@ -66,16 +67,19 @@ function Users() {
 
 function Profile() {
     const { currentUser } = useRootContext()
+
     return (
-        <Panel path = {'/users?user=' + currentUser?.username} title = 'profile' classes = 'w-[50%]'>
-                            
+        <Panel path = {'/users?user=' + currentUser?.username} title = {currentUser?.username} classes = 'h-[50%] w-full md:w-[50%] md:h-full'>
+            <div className = 'w-full h-full flex flex-col justify-center items-center p-0 md:p-4'>
+                <Image id = 'home-panel-profile-image' external path = {currentUser?.picture} classes = 'h-full w-min md:w-full md:h-min aspect-square rounded-full shadow-main'/>
+            </div>
         </Panel>
     )
 }
 
 function Settings() {
     return (
-        <Panel path = '/settings' title = 'settings' classes = 'h-[20%]'>
+        <Panel path = '/settings' title = 'settings' classes = 'h-min' container = {false}>
                         
         </Panel>
     )
@@ -83,7 +87,7 @@ function Settings() {
 
 function Group({classes, direction, children}) {
     return (
-        <div className = {'home-group flex ' + (direction === 'vertical' ? 'flex-col' : 'flex-row') + ' h-full gap-4' + (classes ? ' ' + classes : '')}>
+        <div className = {'home-group transition-all duration-main flex ' + (direction === 'vertical' ? 'flex-col h-full' : 'flex-row w-full') + ' gap-4 md:gap-8' + (classes ? ' ' + classes : '')}>
             {children}
         </div>
     )
@@ -91,12 +95,12 @@ function Group({classes, direction, children}) {
 
 function Panel({path, title, classes, children}) {
     return (
-        <div id = {'home-panel-' + title} className = {'home-panel w-full flex flex-col' + (classes ? ' ' + classes : '')}>
+        <div id = {'home-panel-' + title + '-container'} className = {'home-panel transition-all duration-main w-full flex flex-col gap-2 rounded-main shadow-main p-4 bg-base-0' + (classes ? ' ' + classes : '')}>
             <Link to = {path} id = {'home-panel-' + title + '-link'} className = 'home-panel-link transition-all duration-fast flex flex-row items-center gap-1 hover:gap-2'>
-                <Text id = {'home-panel-' + title + '-link-text'} classes = '!font-bold !cursor-pointer opacity-main'>
+                <Text id = {'home-panel-' + title + '-link-text'} classes = '!text-xl md:!text-3xl !font-bold !cursor-pointer opacity-main'>
                     {title}
                 </Text>
-                <FaAngleRight id = {'home-panel-' + title + '-link-icon'} className = 'w-6 h-6 cursor-pointer opacity-main'/>
+                <FaAngleRight id = {'home-panel-' + title + '-link-icon'} className = 'w-4 h-4 md:w-6 md:h-6 cursor-pointer opacity-main'/>
             </Link>
             {children}
         </div>

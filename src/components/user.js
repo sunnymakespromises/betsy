@@ -121,8 +121,9 @@ function Picture({picture}) {
             <input id = 'user-profile-picture-input' style = {{ display: 'none' }} type = 'file' onChange = {(e) => onUpload(e)} ref = {pictureInput} accept = '.jpg, .jpeg, .png, .gif, .webp'/>
             <Image external id = 'user-profile-picture' path = {(isCropping || !inputs?.picture) ? picture : inputs?.picture} classes = {'transition-all duration-main w-full h-full rounded-full shadow-main' + (isEditing ? ' cursor-pointer' : '') + (picture ? ' opacity-1' : ' opacity-0')} mode = 'cover' onClick = {() => onPictureClick()}/>
             {isCropping ? (
-            <div id = 'user-profile-picture-cropper-container' className = 'transition-all duration-main flex flex-col items-center justify-center absolute top-0 left-0 w-full h-full  rounded-main p-8'>
-                <div id = 'user-profile-picture-cropper' className = 'transition-all duration-main relative w-[90%] md:w-[50%] h-min bg-base-0 rounded-main p-8 flex flex-col items-center gap-2 overflow-hidden shadow-main'>
+            <div id = 'user-profile-picture-cropper-container' className = 'z-10 transition-all duration-main flex flex-col items-center justify-center absolute top-0 left-0 w-full h-full rounded-main p-8'>
+                <div id = 'user-profile-picture-cropper-overlay' className = 'absolute w-[100000px] h-[100000px] bg-reverse-0 opacity-80'/>
+                <div id = 'user-profile-picture-cropper' className = 'transition-all duration-main relative w-[90%] md:w-[60%] md:h-full h-min bg-base-0 rounded-main p-8 flex flex-col items-center gap-2 overflow-hidden shadow-main'>
                     <div id = 'user-profile-picture-cropper-idk' className = 'relative transition-all duration-main w-full aspect-square'>
                         <Cropper {...params}/>
                     </div>
@@ -169,6 +170,37 @@ function Picture({picture}) {
 }
 
 
+
+function Follows() {
+    const { user } = useUsersContext()
+
+    return (
+        <div id = 'user-profile-follows-container' className = 'grow flex flex-col items-center gap-1 md:gap-2'>
+            <div id = 'user-profile-follows-container' className = 'w-full flex flex-row justify-between items-center'>
+                <div id = 'user-profile-followers-container' className = 'flex flex-col'>
+                    <Text id = 'user-profile-followers-text' classes = '!font-medium !text-base md:!text-xl opacity-faint'>
+                        followers
+                    </Text>
+                    <Text id = 'user-profile-followers-value' classes = '!font-extrabold h-9 md:h-12 !text-3xl md:!text-5xl opacity-main'>
+                        {user ? user.follows.followers.length : ''}
+                    </Text>
+                </div>
+                <div id = 'user-profile-following-container' className = 'flex flex-col'>
+                    <Text id = 'user-profile-following-text' classes = '!font-medium !text-base md:!text-xl opacity-faint'>
+                        following
+                    </Text>
+                    <Text id = 'user-profile-following-value' classes = '!font-extrabold h-9 md:h-12 !text-3xl md:!text-5xl opacity-main'>
+                        {user ? user.follows.following.length : ''}
+                    </Text>
+                </div>
+            </div>
+            <Action/>
+        </div>
+    )
+}
+
+
+
 function Action() {
     const { currentUser, refreshCurrentUser } = useRootContext()
     const { user, onFollowButtonClick, onSubmitChanges } = useUsersContext()
@@ -199,7 +231,7 @@ function Action() {
             </Button>
             {isCurrentUser ?
             <Text id = 'user-profile-action-cancel' classes = {'transition-all duration-fast !text-lg opacity-faint !cursor-pointer overflow-hidden' + (isEditing ? ' h-7 translate-y-0' : ' h-0 -translate-y-[100%]')} onClick = {() => onCancel()}>
-                cancel
+                done
             </Text>
             :null}
         </div>
@@ -248,34 +280,4 @@ function Action() {
             onFollowButtonClick()
         }
     }
-}
-
-
-
-function Follows() {
-    const { user } = useUsersContext()
-
-    return (
-        <div id = 'user-profile-follows-container' className = 'grow flex flex-col items-center gap-1 md:gap-2'>
-            <div id = 'user-profile-follows-text-container' className = 'w-full flex flex-row justify-between items-center'>
-                <div id = 'user-profile-followers-container' className = 'flex flex-col'>
-                    <Text id = 'user-profile-followers-text' classes = '!font-medium !text-base md:!text-xl opacity-faint'>
-                        followers
-                    </Text>
-                    <Text id = 'user-profile-followers-value' classes = '!font-extrabold h-9 md:h-12 !text-3xl md:!text-5xl opacity-main'>
-                        {user ? user.follows.followers.length : ''}
-                    </Text>
-                </div>
-                <div id = 'user-profile-following-container' className = 'flex flex-col'>
-                    <Text id = 'user-profile-following-text' classes = '!font-medium !text-base md:!text-xl opacity-faint'>
-                        following
-                    </Text>
-                    <Text id = 'user-profile-following-value' classes = '!font-extrabold h-9 md:h-12 !text-3xl md:!text-5xl opacity-main'>
-                        {user ? user.follows.following.length : ''}
-                    </Text>
-                </div>
-            </div>
-            <Action/>
-        </div>
-    )
 }
