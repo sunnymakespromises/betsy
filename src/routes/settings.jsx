@@ -46,8 +46,8 @@ function Theme() {
         <div id = 'settings-setting-Theme' className = 'w-min flex flex-col gap-tiny'>
             {options.map((option, index) => {
                 return (
-                    <div key = {index} id = {'settings-setting-Theme-' + option} className = 'flex items-center gap-small'>
-                        <div id = {'settings-setting-Theme-' + option + '-selector'} className = {'transition-all duration-main h-[70%] aspect-square bg-reverse-0 dark:bg-base-0 hover:!bg-opacity-100 rounded-full cursor-pointer ' + (inputs?.theme === option ? '!bg-opacity-100' : '!bg-opacity-main')}  onClick = {() => onInputChange('theme', option)}/>
+                    <div key = {index} id = {'settings-setting-Theme-' + option} className = 'flex items-center gap-small cursor-pointer' onClick = {() => onInputChange('theme', option)}>
+                        <div id = {'settings-setting-Theme-' + option + '-selector'} className = {'transition-all duration-main h-[70%] aspect-square bg-reverse-0 dark:bg-base-0 hover:!bg-opacity-100 rounded-full ' + (inputs?.theme === option ? '!bg-opacity-100' : '!bg-opacity-main')}/>
                         <Text id = {'settings-setting-Theme-' + option + '-text'} classes = '!text-2xl md:!text-2xl'>
                             {option}
                         </Text>
@@ -65,8 +65,8 @@ function OddsFormat() {
         <div id = 'settings-setting-Odds-Format' className = 'flex flex-col gap-tiny'>
             {options.map((option, index) => {
                 return (
-                    <div key = {index} id = {'settings-setting-Odds-Format-' + option} className = 'flex items-center gap-small'>
-                        <div id = {'settings-setting-Odds-Format-' + option + '-selector'} className = {'transition-all duration-main h-[70%] aspect-square bg-reverse-0 dark:bg-base-0 hover:!bg-opacity-100 rounded-full cursor-pointer ' + (inputs && inputs['odds-format'] === option ? '!bg-opacity-100' : '!bg-opacity-main')}  onClick = {() => onInputChange('odds-format', option)}/>
+                    <div key = {index} id = {'settings-setting-Odds-Format-' + option} className = 'flex items-center gap-small cursor-pointer' onClick = {() => onInputChange('odds-format', option)}>
+                        <div id = {'settings-setting-Odds-Format-' + option + '-selector'} className = {'transition-all duration-main h-[70%] aspect-square bg-reverse-0 dark:bg-base-0 hover:!bg-opacity-100 rounded-full ' + (inputs && inputs['odds-format'] === option ? '!bg-opacity-100' : '!bg-opacity-main')}/>
                         <Text id = {'settings-setting-Odds-Format-' + option + '-text'} classes = '!text-2xl md:!text-2xl'>
                             {option}
                         </Text>
