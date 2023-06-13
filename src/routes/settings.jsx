@@ -60,7 +60,7 @@ function Theme() {
 
 function OddsFormat() {
     const { inputs, onInputChange } = useSettingsContext()
-    const options = ['American', 'Decimal', 'Fractional']
+    const options = ['American', 'Decimal']
     return (
         <div id = 'settings-setting-Odds-Format' className = 'flex flex-col gap-tiny'>
             {options.map((option, index) => {
