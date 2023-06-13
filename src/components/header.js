@@ -74,7 +74,7 @@ function Menu({ isLandscape }) {
 
             <div id = 'header-menu-container' className = 'group w-12 h-12'>
                 <Image id = 'header-menu-profile-picture' external = {currentUser ? true : false} path = {currentUser?.picture} classes = 'h-full w-full rounded-full cursor-pointer'/>
-                <div id = 'header-menu-items-container' className = 'transition-all duration-main absolute top-[100%] right-0 w-full max-h-0 group-hover:max-h-[9999px] overflow-hidden'>
+                <div id = 'header-menu-items-container' className = 'transition-all duration-main absolute top-[100%] right-0 max-w-[999px] max-h-0 group-hover:max-h-[999px] overflow-hidden'>
                     <div id = 'header-menu-items' className = 'transition-all duration-main relative w-full h-full px-smaller py-0 group-hover:py-smaller mt-6 backdrop-blur-main rounded-b-main'>
                         <Conditional value = {!isLandscape}>
                             {pages.filter((page) => page.navigation.show).map((page, index) => {
