@@ -1,34 +1,82 @@
-import Root from './root'
+import { Routes as RoutesWrapper, Route } from 'react-router-dom'
 import Home from './home'
 import Settings from './settings'
 import Login from './login'
-import Users from './users'
-import ErrorPage from '../errorPage'
+import Logout from './logout'
+import Explore from './explore'
+import User from './user'
+import Wallet from './wallet'
 
-const routes = [
+const pages = [
     {
         path: '/',
-        element: <Root />,
-        errorElement: <ErrorPage />,
-        children: [
-            {
-                path: '/home',
-                element: <Home />
-            },
-            {
-                path: '/settings',
-                element: <Settings />
-            },
-            {
-                path: '/login',
-                element: <Login />
-            },
-            {
-                path: '/users',
-                element: <Users />
-            }
-        ]
+        title: 'Home',
+        element: <Home/>,
+        navigation: {
+            show: false
+        }
+    },
+    {
+        path: '/login',
+        title: 'Login',
+        element: <Login/>,
+        navigation: {
+            show: false
+        }
+    },
+    {
+        path: '/explore',
+        title: 'Explore',
+        element: <Explore/>,
+        navigation: {
+            show: true,
+            index: 0
+        }
+    },
+    {
+        path: '/user',
+        title: 'User',
+        element: <User/>,
+        navigation: {
+            show: false
+        }
+    },
+    {
+        path: '/settings',
+        title: 'Settings',
+        element: <Settings/>,
+        navigation: {
+            show: false
+        }
+    },
+    {
+        path: '/logout',
+        title: 'Logout',
+        element: <Logout/>,
+        navigation: {
+            show: false
+        }
+    },
+    {
+        path: '/wallet',
+        title: 'Wallet',
+        element: <Wallet/>,
+        navigation: {
+            show: false
+        }
     }
 ]
 
-export default routes
+const Routes = ({location}) => {
+    return (
+        <RoutesWrapper location = {location}>
+            {pages.map((page, index) => {
+                return (
+                    <Route key = {index} path = {page.path} element = {page.element}/>
+                )
+            })}
+        </RoutesWrapper>
+    )
+}
+
+export { Routes, pages }

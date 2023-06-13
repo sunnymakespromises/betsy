@@ -1,107 +1,83 @@
 import { Link } from 'react-router-dom'
-import { HomeProvider as Provider, useHomeContext } from '../contexts/home'
-import { useRootContext } from '../contexts/root'
 import { Helmet } from 'react-helmet'
+import { HomeProvider as Provider } from '../contexts/home'
+import { useRootContext } from '../contexts/root'
 import Text from '../components/text'
-import { FaAngleRight } from '@react-icons/all-files/fa/FaAngleRight'
-import Image from '../components/image'
-
+import Page from '../components/page'
+import Conditional from '../components/conditional'
+import Money from '../components/money'
 
 export default function Home() {
-    const { sm } = useRootContext()
     const context = {}
-
-    //slips, wallet, stats, profile, settings
     return (
         <Provider value = {context}>
-            <div id = 'home-page' className = 'w-full h-full flex flex-row gap-4 md:gap-8'>
-                <Helmet><title>dashboard | betsy</title></Helmet>
-                <Group direction = 'vertical' classes = 'w-[50%]'>
-                    <Slips/>
-                    <Stats/>
-                </Group>
-                <Group direction = 'vertical' classes = 'w-[50%]'>
-                    <Wallet/>
-                    <Group direction = {sm ? 'vertical' : 'horizontal'} classes = 'h-[50%]'>
-                        <Users/>
-                        <Profile/>
+            <Page>
+                <div id = 'home-page' className = 'w-full h-full flex flex-col md:flex-row gap-4 md:gap-8'>
+                    <Helmet><title>Dashboard | Betsy</title></Helmet>
+                    <Group direction = 'vertical' classes = 'w-full md:w-[50%]'>
+                        <ActiveSlips/>
                     </Group>
-                    <Settings/>
-                </Group>
-            </div>
+                    <Group direction = 'vertical' classes = 'w-full md:w-[50%]'>
+                        <Wallet/>
+                        <PopularBets/>
+                    </Group>
+                </div>
+            </Page>
         </Provider>
     )
 }
 
-function Slips() {
+function ActiveSlips() {
     return (
-        <Panel path = '/slips' title = 'slips' classes = 'h-[50%]'>
+        <Panel title = 'Active Slips' classes = 'h-full flex flex-col gap-smaller animate__animated animate__slideInLeft'>
+            <div className = 'w-full h-full rounded-main backdrop-blur-main'>
 
-        </Panel>
-    )
-}
-
-function Stats() {
-    return (
-        <Panel path = '/stats' title = 'stats' classes = 'h-[50%]'>
-
+            </div>
         </Panel>
     )
 }
 
 function Wallet() {
-    return (
-        <Panel path = '/wallet' title = 'wallet' classes = 'grow'>
-
-        </Panel>
-    )
-}
-
-function Users() {
-    return (
-        <Panel path = '/users' title = 'users' classes = 'h-[50%] w-full md:w-[50%] md:h-full'>
-
-        </Panel>
-    )
-}
-
-function Profile() {
     const { currentUser } = useRootContext()
-
     return (
-        <Panel path = {'/users?user=' + currentUser?.username} title = {currentUser?.username} classes = 'h-[50%] w-full md:w-[50%] md:h-full'>
-            <div className = 'w-full h-full flex flex-col justify-center items-center p-0 md:p-4'>
-                <Image id = 'home-panel-profile-image' external path = {currentUser?.picture} classes = 'h-full w-min md:w-full md:h-min aspect-square rounded-full shadow-main'/>
+        <Panel title = 'Wallet' showTitle = {false}>
+            <div id = 'home-panel-Wallet' className = 'w-full h-min flex flex-col items-end animate__animated animate__slideInDown'>
+                <Money id = 'home-panel-wallet-main-balance' amount = {currentUser?.balance} textClasses = '!text-7xl md:!text-8xl !font-black w-min text-right'/>
+                <Text id = 'home-panel-Wallet-main-delta' classes = '!text-base md:!text-lg text-right'>
+                    {'+0% over last week'}
+                </Text>
             </div>
         </Panel>
     )
 }
 
-function Settings() {
+function PopularBets() {
     return (
-        <Panel path = '/settings' title = 'settings' classes = 'h-min' container = {false}>
-                        
+        <Panel title = 'Popular Bets' classes = 'grow flex flex-col items-end gap-smaller animate__animated animate__slideInUp'>
+            <div className = 'w-full h-full rounded-main backdrop-blur-main'>
+
+            </div>
         </Panel>
     )
 }
 
-function Group({classes, direction, children}) {
+
+function Group({ classes, direction, children }) {
     return (
-        <div className = {'home-group transition-all duration-main flex ' + (direction === 'vertical' ? 'flex-col h-full' : 'flex-row w-full') + ' gap-4 md:gap-8' + (classes ? ' ' + classes : '')}>
+        <div className = {'home-group flex ' + (direction === 'vertical' ? 'flex-col' : 'flex-row') + ' gap-4 md:gap-8' + (classes ? ' ' + classes : '')}>
             {children}
         </div>
     )
 }
 
-function Panel({path, title, classes, children}) {
+function Panel({ title, showTitle = true, classes, children }) {
     return (
-        <div id = {'home-panel-' + title + '-container'} className = {'home-panel transition-all duration-main w-full flex flex-col gap-2 rounded-main shadow-main p-4 bg-transparent dark:backdrop-brightness-lighter backdrop-brightness-darker' + (classes ? ' ' + classes : '')}>
-            <Link to = {path} id = {'home-panel-' + title + '-link'} className = 'home-panel-link transition-all duration-fast flex flex-row items-center gap-1 hover:gap-2'>
-                <Text id = {'home-panel-' + title + '-link-text'} classes = '!text-xl md:!text-3xl !font-bold !cursor-pointer opacity-main'>
+        <div id = {'home-panel-' + title + '-container'} className = {'home-panel' + (classes ? ' ' + classes : '')}>
+            <Conditional value = {showTitle}>
+                <Text id = {'home-panel-' + title + '-link-text'} classes = '!text-xl md:!text-3xl !font-extrabold'>
                     {title}
                 </Text>
-                <FaAngleRight id = {'home-panel-' + title + '-link-icon'} className = 'w-4 h-4 md:w-6 md:h-6 cursor-pointer opacity-main'/>
-            </Link>
+            </Conditional>
             {children}
         </div>
     )

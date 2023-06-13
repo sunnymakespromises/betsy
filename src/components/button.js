@@ -9,8 +9,7 @@
  */
 export default function Button({ preset = 'main', styles, classes, onClick, children, ...extras }) {
     let options = {
-        'main': 'transition-all duration-main ease-in-out bg-base-0 hover:bg-base-100 rounded-main p-4 shadow-small cursor-pointer flex justify-center items-center',
-        'profile-picture-crop': 'transition-all duration-main ease-in-out bg-base-0 hover:bg-base-100 rounded-main p-2 md:p-4 border-thin border-reverse-0 shadow-small cursor-pointer flex justify-center items-center',
+        'main': 'transition-all duration-slow bg-reverse-0 dark:bg-base-0 hover:scale-smaller !bg-opacity-faint hover:!bg-opacity-main rounded-full md:rounded-main p-4 cursor-pointer flex justify-center items-center',
     }
 
     const getOption = () => {

@@ -50,7 +50,7 @@ function useAuthorize() {
             }
             else if (user) {
                 if (location.pathname === '/login') {
-                    navigate('/home')
+                    navigate('/')
                 }
             }
         }
@@ -67,7 +67,7 @@ function useAuthorize() {
                 setUser(user)
                 if (status) {
                     setCookie('user', user)
-                    navigate('/home')
+                    navigate('/')
                 }
                 else {
                     console.log(message)
@@ -84,7 +84,7 @@ function useAuthorize() {
         accessType: 'offline'
     })
 
-    const signout = () => {
+    const logout = () => {
         googleLogout()
         removeCookie('user')
         setUser(null)
@@ -92,7 +92,7 @@ function useAuthorize() {
         navigate('/login')
     }
 
-    return [ user, refreshUser, signout, login ]
+    return [ user, refreshUser, login, logout ]
 }
 
 export { useAuthorize }

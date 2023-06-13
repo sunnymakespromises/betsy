@@ -4,9 +4,9 @@ async function getUserBy(column, value) {
     const response = {
         status: false,
         user: {
-            follows: {
-                followers: null,
-                following: null,
+            subscriptions: {
+                subscribers: null,
+                subscriptions: null,
             },
             slips: []
         },
@@ -18,9 +18,9 @@ async function getUserBy(column, value) {
         response.status = true
         response.user = {
             ...users[0],
-            follows: {
-                followers: (await queryTable('Follows', { followee: user.id })),
-                following: (await queryTable('Follows', { follower: user.id })),
+            subscriptions: {
+                subscribers: (await queryTable('Subscriptions', { subscribee: user.id })),
+                subscriptions: (await queryTable('Subscriptions', { subscriber: user.id })),
             },
             slips: []
         }

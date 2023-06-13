@@ -1,11 +1,18 @@
 import { useState, useEffect } from 'react'
 
-function useInputs(list) {
+function useInputs(list, defaults = null) {
     const [inputs, setInputs] = useState()
 
     function initializeInputs() {
         const target = {}
-        list.forEach(key => target[key] = '')
+        if (defaults) {
+            for (let i = 0; i < list.length; i++) {
+                target[list[i]] = defaults[i]
+            }
+        }
+        else {
+            list.forEach(key => target[key] = '')
+        }
         setInputs(target)
     }
 
@@ -32,7 +39,12 @@ function useInputs(list) {
 
     function clearInput(input) {
         let newInputs = inputs
-        newInputs[input] = ''
+        if (defaults) {
+            newInputs[input] = defaults[list.indexOf(input)]
+        }
+        else {
+            newInputs[input] = ''
+        }
         setInputs({...newInputs})
     }
 
@@ -40,7 +52,7 @@ function useInputs(list) {
         initializeInputs()
     }
 
-    return [inputs, clearInput, clearAllInputs, onInputChange]
+    return { inputs, clearInput, clearAllInputs, onInputChange }
 }
 
 export { useInputs }

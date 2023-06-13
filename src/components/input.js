@@ -12,13 +12,19 @@
 export default function Input({ value, status, type = 'text', preset = 'main', styles, classes, onChange, ...extras }) {
     let options = {
         'main': {
-            classes: 'font-main w-min transition-all duration-main ease-in-out text-base-0 text-3xl bg-black bg-opacity-30 focus:outline-none px-3 py-2 rounded-xl',
+            classes: 'font-main w-min text-base-0 text-3xl bg-black bg-opacity-30 focus:outline-none px-3 py-2 rounded-xl',
             true: '',
             false: '',
             null: ''
         },
         'profile': {
-            classes: 'text-ellipsis overflow-hidden font-main font-bold w-full transition-all duration-main ease-in-out text-reverse-0 tracking-tighter text-3xl md:text-4xl rounded-xl placeholder:opacity-faint bg-transparent focus:outline-none',
+            classes: 'text-ellipsis overflow-hidden text-center font-main font-black w-full text-reverse-0 dark:text-base-0 text-3xl md:text-3xl placeholder:opacity-main placeholder:text-reverse-0 placeholder:dark:text-base-0 bg-transparent focus:outline-none',
+            true: '',
+            false: '',
+            null: ''
+        },
+        'search': {
+            classes: 'text-ellipsis overflow-hidden font-main font-bold w-full text-reverse-0 dark:text-base-0 text-4xl md:text-5xl placeholder:opacity-main placeholder:text-reverse-0 placeholder:dark:text-base-0 bg-transparent focus:outline-none',
             true: '',
             false: '',
             null: ''
@@ -30,6 +36,6 @@ export default function Input({ value, status, type = 'text', preset = 'main', s
     }
 
     return (
-        <input className = {getOption()?.classes + (status === false ? ' ' + getOption()?.false : '') + (status === true ? ' ' + getOption()?.true : '') + (status === null ? ' ' + getOption()?.null : '') + (classes ? ' ' + classes : '')} style = {styles} value = {value} type = {type} onChange = {onChange} {...extras}/>
+        <input className = {getOption()?.classes + (status === false ? ' ' + getOption()?.false : '') + (status === true ? ' ' + getOption()?.true : '') + (status === null ? ' ' + getOption()?.null : '') + (classes ? ' ' + classes : '')} style = {styles} value = {value ? value : ''} type = {type} onChange = {onChange} {...extras}/>
     )
 }

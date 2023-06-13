@@ -16,17 +16,20 @@ async function getCurrentUser(refresh_token) {
             response.status = true
             response.user = {
                 ...betsyUser,
-                follows: {
-                    followers: (await queryTable('Follows', { followee: authUser.id })),
-                    following: (await queryTable('Follows', { follower: authUser.id })),
+                subscriptions: {
+                    subscribers: (await queryTable('Subscriptions', { subscribee: authUser.id })),
+                    subscriptions: (await queryTable('Subscriptions', { subscriber: authUser.id })),
                 },
-                slips: []
+                slips: [],
+                balance: '0.00'
             }
         }
         else {
             const item = {
                 'id': authUser.id,
                 'username': authUser.name.replace(/[^A-Za-z0-9-_.]/g, '').substring(0, ),
+                'displayname': authUser.name.replace(/[^A-Za-z0-9-_.]/g, '').substring(0, ),
+                'bio': '✨💕',
                 'email': authUser.email,
                 'picture': authUser.picture
             }
@@ -34,11 +37,12 @@ async function getCurrentUser(refresh_token) {
             response.status = true
             response.user = {
                 ...item,
-                follows: {
-                    followers: (await queryTable('Follows', { followee: authUser.id })),
-                    following: (await queryTable('Follows', { follower: authUser.id })),
+                subscriptions: {
+                    subscribers: (await queryTable('Subscriptions', { subscribee: authUser.id })),
+                    subscriptions: (await queryTable('Subscriptions', { subscriber: authUser.id })),
                 },
-                slips: []
+                slips: [],
+                balance: '0.00'
             }
         }
     }

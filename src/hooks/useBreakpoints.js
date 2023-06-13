@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import _ from 'lodash'
 
 function useBreakpoints() {
     const points = [640, 768, 1024]
@@ -10,11 +11,15 @@ function useBreakpoints() {
         }
     }, [])
     useEffect(() => {
+        // console.log(breakPoints)
+    }, [breakPoints])
+    useEffect(() => {
         if (isClient) {
             function getWidth() {
                 const { innerWidth: width } = window
                 return width
             }
+
             function handleResize() {
                 const width = getWidth()
                 const newBreakpoints = [false, false, false]
@@ -35,13 +40,16 @@ function useBreakpoints() {
                         }
                     }
                 }
-                setBreakPoints(newBreakpoints)
+                if (!_.isEqual(newBreakpoints, breakPoints)) {
+                    setBreakPoints(newBreakpoints)
+                }
             }
+
             handleResize()
             window.addEventListener('resize', handleResize)
             return () => window.removeEventListener('resize', handleResize)
         }
-    }, [isClient])
+    }, [isClient, breakPoints])
     return (isClient ? breakPoints : [false, false, false])
 }
 

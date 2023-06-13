@@ -17,11 +17,27 @@ async function updateProfile(refresh_token, column, value) {
         switch (column) {
             case 'username':
                 response.message = validate((value === ''), 'username cannot be empty.', response.message)
-                response.message = validate((value.length < 6 || value.length > 12), 'username must be between 5 and 13 characters.', response.message)
+                response.message = validate((value.length < 6 || value.length > 12), 'username must be between 6 and 12 characters.', response.message)
                 response.message = validate((!(/^[a-zA-Z0-9-_.]+$/.test(value))), 'username cannot contain any special characters.', response.message)
                 response.message = validate(((await queryTable('Users', { username: value })).length > 0), 'username already taken.', response.message)
                 if (response.message === '') {
                     await updateItem('Users', betsyUser.id, {username: value})
+                    response.status = true
+                }
+                break
+            case 'displayname':
+                response.message = validate((value === ''), 'display name cannot be empty.', response.message)
+                response.message = validate((value.length < 1 || value.length > 16), 'username must be between 1 and 16 characters.', response.message)
+                if (response.message === '') {
+                    await updateItem('Users', betsyUser.id, {displayname: value})
+                    response.status = true
+                }
+                break
+            case 'bio':
+                response.message = validate((value === ''), 'bio cannot be empty.', response.message)
+                response.message = validate((value.length < 0 || value.length > 50), 'bio must be between 0 and 50 characters.', response.message)
+                if (response.message === '') {
+                    await updateItem('Users', betsyUser.id, {bio: value})
                     response.status = true
                 }
                 break

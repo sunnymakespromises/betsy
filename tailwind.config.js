@@ -1,39 +1,50 @@
 /** @type {import('tailwindcss').Config} */
 const defaultTheme = require('tailwindcss/defaultTheme')
+const { withAnimations } = require('animated-tailwindcss')
 
 module.exports = {
+    darkMode: 'class',
     content: [
         "./src/**/*.{js,jsx,ts,tsx}",
     ],
     theme: {
+        animatedSettings: {
+            animatedSpeed: 200,
+        },
         extend: {
             fontFamily: {
-                main: ['Inter', ...defaultTheme.fontFamily.sans], // 'FOT-UDMarugo_Large Pr6N'
+                main: ['SF Pro Display', ...defaultTheme.fontFamily.sans], // 'FOT-UDMarugo_Large Pr6N'
             },
             padding: {
-                main: '0.5rem'
+                main: '2rem',
+                smaller: '1.5rem',
+                small: '1rem',
+                tiny: '0.5rem'
+            },
+            margin: {
+                main: '2rem',
+                smaller: '1.5rem',
+                small: '1rem',
+                tiny: '0.5rem'
+            },
+            gap: {
+                main: '1.5rem',
+                smaller: '1rem',
+                small: '0.5rem',
+                tiny: '0.25rem'
             },
             colors: {
                 transparent: 'transparent',
                 base: {
-                    0: '#FFFFFF',
-                    100: '#F6F6F6'
+                    0: '#1A1A1A'
                 },
                 reverse: {
-                    0: '#000000',
-                    100: '#0B0A0A'
+                    0: '#F2F2F2',
+                    100: '#E6E6E6'
                 },
-                light: {
-                    0: '#A1A1AA',
-                    100: '#52525B'
-                },
-                dark: {
-                    0: '#363036',
-                    100: '#413A41'
-                },
-                divide: {
-                    light: 'rgba(255, 255, 255, 0.7)',
-                    dark: 'rgba(255, 255, 255, 0.5)'
+                accent: {
+                    0: '#597DEF',
+                    100: '#FCCD51'
                 }
             },
             borderRadius: {
@@ -50,7 +61,7 @@ module.exports = {
             },
             backdropBrightness: {
                 lighter: '1.25',
-                darker: '1.03'
+                darker: '0.8'
             },
             boxShadow: {
                 main: [
@@ -61,15 +72,23 @@ module.exports = {
                 ]
             },
             opacity: {
-                main: '60%',
-                faint: '40%'
+                'more-visible': '60%',
+                main: '30%',
+                faint: '10%'
             },
             transitionDuration: {
-                main: '300ms',
-                fast: '150ms',
-                slow: '500ms'
+                main: '150ms',
+                fast: '100ms',
+                slow: '300ms'
+            },
+            scale: {
+                main: '1.1',
+                smaller: '1.05',
+                small: '1.03'
             }
         },
     },
-    plugins: [],
+    plugins: [
+        require('tailwindcss-animatecss'),
+    ],
 }

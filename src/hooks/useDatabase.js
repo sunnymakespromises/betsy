@@ -1,7 +1,8 @@
 import { useCookies } from 'react-cookie'
 import { updateProfile as _updateProfile } from '../lib/updateProfile'
 import { getUserBy as _getUserBy } from '../lib/getUserBy'
-import { follow as _follow, unfollow as _unfollow } from '../lib/follow'
+import { getAllUsers as _getAllUsers } from '../lib/getAllUsers'
+import { subscribe as _subscribe, unsubscribe as _unsubscribe } from '../lib/subscribe'
 
 function useDatabase() {
     const [cookies, setCookie, removeCookie] = useCookies()
@@ -34,15 +35,19 @@ function useDatabase() {
         return await _getUserBy(key, value)
     }
 
-    async function follow(id) {
-        return await _follow(cookies['oauth-refresh-token'], id)
+    async function getAllUsers() {
+        return await _getAllUsers()
     }
 
-    async function unfollow(id) {
-        return await _unfollow(cookies['oauth-refresh-token'], id)
+    async function subscribe(id) {
+        return await _subscribe(cookies['oauth-refresh-token'], id)
     }
 
-    return { insert, get, query, update, remove, updateProfile, getUserBy, follow, unfollow }
+    async function unsubscribe(id) {
+        return await _unsubscribe(cookies['oauth-refresh-token'], id)
+    }
+
+    return { insert, get, query, update, remove, updateProfile, getUserBy, getAllUsers, subscribe, unsubscribe }
 }
 
 export { useDatabase }

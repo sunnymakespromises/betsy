@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 function useCropper(picture) {
     const [crop, setCrop] = useState({ x: 0, y: 0 })
@@ -14,18 +14,30 @@ function useCropper(picture) {
         onZoomChange: setZoom,
         onCropComplete: (_, area) => setCroppedArea(area),
         aspect: 1,
+        showGrid: false,
         cropShape: 'round',
-        objectFit: 'auto-cover',
-        classes: {containerClassName: 'rounded-main shadow-main'}
+        objectFit: getObjectFit()
     }
+
+    function getObjectFit() {
+        const img = document.createElement('img')
+        img.src = picture
+        if (img.width / img.height >= 1) {
+            return 'vertical-cover'
+        }
+        else {
+            return 'horizontal-cover'
+        }
+    }
+    
 
     async function onCrop() {
         const image = await createImage(picture)
         const canvas = document.createElement('canvas')
         const ctx = canvas.getContext('2d')
 
-        canvas.width = 196
-        canvas.height = 196
+        canvas.width = 254
+        canvas.height = 254
 
         ctx.drawImage(
             image,
