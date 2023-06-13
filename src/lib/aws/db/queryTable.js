@@ -19,6 +19,7 @@ export default async function queryTable(table, query) {
             ExpressionAttributeValues: expressionAttributeValues,
             ConsistentRead: true
         }
+
         const { Items } = await ddbDocClient.send(new ScanCommand(params))
         return Items
     } catch (err) {
