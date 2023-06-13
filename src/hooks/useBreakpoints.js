@@ -5,14 +5,13 @@ function useBreakpoints() {
     const points = [640, 768, 1024]
     const [isClient, setIsClient] = useState()
     const [breakPoints, setBreakPoints] = useState([false, false, false])
+
     useEffect(() => {
         if (typeof window !== 'undefined') {
             setIsClient(true)
         }
     }, [])
-    useEffect(() => {
-        // console.log(breakPoints)
-    }, [breakPoints])
+
     useEffect(() => {
         if (isClient) {
             function getWidth() {
@@ -50,6 +49,7 @@ function useBreakpoints() {
             return () => window.removeEventListener('resize', handleResize)
         }
     }, [isClient, breakPoints])
+    
     return (isClient ? breakPoints : [false, false, false])
 }
 
