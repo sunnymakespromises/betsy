@@ -1,19 +1,19 @@
 import authenticateUser from './auth/authenticateUser'
-import getItem from './aws/db/getItem'
+import { getUserBy } from './getUserBy'
 import queryTable from './aws/db/queryTable'
 import updateItem from './aws/db/updateItem'
 import insertFile from './aws/s3/insertFile'
 import removeFile from './aws/s3/removeFile'
 const short = require('short-uuid')
 
-async function updateProfile(refresh_token, column, value) {
+async function updateProfile(refresh_token, source, column, value) {
     const response = {
         status: false,
         message: ''
     }
-    const authUser = await authenticateUser(refresh_token)
+    const authUser = await authenticateUser(refresh_token, source)
     if (authUser) {
-        const betsyUser = await getItem('Users', authUser.id)
+        const betsyUser = (await getUserBy('auth_id', authUser.id)).user
         switch (column) {
             case 'username':
                 response.message = validate((value === ''), 'username cannot be empty.', response.message)
