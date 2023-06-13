@@ -7,7 +7,6 @@ function useThemes() {
     const [isDarkMode, setIsDarkMode] = useState(getCurrentTheme())
     
     useEffect(() => {
-        console.log(setting)
         if (setting !== 'Light' && setting !== 'Dark') {
             setIsDarkMode(getCurrentTheme())
             const mqListener = (e => {
