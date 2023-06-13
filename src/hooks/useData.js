@@ -11,8 +11,7 @@ function useData() {
                 Sports: [],
                 Competitions: [],
                 Events: [],
-                Teams: [],
-                Players: [],
+                Competitors: [],
                 Users: users
             })
         }

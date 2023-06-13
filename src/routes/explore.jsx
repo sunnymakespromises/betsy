@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
 import { useWindowContext } from '../contexts/window'
 import { ExploreProvider as Provider, useExploreContext } from '../contexts/explore'
-import { IconShirtSport, IconSoccerField, IconBallFootball, IconTrophy, IconUser, IconPlayFootball } from '@tabler/icons-react'
+import { IconShirtSport, IconSoccerField, IconBallFootball, IconTrophy, IconUser } from '@tabler/icons-react'
 import { useSearch } from '../hooks/useSearch'
 import Text from '../components/text'
 import Image from '../components/image'
@@ -24,10 +24,10 @@ export default function Explore() {
         if (data) {
             setParams({
                 filters: {},
-                limits: { Sports: 3, Competitions: 5, Events: 8, Teams: 8, Players:  8, Users: 10 },
-                categories: ['Sports', 'Competitions', 'Events', 'Teams', 'Players', 'Users'],
+                limits: { Sports: 3, Competitions: 5, Events: 8, Competitors: 8, Users: 10 },
+                categories: ['Sports', 'Competitions', 'Events', 'Competitors', 'Users'],
                 spaces: data,
-                keys: { Sports: [], Competitions: [], Events: [], Teams: [], Players: [], Users: ['username', 'displayname'] }
+                keys: { Sports: [], Competitions: [], Events: [], Competitors: [], Users: ['username', 'displayname'] }
             })
         }
     }, [data])
@@ -57,8 +57,7 @@ function Categories() {
         Sports: <IconBallFootball size = {sm ? 36 : 40} className = {'transition-all duration-main text-reverse-0 dark:text-base-0  hover:scale-main hover:opacity-100 ' + (currentCategory === 'Sports' ? 'opacity-100' : 'opacity-main')}/>,
         Competitions: <IconTrophy size = {sm ? 36 : 40} className = {'transition-all duration-main text-reverse-0 dark:text-base-0  hover:scale-main hover:opacity-100 ' + (currentCategory === 'Competitions' ? 'opacity-100' : 'opacity-main')}/>,
         Events: <IconSoccerField size = {sm ? 36 : 40} className = {'transition-all duration-main text-reverse-0 dark:text-base-0  hover:scale-main hover:opacity-100 ' + (currentCategory === 'Events' ? 'opacity-100' : 'opacity-main')}/>,
-        Teams: <IconShirtSport size = {sm ? 36 : 40} className = {'transition-all duration-main text-reverse-0 dark:text-base-0  hover:scale-main hover:opacity-100 ' + (currentCategory === 'Teams' ? 'opacity-100' : 'opacity-main')}/>,
-        Players:  <IconPlayFootball size = {sm ? 36 : 40} className = {'transition-all duration-main text-reverse-0 dark:text-base-0  hover:scale-main hover:opacity-100 ' + (currentCategory === 'Players' ? 'opacity-100' : 'opacity-main')}/>,
+        Competitors: <IconShirtSport size = {sm ? 36 : 40} className = {'transition-all duration-main text-reverse-0 dark:text-base-0  hover:scale-main hover:opacity-100 ' + (currentCategory === 'Teams' ? 'opacity-100' : 'opacity-main')}/>,
         Users: <IconUser size = {sm ? 36 : 40} className = {'transition-all duration-main text-reverse-0 dark:text-base-0  hover:scale-main hover:opacity-100 ' + (currentCategory === 'Users' ? 'opacity-100' : 'opacity-main')}/>
     }
     return (
