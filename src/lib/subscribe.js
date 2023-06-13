@@ -1,4 +1,4 @@
-import authenticateUser from './authenticateUser'
+import authenticateUser from './auth/authenticateUser'
 import insertItem from './aws/db/insertItem'
 import getItem from './aws/db/getItem'
 import deleteItem from './aws/db/deleteItem'

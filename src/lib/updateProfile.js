@@ -1,4 +1,4 @@
-import authenticateUser from './authenticateUser'
+import authenticateUser from './auth/authenticateUser'
 import getItem from './aws/db/getItem'
 import queryTable from './aws/db/queryTable'
 import updateItem from './aws/db/updateItem'

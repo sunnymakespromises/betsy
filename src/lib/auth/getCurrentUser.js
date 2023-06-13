@@ -1,7 +1,7 @@
 import authenticateUser from './authenticateUser'
-import getItem from './aws/db/getItem'
-import insertItem from './aws/db/insertItem'
-import queryTable from './aws/db/queryTable'
+import getItem from '../aws/db/getItem'
+import insertItem from '../aws/db/insertItem'
+import queryTable from '../aws/db/queryTable'
 
 async function getCurrentUser(refresh_token) {
     const response = {
@@ -29,7 +29,7 @@ async function getCurrentUser(refresh_token) {
                 'id': authUser.id,
                 'username': authUser.name.replace(/[^A-Za-z0-9-_.]/g, '').substring(0, ),
                 'displayname': authUser.name.replace(/[^A-Za-z0-9-_.]/g, '').substring(0, ),
-                'bio': '✨💕',
+                'bio': 'this is my bio 😎',
                 'email': authUser.email,
                 'picture': authUser.picture
             }
