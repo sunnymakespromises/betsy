@@ -1,49 +1,39 @@
 import authenticateUser from './authenticateUser'
-import getItem from '../aws/db/getItem'
 import insertItem from '../aws/db/insertItem'
-import queryTable from '../aws/db/queryTable'
+import { getUserBy } from '../getUserBy'
+const short = require('short-uuid')
 
-async function getCurrentUser(refresh_token) {
+async function getCurrentUser(refresh_token, source) {
     const response = {
         status: false,
         user: null,
         message: ''
     }
-    const authUser = await authenticateUser(refresh_token)
+    const authUser = await authenticateUser(refresh_token, source)
     if (authUser) {
-        const betsyUser = await getItem('Users', authUser.id)
+        const betsyUser = (await getUserBy('auth_id', authUser.id)).user
         if (betsyUser) {
             response.status = true
-            response.user = {
-                ...betsyUser,
-                subscriptions: {
-                    subscribers: (await queryTable('Subscriptions', { subscribee: authUser.id })),
-                    subscriptions: (await queryTable('Subscriptions', { subscriber: authUser.id })),
-                },
-                slips: [],
-                balance: '0.00'
-            }
+            response.user = betsyUser
         }
         else {
             const item = {
-                'id': authUser.id,
-                'username': authUser.name.replace(/[^A-Za-z0-9-_.]/g, '').substring(0, ),
-                'displayname': authUser.name.replace(/[^A-Za-z0-9-_.]/g, '').substring(0, ),
-                'bio': 'this is my bio 😎',
-                'email': authUser.email,
-                'picture': authUser.picture
+                id: short.generate(),
+                username: authUser.name.replace(/[^A-Za-z0-9-_.]/g, '').substring(0, ),
+                displayname: authUser.name.replace(/[^A-Za-z0-9-_.]/g, '').substring(0, ),
+                bio: 'this is my bio 😎',
+                email: authUser.email,
+                picture: authUser.picture,
+                auth_id: authUser.id,
+                auth_source: source,
+                subscribers: [],
+                subscriptions: [],
+                slips: [],
+                balance: 0.00
             }
             await insertItem('Users', item)
             response.status = true
-            response.user = {
-                ...item,
-                subscriptions: {
-                    subscribers: (await queryTable('Subscriptions', { subscribee: authUser.id })),
-                    subscriptions: (await queryTable('Subscriptions', { subscriber: authUser.id })),
-                },
-                slips: [],
-                balance: '0.00'
-            }
+            response.user = item
         }
     }
     else {

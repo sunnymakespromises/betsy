@@ -90,7 +90,7 @@ function Profile() {
                 <DisplayName displayname = {user?.displayname}/>
                 <div className = 'user-profile-info-container w-full flex flex-row gap-small'>
                     <Picture picture = {user?.picture}/>
-                    <Subscriptions subscriptions = {user?.subscriptions}/>
+                    <Subscriptions subscribers = {user?.subscribers} subscriptions = {user?.subscriptions}/>
                 </div>
                 <div id = 'user-profile-username-bio' className = 'w-full flex flex-col'>
                     <Username username = {user?.username}/>
@@ -267,7 +267,7 @@ function Picture({ picture }) {
     }
 }
 
-function Subscriptions({ subscriptions }) {
+function Subscriptions({ subscribers, subscriptions }) {
     return (
         <div id = 'user-profile-subscriptions-container' className = 'w-full flex flex-col items-between gap-1 md:gap-2'>
             <div id = 'user-profile-subscriptions-container' className = 'w-full flex flex-row justify-between items-center'>
@@ -276,7 +276,7 @@ function Subscriptions({ subscriptions }) {
                         Subscribers
                     </Text>
                     <Text id = 'user-profile-subscribers-value' classes = '!font-bold !text-4xl'>
-                        {subscriptions?.subscribers?.length}
+                        {subscribers?.length}
                     </Text>
                 </div>
                 <div id = 'user-profile-subscriptions-container' className = 'flex flex-col items-end w-[50%]'>
@@ -284,7 +284,7 @@ function Subscriptions({ subscriptions }) {
                         Subscriptions
                     </Text>
                     <Text id = 'user-profile-subscriptions-value' classes = '!font-bold !text-4xl text-right'>
-                        {subscriptions?.subscriptions?.length}
+                        {subscriptions?.length}
                     </Text>
                 </div>
             </div>
@@ -354,7 +354,7 @@ function Action() {
                 </Conditional>
                 <Conditional value = {!isLoading}>
                     <Text id = 'user-profile-action-text' preset = 'button' classes = '!text-lg !font-medium'>
-                        {user ? isCurrentUser ? isEditing ? 'Save Changes' : 'Edit Profile' : user.subscriptions.subscribers.filter((subscription) => subscription.subscriber === currentUser?.id).length !== 0 ? 'Unsubscribe' : 'Subscribe' : '' }
+                        {user ? isCurrentUser ? isEditing ? 'Save Changes' : 'Edit Profile' : user.subscribers.filter((subscriber) => subscriber === currentUser?.id).length !== 0 ? 'Unsubscribe' : 'Subscribe' : '' }
                     </Text>
                 </Conditional>
             </Button>
@@ -412,7 +412,7 @@ function Action() {
         }
         else {
             if (user) {
-                if (user.subscriptions.subscribers.filter((subscription) => subscription.subscriber === currentUser.id).length === 0) {
+                if (user.subscribers.filter((subscriber) => subscriber === currentUser.id).length === 0) {
                     if ((await subscribe(user.id)).status) { 
                         setUser(await getUser())
                         await refreshCurrentUser()

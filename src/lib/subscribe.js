@@ -1,28 +1,24 @@
 import authenticateUser from './auth/authenticateUser'
-import insertItem from './aws/db/insertItem'
+import updateItem from './aws/db/updateItem'
 import getItem from './aws/db/getItem'
-import deleteItem from './aws/db/deleteItem'
-import queryTable from './aws/db/queryTable'
+import { getUserBy } from './getUserBy'
 const short = require('short-uuid')
 
-async function subscribe(refresh_token, targetId) {
+async function subscribe(refresh_token, source, targetId) {
     const response = {
         status: false,
         message: ''
     }
-    const authUser = await authenticateUser(refresh_token)
+    const authUser = await authenticateUser(refresh_token, source)
     if (authUser) {
-        if (authUser.id !== targetId) {
+        const betsyUser = (await getUserBy('auth_id', authUser.id)).user
+        if (betsyUser.id !== targetId) {
             const targetUser = await getItem('Users', targetId)
             if (targetUser) {
-                if ((await queryTable('Subscriptions', { subscriber: authUser.id, subscribee: targetUser.id })).length === 0) {
+                if (!targetUser.subscriptions.includes(betsyUser.id)) {
                     response.status = true
-                    const item = {
-                        id: short.generate(),
-                        subscriber: authUser.id,
-                        subscribee: targetUser.id
-                    }
-                    await insertItem('Subscriptions', item)
+                    await updateItem('Users', targetUser.id, { subscribers: [...targetUser.subscribers, betsyUser.id] })
+                    await updateItem('Users', betsyUser.id, { subscriptions: [...betsyUser.subscriptions, targetUser.id] })
                 }
                 else {
                     response.message = 'user is already subscribed to the user with id ' + targetId + '.'
@@ -43,19 +39,20 @@ async function subscribe(refresh_token, targetId) {
     return response
 }
 
-async function unsubscribe(refresh_token, targetId) {
+async function unsubscribe(refresh_token, source, targetId) {
     const response = {
         status: false,
         message: ''
     }
-    const authUser = await authenticateUser(refresh_token)
+    const authUser = await authenticateUser(refresh_token, source)
     if (authUser) {
-        if (authUser.id !== targetId) {
+        const betsyUser = (await getUserBy('auth_id', authUser.id)).user
+        if (betsyUser.id !== targetId) {
             const targetUser = await getItem('Users', targetId)
             if (targetUser) {
-                const subscription = (await queryTable('Subscriptions', { subscriber: authUser.id, subscribee: targetUser.id }))
-                if (subscription.length > 0) {
-                    await deleteItem('Subscriptions', subscription[0].id)
+                if (targetUser.subscriptions.includes(betsyUser.id)) {
+                    await updateItem('Users', targetUser.id, { subscribers: targetUser.subscribers.splice(targetUser.subscribers.indexOf(betsyUser.id), 1)})
+                    await updateItem('Users', betsyUser.id, { subscriptions: betsyUser.subscriptions.splice(betsyUser.subscriptiong.indexOf(targetUser.id), 1)})
                     response.status = true
                 }
                 else {
