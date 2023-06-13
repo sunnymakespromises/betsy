@@ -1,4 +1,4 @@
-async function authenticateUser(refresh_token, source = 'google') {
+async function authenticateUser(refresh_token, source) {
     if (refresh_token) {
         if (source === 'google') {
             const params = {

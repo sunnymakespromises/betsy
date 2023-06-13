@@ -28,7 +28,7 @@ function useDatabase() {
     }
 
     async function updateProfile(key, value) {
-        return await _updateProfile(cookies['oauth-refresh-token'], key, value)
+        return await _updateProfile(cookies['oauth-refresh-token'], cookies['oauth-source'], key, value)
     }
 
     async function getUserBy(key, value) {
@@ -40,11 +40,11 @@ function useDatabase() {
     }
 
     async function subscribe(id) {
-        return await _subscribe(cookies['oauth-refresh-token'], id)
+        return await _subscribe(cookies['oauth-refresh-token'], cookies['oauth-source'], id)
     }
 
     async function unsubscribe(id) {
-        return await _unsubscribe(cookies['oauth-refresh-token'], id)
+        return await _unsubscribe(cookies['oauth-refresh-token'], cookies['oauth-source'], id)
     }
 
     return { insert, get, query, update, remove, updateProfile, getUserBy, getAllUsers, subscribe, unsubscribe }
