@@ -272,7 +272,7 @@ function Subscriptions({ subscriptions }) {
         <div id = 'user-profile-subscriptions-container' className = 'w-full flex flex-col items-between gap-1 md:gap-2'>
             <div id = 'user-profile-subscriptions-container' className = 'w-full flex flex-row justify-between items-center'>
                 <div id = 'user-profile-subscribers-container' className = 'flex flex-col  w-[50%]'>
-                    <Text id = 'user-profile-subscribers-text' classes = '!font-normal !text-lg'>
+                    <Text id = 'user-profile-subscribers-text' classes = '!font-medium !text-lg'>
                         Subscribers
                     </Text>
                     <Text id = 'user-profile-subscribers-value' classes = '!font-bold !text-4xl'>
@@ -280,7 +280,7 @@ function Subscriptions({ subscriptions }) {
                     </Text>
                 </div>
                 <div id = 'user-profile-subscriptions-container' className = 'flex flex-col items-end w-[50%]'>
-                    <Text id = 'user-profile-subscriptions-text' classes = '!font-normal !text-lg'>
+                    <Text id = 'user-profile-subscriptions-text' classes = '!font-medium !text-lg'>
                         Subscriptions
                     </Text>
                     <Text id = 'user-profile-subscriptions-value' classes = '!font-bold !text-4xl text-right'>
