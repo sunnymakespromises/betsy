@@ -41,7 +41,7 @@ function Items() {
 
     return (
         <div id = 'header-links-container' className = 'grow h-full flex items-center gap-main'>
-            {pages.filter((page) => page.navigation.show).map((page, index) => {
+            {pages.filter((page) => page.navigation.show).sort((a, b) => a.navigation.index - b.navigation.index).map((page, index) => {
                 return (
                     <Item key = {index} title = {page.title} path = {page.path}/>
                 )
@@ -77,7 +77,7 @@ function Menu({ isLandscape }) {
                 <div id = 'header-menu-items-container' className = 'transition-all duration-main absolute top-[100%] right-0 max-w-[999px] max-h-0 group-hover:max-h-[999px] overflow-hidden'>
                     <div id = 'header-menu-items' className = 'transition-all duration-main relative w-full h-full px-smaller py-0 group-hover:py-smaller mt-6 backdrop-blur-main rounded-b-main'>
                         <Conditional value = {!isLandscape}>
-                            {pages.filter((page) => page.navigation.show).map((page, index) => {
+                            {pages.filter((page) => page.navigation.show).sort((a, b) => a.navigation.index - b.navigation.index).map((page, index) => {
                                 return (
                                     <Item key = {index} title = {page.title} path ={page.path}/>
                                 )
