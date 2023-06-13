@@ -55,5 +55,10 @@
     "devDependencies": {
         "animated-tailwindcss": "^4.0.0",
         "tailwindcss": "^3.3.2"
+    },
+    "browser": {
+        "fs": false,
+        "os": false,
+        "path": false
     }
 }
