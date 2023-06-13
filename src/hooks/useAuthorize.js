@@ -12,7 +12,7 @@ function useAuthorize() {
     const location = useLocation()
 
     async function refreshUser() {
-        const { status, message, user } = await getCurrentUser(cookies['oauth-refresh-token'])
+        const { status, message, user } = await getCurrentUser(cookies['oauth-refresh-token'], cookies['oauth-source'])
         setUser(user)
         if (status) {
             setCookie('user', user)
@@ -60,22 +60,26 @@ function useAuthorize() {
 
     const login = useGoogleLogin({
         onSuccess: async (res) => {
-            const { status, message, refreshToken } = await getRefreshToken(res.code)
+            const { status, message, refreshToken } = await getRefreshToken(res.code, 'google')
             if (status) {
                 setCookie('oauth-refresh-token', refreshToken)
-                const { status, message, user } = await getCurrentUser(refreshToken)
+                const { status, message, user } = await getCurrentUser(refreshToken, 'google')
                 setUser(user)
                 if (status) {
                     setCookie('user', user)
+                    setCookie('oauth-source', 'google')
                     navigate('/')
                 }
                 else {
                     console.log(message)
+                    removeCookie('oauth-source')
                     removeCookie('user')
                 }
             }
             else {
                 console.log(message)
+                removeCookie('oauth-source')
+                removeCookie('user')
                 removeCookie('oauth-refresh-token')
             }
         },
@@ -88,6 +92,7 @@ function useAuthorize() {
         googleLogout()
         removeCookie('user')
         setUser(null)
+        removeCookie('oauth-source')
         removeCookie('oauth-refresh-token')
         navigate('/login')
     }
