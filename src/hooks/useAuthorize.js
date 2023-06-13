@@ -2,8 +2,8 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { useCookies } from 'react-cookie'
 import { googleLogout, useGoogleLogin } from '@react-oauth/google'
-import getCurrentUser from '../lib/getCurrentUser'
-import getRefreshToken from '../lib/getRefreshToken'
+import getCurrentUser from '../lib/auth/getCurrentUser'
+import getRefreshToken from '../lib/auth/getRefreshToken'
 
 function useAuthorize() {
     const [user, setUser] = useState()
