@@ -244,8 +244,8 @@ function Picture({ picture }) {
                     <Text id = 'user-profile-picture-cropper-error' preset = 'profile-error'>{statuses?.picture?.message}</Text>
                 </Conditional>
             </Image>
-            <Text id = 'user-profile-picture-crop' classes = {'transition-all duration-main flex items-center justify-center !text-sm !cursor-pointer hover:scale-main rounded-main bg-reverse-0 dark:bg-base-0 bg-opacity-faint overflow-hidden px-tiny animate__animated !animate__fast ' + (isCropping ? 'h-5 animate__slideInDown' : 'h-0 animate__slideOutUp')} onClick = {() => isCropping ? onCrop() : null}>
-                Crop
+            <Text id = 'user-profile-picture-save' classes = {'transition-all duration-main flex items-center justify-center !text-sm !cursor-pointer hover:scale-main rounded-main bg-reverse-0 dark:bg-base-0 !bg-opacity-faint overflow-hidden px-tiny animate__animated !animate__fast ' + (isCropping ? 'h-5 animate__slideInDown' : 'h-0 animate__slideOutUp')} onClick = {() => isCropping ? onCrop() : null}>
+                Save
             </Text>
         </div>
     )
