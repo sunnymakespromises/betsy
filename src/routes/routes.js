@@ -6,6 +6,7 @@ import Logout from './logout'
 import Explore from './explore'
 import User from './user'
 import Wallet from './wallet'
+import Dev from './dev'
 
 const pages = [
     {
@@ -63,6 +64,15 @@ const pages = [
         element: <Wallet/>,
         navigation: {
             show: false
+        }
+    },
+    {
+        path: '/dev',
+        title: 'Dev',
+        element: <Dev/>,
+        navigation: {
+            show: true,
+            index: 1
         }
     }
 ]
