@@ -1,6 +1,8 @@
 import authenticateUser from './auth/authenticateUser'
 import updateItem from './aws/db/updateItem'
 import getItem from './aws/db/getItem'
+import { getUserBy } from './getUserBy'
+const short = require('short-uuid')
 
 async function subscribe(refresh_token, source, targetId) {
     const response = {
@@ -9,7 +11,7 @@ async function subscribe(refresh_token, source, targetId) {
     }
     const authUser = await authenticateUser(refresh_token, source)
     if (authUser) {
-        const betsyUser = await getItem('Users', { auth_id: authUser.id })
+        const betsyUser = (await getUserBy('auth_id', authUser.id)).user
         if (betsyUser.id !== targetId) {
             const targetUser = await getItem('Users', targetId)
             if (targetUser) {
@@ -44,13 +46,13 @@ async function unsubscribe(refresh_token, source, targetId) {
     }
     const authUser = await authenticateUser(refresh_token, source)
     if (authUser) {
-        const betsyUser = await getItem('Users', { auth_id: authUser.id })
+        const betsyUser = (await getUserBy('auth_id', authUser.id)).user
         if (betsyUser.id !== targetId) {
             const targetUser = await getItem('Users', targetId)
             if (targetUser) {
-                if (targetUser.subscribers.includes(betsyUser.id)) {
-                    await updateItem('Users', targetUser.id, { subscribers: targetUser.subscribers.filter(s => s !== betsyUser.id)})
-                    await updateItem('Users', betsyUser.id, { subscriptions: targetUser.subscriptions.filter(s => s !== targetUser.id)})
+                if (targetUser.subscriptions.includes(betsyUser.id)) {
+                    await updateItem('Users', targetUser.id, { subscribers: targetUser.subscribers.splice(targetUser.subscribers.indexOf(betsyUser.id), 1)})
+                    await updateItem('Users', betsyUser.id, { subscriptions: betsyUser.subscriptions.splice(betsyUser.subscriptiong.indexOf(targetUser.id), 1)})
                     response.status = true
                 }
                 else {
