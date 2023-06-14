@@ -1,5 +1,4 @@
 import authenticateUser from './auth/authenticateUser'
-import { getUserBy } from './getUserBy'
 import queryTable from './aws/db/queryTable'
 import updateItem from './aws/db/updateItem'
 import insertFile from './aws/s3/insertFile'
@@ -13,13 +12,13 @@ async function updateProfile(refresh_token, source, column, value) {
     }
     const authUser = await authenticateUser(refresh_token, source)
     if (authUser) {
-        const betsyUser = (await getUserBy('auth_id', authUser.id)).user
+        const betsyUser = await queryTable('Users', { auth_id: authUser.id }, true)
         switch (column) {
             case 'username':
                 response.message = validate((value === ''), 'username cannot be empty.', response.message)
                 response.message = validate((value.length < 6 || value.length > 12), 'username must be between 6 and 12 characters.', response.message)
                 response.message = validate((!(/^[a-zA-Z0-9-_.]+$/.test(value))), 'username cannot contain any special characters.', response.message)
-                response.message = validate(((await queryTable('Users', { username: value })).length > 0), 'username already taken.', response.message)
+                response.message = validate((await queryTable('Users', { username: value }, true)), 'username already taken.', response.message)
                 if (response.message === '') {
                     await updateItem('Users', betsyUser.id, {username: value})
                     response.status = true

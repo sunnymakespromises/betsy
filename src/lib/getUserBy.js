@@ -6,9 +6,8 @@ async function getUserBy(column, value) {
         user: null,
         message: ''
     }
-    const users = await queryTable('Users', { [column]: value })
-    if (users.length > 0) {
-        const user = users[0]
+    const user = await queryTable('Users', { [column]: value }, true)
+    if (user) {
         response.status = true
         delete user['auth_id']
         delete user['auth_source']

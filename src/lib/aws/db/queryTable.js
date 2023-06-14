@@ -2,7 +2,7 @@ import { ddbDocClient } from './ddbDocClient'
 import { ScanCommand } from '@aws-sdk/lib-dynamodb'
 import reserved_keywords from './aws_reserved_keywords'
 
-export default async function queryTable(table, query) {
+export default async function queryTable(table, query, single = false) {
     try {
         let letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
         let letterIndex = 0
@@ -30,7 +30,13 @@ export default async function queryTable(table, query) {
             params['ExpressionAttributeNames'] = expressionAttributeNames
         }
         const { Items } = await ddbDocClient.send(new ScanCommand(params))
-        return Items
+        if (!single) {
+            return Items
+        }
+        if (Items.length > 0) {
+            return Items[0]
+        }
+        return null
     } catch (err) {
         console.log('Error', err)
     }
