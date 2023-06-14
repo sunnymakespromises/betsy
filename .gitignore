@@ -11,6 +11,9 @@
 # production
 /build
 
+# scrap
+scrap.txt
+
 # misc
 .DS_Store
 .env
