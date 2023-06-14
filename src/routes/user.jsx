@@ -57,7 +57,7 @@ export default function User() {
     )
 
     async function getUser() {
-        const fetchedUser = (await getUserBy('username', username))
+        const fetchedUser = await getUserBy('username', username)
         if (fetchedUser.status) {
             return fetchedUser.user
         }
@@ -163,9 +163,6 @@ function Username({ username }) {
     else {
         return (
             <div id = 'user-profile-username-container' className = 'w-full flex flex-row gap-tiny'>
-                {/* <Text id = 'user-profile-username-@' classes = '!font-bold !text-2xl'>
-                    @
-                </Text> */}
                 <Text id = 'user-profile-username' classes = 'text-ellipsis !font-bold overflow-hidden !text-xl w-full'>
                     {'@' + username}
                 </Text>
@@ -322,7 +319,7 @@ function Action() {
         }
     }
 
-    const oneChangeFailed = () => {
+    const atLeastOneChangeFailed = () => {
         if (statuses) {
             for (const status of Object.keys(statuses)) {
                 if (statuses[status].status === false) {
@@ -335,7 +332,7 @@ function Action() {
     }
 
     const allChangesWereSuccessful = () => {
-        if (statuses && !oneChangeFailed()) {
+        if (statuses && !atLeastOneChangeFailed()) {
             for (const status of Object.keys(statuses)) {
                 if (statuses[status].status) {
                     return true
@@ -348,7 +345,7 @@ function Action() {
 
     return (
         <div id = 'user-profile-action-container' className = 'relative w-full flex flex-col items-center'>
-            <Button id = 'user-profile-action-button' classes = {'z-10 h-11 !p-0 overflow-hidden w-full animate__animated !animate__slow' + (oneChangeFailed() ? ' animate__headShake' : allChangesWereSuccessful() ? ' animate__bounce' : '')} onClick = {() => onAction()}>
+            <Button id = 'user-profile-action-button' classes = {'z-10 h-11 !p-0 overflow-hidden w-full animate__animated !animate__slow' + (atLeastOneChangeFailed() ? ' animate__headShake' : allChangesWereSuccessful() ? ' animate__bounce' : '')} onClick = {() => onAction()}>
                 <Conditional value = {isLoading}>
                     <Image id = 'user-profile-action-loading' path = 'images/loading.gif' classes = 'h-6 aspect-square m-1'/>
                 </Conditional>

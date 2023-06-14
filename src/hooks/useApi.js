@@ -6,12 +6,6 @@ function useApi() {
     const { cookies } = useWindowContext()
     async function initializeApiData() {
         const response = await _initializeApiData(cookies['odds-format'])
-        if (response.status) {
-            console.log('done!')
-        }
-        else {
-            console.log(response.message)
-        }
     }
 
     return { initializeApiData }
