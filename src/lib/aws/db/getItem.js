@@ -10,7 +10,7 @@ export default async function getItem(table, key) {
         try {
             const params = {
                 TableName: 'Betsy_' + table,
-                Key: key.constructor.name === 'Object' ? key : { id: key }
+                Key: { id: key }
             }
             const { Item } = await ddbDocClient.send(new GetCommand(params))
             return Item
