@@ -1,6 +1,6 @@
 import authenticateUser from './authenticateUser'
 import insertItem from '../aws/db/insertItem'
-import { getUserBy } from '../getUserBy'
+import getItem from '../aws/db/getItem'
 const short = require('short-uuid')
 
 async function getCurrentUser(refresh_token, source) {
@@ -11,7 +11,7 @@ async function getCurrentUser(refresh_token, source) {
     }
     const authUser = await authenticateUser(refresh_token, source)
     if (authUser) {
-        const betsyUser = (await getUserBy('auth_id', authUser.id)).user
+        const betsyUser = await getItem('Users', { auth_id: authUser.id })
         if (betsyUser) {
             response.status = true
             response.user = betsyUser
