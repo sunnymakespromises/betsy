@@ -59,7 +59,7 @@ async function getData() {
         response.statuses.competitors = true
     }
     else {
-        response.messages.competitors = 'no compeitors found.'
+        response.messages.competitors = 'no competitors found.'
     }
 
     const users = await getTable('Users')
