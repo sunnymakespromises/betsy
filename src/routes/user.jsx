@@ -23,9 +23,9 @@ export default function User() {
     const { currentUser } = useRootContext()
     const [user, setUser] = useState()
     const { getUserBy } = useDatabase()
-    const username = searchParams.get('username')
-    const isCurrentUser = currentUser?.username === username
-    const context = { user, setUser, username, isCurrentUser, getUser }
+    const userId = searchParams.get('id')
+    const isCurrentUser = currentUser?.id === userId
+    const context = { user, setUser, isCurrentUser, getUser }
 
     useEffect(() => {
         async function initialize() {
@@ -37,9 +37,9 @@ export default function User() {
             }
         }
 
-        if (username) { initialize() }
+        if (userId) { initialize() }
         else { setUser(false) }
-    }, [username, currentUser])
+    }, [userId, currentUser])
 
     return (
         <UserProvider value = {context}>
@@ -57,7 +57,7 @@ export default function User() {
     )
 
     async function getUser() {
-        const fetchedUser = await getUserBy('username', username)
+        const fetchedUser = await getUserBy('id', userId)
         if (fetchedUser.status) {
             return fetchedUser.user
         }
@@ -291,7 +291,6 @@ function Subscriptions({ subscribers, subscriptions }) {
 }
 
 function Action() {
-    const { setSearchParams } = useWindowContext()
     const { currentUser, refreshCurrentUser } = useRootContext()
     const { user, setUser, isCurrentUser, getUser } = useUserContext()
     const { isEditing, setIsEditing, isLoading, execute, statuses, setStatus, inputs } = useProfileContext()
@@ -351,7 +350,7 @@ function Action() {
                 </Conditional>
                 <Conditional value = {!isLoading}>
                     <Text id = 'user-profile-action-text' preset = 'button' classes = '!text-lg !font-medium'>
-                        {user ? isCurrentUser ? isEditing ? 'Save Changes' : 'Edit Profile' : user.subscribers.filter((subscriber) => subscriber === currentUser?.id).length !== 0 ? 'Unsubscribe' : 'Subscribe' : '' }
+                        {user ? isCurrentUser ? isEditing ? 'Save Changes' : 'Edit Profile' : user.subscribers.find((subscriber) => subscriber === currentUser?.id) ? 'Unsubscribe' : 'Subscribe' : '' }
                     </Text>
                 </Conditional>
             </Button>
@@ -379,15 +378,12 @@ function Action() {
                         await execute(async () => {
                             const { status, message } = await updateProfile(input, inputs[input])
                             setStatus(input, status, message, 3000)
-                            if (status) {
-                                await refreshCurrentUser()
-                            }
                             changes[input] = {...changes[input], didChange: status}
                         })
                     }
                 }
-                if (changes.username.didChange) {
-                    setSearchParams({username: changes.username.changedTo})
+                if (!atLeastOneChangeFailed()) {
+                    await refreshCurrentUser()
                 }
                 if (allChangesWereSuccessful()) {
                     setIsEditing(false)
@@ -409,14 +405,14 @@ function Action() {
         }
         else {
             if (user) {
-                if (user.subscribers.filter((subscriber) => subscriber === currentUser.id).length === 0) {
-                    if ((await subscribe(user.id)).status) { 
+                if (user.subscribers.find((subscriber) => subscriber === currentUser.id)) {
+                    if ((await unsubscribe(user.id)).status) {
                         setUser(await getUser())
                         await refreshCurrentUser()
                     }
                 }
                 else {
-                    if ((await unsubscribe(user.id)).status) {
+                    if ((await subscribe(user.id)).status) { 
                         setUser(await getUser())
                         await refreshCurrentUser()
                     }

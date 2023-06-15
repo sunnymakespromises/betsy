@@ -90,7 +90,7 @@ function Results({results}) {
         switch (currentCategory) {
             case 'Users':
                 return (
-                    <Link to = {'/user?username=' + result?.item?.username} className = {'transition-all duration-main explore-search-' + currentCategory + '-result-container w-min h-min flex flex-row items-center gap-small origin-left hover:scale-main'}>
+                    <Link to = {'/user?id=' + result?.item?.id} className = {'transition-all duration-main explore-search-' + currentCategory + '-result-container w-min h-min flex flex-row items-center gap-small origin-left hover:scale-main'}>
                         <Image external path = {result?.item?.picture} classes = {'explore-search-' + currentCategory + '-result-image h-10 md:h-10 aspect-square rounded-full'}/>
                         <div className = {'explore-search-' + currentCategory + '-result-text-container flex flex-col'}>
                             

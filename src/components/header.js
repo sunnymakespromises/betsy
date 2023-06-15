@@ -83,7 +83,7 @@ function Menu({ isLandscape }) {
                                 )
                             })}
                         </Conditional>
-                        <Item title = 'Profile' path = {currentUser ? '/user?username=' + currentUser?.username : '/login'}/>
+                        <Item title = 'Profile' path = {currentUser ? '/user?id=' + currentUser?.id : '/login'}/>
                         <Item title = 'Settings' path = {currentUser ? '/settings' : '/login'}/>
                         <Item title = 'Logout' path = {currentUser ? '/logout' : '/login'}/>
                     </div>
