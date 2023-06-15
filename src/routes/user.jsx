@@ -318,29 +318,9 @@ function Action() {
         }
     }
 
-    const atLeastOneChangeFailed = () => {
-        if (statuses) {
-            for (const status of Object.keys(statuses)) {
-                if (statuses[status].status === false) {
-                    return true
-                }
-                return false
-            }
-        }
-        return false
-    }
+    const atLeastOneChangeFailed = () => { return Object.keys(statuses).some(status => statuses[status].status === false) }
 
-    const allChangesWereSuccessful = () => {
-        if (statuses && !atLeastOneChangeFailed()) {
-            for (const status of Object.keys(statuses)) {
-                if (statuses[status].status) {
-                    return true
-                }
-            }
-            return false
-        } 
-        return false
-    }
+    const allChangesWereSuccessful = () => { return (Object.keys(statuses).every(status => statuses[status].status === true))}
 
     return (
         <div id = 'user-profile-action-container' className = 'relative w-full flex flex-col items-center'>
