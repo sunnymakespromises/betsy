@@ -7,13 +7,12 @@ export default async function getItem(table, key) {
         return await queryTable(table, key, true)
     }
     else {
+        const params = {
+            TableName: 'Betsy_' + table,
+            Key: { id: key }
+        }
         try {
-            const params = {
-                TableName: 'Betsy_' + table,
-                Key: { id: key }
-            }
-            const { Item } = await ddbDocClient.send(new GetCommand(params))
-            return Item
+            return await ddbDocClient.send(new GetCommand(params))
         } catch (err) {
             console.log('Error', err)
         }
