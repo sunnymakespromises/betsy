@@ -20,7 +20,7 @@ import Page from '../components/page'
 
 export default function User() {
     const { searchParams } = useWindowContext()
-    const { currentUser } = useRootContext()
+    const { currentUser, data } = useRootContext()
     const [user, setUser] = useState()
     const { getUserBy } = useDatabase()
     const userId = searchParams.get('id')
@@ -33,13 +33,15 @@ export default function User() {
                 setUser(currentUser)
             }
             else {
-                setUser(await getUser()) 
+                if (data && data.users) {
+                    setUser(data.users.find(user => user.id === userId)) 
+                }
             }
         }
 
         if (userId) { initialize() }
         else { setUser(false) }
-    }, [userId, currentUser])
+    }, [userId, currentUser, data])
 
     return (
         <UserProvider value = {context}>
