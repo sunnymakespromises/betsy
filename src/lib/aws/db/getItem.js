@@ -12,7 +12,8 @@ export default async function getItem(table, key) {
             Key: { id: key }
         }
         try {
-            return await ddbDocClient.send(new GetCommand(params))
+            const { Item } = await ddbDocClient.send(new GetCommand(params))
+            return Item
         } catch (err) {
             console.log('Error', err)
         }
