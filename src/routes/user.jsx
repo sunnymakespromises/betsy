@@ -44,9 +44,9 @@ export default function User() {
     return (
         <UserProvider value = {context}>
             <Page>
-                <div id = 'user-page' className = 'w-full h-full flex flex-col items-center justify-center gap-4'>
+                <div id = 'user-page' className = 'w-full h-full flex flex-col items-center justify-center gap-smaller'>
                     <Helmet><title>{user?.username + ' | Betsy'}</title></Helmet>
-                    <div id = 'user' className = 'relative w-full h-full flex flex-col items-center md:flex-row md:items-start gap-4 md:gap-8'>
+                    <div id = 'user' className = 'relative w-full h-full flex flex-col items-center md:flex-row md:items-start gap-smaller md:gap-main'>
                         <Profile/>
                         <Slips/>
                         <Stats/>
@@ -86,7 +86,7 @@ function Profile() {
 
     return (
         <ProfileProvider value = {context}>
-            <div id = 'user-profile' className = {'flex flex-col items-start md:items-center gap-small md:gap-small w-full md:w-96 md:h-full origin-top animate__animated animate__slideInDown'}>
+            <div id = 'user-profile' className = {'flex flex-col items-start md:items-center gap-small md:gap-small w-full md:w-96 md:h-full origin-top animate__animated animate__slideInUp'}>
                 <DisplayName displayname = {user?.displayname}/>
                 <div className = 'user-profile-info-container w-full flex flex-row gap-small'>
                     <Picture picture = {user?.picture}/>
@@ -266,7 +266,7 @@ function Picture({ picture }) {
 
 function Subscriptions({ subscribers, subscriptions }) {
     return (
-        <div id = 'user-profile-subscriptions-container' className = 'w-full flex flex-col items-between gap-1 md:gap-2'>
+        <div id = 'user-profile-subscriptions-container' className = 'w-full flex flex-col items-between gap-tiny md:gap-small'>
             <div id = 'user-profile-subscriptions-container' className = 'w-full flex flex-row justify-between items-center'>
                 <div id = 'user-profile-subscribers-container' className = 'flex flex-col  w-[50%]'>
                     <Text id = 'user-profile-subscribers-text' classes = '!font-medium !text-lg'>
@@ -404,7 +404,7 @@ function Action() {
 
 function Slips() {
     return (
-        <div className = 'user-data flex flex-col gap-2 md:gap-4 grow w-full md:w-min h-full animate__animated animate__slideInUp'>
+        <div className = 'user-data flex flex-col gap-small md:gap-smaller grow w-full md:w-min h-full animate__animated animate__slideInDown'>
             <div id = 'user-slips' className = 'w-full h-full backdrop-blur-main rounded-main'>
 
             </div>
@@ -414,7 +414,7 @@ function Slips() {
 
 function Stats() {
     return (
-        <div id = 'user-stats' className = 'user-data flex flex-col gap-2 md:gap-4 grow w-full md:w-min h-full backdrop-blur-main rounded-main animate__animated animate__slideInRight'>
+        <div id = 'user-stats' className = 'user-data flex flex-col gap-small md:gap-smaller grow w-full md:w-min h-full backdrop-blur-main rounded-main animate__animated animate__slideInRight'>
             
         </div>
     )

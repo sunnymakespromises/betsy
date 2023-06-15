@@ -8,7 +8,7 @@ export default function Wallet() {
     const { currentUser } = useRootContext()
     return (
         <Page>
-            <div id = 'wallet-page' className = 'w-full h-full flex flex-col gap-4 md:gap-8'>
+            <div id = 'wallet-page' className = 'w-full h-full flex flex-col gap-smaller md:gap-main'>
                 <Helmet><title>Wallet | Betsy</title></Helmet>
                 <div id = 'wallet-amount-container' className = 'w-full h-min flex flex-col animate__animated animate__slideInDown'>
                     <Money id = 'wallet-amount' amount = {currentUser?.balance} textClasses = '!text-7xl md:!text-8xl !font-black w-min text-right'/>

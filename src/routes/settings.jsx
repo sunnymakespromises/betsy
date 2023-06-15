@@ -15,7 +15,7 @@ export default function Settings() {
     return (
         <Provider value = {context}>
             <Page>
-                <div id = 'settings-page' className = 'w-full h-full flex flex-col items-center gap-4'>
+                <div id = 'settings-page' className = 'w-full h-full flex flex-col items-center gap-smaller'>
                     <Helmet><title>Settings | Betsy</title></Helmet>
                     <Setting title = 'Theme'>
                         <Theme/>

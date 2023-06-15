@@ -13,7 +13,7 @@ export default function Dev() {
     return (
         <Provider value = {context}>
             <Page>
-                <div id = 'dev-page' className = 'w-full h-full flex flex-col gap-4'>
+                <div id = 'dev-page' className = 'w-full h-full flex flex-col'>
                     <Helmet><title>Dev | Betsy</title></Helmet>
                     <Button onClick = {() => initializeApiData()}>
                         <Text>

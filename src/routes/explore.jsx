@@ -35,7 +35,7 @@ export default function Explore() {
     return (
         <Provider value = {context}>
             <Page>
-                <div id = 'explore-page' className = 'w-full h-full flex flex-col gap-4'>
+                <div id = 'explore-page' className = 'w-full h-full flex flex-col gap-smaller'>
                     <Helmet><title>Users | Betsy</title></Helmet>
                     <Input id = 'explore-search-input' preset = 'search' classes = 'animate__animated animate__slideInDown' status = {null} value = {inputs?.query} onChange = {(e) => onInputChange('query', e.target.value)} placeholder = {'Search...'} autoComplete = 'off'/>
                     <div id = 'explore-search-results' className = {'transition-all duration-main w-full flex flex-col rounded-main backdrop-blur-main px-small oerflow-hidden gap-smaller ' + (inputs?.query !== '' ? 'py-small flex-1' : 'py-0 flex-0')}>

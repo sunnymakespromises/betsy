@@ -12,7 +12,7 @@ export default function Home() {
     return (
         <Provider value = {context}>
             <Page>
-                <div id = 'home-page' className = 'w-full h-full flex flex-col md:flex-row gap-4 md:gap-8'>
+                <div id = 'home-page' className = 'w-full h-full flex flex-col md:flex-row gap-smaller md:gap-main'>
                     <Helmet><title>Dashboard | Betsy</title></Helmet>
                     <Group direction = 'vertical' classes = 'w-full md:w-[50%]'>
                         <ActiveSlips/>
@@ -64,7 +64,7 @@ function PopularBets() {
 
 function Group({ classes, direction, children }) {
     return (
-        <div className = {'home-group flex ' + (direction === 'vertical' ? 'flex-col' : 'flex-row') + ' gap-4 md:gap-8' + (classes ? ' ' + classes : '')}>
+        <div className = {'home-group flex ' + (direction === 'vertical' ? 'flex-col' : 'flex-row') + ' gap-smaller md:gap-main' + (classes ? ' ' + classes : '')}>
             {children}
         </div>
     )
