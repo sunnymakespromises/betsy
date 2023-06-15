@@ -11,11 +11,11 @@ async function getData() {
             users: false
         },
         data: {
-            Sports: [],
-            Competitions: [],
-            Events: [],
-            Competitors: [],
-            Users: []
+            sports: [],
+            competitions: [],
+            events: [],
+            competitors: [],
+            users: []
         },
         messages: {
             sports: '',
@@ -28,7 +28,7 @@ async function getData() {
 
     const sports = await getTable('Sports')
     if (sports.length > 0) {
-        response.data.Sports = sports
+        response.data.sports = sports
         response.statuses.sports = true
     }
     else {
@@ -37,7 +37,7 @@ async function getData() {
 
     const competitions = await getTable('Competitions')
     if (competitions.length > 0) {
-        response.data.Competitions = competitions
+        response.data.competitions = competitions
         response.statuses.competitions = true
     }
     else {
@@ -46,7 +46,7 @@ async function getData() {
 
     const events = await getTable('Events')
     if (events.length > 0) {
-        response.data.Events = events
+        response.data.events = events
         response.statuses.events = true
     }
     else {
@@ -55,7 +55,7 @@ async function getData() {
 
     const competitors = await getTable('Competitors')
     if (competitors.length > 0) { 
-        response.data.Competitors = competitors
+        response.data.competitors = competitors
         response.statuses.competitors = true
     }
     else {
@@ -64,11 +64,10 @@ async function getData() {
 
     const users = await getTable('Users')
     if (users.length > 0) {
-        response.data.Users = []
         for (const user of users) {
             delete user['auth_id']
             delete user['auth_source']
-            response.data.Users.push(user)
+            response.data.users.push(user)
         }
         response.statuses.users = true
     }
@@ -76,9 +75,7 @@ async function getData() {
         response.messages.users = 'no users found.'
     }
 
-    if (response.statuses.sports && response.statuses.competitions && response.statuses.events && response.statuses.competitors && response.statuses.users) {
-        response.statuses.all = true
-    }
+    response.statuses.all = Object.keys(response.statuses).every(status => response.statuses[status] === true)
 
     return response
 }
