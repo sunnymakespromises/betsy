@@ -22,7 +22,7 @@ export default function Login() {
                             Betsy
                         </Text>
                         <Text classes = '!text-sm md:!text-lg text-center'>
-                            The #1 free sports betting simulator for casual fans.
+                            The #1 free sports betting simulator.
                         </Text>
                     </div>
                     <div id = 'login-form' className = 'w-full h-min flex flex-col items-center gap-small'>
