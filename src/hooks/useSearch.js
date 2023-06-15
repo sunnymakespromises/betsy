@@ -42,16 +42,7 @@ function useSearch(params) {
         }
     }, [inputs?.query, params])
 
-    function resultsAreEmpty() {
-        for (const category of Object.keys(results)) {
-            if (results[category].length > 0) {
-                return false
-            }
-        }
-        return true
-    }
-
-    return { inputs, onInputChange, results, resultsAreEmpty }
+    return { inputs, onInputChange, results }
 }
 
 export { useSearch }

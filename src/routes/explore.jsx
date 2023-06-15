@@ -17,8 +17,8 @@ export default function Explore() {
     const { data } = useRootContext()
     const [params, setParams] = useState()
     const currentCategory = searchParams.get('category') ? searchParams.get('category') : 'Sports'
-    const { inputs, onInputChange, results, resultsAreEmpty } = useSearch(params)
-    const context = { params, results, resultsAreEmpty, currentCategory, inputs }
+    const { inputs, onInputChange, results } = useSearch(params)
+    const context = { params, results, currentCategory, inputs }
 
     useEffect(() => {
         if (data) {
