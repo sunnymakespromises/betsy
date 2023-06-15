@@ -10,13 +10,16 @@ export default async function queryTable(table, query, single = false) {
         let expressionAttributeNames = {}
         let expressionAttributeValues = {}
         for (let updateKey of Object.keys(query)) {
-            const keyIsReserved = reserved_keywords.includes(updateKey)
+            const keyIsReserved = updateKey.split('.').some(k => reserved_keywords.includes(k))
             let comma = Object.keys(query).indexOf(updateKey) !== Object.keys(query).length - 1 ? ' and ' : ''
-            let pound = keyIsReserved ? '#' : ''
-            filterExpression += pound + updateKey + ' = :' + letters[letterIndex] + comma
+            let key = keyIsReserved ? updateKey.split('.').map(k => reserved_keywords.includes(k) ? '#' + k : k).join('.') : updateKey
+            filterExpression += key + ' = :' + letters[letterIndex] + comma
             expressionAttributeValues[':' + letters[letterIndex]] = query[updateKey]
             if (keyIsReserved) {
-                expressionAttributeNames['#' + updateKey] = updateKey
+                const reservedKeys = key.split('.').filter(k => k.includes('#'))
+                for (const reservedKey of reservedKeys) {
+                    expressionAttributeNames[reservedKey] = reservedKey.replace('#', '')
+                }
             }
             letterIndex++
         }
@@ -29,6 +32,7 @@ export default async function queryTable(table, query, single = false) {
         if (Object.keys(expressionAttributeNames).length !== 0) {
             params['ExpressionAttributeNames'] = expressionAttributeNames
         }
+        console.log(params)
         const { Items } = await ddbDocClient.send(new ScanCommand(params))
         if (!single) {
             return Items
