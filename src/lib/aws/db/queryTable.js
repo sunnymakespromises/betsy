@@ -2,7 +2,7 @@ import { ddbDocClient } from './ddbDocClient'
 import { ScanCommand } from '@aws-sdk/lib-dynamodb'
 import reserved_keywords from './aws_reserved_keywords'
 
-export default async function queryTable(table, query, single = false) {
+export default async function queryTable(table, query, attributes = null, single = false) {
     let letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
     let letterIndex = 0
     let filterExpression = ''
@@ -30,6 +30,19 @@ export default async function queryTable(table, query, single = false) {
     }
     if (Object.keys(expressionAttributeNames).length !== 0) {
         params.ExpressionAttributeNames = expressionAttributeNames
+    }
+    if (attributes) {
+        const expressionAttributeNames = {}
+        const projectionExpression = attributes.map(a => reserved_keywords.includes(a) ? '#' + a : a)
+        for (const expression of projectionExpression) {
+            if (expression.includes('#')) {
+                expressionAttributeNames[expression] = expression.replace('#', '')
+            }
+        }
+        params.ProjectionExpression = projectionExpression.join(', ')
+        if (Object.keys(expressionAttributeNames).length !== 0) {
+            params.ExpressionAttributeNames = expressionAttributeNames
+        }
     }
     try {
         if (!single) {
