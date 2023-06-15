@@ -14,7 +14,7 @@ async function subscribe(refresh_token, source, targetId) {
             if (betsyUser.id !== targetId) {
                 const targetUser = await getItem('Users', targetId)
                 if (targetUser) {
-                    if (!(targetUser.subscriptions.some(s => s.id === betsyUser.id))) {
+                    if (!(targetUser.subscribers.some(s => s.id === betsyUser.id))) {
                         response.status = true
                         await updateItem('Users', targetUser.id, { subscribers: [...targetUser.subscribers, { id: betsyUser.id, username: betsyUser.username, display_name: betsyUser.display_name }] })
                         await updateItem('Users', betsyUser.id, { subscriptions: [...betsyUser.subscriptions, { id: targetUser.id, username: targetUser.username, display_name: targetUser.display_name }] })
@@ -54,9 +54,9 @@ async function unsubscribe(refresh_token, source, targetId) {
             if (betsyUser.id !== targetId) {
                 const targetUser = await getItem('Users', targetId)
                 if (targetUser) {
-                    if (targetUser.subscriptions.some(s => s.id === betsyUser.id)) {
-                        await updateItem('Users', targetUser.id, { subscribers: targetUser.subscribers.splice(targetUser.subscribers.findIndex(s => s.id === betsyUser.id), 1)})
-                        await updateItem('Users', betsyUser.id, { subscriptions: betsyUser.subscriptions.splice(betsyUser.subscriptions.findIndex(s => s.id === targetUser.id), 1)})
+                    if (targetUser.subscribers.some(s => s.id === betsyUser.id)) {
+                        await updateItem('Users', targetUser.id, { subscribers: targetUser.subscribers.filter(subscriber => subscriber.id !== betsyUser.id)})
+                        await updateItem('Users', betsyUser.id, { subscriptions: betsyUser.subscriptions.filter(subscription => subscription.id !== targetUser.id)})
                         response.status = true
                     }
                     else {
