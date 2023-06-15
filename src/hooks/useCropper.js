@@ -22,12 +22,7 @@ function useCropper(picture) {
     function getObjectFit() {
         const img = document.createElement('img')
         img.src = picture
-        if (img.width / img.height >= 1) {
-            return 'vertical-cover'
-        }
-        else {
-            return 'horizontal-cover'
-        }
+        return (img.width / img.height >= 1) ? 'vertical-cover' : 'horizontal-cover'
     }
     
 
