@@ -12,7 +12,7 @@ async function updateProfile(refresh_token, source, key, value) {
     }
     const authUser = await authenticateUser(refresh_token, source)
     if (authUser) {
-        const betsyUser = await getItem('Users', { auth_id: authUser.id })
+        const betsyUser = await getItem('Users', { auth_id: authUser.id }, ['id', 'picture'])
         switch (key) {
             case 'username':
                 response.message = validate((value === ''), 'username cannot be empty.', response.message)

@@ -9,7 +9,7 @@ async function subscribe(refresh_token, source, targetId) {
     }
     const authUser = await authenticateUser(refresh_token, source)
     if (authUser) {
-        const betsyUser = await getItem('Users', { auth_id: authUser.id })
+        const betsyUser = await getItem('Users', { auth_id: authUser.id }, ['id', 'subscriptions'])
         if (betsyUser) {
             if (betsyUser.id !== targetId) {
                 const targetUser = await getItem('Users', targetId)
@@ -49,7 +49,7 @@ async function unsubscribe(refresh_token, source, targetId) {
     }
     const authUser = await authenticateUser(refresh_token, source)
     if (authUser) {
-        const betsyUser = await getItem('Users', { auth_id: authUser.id })
+        const betsyUser = await getItem('Users', { auth_id: authUser.id }, ['id', 'subscriptions'])
         if (betsyUser) {
             if (betsyUser.id !== targetId) {
                 const targetUser = await getItem('Users', targetId)
