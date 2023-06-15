@@ -210,6 +210,7 @@ async function updateEvents(log) {
                     },
                     competitors: competitors ? competitors : [],
                     last_updated: null,
+                    next_update: null,
                     odds: event.bookmakers.find(b => b.key === 'fanduel')?.markets.map(m => { return { key: m.key, name: MARKET_NAMES[m.key], outcomes: m.outcomes.map(o => { return { [(competitors.find(c => c.name === o.name) ? 'competitor' : 'name')]: (competitors.find(c => c.name === o.name) ? competitors.find(c => c.name === o.name) : o.name), [o.description ? 'competitor' : null]: (o.description ? competitors.find(c => c.name === o.description) : null), odds: o.price, point: (o.point ? o.point : null) } })} }), // looks scary but it just condenses the odds into the right form
                     is_outright: competition.is_outright,
                     is_solo: competition.is_solo,
