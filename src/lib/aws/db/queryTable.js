@@ -10,16 +10,13 @@ export default async function queryTable(table, query, single = false) {
         let expressionAttributeNames = {}
         let expressionAttributeValues = {}
         for (let updateKey of Object.keys(query)) {
-            const keyIsReserved = updateKey.split('.').some(k => reserved_keywords.includes(k))
+            const keyIsReserved = reserved_keywords.includes(updateKey)
             let comma = Object.keys(query).indexOf(updateKey) !== Object.keys(query).length - 1 ? ' and ' : ''
-            let key = keyIsReserved ? updateKey.split('.').map(k => reserved_keywords.includes(k) ? '#' + k : k).join('.') : updateKey
-            filterExpression += key + ' = :' + letters[letterIndex] + comma
+            let pound = keyIsReserved ? '#' : ''
+            filterExpression += pound + updateKey + ' = :' + letters[letterIndex] + comma
             expressionAttributeValues[':' + letters[letterIndex]] = query[updateKey]
             if (keyIsReserved) {
-                const reservedKeys = key.split('.').filter(k => k.includes('#'))
-                for (const reservedKey of reservedKeys) {
-                    expressionAttributeNames[reservedKey] = reservedKey.replace('#', '')
-                }
+                expressionAttributeNames['#' + updateKey] = updateKey
             }
             letterIndex++
         }
