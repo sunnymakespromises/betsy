@@ -9,13 +9,16 @@ export default async function updateItem(table, key, object) {
     let expressionAttributeNames = {}
     let expressionAttributeValues = {}
     for (let updateKey of Object.keys(object)) {
-        const keyIsReserved = reserved_keywords.includes(updateKey)
+        const keyIsReserved = updateKey.split('.').some(k => reserved_keywords.includes(k))
         let comma = Object.keys(object).indexOf(updateKey) !== Object.keys(object).length - 1 ? ', ' : ''
-        let pound = keyIsReserved ? '#' : ''
-        updateExpression += pound + updateKey + ' = :' + letters[letterIndex] + comma
+        let key = keyIsReserved ? updateKey.split('.').map(k => reserved_keywords.includes(k) ? '#' + k : k).join('.') : updateKey
+        updateExpression += key + ' = :' + letters[letterIndex] + comma
         expressionAttributeValues[':' + letters[letterIndex]] = object[updateKey]
         if (keyIsReserved) {
-            expressionAttributeNames['#' + updateKey] = updateKey
+            const reservedKeys = key.split('.').filter(k => k.includes('#'))
+            for (const reservedKey of reservedKeys) {
+                expressionAttributeNames[reservedKey] = reservedKey.replace('#', '')
+            }
         }
         letterIndex++
     }
