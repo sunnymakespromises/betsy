@@ -39,12 +39,7 @@ function useInputs(list, defaults = null) {
 
     function clearInput(input) {
         let newInputs = inputs
-        if (defaults) {
-            newInputs[input] = defaults[list.indexOf(input)]
-        }
-        else {
-            newInputs[input] = ''
-        }
+        newInputs[input] = defaults ? defaults[list.indexOf(input)] : ''
         setInputs({...newInputs})
     }
 
