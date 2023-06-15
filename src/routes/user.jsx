@@ -33,9 +33,7 @@ export default function User() {
                 setUser(currentUser)
             }
             else {
-                if (data && data.users) {
-                    setUser(data.users.find(user => user.id === userId)) 
-                }
+                setUser(await getUser()) 
             }
         }
 
