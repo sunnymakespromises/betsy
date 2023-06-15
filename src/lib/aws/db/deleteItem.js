@@ -1,10 +1,10 @@
 import { ddbDocClient } from './ddbDocClient'
 import { DeleteCommand } from '@aws-sdk/lib-dynamodb'
-import queryTable from './queryTable'
+import getItem from './getItem'
 
 export default async function deleteItem(table, key) {
     if (key.constructor.name === 'Object') {
-        const item = await queryTable(table, key, null, true)
+        const item = await getItem(table, key, null)
         const params = {
             TableName: 'Betsy_' + table,
             Key: { id: item.id }
