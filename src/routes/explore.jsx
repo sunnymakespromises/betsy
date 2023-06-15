@@ -27,7 +27,7 @@ export default function Explore() {
                 limits: { Sports: 3, Competitions: 5, Events: 8, Competitors: 8, Users: 10 },
                 categories: ['Sports', 'Competitions', 'Events', 'Competitors', 'Users'],
                 spaces: data,
-                keys: { Sports: [], Competitions: [], Events: [], Competitors: [], Users: ['username', 'displayname'] }
+                keys: { Sports: [], Competitions: [], Events: [], Competitors: [], Users: ['username', 'display_name'] }
             })
         }
     }, [data])
@@ -98,8 +98,8 @@ function Results({results}) {
                         <Image external path = {result?.item?.picture} classes = {'explore-search-' + currentCategory + '-result-image h-10 md:h-10 aspect-square rounded-full'}/>
                         <div className = {'explore-search-' + currentCategory + '-result-text-container flex flex-col'}>
                             
-                            <Text classes = {'explore-search-' + currentCategory + '-result-text-displayname !text-2xl md:!text-2xl'}>
-                                {result?.item?.displayname}
+                            <Text classes = {'explore-search-' + currentCategory + '-result-text-display_name !text-2xl md:!text-2xl'}>
+                                {result?.item?.display_name}
                             </Text>
                             <Text classes = {'explore-search-' + currentCategory + '-result-text-username !text-xl md:!text-lg !text-opacity-main -mt-tiny'}>
                                 {'@' + result?.item?.username}

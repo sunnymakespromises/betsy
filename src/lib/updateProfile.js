@@ -24,11 +24,11 @@ async function updateProfile(refresh_token, source, key, value) {
                     response.status = true
                 }
                 break
-            case 'displayname':
+            case 'display_name':
                 response.message = validate((value === ''), 'display name cannot be empty.', response.message)
                 response.message = validate((value.length < 1 || value.length > 16), 'display name must be between 1 and 16 characters.', response.message)
                 if (response.message === '') {
-                    await updateItem('Users', betsyUser.id, {displayname: value})
+                    await updateItem('Users', betsyUser.id, {display_name: value})
                     response.status = true
                 }
                 break
