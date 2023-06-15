@@ -22,14 +22,14 @@ export default async function queryTable(table, query, single = false) {
         }
         letterIndex++
     }
-    const params = {
+    let params = {
         TableName: 'Betsy_' + table,
         FilterExpression: filterExpression,
         ExpressionAttributeValues: expressionAttributeValues,
         ConsistentRead: true
     }
     if (Object.keys(expressionAttributeNames).length !== 0) {
-        params['ExpressionAttributeNames'] = expressionAttributeNames
+        params.ExpressionAttributeNames = expressionAttributeNames
     }
     try {
         if (!single) {
