@@ -83,7 +83,6 @@ function Results({results}) {
     return (
         <div className = {'explore-search-' + currentCategory + '-results w-full flex flex-col gap-smaller'}>
             {results?.map((result, index) => {
-                console.log(result)
                 return (
                     <Result key = {index} result = {result}/>
                 )
