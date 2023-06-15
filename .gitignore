@@ -11,6 +11,9 @@
 # production
 /build
 
+# cached api data
+/public/res/*
+
 # scrap
 scrap.txt
 
