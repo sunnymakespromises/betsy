@@ -17,11 +17,12 @@ async function getCurrentUser(refresh_token, source) {
             response.user = betsyUser
         }
         else {
+            const id = short.generate()
             const item = {
-                id: short.generate(),
-                username: authUser.name.replace(/[^A-Za-z0-9-_.]/g, '').substring(0, ),
-                display_name: authUser.name.replace(/[^A-Za-z0-9-_.]/g, '').substring(0, ),
-                bio: 'this is my bio 😎',
+                id: id,
+                username: 'user' + id.substring(0, 8),
+                display_name: 'user' + id.substring(0, 8),
+                bio: 'my bio 💕',
                 email: authUser.email,
                 picture: authUser.picture,
                 auth_id: authUser.id,
