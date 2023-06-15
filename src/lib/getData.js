@@ -27,7 +27,12 @@ async function getData() {
 
     const sports = await getTable('Sports')
     if (sports.length > 0) {
-        response.data.sports = sports
+        for (const sport of sports) {
+            response.data.sports.push({
+                id: sport.id,
+                name: sport.name,
+            })
+        }
         response.statuses.sports = true
     }
     else {
@@ -36,7 +41,12 @@ async function getData() {
 
     const competitions = await getTable('Competitions')
     if (competitions.length > 0) {
-        response.data.competitions = competitions
+        for (const competition of competitions) {
+            response.data.competitions.push({
+                id: competition.id,
+                name: competition.name,
+            })
+        }
         response.statuses.competitions = true
     }
     else {
@@ -45,7 +55,12 @@ async function getData() {
 
     const events = await getTable('Events')
     if (events.length > 0) {
-        response.data.events = events
+        for (const event of events) {
+            response.data.events.push({
+                id: event.id,
+                name: event.name,
+            })
+        }
         response.statuses.events = true
     }
     else {
@@ -54,7 +69,12 @@ async function getData() {
 
     const competitors = await getTable('Competitors')
     if (competitors.length > 0) { 
-        response.data.competitors = competitors
+        for (const competitor of competitors) {
+            response.data.competitors.push({
+                id: competitor.id,
+                name: competitor.name
+            })
+        }
         response.statuses.competitors = true
     }
     else {
@@ -64,9 +84,12 @@ async function getData() {
     const users = await getTable('Users')
     if (users.length > 0) {
         for (const user of users) {
-            delete user['auth_id']
-            delete user['auth_source']
-            response.data.users.push(user)
+            response.data.users.push({
+                id: user.id,
+                username: user.username,
+                display_name: user.display_name,
+                picture: user.picture
+            })
         }
         response.statuses.users = true
     }
