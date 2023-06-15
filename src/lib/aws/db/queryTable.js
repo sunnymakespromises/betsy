@@ -28,11 +28,7 @@ export default async function queryTable(table, query, attributes = null, single
         ExpressionAttributeValues: expressionAttributeValues,
         ConsistentRead: true
     }
-    if (Object.keys(expressionAttributeNames).length !== 0) {
-        params.ExpressionAttributeNames = expressionAttributeNames
-    }
     if (attributes) {
-        const expressionAttributeNames = {}
         const projectionExpression = attributes.map(a => reserved_keywords.includes(a) ? '#' + a : a)
         for (const expression of projectionExpression) {
             if (expression.includes('#')) {
@@ -40,9 +36,9 @@ export default async function queryTable(table, query, attributes = null, single
             }
         }
         params.ProjectionExpression = projectionExpression.join(', ')
-        if (Object.keys(expressionAttributeNames).length !== 0) {
-            params.ExpressionAttributeNames = expressionAttributeNames
-        }
+    }
+    if (Object.keys(expressionAttributeNames).length !== 0) {
+        params.ExpressionAttributeNames = expressionAttributeNames
     }
     try {
         if (!single) {
