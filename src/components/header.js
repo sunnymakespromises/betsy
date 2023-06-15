@@ -30,8 +30,8 @@ function Logo() {
     const { currentUser } = useRootContext()
 
     return (
-        <Link id = 'header-logo-container' to = {currentUser ? '/' : '/login'} className = 'h-full aspect-[1.054] animate__animated !animate__slow hover:animate__tada'>
-            <Image id = 'header-logo' path = {'images/' + (isDarkMode ? 'dark' : 'light') + '/logo.svg'} classes = 'h-full w-full cursor-pointer'/>
+        <Link id = 'header-logo-container' to = {currentUser ? '/' : '/login'} className = 'h-full aspect-[1.16] animate__animated !animate__slow hover:animate__tada'>
+            <Image id = 'header-logo' path = {'images/' + (isDarkMode ? 'dark' : 'light') + '/logo-beta.svg'} classes = 'h-full w-full cursor-pointer'/>
         </Link>
     )
 }

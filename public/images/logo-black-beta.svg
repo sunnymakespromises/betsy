@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 271.6 234">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #1a1a1a;
+      }
+
+      .cls-2 {
+        fill: #597def;
+      }
+
+      .cls-3 {
+        fill: #f2f2f2;
+        font-family: SFPro-Bold, 'SF Pro';
+        font-size: 48.87px;
+        font-variation-settings: 'wdth' 100, 'opsz' 28, 'wght' 700;
+      }
+
+      .cls-4 {
+        letter-spacing: 0em;
+      }
+    </style>
+  </defs>
+  <g id="Layer_1-2" data-name="Layer 1">
+    <g id="GuzQ32">
+      <g>
+        <path class="cls-1" d="M224.45,111.31c1.75-96.46-28.78-148.09-94.01-39.13-7,0-21,0-30.9,2.48C13.17-1.38-19.49,19.88,11.42,132.17c-42.72,155.87,285.62,119.92,213.04-20.86Z"/>
+        <path class="cls-2" d="M166.95,94.93c-49.3,1.05-49.11,73.91,.08,74.8,49.26-1.07,49.16-73.93-.08-74.8Z"/>
+        <path class="cls-2" d="M70.02,106.59c-49.17,.5-49.79,73.54-.7,74.96,49.1-.43,49.83-73.66,.7-74.96Z"/>
+        <path class="cls-1" d="M143.72,130.96c.19-33.11,45.65-32.8,46.2-.09-.47,33.59-45.55,33.62-46.2,.09Z"/>
+        <path class="cls-1" d="M70.16,117.45c30.22,.84,29.69,50.02-.25,50.77-30.51-.55-30.25-50.43,.25-50.77Z"/>
+        <rect class="cls-2" x="126.14" y="17.63" width="143.87" height="64.52" rx="18.08" ry="18.08" transform="translate(29.17 -64.97) rotate(20.08)"/>
+        <text class="cls-3" transform="translate(145.63 47.27) rotate(20.08)"><tspan x="0" y="0">Be</tspan><tspan class="cls-4" x="58.39" y="0">t</tspan><tspan x="75.53" y="0">a</tspan></text>
+      </g>
+    </g>
+  </g>
+</svg>
