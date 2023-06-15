@@ -5,7 +5,7 @@ import insertFile from './aws/s3/insertFile'
 import removeFile from './aws/s3/removeFile'
 const short = require('short-uuid')
 
-async function updateProfile(refresh_token, source, column, value) {
+async function updateProfile(refresh_token, source, key, value) {
     const response = {
         status: false,
         message: ''
@@ -13,7 +13,7 @@ async function updateProfile(refresh_token, source, column, value) {
     const authUser = await authenticateUser(refresh_token, source)
     if (authUser) {
         const betsyUser = await getItem('Users', { auth_id: authUser.id })
-        switch (column) {
+        switch (key) {
             case 'username':
                 response.message = validate((value === ''), 'username cannot be empty.', response.message)
                 response.message = validate((value.length < 6 || value.length > 12), 'username must be between 6 and 12 characters.', response.message)
