@@ -81,8 +81,8 @@ function OddsFormat() {
 
 function Donate() {
     return (
-        <div id = 'donate-container' className = 'w-full grow md:w-[80%] flex flex-col justify-end items-center gap-small'>
-            <Text classes = '!text-sm md:!text-base text-center !text-opacity-main'>
+        <div id = 'donate-container' className = 'w-full grow md:w-[80%] flex flex-col justify-end items-center gap-small opacity-main'>
+            <Text classes = '!text-sm md:!text-base text-center'>
                 Betsy is 100% free to use (and I dont wanna put ads) so i pay everything out of pocket for servers and apis. Needless to say, this can cost a lot, especially as the site grows. If you enjoy playing and want to support me, you can donate using the button below! Any little gift is extremely appreciated, but never feel obligated to give.
             </Text>
             <Link to = 'https://bmc.link/sunnynineteen'>
