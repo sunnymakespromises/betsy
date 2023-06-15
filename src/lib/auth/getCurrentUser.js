@@ -28,6 +28,7 @@ async function getCurrentUser(refresh_token, source) {
                 auth_source: source,
                 subscribers: [],
                 subscriptions: [],
+                favorites: [],
                 slips: [],
                 balance: 0.00
             }
