@@ -14,10 +14,10 @@ async function subscribe(refresh_token, source, targetId) {
             if (betsyUser.id !== targetId) {
                 const targetUser = await getItem('Users', targetId)
                 if (targetUser) {
-                    if (!(targetUser.subscribers.some(s => s.id === betsyUser.id))) {
+                    if (!(targetUser.subscribers.some(s => s === betsyUser.id))) {
                         response.status = true
-                        await updateItem('Users', targetUser.id, { subscribers: [...targetUser.subscribers, { id: betsyUser.id, username: betsyUser.username, display_name: betsyUser.display_name }] })
-                        await updateItem('Users', betsyUser.id, { subscriptions: [...betsyUser.subscriptions, { id: targetUser.id, username: targetUser.username, display_name: targetUser.display_name }] })
+                        await updateItem('Users', targetUser.id, { subscribers: [...targetUser.subscribers, betsyUser.id] })
+                        await updateItem('Users', betsyUser.id, { subscriptions: [...betsyUser.subscriptions, targetUser.id] })
                     }
                     else {
                         response.message = 'user is already subscribed to the user with id ' + targetId + '.'
@@ -54,9 +54,9 @@ async function unsubscribe(refresh_token, source, targetId) {
             if (betsyUser.id !== targetId) {
                 const targetUser = await getItem('Users', targetId)
                 if (targetUser) {
-                    if (targetUser.subscribers.some(s => s.id === betsyUser.id)) {
-                        await updateItem('Users', targetUser.id, { subscribers: targetUser.subscribers.filter(subscriber => subscriber.id !== betsyUser.id)})
-                        await updateItem('Users', betsyUser.id, { subscriptions: betsyUser.subscriptions.filter(subscription => subscription.id !== targetUser.id)})
+                    if (targetUser.subscribers.some(s => s === betsyUser.id)) {
+                        await updateItem('Users', targetUser.id, { subscribers: targetUser.subscribers.filter(subscriber => subscriber !== betsyUser.id)})
+                        await updateItem('Users', betsyUser.id, { subscriptions: betsyUser.subscriptions.filter(subscription => subscription !== targetUser.id)})
                         response.status = true
                     }
                     else {

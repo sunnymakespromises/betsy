@@ -315,7 +315,7 @@ function Action() {
 
     const atLeastOneChangeFailed = () => { return statuses && Object.keys(statuses).some(status => statuses[status].status === false) }
     const allChangesWereSuccessful = () => { return statuses && (Object.keys(statuses).every(status => statuses[status].status === true))}
-    const currentUserIsSubscribedToUser = () => { return user && user.subscribers.some(subscriber => subscriber.id === currentUser?.id) }
+    const currentUserIsSubscribedToUser = () => { return user && user.subscribers.some(subscriber => subscriber === currentUser?.id) }
 
     return (
         <div id = 'user-profile-action-container' className = 'relative w-full flex flex-col items-center'>
