@@ -2,17 +2,20 @@ import { ddbDocClient } from './ddbDocClient'
 import { ScanCommand } from '@aws-sdk/lib-dynamodb'
 import reserved_keywords from './aws_reserved_keywords'
 
+// has optional 'mode' key in query
 export default async function queryTable(table, query, attributes = null, single = false) {
     let letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
     let letterIndex = 0
     let filterExpression = ''
     let expressionAttributeNames = {}
     let expressionAttributeValues = {}
-    for (let updateKey of Object.keys(query)) {
+    for (let updateKey of Object.keys(query).filter(k => k !== 'mode')) {
         const keyIsReserved = updateKey.split('.').some(k => reserved_keywords.includes(k))
-        let comma = Object.keys(query).indexOf(updateKey) !== Object.keys(query).length - 1 ? ' and ' : ''
+        let prefix = query.mode === 'contains' ? 'contains(' : ''
         let key = keyIsReserved ? updateKey.split('.').map(k => reserved_keywords.includes(k) ? '#' + k : k).join('.') : updateKey
-        filterExpression += key + ' = :' + letters[letterIndex] + comma
+        let separator = query.mode === 'contains' ? ', :' : ' = :'
+        let suffix = Object.keys(query).indexOf(updateKey) !== Object.keys(query).length - 1 ? query.mode === 'contains' ? ') and ' :  ' and ' : query.mode === 'contains' ? ')' : ''
+        filterExpression += prefix + key + separator + letters[letterIndex] + suffix
         expressionAttributeValues[':' + letters[letterIndex]] = query[updateKey]
         if (keyIsReserved) {
             const reservedKeys = key.split('.').filter(k => k.includes('#'))
