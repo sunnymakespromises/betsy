@@ -6,6 +6,7 @@ import Image from '../components/image'
 import Text from '../components/text'
 import Page from '../components/page'
 import { useSettings } from '../hooks/useSettings'
+import { Link } from 'react-router-dom'
 
 export default function Settings() {
     const [inputs, onInputChange] = useSettings(['theme', 'odds-format'], ['System', 'American'])
@@ -22,6 +23,7 @@ export default function Settings() {
                     <Setting title = 'Odds Format'>
                         <OddsFormat/>
                     </Setting>
+                    <Donate/>
                 </div>
             </Page>
         </Provider>
@@ -73,6 +75,23 @@ function OddsFormat() {
                     </div>
                 )
             })}
+        </div>
+    )
+}
+
+function Donate() {
+    return (
+        <div id = 'donate-container' className = 'w-full grow md:w-[80%] flex flex-col justify-end items-center gap-small'>
+            <Text classes = '!text-sm md:!text-base text-center !text-opacity-main'>
+                Betsy is 100% free to use (and I dont wanna put ads) so i pay everything out of pocket for servers and apis. Needless to say, this can cost a lot, especially as the site grows. If you enjoy playing and want to support me, you can donate using the button below! Any little gift is extremely appreciated, but never feel obligated to give.
+            </Text>
+            <Link to = 'https://bmc.link/sunnynineteen'>
+                <Button classes = 'w-min'>
+                    <Text preset = 'button' classes = '!text-base md:!text-xl'>
+                        Donate
+                    </Text>
+                </Button>
+            </Link>
         </div>
     )
 }
