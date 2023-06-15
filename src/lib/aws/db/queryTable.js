@@ -32,7 +32,6 @@ export default async function queryTable(table, query, single = false) {
         if (Object.keys(expressionAttributeNames).length !== 0) {
             params['ExpressionAttributeNames'] = expressionAttributeNames
         }
-        console.log(params)
         const { Items } = await ddbDocClient.send(new ScanCommand(params))
         if (!single) {
             return Items
