@@ -1,7 +1,6 @@
 import { useCookies } from 'react-cookie'
 import { updateProfile as _updateProfile } from '../lib/updateProfile'
 import { getUserBy as _getUserBy } from '../lib/getUserBy'
-import { getAllUsers as _getAllUsers } from '../lib/getAllUsers'
 import { subscribe as _subscribe, unsubscribe as _unsubscribe } from '../lib/subscribe'
 
 function useDatabase() {
@@ -35,10 +34,6 @@ function useDatabase() {
         return await _getUserBy(key, value)
     }
 
-    async function getAllUsers() {
-        return await _getAllUsers()
-    }
-
     async function subscribe(id) {
         return await _subscribe(cookies['oauth-refresh-token'], cookies['oauth-source'], id)
     }
@@ -47,7 +42,7 @@ function useDatabase() {
         return await _unsubscribe(cookies['oauth-refresh-token'], cookies['oauth-source'], id)
     }
 
-    return { insert, get, query, update, remove, updateProfile, getUserBy, getAllUsers, subscribe, unsubscribe }
+    return { insert, get, query, update, remove, updateProfile, getUserBy, subscribe, unsubscribe }
 }
 
 export { useDatabase }
