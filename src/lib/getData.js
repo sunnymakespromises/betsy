@@ -3,7 +3,6 @@ import getTable from './aws/db/getTable'
 async function getData() {
     const response = {
         statuses: {
-            all: false,
             sports: false,
             competitions: false,
             events: false,
