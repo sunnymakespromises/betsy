@@ -64,13 +64,17 @@ function Categories() {
         <div id = 'explore-search-categories' className = {'flex overflow-hidden ' + (inputs?.query !== '' ? 'w-full md:w-[40%]' : 'w-[0%]')}>
             {params?.categories?.map((param, index) => {
                 return (
-                    <div key = {index} className = 'w-full h-full flex justify-center md:justify-start cursor-pointer' onClick = {() => setSearchParams({...Object.fromEntries([...searchParams]), category: param})} >
+                    <div key = {index} className = 'w-full h-full flex justify-center md:justify-start cursor-pointer' onClick = {() => onChangeCategory(param)} >
                         {icons[param]}
                     </div>
                 )
             })}
         </div>
     )
+
+    function onChangeCategory(param) {
+        setSearchParams({...Object.fromEntries([...searchParams]), category: param})
+    }
 }
 
 function Results({results}) {

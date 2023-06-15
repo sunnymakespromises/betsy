@@ -58,12 +58,7 @@ export default function User() {
 
     async function getUser() {
         const fetchedUser = await getUserBy('id', userId)
-        if (fetchedUser.status) {
-            return fetchedUser.user
-        }
-        else {
-            return false
-        }
+        return fetchedUser.status ? fetchedUser.user : false
     }
 }
 
@@ -319,8 +314,8 @@ function Action() {
     }
 
     const atLeastOneChangeFailed = () => { return statuses && Object.keys(statuses).some(status => statuses[status].status === false) }
-
     const allChangesWereSuccessful = () => { return statuses && (Object.keys(statuses).every(status => statuses[status].status === true))}
+    const currentUserIsSubscribedToUser = () => { return user.subscribers.find((subscriber) => subscriber === currentUser?.id) }
 
     return (
         <div id = 'user-profile-action-container' className = 'relative w-full flex flex-col items-center'>
@@ -330,7 +325,7 @@ function Action() {
                 </Conditional>
                 <Conditional value = {!isLoading}>
                     <Text id = 'user-profile-action-text' preset = 'button' classes = '!text-lg !font-medium'>
-                        {user ? isCurrentUser ? isEditing ? 'Save Changes' : 'Edit Profile' : user.subscribers.find((subscriber) => subscriber === currentUser?.id) ? 'Unsubscribe' : 'Subscribe' : '' }
+                        {user ? isCurrentUser ? isEditing ? 'Save Changes' : 'Edit Profile' : currentUserIsSubscribedToUser() ? 'Unsubscribe' : 'Subscribe' : '' }
                     </Text>
                 </Conditional>
             </Button>
@@ -385,7 +380,7 @@ function Action() {
         }
         else {
             if (user) {
-                if (user.subscribers.find((subscriber) => subscriber === currentUser.id)) {
+                if (currentUserIsSubscribedToUser()) {
                     if ((await unsubscribe(user.id)).status) {
                         setUser(await getUser())
                         await refreshCurrentUser()
