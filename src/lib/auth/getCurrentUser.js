@@ -20,7 +20,7 @@ async function getCurrentUser(refresh_token, source) {
             const item = {
                 id: short.generate(),
                 username: authUser.name.replace(/[^A-Za-z0-9-_.]/g, '').substring(0, ),
-                displayname: authUser.name.replace(/[^A-Za-z0-9-_.]/g, '').substring(0, ),
+                display_name: authUser.name.replace(/[^A-Za-z0-9-_.]/g, '').substring(0, ),
                 bio: 'this is my bio 😎',
                 email: authUser.email,
                 picture: authUser.picture,

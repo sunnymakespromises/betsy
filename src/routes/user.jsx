@@ -68,8 +68,8 @@ function Profile() {
     const { user, isCurrentUser } = useUserContext()
     const [isEditing, setIsEditing] = useState()
     const [isLoading, execute] = useLoading()
-    const [statuses, setStatus, clearAllStatuses] = useStatuses(['username', 'displayname', 'picture', 'bio'])
-    const { inputs, clearInput, clearAllInputs, onInputChange } = useInputs(['username', 'displayname', 'picture', 'bio'])
+    const [statuses, setStatus, clearAllStatuses] = useStatuses(['username', 'display_name', 'picture', 'bio'])
+    const { inputs, clearInput, clearAllInputs, onInputChange } = useInputs(['username', 'display_name', 'picture', 'bio'])
     const context = { isEditing, setIsEditing, isLoading, execute, statuses, setStatus, clearAllStatuses, inputs, clearInput, clearAllInputs, onInputChange }
 
     useEffect(() => {
@@ -82,7 +82,7 @@ function Profile() {
     return (
         <ProfileProvider value = {context}>
             <div id = 'user-profile' className = {'flex flex-col items-start md:items-center gap-small md:gap-small w-full md:w-96 md:h-full origin-top animate__animated animate__slideInUp'}>
-                <DisplayName displayname = {user?.displayname}/>
+                <DisplayName display_name = {user?.display_name}/>
                 <div className = 'user-profile-info-container w-full flex flex-row gap-small'>
                     <Picture picture = {user?.picture}/>
                     <Subscriptions subscribers = {user?.subscribers} subscriptions = {user?.subscriptions}/>
@@ -96,21 +96,21 @@ function Profile() {
     )    
 }
 
-function DisplayName({ displayname }) {
+function DisplayName({ display_name }) {
     const { navigate } = useWindowContext()
     const { isCurrentUser } = useUserContext()
     const { inputs, onInputChange, statuses, isLoading, isEditing } = useProfileContext()
 
     if (isEditing || isLoading) {
         return (
-            <div id = 'user-profile-displayname-input-container' className = 'relative w-full flex flex-col items-center'>
-                <div id = 'user-profile-displayname-input-input-container' className = 'w-full flex flex-row items-center'>
+            <div id = 'user-profile-display_name-input-container' className = 'relative w-full flex flex-col items-center'>
+                <div id = 'user-profile-display_name-input-input-container' className = 'w-full flex flex-row items-center'>
                     <FaAngleLeft id = 'user-back-button' onClick = {() => navigate(-1)} className = 'transition-all duration-main absolute top-[50%] left-0 w-8 h-8 -translate-y-[50%] cursor-pointer text-reverse-0 dark:text-base-0 hover:scale-main'/>
-                    <Input id = 'user-profile-displayname-input' preset = 'profile' status = {statuses?.displayname} value = {inputs?.displayname} onChange = {(e) => onChange(e)} placeholder = {displayname} autoComplete = 'off'/>
+                    <Input id = 'user-profile-display_name-input' preset = 'profile' status = {statuses?.display_name} value = {inputs?.display_name} onChange = {(e) => onChange(e)} placeholder = {display_name} autoComplete = 'off'/>
                 </div>
-                <Conditional value = {statuses?.displayname?.message}>
-                    <Text id = 'user-profile-displayname-input-error' preset = 'profile-error' classes = 'w-full text-center'>
-                        {statuses?.displayname?.message}
+                <Conditional value = {statuses?.display_name?.message}>
+                    <Text id = 'user-profile-display_name-input-error' preset = 'profile-error' classes = 'w-full text-center'>
+                        {statuses?.display_name?.message}
                     </Text>
                 </Conditional>
             </div>
@@ -118,10 +118,10 @@ function DisplayName({ displayname }) {
     }
     else {
         return (
-            <div id = 'user-profile-displayname-container' className = 'relative w-full flex flex-row items-center'>
+            <div id = 'user-profile-display_name-container' className = 'relative w-full flex flex-row items-center'>
                 <FaAngleLeft id = 'user-back-button' onClick = {() => navigate(-1)} className = 'transition-all duration-main absolute top-[50%] left-0 w-8 h-8 -translate-y-[50%] cursor-pointer text-reverse-0 dark:text-base-0 hover:scale-main'/>
-                <Text id = 'user-profile-displayname' classes = 'text-ellipsis overflow-hidden text-center !font-black h-9 w-full'>
-                    {displayname}
+                <Text id = 'user-profile-display_name' classes = 'text-ellipsis overflow-hidden text-center !font-black h-9 w-full'>
+                    {display_name}
                 </Text>
             </div>
         )
@@ -129,7 +129,7 @@ function DisplayName({ displayname }) {
 
     function onChange(event) {
         if (isCurrentUser) {
-            onInputChange('displayname', event.target.value)
+            onInputChange('display_name', event.target.value)
         }
     }
 }
@@ -301,10 +301,10 @@ function Action() {
             didChange: false,
             changedTo: inputs?.picture
         },
-        displayname: {
-            attemptedToChange: inputs?.displayname !== currentUser?.displayname && inputs?.displayname !== '',
+        display_name: {
+            attemptedToChange: inputs?.display_name !== currentUser?.display_name && inputs?.display_name !== '',
             didChange: false,
-            changedTo: inputs?.displayname
+            changedTo: inputs?.display_name
         },
         bio: {
             attemptedToChange: inputs?.bio !== currentUser?.bio && inputs?.bio !== '',
