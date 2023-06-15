@@ -318,9 +318,9 @@ function Action() {
         }
     }
 
-    const atLeastOneChangeFailed = () => { return Object.keys(statuses).some(status => statuses[status].status === false) }
+    const atLeastOneChangeFailed = () => { return statuses && Object.keys(statuses).some(status => statuses[status].status === false) }
 
-    const allChangesWereSuccessful = () => { return (Object.keys(statuses).every(status => statuses[status].status === true))}
+    const allChangesWereSuccessful = () => { return statuses && (Object.keys(statuses).every(status => statuses[status].status === true))}
 
     return (
         <div id = 'user-profile-action-container' className = 'relative w-full flex flex-col items-center'>
