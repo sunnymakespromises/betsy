@@ -8,9 +8,6 @@ function useData() {
         async function initialize() {
             const data = (await getData())
             setData(data.data)
-            if (!(data.statuses.all)) {
-                console.log(data.messages)
-            }
         }
 
         if (!data) {
