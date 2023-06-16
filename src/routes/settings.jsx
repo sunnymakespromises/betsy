@@ -1,28 +1,24 @@
 import { Helmet } from 'react-helmet'
-import { useWindowContext } from '../contexts/window'
 import { SettingsProvider as Provider, useSettingsContext } from '../contexts/settings'
 import Button from '../components/button'
-import Image from '../components/image'
 import Text from '../components/text'
 import Page from '../components/page'
 import { useSettings } from '../hooks/useSettings'
 import { Link } from 'react-router-dom'
+import Conditional from '../components/conditional'
 
 export default function Settings() {
-    const [inputs, onInputChange] = useSettings(['theme', 'odds-format'], ['System', 'American'])
-    const context = { inputs, onInputChange }
+    const [input, onInputChange] = useSettings(['theme', 'odds_format', 'currency'], ['System', 'American', 'Dollars'])
+    const context = { input, onInputChange }
 
     return (
         <Provider value = {context}>
             <Page>
                 <div id = 'settings-page' className = 'w-full h-full flex flex-col items-center gap-smaller'>
                     <Helmet><title>Settings | Betsy</title></Helmet>
-                    <Setting title = 'Theme'>
-                        <Theme/>
-                    </Setting>
-                    <Setting title = 'Odds Format'>
-                        <OddsFormat/>
-                    </Setting>
+                    <Setting title = 'Theme' inputKey = 'theme' options = {['System', 'Light', 'Dark']}/>
+                    <Setting title = 'Odds Format' inputKey = 'odds_format' options = {['American', 'Decimal']}/>
+                    <Setting title = 'Currency' inputKey = 'currency' options = {['Dollars', 'Pounds', 'Euros']}/>
                     <Donate/>
                 </div>
             </Page>
@@ -30,51 +26,28 @@ export default function Settings() {
     )
 }
 
-function Setting({title, children}) {
+function Setting({title, inputKey, options, children}) {
+    const { input, onInputChange } = useSettingsContext()
     return (
         <div id = {'settings-setting-' + title + '-container'} className = 'w-full h-min flex flex-col gap-small'>
             <Text>
                 {title}
             </Text>
+            <Conditional value = {!children}>
+                <div id = {'settings-setting-' + title} className = 'flex flex-col gap-tiny'>
+                    {options && options.map((option, index) => {
+                        return (
+                            <div key = {index} id = {'settings-setting-' + title + '-' + option} className = 'group flex items-center w-min gap-small cursor-pointer' onClick = {() => onInputChange(inputKey, option, 'text')}>
+                                <div id = {'settings-setting-' + title + '-' + option + '-selector'} className = {'transition-all duration-main h-[70%] aspect-square bg-reverse-0 dark:bg-base-0 group-hover:!bg-opacity-100 rounded-full ' + (input && input[inputKey] === option ? '!bg-opacity-100' : '!bg-opacity-main')}/>
+                                <Text id = {'settings-setting-' + title + '-' + option + '-text'} classes = '!text-2xl md:!text-2xl'>
+                                    {option}
+                                </Text>
+                            </div>
+                        )
+                    })}
+                </div>
+            </Conditional>
             {children}
-        </div>
-    )
-}
-
-function Theme() {
-    const { inputs, onInputChange } = useSettingsContext()
-    const options = ['System', 'Light', 'Dark']
-    return (
-        <div id = 'settings-setting-Theme' className = 'w-min flex flex-col gap-tiny'>
-            {options.map((option, index) => {
-                return (
-                    <div key = {index} id = {'settings-setting-Theme-' + option} className = 'flex items-center gap-small cursor-pointer' onClick = {() => onInputChange('theme', option)}>
-                        <div id = {'settings-setting-Theme-' + option + '-selector'} className = {'transition-all duration-main h-[70%] aspect-square bg-reverse-0 dark:bg-base-0 hover:!bg-opacity-100 rounded-full ' + (inputs?.theme === option ? '!bg-opacity-100' : '!bg-opacity-main')}/>
-                        <Text id = {'settings-setting-Theme-' + option + '-text'} classes = '!text-2xl md:!text-2xl'>
-                            {option}
-                        </Text>
-                    </div>
-                )
-            })}
-        </div>
-    )
-}
-
-function OddsFormat() {
-    const { inputs, onInputChange } = useSettingsContext()
-    const options = ['American', 'Decimal']
-    return (
-        <div id = 'settings-setting-Odds-Format' className = 'flex flex-col gap-tiny'>
-            {options.map((option, index) => {
-                return (
-                    <div key = {index} id = {'settings-setting-Odds-Format-' + option} className = 'flex items-center gap-small cursor-pointer' onClick = {() => onInputChange('odds-format', option)}>
-                        <div id = {'settings-setting-Odds-Format-' + option + '-selector'} className = {'transition-all duration-main h-[70%] aspect-square bg-reverse-0 dark:bg-base-0 hover:!bg-opacity-100 rounded-full ' + (inputs && inputs['odds-format'] === option ? '!bg-opacity-100' : '!bg-opacity-main')}/>
-                        <Text id = {'settings-setting-Odds-Format-' + option + '-text'} classes = '!text-2xl md:!text-2xl'>
-                            {option}
-                        </Text>
-                    </div>
-                )
-            })}
         </div>
     )
 }

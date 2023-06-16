@@ -8,7 +8,7 @@ import { UserProvider, useUserContext } from '../contexts/user'
 import { ProfileProvider, useProfileContext } from '../contexts/profile'
 import { useLoading } from '../hooks/useLoading'
 import { useStatuses } from '../hooks/useStatuses'
-import { useInputs } from '../hooks/useInputs'
+import { useInput } from '../hooks/useInput'
 import { useCropper } from '../hooks/useCropper'
 import { useDatabase } from '../hooks/useDatabase'
 import Image from '../components/image'
@@ -17,15 +17,19 @@ import Button from '../components/button'
 import Input from '../components/input'
 import Conditional from '../components/conditional'
 import Page from '../components/page'
+import { useCancelDetector } from '../hooks/useCancelDetector'
+import { Link } from 'react-router-dom'
+import { useSearch } from '../hooks/useSearch'
 
 export default function User() {
     const { searchParams } = useWindowContext()
     const { currentUser, data } = useRootContext()
     const [user, setUser] = useState()
+    const [searchSpace, setSearchSpace] = useState()
     const { getUserBy } = useDatabase()
     const userId = searchParams.get('id')
     const isCurrentUser = currentUser?.id === userId
-    const context = { user, setUser, isCurrentUser, getUser }
+    const context = { user, setUser, isCurrentUser, getUser, searchSpace, setSearchSpace }
 
     useEffect(() => {
         async function initialize() {
@@ -43,7 +47,7 @@ export default function User() {
 
     return (
         <UserProvider value = {context}>
-            <Page>
+            <Page dim = {searchSpace}>
                 <div id = 'user-page' className = 'w-full h-full flex flex-col items-center justify-center gap-smaller'>
                     <Helmet><title>{user?.username + ' | Betsy'}</title></Helmet>
                     <div id = 'user' className = 'relative w-full h-full flex flex-col items-center md:flex-row md:items-start gap-smaller md:gap-main'>
@@ -51,6 +55,9 @@ export default function User() {
                         <Slips/>
                         <Stats/>
                     </div>
+                    <Conditional value = {searchSpace}>
+                        <SubscriptionsModal/>
+                    </Conditional>
                 </div>
             </Page>
         </UserProvider>
@@ -62,19 +69,17 @@ export default function User() {
     }
 }
 
-
-
 function Profile() {
     const { user, isCurrentUser } = useUserContext()
     const [isEditing, setIsEditing] = useState()
     const [isLoading, execute] = useLoading()
     const [statuses, setStatus, clearAllStatuses] = useStatuses(['username', 'display_name', 'picture', 'bio'])
-    const { inputs, clearInput, clearAllInputs, onInputChange } = useInputs(['username', 'display_name', 'picture', 'bio'])
-    const context = { isEditing, setIsEditing, isLoading, execute, statuses, setStatus, clearAllStatuses, inputs, clearInput, clearAllInputs, onInputChange }
+    const { input, clearInput, clearAllInput, onInputChange } = useInput(['username', 'display_name', 'picture', 'bio'])
+    const context = { isEditing, setIsEditing, isLoading, execute, statuses, setStatus, clearAllStatuses, input, clearInput, clearAllInput, onInputChange }
 
     useEffect(() => {
         if (isCurrentUser && isEditing === false) {
-            clearAllInputs()
+            clearAllInput()
             clearAllStatuses()
         }
     }, [isEditing])
@@ -99,14 +104,14 @@ function Profile() {
 function DisplayName({ display_name }) {
     const { navigate } = useWindowContext()
     const { isCurrentUser } = useUserContext()
-    const { inputs, onInputChange, statuses, isLoading, isEditing } = useProfileContext()
+    const { input, onInputChange, statuses, isLoading, isEditing } = useProfileContext()
 
     if (isEditing || isLoading) {
         return (
             <div id = 'user-profile-display_name-input-container' className = 'relative w-full flex flex-col items-center'>
                 <div id = 'user-profile-display_name-input-input-container' className = 'w-full flex flex-row items-center'>
                     <FaAngleLeft id = 'user-back-button' onClick = {() => navigate(-1)} className = 'transition-all duration-main absolute top-[50%] left-0 w-8 h-8 -translate-y-[50%] cursor-pointer text-reverse-0 dark:text-base-0 hover:scale-main'/>
-                    <Input id = 'user-profile-display_name-input' preset = 'profile' status = {statuses?.display_name} value = {inputs?.display_name} onChange = {(e) => onChange(e)} placeholder = {display_name} autoComplete = 'off'/>
+                    <Input id = 'user-profile-display_name-input' preset = 'profile' status = {statuses?.display_name} value = {input?.display_name} onChange = {(e) => onChange(e)} placeholder = {display_name} autoComplete = 'off'/>
                 </div>
                 <Conditional value = {statuses?.display_name?.message}>
                     <Text id = 'user-profile-display_name-input-error' preset = 'profile-error' classes = 'w-full text-center'>
@@ -129,14 +134,14 @@ function DisplayName({ display_name }) {
 
     function onChange(event) {
         if (isCurrentUser) {
-            onInputChange('display_name', event.target.value)
+            onInputChange('display_name', event.target.value, 'text')
         }
     }
 }
 
 function Username({ username }) {
     const { isCurrentUser } = useUserContext()
-    const { inputs, onInputChange, statuses, isLoading, isEditing } = useProfileContext()
+    const { input, onInputChange, statuses, isLoading, isEditing } = useProfileContext()
 
     if (isEditing || isLoading) {
         return (
@@ -145,7 +150,7 @@ function Username({ username }) {
                     <Text id = 'user-profile-username-@' classes = '!font-bold !text-xl'>
                         @
                     </Text>
-                    <Input id = 'user-profile-username-input' preset = 'profile' classes = '!font-bold !text-xl !text-left' status = {statuses?.username} value = {inputs?.username} onChange = {(e) => onChange(e)} placeholder = {username} autoComplete = 'off'/>
+                    <Input id = 'user-profile-username-input' preset = 'profile' classes = '!font-bold !text-xl !text-left' status = {statuses?.username} value = {input?.username} onChange = {(e) => onChange(e)} placeholder = {username} autoComplete = 'off'/>
                 </div>
                 <Conditional value = {statuses?.username?.message}>
                     <Text id = 'user-profile-username-input-error' preset = 'profile-error' classes = 'w-full text-center'>
@@ -167,20 +172,20 @@ function Username({ username }) {
 
     function onChange(event) {
         if (isCurrentUser) {
-            onInputChange('username', event.target.value)
+            onInputChange('username', event.target.value, 'text')
         }
     }
 }
 
 function Bio({ bio }) {
     const { isCurrentUser } = useUserContext()
-    const { inputs, onInputChange, statuses, isLoading, isEditing } = useProfileContext()
+    const { input, onInputChange, statuses, isLoading, isEditing } = useProfileContext()
 
     if (isEditing || isLoading) {
         return (
             <div id = 'user-profile-bio-input-container' className = 'w-full flex flex-col items-center'>
                 <div id = 'user-profile-bio-input-input-container' className = 'w-full flex flex-row items-center'>
-                    <Input id = 'user-profile-bio-input' preset = 'profile' classes = '!font-normal !text-lg !text-left' status = {statuses?.bio} value = {inputs?.bio} onChange = {(e) => onChange(e)} placeholder = {bio} autoComplete = 'off'/>
+                    <Input id = 'user-profile-bio-input' preset = 'profile' classes = '!font-normal !text-lg !text-left' status = {statuses?.bio} value = {input?.bio} onChange = {(e) => onChange(e)} placeholder = {bio} autoComplete = 'off'/>
                 </div>
                 <Conditional value = {statuses?.bio?.message}>
                     <Text id = 'user-profile-bio-input-error' preset = 'profile-error' classes = 'w-full text-center'>
@@ -202,17 +207,17 @@ function Bio({ bio }) {
 
     function onChange(event) {
         if (isCurrentUser) {
-            onInputChange('bio', event.target.value)
+            onInputChange('bio', event.target.value, 'text')
         }
     }
 }
 
 function Picture({ picture }) {
     const { isCurrentUser } = useUserContext()
-    const { inputs, onInputChange, statuses, isLoading, isEditing } = useProfileContext()
+    const { input, onInputChange, statuses, isLoading, isEditing } = useProfileContext()
     const pictureInput = useRef(null)
     const [isCropping, setIsCropping] = useState(false)
-    const [params, onCrop, croppedImage] = useCropper(inputs?.picture)
+    const [params, onCrop, croppedImage] = useCropper(input?.picture)
 
     useEffect(() => {
         if (isCurrentUser && croppedImage) {
@@ -230,7 +235,7 @@ function Picture({ picture }) {
     return (
         <div id = 'user-profile-picture-container' className = 'relative flex flex-col justify-center items-center h-full aspect-square w-min gap-tiny'>
             <input id = 'user-profile-picture-input' style = {{ display: 'none' }} type = 'file' onChange = {(e) => onUpload(e)} ref = {pictureInput} accept = '.jpg, .jpeg, .png, .gif, .webp'/>
-            <Image external id = 'user-profile-picture' path = {(isCropping || !inputs?.picture) ? picture : inputs?.picture} classes = {'relative h-full aspect-square rounded-full overflow-hidden z-10' + (isEditing ? ' cursor-pointer' : '')} mode = 'cover' onClick = {() => onPictureClick()}>
+            <Image external id = 'user-profile-picture' path = {(isCropping || !input?.picture) ? picture : input?.picture} classes = {'relative h-full aspect-square rounded-full overflow-hidden z-10' + (isEditing ? ' cursor-pointer' : '')} mode = 'cover' onClick = {() => onPictureClick()}>
                 <Conditional value = {isCropping}>
                     <Cropper {...params}/>
                     <Text id = 'user-profile-picture-cropper-error' preset = 'profile-error'>{statuses?.picture?.message}</Text>
@@ -260,6 +265,8 @@ function Picture({ picture }) {
 }
 
 function Subscriptions({ subscribers, subscriptions }) {
+    const { setSearchSpace } = useUserContext()
+
     return (
         <div id = 'user-profile-subscriptions-container' className = 'w-full flex flex-col items-between gap-tiny md:gap-small'>
             <div id = 'user-profile-subscriptions-container' className = 'w-full flex flex-row justify-between items-center'>
@@ -267,7 +274,7 @@ function Subscriptions({ subscribers, subscriptions }) {
                     <Text id = 'user-profile-subscribers-text' classes = '!font-medium !text-lg'>
                         Subscribers
                     </Text>
-                    <Text id = 'user-profile-subscribers-value' classes = '!font-bold !text-4xl'>
+                    <Text id = 'user-profile-subscribers-value' classes = '!font-bold !text-4xl !cursor-pointer' onClick = {() => setSearchSpace(subscribers)}>
                         {subscribers?.length}
                     </Text>
                 </div>
@@ -275,7 +282,7 @@ function Subscriptions({ subscribers, subscriptions }) {
                     <Text id = 'user-profile-subscriptions-text' classes = '!font-medium !text-lg'>
                         Subscriptions
                     </Text>
-                    <Text id = 'user-profile-subscriptions-value' classes = '!font-bold !text-4xl text-right'>
+                    <Text id = 'user-profile-subscriptions-value' classes = '!font-bold !text-4xl text-right !cursor-pointer' onClick = {() => setSearchSpace(subscriptions)}>
                         {subscriptions?.length}
                     </Text>
                 </div>
@@ -288,34 +295,34 @@ function Subscriptions({ subscribers, subscriptions }) {
 function Action() {
     const { currentUser, refreshCurrentUser } = useRootContext()
     const { user, setUser, isCurrentUser, getUser } = useUserContext()
-    const { isEditing, setIsEditing, isLoading, execute, statuses, setStatus, inputs } = useProfileContext()
+    const { isEditing, setIsEditing, isLoading, execute, statuses, setStatus, input } = useProfileContext()
     const { updateProfile, subscribe, unsubscribe } = useDatabase()
-    const changes = {
-        username: {
-            attemptedToChange: inputs?.username !== currentUser?.username && inputs?.username !== '',
-            didChange: false,
-            changedTo: inputs?.username
-        },
-        picture: {
-            attemptedToChange: inputs?.picture !== '',
-            didChange: false,
-            changedTo: inputs?.picture
-        },
-        display_name: {
-            attemptedToChange: inputs?.display_name !== currentUser?.display_name && inputs?.display_name !== '',
-            didChange: false,
-            changedTo: inputs?.display_name
-        },
-        bio: {
-            attemptedToChange: inputs?.bio !== currentUser?.bio && inputs?.bio !== '',
-            didChange: false,
-            changedTo: inputs?.bio
-        }
-    }
+    const [changes, setChanges] = useState()
 
-    const atLeastOneChangeFailed = () => { return statuses && Object.keys(statuses).some(status => statuses[status].status === false) }
-    const allChangesWereSuccessful = () => { return statuses && (Object.keys(statuses).every(status => statuses[status].status === true))}
-    const currentUserIsSubscribedToUser = () => { return user && user.subscribers.some(subscriber => subscriber === currentUser?.id) }
+    useEffect(() => {
+        setChanges({
+            username: {
+                attemptedToChange: input?.username !== currentUser?.username && input?.username !== '',
+                didChange: false,
+                changedTo: input?.username
+            },
+            picture: {
+                attemptedToChange: input?.picture !== '',
+                didChange: false,
+                changedTo: input?.picture
+            },
+            display_name: {
+                attemptedToChange: input?.display_name !== currentUser?.display_name && input?.display_name !== '',
+                didChange: false,
+                changedTo: input?.display_name
+            },
+            bio: {
+                attemptedToChange: input?.bio !== currentUser?.bio && input?.bio !== '',
+                didChange: false,
+                changedTo: input?.bio
+            }
+        })
+    }, [currentUser, input])
 
     return (
         <div id = 'user-profile-action-container' className = 'relative w-full flex flex-col items-center'>
@@ -339,6 +346,16 @@ function Action() {
         </div>
     )
 
+    function atLeastOneChangeFailed() {
+        return statuses && Object.keys(statuses).some(status => statuses[status].status === false)
+    }
+    function allChangesWereSuccessful() {
+        return statuses && (Object.keys(statuses).every(status => statuses[status].status === true))
+    }
+    function currentUserIsSubscribedToUser() {
+        return user && user.subscribers.some(subscriber => subscriber.id === currentUser?.id)
+    }
+
     function onCancel() {
         if (isCurrentUser) {
             setIsEditing(false)
@@ -348,12 +365,12 @@ function Action() {
     async function submitChanges() {
         if (isCurrentUser) {
             if (!isLoading) {
-                for await (const input of Object.keys(changes)) {
-                    if (changes[input].attemptedToChange) {
+                for await (const i of Object.keys(changes)) {
+                    if (changes[i].attemptedToChange) {
                         await execute(async () => {
-                            const { status, message } = await updateProfile(input, inputs[input])
-                            setStatus(input, status, message, 3000)
-                            changes[input] = {...changes[input], didChange: status}
+                            const { status, message } = await updateProfile(i, input[i])
+                            setStatus(i, status, message, 3000)
+                            changes[i] = {...changes[i], didChange: status}
                         })
                     }
                 }
@@ -370,30 +387,72 @@ function Action() {
     async function onAction() {
         if (isCurrentUser) {
             if (isEditing) {
-                if (!isLoading) {
-                    submitChanges()
+                if (!isLoading) { submitChanges() }
+            }
+            else { setIsEditing(true) }
+        }
+        else if (user) {
+            if (currentUserIsSubscribedToUser()) {
+                if ((await unsubscribe(user.id)).status) {
+                    setUser(await getUser())
+                    await refreshCurrentUser()
                 }
             }
             else {
-                setIsEditing(true)
-            }
-        }
-        else {
-            if (user) {
-                if (currentUserIsSubscribedToUser()) {
-                    if ((await unsubscribe(user.id)).status) {
-                        setUser(await getUser())
-                        await refreshCurrentUser()
-                    }
-                }
-                else {
-                    if ((await subscribe(user.id)).status) { 
-                        setUser(await getUser())
-                        await refreshCurrentUser()
-                    }
+                if ((await subscribe(user.id)).status) { 
+                    setUser(await getUser())
+                    await refreshCurrentUser()
                 }
             }
         }
+    }
+}
+
+function SubscriptionsModal() {
+    const { searchSpace, setSearchSpace } = useUserContext()
+    const { input, onInputChange, results, setParams } = useSearch()
+    const ref = useRef(null)
+    const inputRef = useRef(input)
+    useCancelDetector(ref, () => setSearchSpace(null))
+    useEffect(() => {
+        if (searchSpace) {
+            setParams({
+                filters: {},
+                limit: 10,
+                space: searchSpace,
+                keys: ['username', 'display_name'],
+                emptyOnInitial: false
+            })
+        }
+    }, [searchSpace])
+
+    return (
+        <div id = 'subscriptions-modal-container' className = {'absolute w-full h-full flex flex-col items-center justify-center animate__animated z-20'}>
+            <div ref = {ref} id = 'subscriptions-modal' className = 'w-[80%] md:w-[60%] h-[90%] md:h-[80%] flex flex-col gap-small bg-reverse-0 rounded-main overflow-scroll p-8'>
+                <Input ref = {inputRef} id = 'subscriptions-modal-search-input' preset = 'search' classes = '!text-2xl md:!text-3xl' status = {null} value = {input} onChange = {(e) => onInputChange(null, e.target.value, 'text')} placeholder = 'Search...' autoComplete = 'off' autoFocus/>
+                {results.length > 0 && results.map((result, index) => {
+                    return (
+                        <Result key = {index} user = {result}/>
+                    )
+                })}
+            </div>
+        </div>
+    )
+
+    function Result({user}) {
+        return (
+            <Link to = {'/user?id=' + user.id} className = {'transition-all duration-main subscription-modal-' + user.username + '-container w-min h-min flex flex-row items-center gap-small origin-left hover:scale-main'} onClick = {() => setSearchSpace(null)}>
+                <Image external path = {user.picture} classes = {'subscription-modal-' + user.username + '-image h-10 md:h-10 aspect-square rounded-full'}/>
+                <div className = {'subscription-modal-' + user.username + '-text-container flex flex-col'}>
+                    <Text classes = {'subscription-modal-' + user.username + '-text-display_name !text-2xl md:!text-2xl'}>
+                        {user.display_name}
+                    </Text>
+                    <Text classes = {'subscription-modal-' + user.username + '-text-username !text-xl md:!text-lg !text-opacity-main -mt-tiny'}>
+                        {'@' + user.username}
+                    </Text>
+                </div>
+            </Link>
+        )
     }
 }
 
