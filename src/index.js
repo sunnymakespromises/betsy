@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
-import { CookiesProvider, useCookies } from 'react-cookie'
+import { CookiesProvider } from 'react-cookie'
 import { GoogleOAuthProvider } from '@react-oauth/google'
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
 import { WindowProvider } from './contexts/window'
@@ -32,10 +32,9 @@ function Root() {
     const navigate = useNavigate()
     const data = useData()
     const [searchParams, setSearchParams] = useSearchParams()
-    const [cookies, setCookie, removeCookie] = useCookies()
     const isDarkMode = useThemes()
     const [currentUser, refreshCurrentUser, login, logout] = useAuthorize()
-    const windowContext = { sm, md, lg, isDarkMode, location, navigate, searchParams, setSearchParams, cookies, setCookie, removeCookie }
+    const windowContext = { sm, md, lg, isDarkMode, location, navigate, searchParams, setSearchParams }
     const rootContext = { currentUser, refreshCurrentUser, data, login, logout }
 
     return (

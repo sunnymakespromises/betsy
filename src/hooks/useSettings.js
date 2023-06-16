@@ -1,9 +1,9 @@
 import { useEffect } from 'react'
-import { useWindowContext } from '../contexts/window'
+import { useCookies } from 'react-cookie'
 import { useInput } from './useInput'
 
 function useSettings(list, defaults) {
-    const { cookies, setCookie } = useWindowContext()
+    const [cookies, setCookie, removeCookie] = useCookies()
     const { input, onInputChange } = useInput(list, getDefaults())
 
     useEffect(() => {
