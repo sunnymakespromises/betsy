@@ -1,3 +1,4 @@
+import { forwardRef } from 'react'
 /**
  * An <input> that contains the given value and preset, and updates the value according to onChange when the user types in it.
  * @param {string} value the text value of the input.
@@ -9,7 +10,7 @@
  * @param {function} onChange the function to be triggered whenever the user types into the input.
  * @returns an <input> tag.
  */
-export default function Input({ value, status, type = 'text', preset = 'main', styles, classes, onChange, ...extras }) {
+const Input = forwardRef(function Input({ value, status, type = 'text', preset = 'main', styles, classes, onChange, ...extras }, ref) {
     let options = {
         'main': {
             classes: 'font-main w-min text-base-0 text-3xl bg-black bg-opacity-30 focus:outline-none px-3 py-2 rounded-xl',
@@ -36,6 +37,7 @@ export default function Input({ value, status, type = 'text', preset = 'main', s
     }
 
     return (
-        <input className = {getOption()?.classes + (status === false ? ' ' + getOption()?.false : '') + (status === true ? ' ' + getOption()?.true : '') + (status === null ? ' ' + getOption()?.null : '') + (classes ? ' ' + classes : '')} style = {styles} value = {value ? value : ''} type = {type} onChange = {onChange} {...extras}/>
+        <input className = {getOption()?.classes + (status === false ? ' ' + getOption()?.false : '') + (status === true ? ' ' + getOption()?.true : '') + (status === null ? ' ' + getOption()?.null : '') + (classes ? ' ' + classes : '')} style = {styles} value = {value ? value : ''} type = {type} onChange = {onChange} ref = {ref} {...extras}/>
     )
-}
+})
+export default Input
