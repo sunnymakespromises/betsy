@@ -35,7 +35,7 @@ async function getCurrentUser(refresh_token, source) {
                 subscriptions: [],
                 favorites: [],
                 slips: [],
-                balance: 0.00,
+                balance: 10.00,
                 is_locked: false
             }
             await insertItem('Users', item)
