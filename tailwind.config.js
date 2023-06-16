@@ -9,7 +9,7 @@ module.exports = {
     ],
     theme: {
         animatedSettings: {
-            animatedSpeed: 200,
+            animatedSpeed: 150,
         },
         extend: {
             fontFamily: {
