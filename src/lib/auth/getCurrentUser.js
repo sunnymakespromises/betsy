@@ -1,6 +1,7 @@
 import authenticateUser from './authenticateUser'
 import insertItem from '../aws/db/insertItem'
 import getItem from '../aws/db/getItem'
+import queryTable from '../aws/db/queryTable'
 const short = require('short-uuid')
 
 async function getCurrentUser(refresh_token, source) {
@@ -11,15 +12,18 @@ async function getCurrentUser(refresh_token, source) {
     }
     const authUser = await authenticateUser(refresh_token, source)
     if (authUser) {
-        const betsyUser = await getItem('Users', { auth_id: authUser.id })
+        let betsyUser = await getItem('Users', { auth_id: authUser.id })
         if (betsyUser) {
             response.status = true
+            betsyUser.subscriptions = await queryTable('Users', { mode: 'contains', subscribers: betsyUser.id }, ['id', 'username', 'display_name', 'picture'], false)
+            betsyUser.subscribers = await queryTable('Users', { mode: 'contains', subscriptions: betsyUser.id }, ['id', 'username', 'display_name', 'picture'], false)
             response.user = betsyUser
         }
         else {
             const id = short.generate()
             const item = {
                 id: id,
+                join_date: Date.now(),
                 username: 'user' + id.substring(0, 8),
                 display_name: 'user' + id.substring(0, 8),
                 bio: 'my bio 💕',
@@ -31,7 +35,8 @@ async function getCurrentUser(refresh_token, source) {
                 subscriptions: [],
                 favorites: [],
                 slips: [],
-                balance: 0.00
+                balance: 0.00,
+                is_locked: false
             }
             await insertItem('Users', item)
             response.status = true
