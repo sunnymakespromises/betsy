@@ -55,7 +55,7 @@ function Categories() {
         sports: <IconBallFootball size = {sm ? 36 : 40} className = {'transition-all duration-main text-reverse-0 dark:text-base-0  hover:scale-main hover:opacity-100 ' + (currentCategory === 'sports' ? 'opacity-100' : 'opacity-main')}/>,
         competitions: <IconTrophy size = {sm ? 36 : 40} className = {'transition-all duration-main text-reverse-0 dark:text-base-0  hover:scale-main hover:opacity-100 ' + (currentCategory === 'competitions' ? 'opacity-100' : 'opacity-main')}/>,
         events: <IconSoccerField size = {sm ? 36 : 40} className = {'transition-all duration-main text-reverse-0 dark:text-base-0  hover:scale-main hover:opacity-100 ' + (currentCategory === 'events' ? 'opacity-100' : 'opacity-main')}/>,
-        competitors: <IconShirtSport size = {sm ? 36 : 40} className = {'transition-all duration-main text-reverse-0 dark:text-base-0  hover:scale-main hover:opacity-100 ' + (currentCategory === 'teams' ? 'opacity-100' : 'opacity-main')}/>,
+        competitors: <IconShirtSport size = {sm ? 36 : 40} className = {'transition-all duration-main text-reverse-0 dark:text-base-0  hover:scale-main hover:opacity-100 ' + (currentCategory === 'competitors' ? 'opacity-100' : 'opacity-main')}/>,
         users: <IconUser size = {sm ? 36 : 40} className = {'transition-all duration-main text-reverse-0 dark:text-base-0  hover:scale-main hover:opacity-100 ' + (currentCategory === 'users' ? 'opacity-100' : 'opacity-main')}/>
     }
     return (
