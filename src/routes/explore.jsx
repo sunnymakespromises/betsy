@@ -16,7 +16,7 @@ export default function Explore() {
     const { searchParams } = useWindowContext()
     const { data } = useRootContext()
     const currentCategory = searchParams.get('category') ? searchParams.get('category') : 'sports'
-    const { setParams, input, onInputChange, results } = useSearch()
+    const { input, setParams, onInputChange, results } = useSearch()
     const context = { results, currentCategory, input }
 
     useEffect(() => {
@@ -38,11 +38,9 @@ export default function Explore() {
                 <div id = 'explore-page' className = 'w-full h-full flex flex-col gap-smaller'>
                     <Helmet><title>Users | Betsy</title></Helmet>
                     <Input id = 'explore-search-input' preset = 'search' status = {null} value = {input} onChange = {(e) => onInputChange(null, e.target.value, 'text')} placeholder = {'Search...'} autoComplete = 'off'/>
-                    <div id = 'explore-search-results' className = {'transition-all duration-main w-full flex flex-col rounded-main backdrop-blur-main px-small oerflow-hidden gap-smaller ' + (input !== '' ? 'py-small flex-1' : 'py-0 flex-0')}>
-                        <Conditional value = {input !== ''}>
-                            <Categories/>
-                            <Results results = {results[currentCategory]}/>
-                        </Conditional>
+                    <div id = 'explore-search-results' className = {'transition-all duration-main w-full flex flex-col rounded-main backdrop-blur-main px-small oerflow-hidden gap-smaller py-small flex-1'}>
+                        <Categories/>
+                        <Results results = {results[currentCategory]}/>
                     </div>
                 </div>
             </Page>
@@ -52,7 +50,7 @@ export default function Explore() {
 
 function Categories() {
     const { sm, searchParams, setSearchParams } = useWindowContext()
-    const { currentCategory, input } = useExploreContext()
+    const { currentCategory } = useExploreContext()
     const icons = { 
         sports: <IconBallFootball size = {sm ? 36 : 40} className = {'transition-all duration-main text-reverse-0 dark:text-base-0  hover:scale-main hover:opacity-100 ' + (currentCategory === 'sports' ? 'opacity-100' : 'opacity-main')}/>,
         competitions: <IconTrophy size = {sm ? 36 : 40} className = {'transition-all duration-main text-reverse-0 dark:text-base-0  hover:scale-main hover:opacity-100 ' + (currentCategory === 'competitions' ? 'opacity-100' : 'opacity-main')}/>,
@@ -61,7 +59,7 @@ function Categories() {
         users: <IconUser size = {sm ? 36 : 40} className = {'transition-all duration-main text-reverse-0 dark:text-base-0  hover:scale-main hover:opacity-100 ' + (currentCategory === 'users' ? 'opacity-100' : 'opacity-main')}/>
     }
     return (
-        <div id = 'explore-search-categories' className = {'flex overflow-hidden ' + (input !== '' ? 'w-full md:w-[40%]' : 'w-[0%]')}>
+        <div id = 'explore-search-categories' className = 'flex overflow-hidden w-full md:w-[40%]'>
             {Object.keys(icons).map((category, index) => {
                 return (
                     <div key = {index} className = 'explore-search-category-container w-full h-full flex justify-center md:justify-start cursor-pointer' onClick = {() => onChangeCategory(category)} >
@@ -78,16 +76,18 @@ function Categories() {
 }
 
 function Results({results}) {
-    const { currentCategory } = useExploreContext()
+    const { currentCategory, input } = useExploreContext()
 
     return (
-        <div className = {'explore-search-' + currentCategory + '-results w-full flex flex-col gap-smaller'}>
-            {results?.map((result, index) => {
-                return (
-                    <Result key = {index} result = {result}/>
-                )
-            })}
-        </div>
+        <Conditional value = {currentCategory !== 'users' || input !== ''}>
+            <div className = {'explore-search-' + currentCategory + '-results w-full flex flex-col gap-smaller'}>
+                {results?.map((result, index) => {
+                    return (
+                        <Result key = {index} result = {result}/>
+                    )
+                })}
+            </div>
+        </Conditional>
     )
 
     function Result({result}) {
