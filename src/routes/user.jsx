@@ -153,7 +153,7 @@ function Username({ username }) {
                     <Input id = 'user-profile-username-input' preset = 'profile' classes = '!font-bold !text-xl !text-left' status = {statuses?.username} value = {input?.username} onChange = {(e) => onChange(e)} placeholder = {username} autoComplete = 'off'/>
                 </div>
                 <Conditional value = {statuses?.username?.message}>
-                    <Text id = 'user-profile-username-input-error' preset = 'profile-error' classes = 'w-full text-center'>
+                    <Text id = 'user-profile-username-input-error' preset = 'profile-error' classes = 'w-full'>
                         {statuses?.username?.message}
                     </Text>
                 </Conditional>
@@ -188,7 +188,7 @@ function Bio({ bio }) {
                     <Input id = 'user-profile-bio-input' preset = 'profile' classes = '!font-normal !text-lg !text-left' status = {statuses?.bio} value = {input?.bio} onChange = {(e) => onChange(e)} placeholder = {bio} autoComplete = 'off'/>
                 </div>
                 <Conditional value = {statuses?.bio?.message}>
-                    <Text id = 'user-profile-bio-input-error' preset = 'profile-error' classes = 'w-full text-center'>
+                    <Text id = 'user-profile-bio-input-error' preset = 'profile-error' classes = 'w-full'>
                         {statuses?.bio?.message}
                     </Text>
                 </Conditional>
