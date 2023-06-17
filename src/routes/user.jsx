@@ -350,7 +350,7 @@ function Action() {
         return statuses && Object.keys(statuses).some(status => statuses[status].status === false)
     }
     function allChangesWereSuccessful() {
-        return statuses && (Object.keys(statuses).every(status => statuses[status].status === true))
+        return statuses && (Object.keys(statuses).every(status => statuses[status].status !== false) && Object.keys(statuses).some(status => statuses[status].status === true))
     }
     function currentUserIsSubscribedToUser() {
         return user && user.subscribers.some(subscriber => subscriber.id === currentUser?.id)
