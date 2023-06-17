@@ -428,8 +428,8 @@ function SubscriptionsModal() {
 
     return (
         <div id = 'subscriptions-modal-container' className = {'absolute w-full h-full flex flex-col items-center justify-center animate__animated z-20'}>
-            <div ref = {ref} id = 'subscriptions-modal' className = 'w-[80%] md:w-[60%] h-[90%] md:h-[80%] flex flex-col gap-small bg-reverse-0 rounded-main overflow-scroll p-8'>
-                <Input ref = {inputRef} id = 'subscriptions-modal-search-input' preset = 'search' classes = '!text-2xl md:!text-3xl' status = {null} value = {input} onChange = {(e) => onInputChange(null, e.target.value, 'text')} placeholder = 'Search...' autoComplete = 'off' autoFocus/>
+            <div ref = {ref} id = 'subscriptions-modal' className = 'w-[80%] md:w-[60%] h-[90%] md:h-[80%] flex flex-col gap-small bg-reverse-0 dark:bg-base-0 rounded-main overflow-scroll p-8'>
+                <Input ref = {inputRef} id = 'subscriptions-modal-search-input' preset = 'search' classes = '!text-base-0 dark:!text-reverse-0 !text-2xl md:!text-3xl' status = {null} value = {input} onChange = {(e) => onInputChange(null, e.target.value, 'text')} placeholder = 'Search...' autoComplete = 'off' autoFocus/>
                 {results.length > 0 && results.map((result, index) => {
                     return (
                         <Result key = {index} user = {result}/>
@@ -444,10 +444,10 @@ function SubscriptionsModal() {
             <Link to = {'/user?id=' + user.id} className = {'transition-all duration-main subscription-modal-' + user.username + '-container w-min h-min flex flex-row items-center gap-small origin-left hover:scale-main'} onClick = {() => setSearchSpace(null)}>
                 <Image external path = {user.picture} classes = {'subscription-modal-' + user.username + '-image h-10 md:h-10 aspect-square rounded-full'}/>
                 <div className = {'subscription-modal-' + user.username + '-text-container flex flex-col'}>
-                    <Text classes = {'subscription-modal-' + user.username + '-text-display_name !text-2xl md:!text-2xl'}>
+                    <Text classes = {'subscription-modal-' + user.username + '-text-display_name !text-base-0 dark:!text-reverse-0 !text-2xl md:!text-2xl'}>
                         {user.display_name}
                     </Text>
-                    <Text classes = {'subscription-modal-' + user.username + '-text-username !text-xl md:!text-lg !text-opacity-main -mt-tiny'}>
+                    <Text classes = {'subscription-modal-' + user.username + '-text-username !text-base-0 dark:!text-reverse-0 !text-xl md:!text-lg !text-opacity-main -mt-tiny'}>
                         {'@' + user.username}
                     </Text>
                 </div>
