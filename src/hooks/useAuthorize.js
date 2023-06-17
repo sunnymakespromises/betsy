@@ -14,27 +14,16 @@ function useAuthorize() {
     async function refreshUser() {
         const { status, message, user } = await getCurrentUser(cookies['oauth_refresh_token'], cookies['oauth_source'])
         setUser(user)
-        if (status) {
-            setCookie('user', user)
-        }
-        else {
-            console.log(message)
-            removeCookie('user')
-        }
+        if (!status) { console.log(message) }
     }
 
     useEffect(() => {
         async function initial() {
-            if (cookies['user']) {
-                setUser(cookies['user'])
+            if (cookies['oauth_refresh_token']) {
+                await refreshUser()
             }
             else {
-                if (cookies['oauth_refresh_token']) {
-                    await refreshUser()
-                }
-                else {
-                    setUser(null)
-                }
+                setUser(null)
             }
         }
 
@@ -66,20 +55,17 @@ function useAuthorize() {
                 const { status, message, user } = await getCurrentUser(refreshToken, 'google')
                 setUser(user)
                 if (status) {
-                    setCookie('user', user)
                     setCookie('oauth_source', 'google')
                     navigate('/')
                 }
                 else {
                     console.log(message)
                     removeCookie('oauth_source')
-                    removeCookie('user')
                 }
             }
             else {
                 console.log(message)
                 removeCookie('oauth_source')
-                removeCookie('user')
                 removeCookie('oauth_refresh_token')
             }
         },
@@ -90,7 +76,6 @@ function useAuthorize() {
 
     const logout = () => {
         googleLogout()
-        removeCookie('user')
         setUser(null)
         removeCookie('oauth_source')
         removeCookie('oauth_refresh_token')
