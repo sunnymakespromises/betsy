@@ -39,11 +39,11 @@ function useSearch() {
                 if (input !== '') {
                     if ((params?.space).length > 0) {
                         let fuse = new Fuse(params?.space, {
-                            includeScore: true,
-                            findAllMatches: false,
+                            minMatchCharLength: 3,
+                            threshold: 0.3,
                             keys: params?.keys
                         })
-                        newResults = fuse.search(input).slice(0, params?.limit).sort((a,b) => a?.score - b?.score).map(r => r.item)
+                        newResults = fuse.search(input).slice(0, params?.limit).map(r => r.item)
                     }
                 }
                 else {
@@ -57,11 +57,11 @@ function useSearch() {
                     if (input !== '') {
                         if ((params?.spaces[category]).length > 0) {
                             let fuse = new Fuse(params?.spaces[category], {
-                                includeScore: true,
-                                findAllMatches: false,
+                                minMatchCharLength: 3,
+                                threshold: 0.3,
                                 keys: params?.keys[category]
                             })
-                            newResults[category] = fuse.search(input).slice(0, params?.limits[category]).sort((a,b) => a?.score - b?.score).map(r => r.item)
+                            newResults[category] = fuse.search(input).slice(0, params?.limits[category]).map(r => r.item)
                         }
                     }
                     else {
