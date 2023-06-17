@@ -328,7 +328,7 @@ function Action() {
         <div id = 'user-profile-action-container' className = 'relative w-full flex flex-col items-center'>
             <Button id = 'user-profile-action-button' classes = {'z-10 h-11 !p-0 overflow-hidden w-full animate__animated !animate__slow' + (atLeastOneChangeFailed() ? ' animate__headShake' : allChangesWereSuccessful() ? ' animate__bounce' : '')} onClick = {() => onAction()}>
                 <Conditional value = {isLoading}>
-                    <Image id = 'user-profile-action-loading' path = 'images/loading.gif' classes = 'h-6 aspect-square m-1'/>
+                    <Image id = 'user-profile-action-loading' path = 'images/loading.gif' classes = 'h-6 aspect-square m-1 opacity-main'/>
                 </Conditional>
                 <Conditional value = {!isLoading}>
                     <Text id = 'user-profile-action-text' preset = 'button' classes = '!text-lg !font-medium'>
