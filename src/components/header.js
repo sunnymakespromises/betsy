@@ -68,7 +68,7 @@ function Menu({ isLandscape }) {
         <div id = 'header-menu' className = 'relative h-full w-min flex items-center gap-smaller animate__animated animate__slideInRight'>
             <Conditional value = {currentUser}>
                 <Link id = 'header-menu-wallet' to = '/wallet' className = 'flex items-center h-full w-min gap-small cursor-pointer'>
-                    <Money id = 'header-menu-money' amount = {currentUser?.balance} classes = 'transition-all duration-main hover:scale-main' textClasses = '!font-bold'/>
+                    <Money id = 'header-menu-money' amount = {currentUser?.balance} classes = 'transition-all duration-main hover:scale-main' textClasses = '!font-bold' shortened/>
                 </Link>
             </Conditional>
 
