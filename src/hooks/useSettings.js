@@ -17,7 +17,6 @@ function useSettings(list, defaults) {
     function getDefaults() {
         let newDefaults = []
         for (let i = 0; i < list.length; i++) {
-            console.log(cookies[list[i]])
             newDefaults[i] = cookies[list[i]] ? cookies[list[i]] : defaults[i]
         }
         return newDefaults

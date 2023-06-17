@@ -8,7 +8,6 @@ function useCancelDetector(ref, callback) {
             }
         }
         function handleKeyPress(event) {
-            console.log(event)
             if (event.key === 'Escape') {
                 callback()
             }
