@@ -5,7 +5,6 @@ import { useRootContext } from '../contexts/root'
 import Text from '../components/text'
 import Page from '../components/page'
 import Conditional from '../components/conditional'
-import Money from '../components/money'
 
 export default function Home() {
     const context = {}
@@ -18,7 +17,6 @@ export default function Home() {
                         <ActiveSlips/>
                     </Group>
                     <Group direction = 'vertical' classes = 'w-full md:w-[50%]'>
-                        <Wallet/>
                         <PopularBets/>
                     </Group>
                 </div>
@@ -32,20 +30,6 @@ function ActiveSlips() {
         <Panel title = 'Active Slips' classes = 'h-full flex flex-col gap-smaller animate__animated animate__slideInLeft'>
             <div className = 'w-full h-full rounded-main backdrop-blur-main'>
 
-            </div>
-        </Panel>
-    )
-}
-
-function Wallet() {
-    const { currentUser } = useRootContext()
-    return (
-        <Panel title = 'Wallet' showTitle = {false}>
-            <div id = 'home-panel-Wallet' className = 'w-full h-min flex flex-col items-end animate__animated animate__slideInDown'>
-                <Money id = 'home-panel-wallet-main-balance' amount = {currentUser?.balance} textClasses = '!text-7xl md:!text-8xl !font-black w-min text-right'/>
-                <Text id = 'home-panel-Wallet-main-delta' classes = '!text-base md:!text-lg text-right'>
-                    {'+0% over last week'}
-                </Text>
             </div>
         </Panel>
     )
