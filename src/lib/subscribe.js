@@ -1,6 +1,7 @@
 import authenticateUser from './auth/authenticateUser'
 import updateItem from './aws/db/updateItem'
 import getItem from './aws/db/getItem'
+import queryTable from './aws/db/queryTable'
 
 async function subscribe(refresh_token, source, targetId) {
     const response = {
@@ -9,7 +10,7 @@ async function subscribe(refresh_token, source, targetId) {
     }
     const authUser = await authenticateUser(refresh_token, source)
     if (authUser) {
-        const betsyUser = await getItem('Users', { auth_id: authUser.id }, ['id', 'subscriptions'])
+        const betsyUser = await queryTable('Users', 'auth_id = ' + authUser.id, ['id', 'subscriptions'], true)
         if (betsyUser) {
             if (betsyUser.id !== targetId) {
                 const targetUser = await getItem('Users', targetId)
@@ -49,7 +50,7 @@ async function unsubscribe(refresh_token, source, targetId) {
     }
     const authUser = await authenticateUser(refresh_token, source)
     if (authUser) {
-        const betsyUser = await getItem('Users', { auth_id: authUser.id }, ['id', 'subscriptions'])
+        const betsyUser = await queryTable('Users', 'auth_id = ' + authUser.id, ['id', 'subscriptions'], true)
         if (betsyUser) {
             if (betsyUser.id !== targetId) {
                 const targetUser = await getItem('Users', targetId)

@@ -1,4 +1,5 @@
 /* eslint-disable no-loop-func */
+/* eslint-disable no-unused-vars */
 import insertItem from '../aws/db/insertItem'
 import updateItem from '../aws/db/updateItem'
 import getTable from '../aws/db/getTable'
@@ -6,14 +7,15 @@ import getItem from '../aws/db/getItem'
 import deleteItem from '../aws/db/deleteItem'
 import downloadJSON from '../util/downloadJSON'
 import millisToMS from '../util/millisToMS'
+import queryTable from '../aws/db/queryTable'
 const short = require('short-uuid')
 
 const SPORTS_API_URL = 'https://api.the-odds-api.com/v4/sports/?apiKey=' + process.env.REACT_APP_ODDS_API_KEY + '&all=true'
 const ALLOWED_SPORTS = ['American Football', 'Baseball', 'Basketball', 'Boxing', 'Golf', 'Ice Hockey', 'Soccer', 'Tennis']
-const CHECK_IF_COMPLETED_DELAYS = { 'American Football': 10800000, 'Baseball': 7200000, 'Basketball': 7200000, 'Boxing': 900000, 'Ice Hockey': 7200000, 'Soccer': 5400000 }
+const CHECK_IF_COMPLETED_OFFSETS = { 'American Football': 10800, 'Baseball': 7200, 'Basketball': 7200, 'Boxing': 900, 'Ice Hockey': 7200, 'Soccer': 5400 }
 const PLAYER_PROPS = { 'basketball_nba': 'player_points,player_rebounds,player_assists,player_threes,player_double_double,player_blocks,player_steals,player_turnovers', 'American Football': 'player_pass_tds,player_pass_yds,player_pass_completions,player_pass_attempts,player_pass_interceptions,player_rush_yds,player_rush_attempts,player_receptions,player_reception_yds' }
 const SOLO_SPORTS = ['Boxing', 'Golf', 'Tennis']
-const MARKET_NAMES = { h2h: 'Moneyline', spreads: 'Points Spread', totals: 'Total Score', outrights: 'Outright Winner', alternate_spreads: 'Alternate Spreads', alternate_totals: 'Alternate Totals', draw_no_bet: 'Draw No Bet', player_pass_tds: 'Passing Touchdowns', player_pass_yds: 'Passing Yards', player_pass_completions: 'Pass Completions', player_pass_attempts: 'Pass Attempts', player_pass_interceptions: 'Interceptions', player_rush_yds: 'Rushing Yards', player_rush_attempts: 'Rush Attempts', player_receptions: 'Receptions', player_reception_yds: 'Reception Yards', player_points: 'Points', player_rebounds: 'Rebounds', player_assists: 'Assists', player_threes: 'Threes', player_double_double: 'Double Double?', player_blocks: 'Blocks', player_steals: 'Steals', player_turnovers: 'Turnovers' } 
+const MARKET_NAMES = { h2h: 'Moneyline', spreads: 'Points Spread', totals: 'Total Score', outrights: 'Outright Winner', alternate_spreads: 'Alternate Spreads', alternate_totals: 'Alternate Totals', draw_no_bet: 'Draw No Bet', player_pass_tds: 'Passing Touchdowns', player_pass_yds: 'Passing Yards', player_pass_completions: 'Pass Completions', player_pass_attempts: 'Pass Attempts', player_pass_interceptions: 'Interceptions', player_rush_yds: 'Rushing Yards', player_rush_attempts: 'Rush Attempts', player_receptions: 'Receptions', player_reception_yds: 'Reception Yards', player_points: 'Points', player_rebounds: 'Rebounds', player_assists: 'Assists', player_threes: 'Threes', player_double_double: 'Double Double?', player_blocks: 'Blocks', player_steals: 'Steals', player_turnovers: 'Turnovers' }
 const LAZY = true
 
 async function initializeApiData() {
@@ -50,6 +52,13 @@ async function initializeApiData() {
             time: '0m0s',
             changes: []
         },
+        eventSweeps: {
+            reads: 0,
+            writes: 0,
+            requests: 0,
+            time: '0m0s',
+            changes: []
+        },
         totals: {
             reads: 0,
             writes: 0,
@@ -59,13 +68,17 @@ async function initializeApiData() {
     }
     const startTime = Date.now()
     console.log('started..')
-    await updateSports(log)
-    await updateCompetitions(log)
-    await updateCompetitors(log)
-    await updateEvents(log)
+    // await updateSports(log)
+    // console.log('done with sports in ', log.sports.time + '.')
+    // await updateCompetitions(log)
+    // console.log('done with competitions in ', log.competitions.time + '.')
+    // await updateCompetitors(log)
+    // console.log('done with competitors in ', log.competitors.time + '.')
+    // await updateEvents(log)
+    await sweepEvents(log)
     log.totals.time = millisToMS(Date.now() - startTime)
     console.log('done at', Date.now(), 'in', ((Date.now() - startTime) / 1000), 's.' )
-    downloadJSON(log, 'log_' + Date.now() + '.json')
+    // downloadJSON(log, 'log_' + Date.now() + '.json')
 
     return response
 }
@@ -81,7 +94,7 @@ async function updateSports(log) {
             res = await res.json()
             const sports = res.map(i => i.group).filter((v, i, s) => s.indexOf(v) === i).filter(s => ALLOWED_SPORTS.includes(s)) // get unique sports from the api response
             for (const sport of sports) { // for each sport
-                const sportInDb = await getItem('Sports', { name: sport }, ['id']);usage.reads++ // get the existing sport in the db
+                const sportInDb = await queryTable('Sports', 'name = ' + sport, ['id'], false);usage.reads++ // get the existing sport in the db
                 if (!sportInDb) { // if sport is not already in the db
                     const item = { // create sport object
                         id: short.generate(),
@@ -109,9 +122,9 @@ async function updateCompetitions(log) {
             res = await res.json()
             const competitions = res.filter(i => ALLOWED_SPORTS.includes(i.group)).filter((v, i, s) => s.indexOf(v) === i) // get unique competitions from the api response
             for (const competition of competitions) { // for each competition
-                const competitionInDb = await getItem('Competitions', { key: competition.key }, ['id', 'name', 'is_active']);usage.reads++ // get the existing competition in the db
+                const competitionInDb = await queryTable('Competitions', 'key = ' + competition.key, ['id', 'name', 'is_active'], true);usage.reads++ // get the existing competition in the db
                 if (!competitionInDb) { // if the competition is not already in the db
-                    const sport = await getItem('Sports', { name: competition.group }, ['id', 'name', 'is_solo', 'competitions']);usage.reads++ // get the sport from the db that this competition belongs to
+                    const sport = await queryTable('Sports', 'name = ' + competition.group, ['id', 'name', 'is_solo', 'competitions'], true);usage.reads++ // get the sport from the db that this competition belongs to
                     const item = { // create the competition object
                         id: short.generate(),
                         key: competition.key,
@@ -147,12 +160,12 @@ async function updateCompetitors(log) {
     let events = await getEvents(usage, false, null)
     let changeWasMade = false
     for (let eventGroup of events) { // for each competitions' events
-        let competition = await getItem('Competitions', { key: eventGroup[0].sport_key }, ['id', 'name', 'sport', 'competitors']);usage.reads++ // get the corresponding competition from the db
+        let competition = await queryTable('Competitions', 'key = ' + eventGroup[0].sport_key, ['id', 'name', 'sport', 'competitors'], true);usage.reads++ // get the corresponding competition from the db
         for (const event of eventGroup) { // for each event
             let competitors = event.has_outrights ? event.bookmakers.find(b => b.key === 'fanduel')?.markets?.find(m => m.key === 'outrights')?.outcomes?.map(o => o.name)?.filter((v, i, s) => s.indexOf(v) === i) : [event.home_team, event.away_team] // for outright events, its getting all of the possible outcomes of the outright bet. if not, its just the home and away team LOL
             for (const competitor of competitors) { // for each competitor in the event
                 if (changeWasMade) { competition = await getItem('Competitions', competition.id, ['id', 'name', 'sport', 'competitors']);usage.reads++ } // if a change was made in the last loop, refresh the competition. let's say we add competitor A to a competition as a competitor and sets competition.competitors to [A.id]. then we add competitor B to the same competition. if we didnt refresh the competition, the second loop will access competition.competitors as [], and will set it to [B.id]. now, it can see that competition.competitors was set to [A.id] and will now set it to [A.id, B.id]
-                const competitorInDb = await getItem('Competitors', { name: competitor, 'sport.id': competition.sport.id }, ['id', 'name', 'competitions']);usage.reads++ // get the competitor in the db
+                const competitorInDb = await queryTable('Competitors', 'name = ' + competitor + ' and sport.id = ' + competition.sport.id, ['id', 'name', 'competitions'], true);usage.reads++ // get the competitor in the db
                 if (competitorInDb) { // if the competitor is already in the db
                     if (!(competitorInDb.competitions.some(c => c.id === competition.id))) { // if this competition is "new" for the competitor
                         await updateItem('Competitors', competitorInDb.id, { competitions: [...competitorInDb.competitions, { id: competition.id, name: competition.name }]});usage.writes++ // update competitor to include this competition 
@@ -193,9 +206,9 @@ async function updateEvents(log) {
     let allCompetitors = await getTable('Competitors', ['id', 'name']);usage.reads++
     let changeWasMade = false
     for (const eventGroup of events) { // for each competitions' events
-        let competition = await getItem('Competitions', { key: eventGroup[0].sport_key });usage.reads++ // get the corresponding competition from the db
+        let competition = await queryTable('Competitions', 'key = ' + eventGroup[0].sport_key, null, false);usage.reads++ // get the corresponding competition from the db
         for (const event of eventGroup) { // for every event
-            if (changeWasMade) { competition = await getItem('Competitions', { key: eventGroup[0].sport_key });usage.reads++ }// if a change was made in the last loop, refresh the competition. let's say we add event A to a competition and sets competition.events to [A.id]. then we add event B to the same competition. if we didnt refresh the competition, the second loop will access competition.events as [], and will set it to [B.id]. now, it can see that competition.events was set to [A.id] and will now set it to [A.id, B.id]
+            if (changeWasMade) { competition = await queryTable('Competitions', 'key = ' + eventGroup[0].sport_key, null, false);usage.reads++ }// if a change was made in the last loop, refresh the competition. let's say we add event A to a competition and sets competition.events to [A.id]. then we add event B to the same competition. if we didnt refresh the competition, the second loop will access competition.events as [], and will set it to [B.id]. now, it can see that competition.events was set to [A.id] and will now set it to [A.id, B.id]
             let eventInDb = await getItem('Events', event.id, ['id']);usage.reads++ // get the event in the db
             if (!eventInDb) { // if the event is not already in the db
                 let competitors = (event.has_outrights ? event.bookmakers.find(b => b.key === 'fanduel')?.markets?.find(m => m.key === 'outrights')?.outcomes?.map(o => o.name)?.filter((v, i, s) => s.indexOf(v) === i) : [event.home_team, event.away_team])?.map(c => { return { id: (allCompetitors.find(c2 => c2.name === c))?.id, name: (allCompetitors.find(c2 => c2.name === c))?.name}}) // for outright events, its getting all of the possible outcomes of the outright bet. if not, its just the home and away team LOL. then replace the names with the proper ids/names.
@@ -219,9 +232,11 @@ async function updateEvents(log) {
                 await insertItem('Events', item);usage.writes++ // insert event into the db
                 log.events.changes.push('+ ' + item.name)
                 await updateItem('Competitions', competition.id, { events: [...competition.events, { id: item.id, name: item.name }]});usage.writes++ // update the competition's events to include this event
+                log.events.changes.push('+ ' + item.name + ' to ' + competition.name + `'s events`)
                 for (let competitor of competitors) { // for each competitor in the competition
-                    competitor = await getItem('Competitors', competitor.id, ['id', 'events']);usage.reads++ // get the competitor in the db
+                    competitor = await getItem('Competitors', competitor.id, ['id', 'name', 'events']);usage.reads++ // get the competitor in the db
                     await updateItem('Competitors', competitor.id, { events: [...competitor.events, { id: item.id, name: item.name }]});usage.writes++ // update the competitor's events to include this event
+                    log.events.changes.push('+ ' + item.name + ' to ' + competitor.name + `'s events`)
                 }
                 changeWasMade = true // change was made
             }
@@ -234,10 +249,13 @@ async function updateEvents(log) {
             for (let competitor of event.competitors) { // for each competitor in the event
                 competitor = await getItem('Competitors', competitor.id, ['id', 'events']);usage.reads++ // get the competitor in the db
                 await updateItem('Competitors', competitor.id, { events: competitor.events.filter(e => e.id !== event.id) });usage.writes++ // remove the event from the competitor's events
+                log.events.changes.push('- ' + event.name + ' from ' + competitor.name + `'s events`)
             }
             let competition = await getItem('Competitions', event.competition.id, ['id', 'events']);usage.reads++ // get the competition in the db
             await updateItem('Competitions', competition.id, { events: competition.events.filter(e => e.id !== event.id) });usage.writes++ // remove the event from the competition's events
+            log.events.changes.push('- ' + event.name + ' from ' + competition.name + `'s events`)
             await deleteItem('Events', event.id);usage.writes++ // delete the event from the db
+            log.events.changes.push('- ' + event.name)
         }
     }
     addUsage(log.totals, log.events, usage)
@@ -249,7 +267,17 @@ async function updateOdds(log) {
 }
 
 // every 10 minutes
-async function updateCompletions(log) {
+async function sweepEvents(log) {
+    let usage = { reads: 0, writes: 0, requests: 0, time: Date.now() }
+    let competitions = await queryTable('Competitions', 'is_active = true', null, false);usage.reads++
+    for (const competition of competitions) {
+        let events = await queryTable('Events', 'sport.id = ' + competition.sport.id + ' and start_time < ' + (Date.now() - CHECK_IF_COMPLETED_OFFSETS[competition.sport.name]), null, false)
+        console.log(events)
+        // console.log(event.name, Date.now(), event.start_time, CHECK_IF_COMPLETED_DELAYS[event.sport.name], event.start_time + CHECK_IF_COMPLETED_DELAYS[event.sport.name])
+        // if (Date.now() - event.start_time + CHECK_IF_COMPLETED_DELAYS[event.sport.name] <= 0) {
+        //     console.log('completed')
+        // }
+    }
     // get events
     // for all events
         // if start_time + sport's CHECK_IF_COMPLETED_DELAYS value >= current time
@@ -258,6 +286,7 @@ async function updateCompletions(log) {
                 // generate a hit function that when given a bet returns if it hit or not
                 // for every slip that has this odd
                     // if the 
+    addUsage(log.totals, log.eventSweeps, usage)
 }
 
 async function getEvents(usage, allMarkets, specificCompetitions = null) {

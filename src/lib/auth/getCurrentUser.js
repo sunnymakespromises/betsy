@@ -1,6 +1,5 @@
 import authenticateUser from './authenticateUser'
 import insertItem from '../aws/db/insertItem'
-import getItem from '../aws/db/getItem'
 import queryTable from '../aws/db/queryTable'
 const short = require('short-uuid')
 
@@ -12,11 +11,11 @@ async function getCurrentUser(refresh_token, source) {
     }
     const authUser = await authenticateUser(refresh_token, source)
     if (authUser) {
-        let betsyUser = await getItem('Users', { auth_id: authUser.id })
+        let betsyUser = await queryTable('Users', 'auth_id = ' + authUser.id, null, true)
         if (betsyUser) {
             response.status = true
-            betsyUser.subscriptions = await queryTable('Users', { mode: 'contains', subscribers: betsyUser.id }, ['id', 'username', 'display_name', 'picture'], false)
-            betsyUser.subscribers = await queryTable('Users', { mode: 'contains', subscriptions: betsyUser.id }, ['id', 'username', 'display_name', 'picture'], false)
+            betsyUser.subscriptions = await queryTable('Users', 'subscribers contains ' + betsyUser.id, ['id', 'username', 'display_name', 'picture'], false)
+            betsyUser.subscribers = await queryTable('Users', 'subscriptions contains ' + betsyUser.id, ['id', 'username', 'display_name', 'picture'], false)
             response.user = betsyUser
         }
         else {
