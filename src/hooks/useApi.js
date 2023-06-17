@@ -3,7 +3,7 @@ import { initializeApiData as _initializeApiData } from '../lib/api/initializeAp
 
 function useApi() {
     async function initializeApiData() {
-        const response = await _initializeApiData()
+        await _initializeApiData()
     }
 
     return { initializeApiData }

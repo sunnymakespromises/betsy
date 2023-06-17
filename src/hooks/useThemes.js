@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useCookies } from 'react-cookie'
 
 function useThemes() {
-    const [cookies, setCookie, removeCookie] = useCookies(['theme'])
+    const [cookies,,] = useCookies(['theme'])
     const setting = cookies['theme']
     const [isDarkMode, setIsDarkMode] = useState(getCurrentTheme())
     

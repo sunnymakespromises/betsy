@@ -4,7 +4,7 @@ import { getUserBy as _getUserBy } from '../lib/getUserBy'
 import { subscribe as _subscribe, unsubscribe as _unsubscribe } from '../lib/subscribe'
 
 function useDatabase() {
-    const [cookies, setCookie, removeCookie] = useCookies()
+    const [cookies,,] = useCookies()
 
     async function insert() {
         

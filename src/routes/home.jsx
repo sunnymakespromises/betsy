@@ -1,7 +1,5 @@
-import { Link } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
 import { HomeProvider as Provider } from '../contexts/home'
-import { useRootContext } from '../contexts/root'
 import Text from '../components/text'
 import Page from '../components/page'
 import Conditional from '../components/conditional'

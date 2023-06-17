@@ -1,5 +1,3 @@
-import Conditional from "./conditional";
-
 export default function Page({ dim = null, children }) {
     return (
         <div className = 'page absolute w-full h-full p-8 z-0 overflow-hidden animate__animated'>

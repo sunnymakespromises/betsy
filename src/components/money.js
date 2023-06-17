@@ -1,11 +1,10 @@
-import { useEffect, useRef, useState } from 'react'
-import Image from './image'
+import { useRef } from 'react'
 import Text from './text'
 import { useCookies } from 'react-cookie'
 import calculateCurrency from '../lib/util/calculateCurrency'
 
 export default function Money({amount, classes, textClasses, shortened = false, ...extras}) {
-    const [cookies, setCookie, removeCookie] = useCookies()
+    const [cookies,,] = useCookies()
     const textRef = useRef()
     
     return (
@@ -13,7 +12,6 @@ export default function Money({amount, classes, textClasses, shortened = false, 
             <Text classes = {'money-value' + (textClasses ? ' ' + textClasses : '')}>
                 {calculateCurrency(cookies['currency'], amount ? amount : '0.00', shortened)}
             </Text>
-            {/* <Image path = {'images/coin.svg'} classes = 'money-coin aspect-square' styles = {{height: coinHeight}}/> */}
         </div>
     )
 }

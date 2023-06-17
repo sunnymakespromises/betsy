@@ -3,7 +3,7 @@ import { useCookies } from 'react-cookie'
 import { useInput } from './useInput'
 
 function useSettings(list, defaults) {
-    const [cookies, setCookie, removeCookie] = useCookies()
+    const [cookies, setCookie,] = useCookies()
     const { input, onInputChange } = useInput(list, getDefaults())
 
     useEffect(() => {

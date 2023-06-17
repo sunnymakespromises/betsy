@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 function useCropper(picture) {
     const [crop, setCrop] = useState({ x: 0, y: 0 })
