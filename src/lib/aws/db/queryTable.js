@@ -1,6 +1,7 @@
 import { ddbDocClient } from './ddbDocClient'
 import { ScanCommand } from '@aws-sdk/lib-dynamodb'
 import reserved_keywords from './aws_reserved_keywords'
+const ESCAPE_CHAR = '/'
 
 export default async function queryTable(table, query, attributes = null, single = false) {
     let letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
@@ -10,6 +11,18 @@ export default async function queryTable(table, query, attributes = null, single
     let expressionAttributeValues = {}
     if (query.constructor.name === 'String') {
         let words = query.split(' ')
+        if (query.includes(ESCAPE_CHAR)) {
+            let indices = words.filter(w => w.includes(ESCAPE_CHAR) && w.split(ESCAPE_CHAR).length - 1 !== 2).map(w => words.indexOf(w))
+            for (let i = 0; i < indices.length; i = i + 2) {
+                let merged = ''
+                for (let j = 0; j < indices[i + 1] - indices[i] + 1; j++) {
+                    merged += ((j !== 0 ? ' ' : '') + words[j + indices[i]]).replace(ESCAPE_CHAR, '')
+                    words[j + indices[i]] = 'DELETE'
+                }
+                words[indices[i]] = merged
+            }
+            words = words.filter(w => w !== 'DELETE').map(w => w.replaceAll(ESCAPE_CHAR, ''))
+        }
         let expected = 'attribute'
         let next = ''
         for (let i = 0; i < words.length; i++) {
