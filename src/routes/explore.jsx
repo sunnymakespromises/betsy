@@ -15,9 +15,18 @@ import { useRootContext } from '../contexts/root'
 export default function Explore() {
     const { searchParams } = useWindowContext()
     const { data } = useRootContext()
-    const currentCategory = searchParams.get('category') ? searchParams.get('category') : 'sports'
+    const [currentCategory, setCurrentCategory] = useState()
     const { input, setParams, onInputChange, results } = useSearch()
     const context = { results, currentCategory, input }
+
+    useEffect(() => {
+        if (searchParams.get('category')) {
+            setCurrentCategory(searchParams.get('category'))
+        }
+        else {
+            setCurrentCategory('sports')
+        }
+    }, [searchParams])
 
     useEffect(() => {
         if (data) {
