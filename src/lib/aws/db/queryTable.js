@@ -9,57 +9,43 @@ export default async function queryTable(table, query, attributes = null, single
     let filterExpression = ''
     let expressionAttributeNames = {}
     let expressionAttributeValues = {}
-    if (query.constructor.name === 'String') {
-        let words = query.split(' ')
-        if (query.includes(ESCAPE_CHAR)) {
-            let indices = words.filter(w => w.includes(ESCAPE_CHAR) && w.split(ESCAPE_CHAR).length - 1 !== 2).map(w => words.indexOf(w))
-            for (let i = 0; i < indices.length; i = i + 2) {
-                let merged = ''
-                for (let j = 0; j < indices[i + 1] - indices[i] + 1; j++) {
-                    merged += ((j !== 0 ? ' ' : '') + words[j + indices[i]]).replace(ESCAPE_CHAR, '')
-                    words[j + indices[i]] = 'DELETE'
+    let words = getEscapedQuery(query)
+    let expected = 'attribute'
+    let next = ''
+    for (let i = 0; i < words.length; i++) {
+        switch (expected) {
+            case 'attribute':
+                const isReserved = words[i].split('.').some(w => reserved_keywords.includes(w))
+                filterExpression += ((i !== 0 ? ' ' : '') + (isReserved ? words[i].split('.').map(w => reserved_keywords.includes(w) ? '#' + w : w).join('.') : words[i])) + next
+                if (isReserved) {
+                    const reservedAttributes = filterExpression.split(' ')[i].split('.').filter(w => w.includes('#'))
+                    for (const reservedAttribute of reservedAttributes) {
+                        expressionAttributeNames[reservedAttribute] = reservedAttribute.replace('#', '')
+                    }
                 }
-                words[indices[i]] = merged
-            }
-            words = words.filter(w => w !== 'DELETE').map(w => w.replaceAll(ESCAPE_CHAR, ''))
-        }
-        let expected = 'attribute'
-        let next = ''
-        for (let i = 0; i < words.length; i++) {
-            switch (expected) {
-                case 'attribute':
-                    const isReserved = words[i].split('.').some(w => reserved_keywords.includes(w))
-                    filterExpression += ((i !== 0 ? ' ' : '') + (isReserved ? words[i].split('.').map(w => reserved_keywords.includes(w) ? '#' + w : w).join('.') : words[i])) + next
-                    if (isReserved) {
-                        const reservedAttributes = filterExpression.split(' ')[i].split('.').filter(w => w.includes('#'))
-                        for (const reservedAttribute of reservedAttributes) {
-                            expressionAttributeNames[reservedAttribute] = reservedAttribute.replace('#', '')
-                        }
-                    }
-                    expected = 'operator'
-                    break
-                case 'operator':
-                    filterExpression += ' ' + words[i]
-                    if (words[i] === 'contains') {
-                        filterExpression += '('
-                        let arr = filterExpression.split(' ')
-                        filterExpression = (arr.with(i,arr[i-1]).with(i-1,arr[i]).join(' ')) + ',' + next
-                        next = ')'
-                    }
-                    expected = 'value'
-                    break
-                case 'value':
-                    filterExpression += ' :' + letters[letterIndex] + next
-                    expressionAttributeValues[':' + letters[letterIndex]] = getValue(words[i]);letterIndex++
-                    expected = 'logic'
-                    break
-                case 'logic':
-                    filterExpression += ' ' + words[i] + next
-                    expected = 'attribute'
-                    break
-                default:
-                    break
-            }
+                expected = 'operator'
+                break
+            case 'operator':
+                filterExpression += ' ' + words[i]
+                if (words[i] === 'contains') {
+                    filterExpression += '('
+                    let arr = filterExpression.split(' ')
+                    filterExpression = (arr.with(i,arr[i-1]).with(i-1,arr[i]).join(' ')) + ',' + next
+                    next = ')'
+                }
+                expected = 'value'
+                break
+            case 'value':
+                filterExpression += ' :' + letters[letterIndex] + next
+                expressionAttributeValues[':' + letters[letterIndex]] = getValue(words[i]);letterIndex++
+                expected = 'logic'
+                break
+            case 'logic':
+                filterExpression += ' ' + words[i] + next
+                expected = 'attribute'
+                break
+            default:
+                break
         }
     }
     let params = {
@@ -93,6 +79,23 @@ export default async function queryTable(table, query, attributes = null, single
         return null
     } catch (err) {
         console.log('Error', err)
+    }
+
+    function getEscapedQuery(query) {
+        let words = query.split(' ')
+        if (query.includes(ESCAPE_CHAR)) {
+            let indices = words.filter(w => w.includes(ESCAPE_CHAR) && w.split(ESCAPE_CHAR).length - 1 !== 2).map(w => words.indexOf(w))
+            for (let i = 0; i < indices.length; i = i + 2) {
+                let merged = ''
+                for (let j = 0; j < indices[i + 1] - indices[i] + 1; j++) {
+                    merged += ((j !== 0 ? ' ' : '') + words[j + indices[i]]).replace(ESCAPE_CHAR, '')
+                    words[j + indices[i]] = 'DELETE'
+                }
+                words[indices[i]] = merged
+            }
+            words = words.filter(w => w !== 'DELETE').map(w => w.replaceAll(ESCAPE_CHAR, ''))
+        }
+        return words
     }
 
     function getValue(value) {
