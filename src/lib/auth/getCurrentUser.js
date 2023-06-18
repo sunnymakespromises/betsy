@@ -32,7 +32,11 @@ async function getCurrentUser(refresh_token, source) {
                 auth_source: source,
                 subscribers: [],
                 subscriptions: [],
-                favorites: [],
+                favorites: {
+                    sports: [],
+                    competitions: [],
+                    competitors: []
+                },
                 slips: [],
                 balance: 10.00,
                 is_locked: false
