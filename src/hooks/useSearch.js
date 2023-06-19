@@ -39,7 +39,6 @@ function useSearch() {
                 if (input !== '') {
                     if ((params?.space).length > 0) {
                         let fuse = new Fuse(params?.space, {
-                            minMatchCharLength: 3,
                             threshold: 0.3,
                             keys: params?.keys
                         })
@@ -57,7 +56,6 @@ function useSearch() {
                     if (input !== '') {
                         if ((params?.spaces[category]).length > 0) {
                             let fuse = new Fuse(params?.spaces[category], {
-                                minMatchCharLength: 3,
                                 threshold: 0.3,
                                 keys: params?.keys[category]
                             })
