@@ -1,6 +1,5 @@
 /** @type {import('tailwindcss').Config} */
 const defaultTheme = require('tailwindcss/defaultTheme')
-const { withAnimations } = require('animated-tailwindcss')
 
 module.exports = {
     darkMode: 'class',
