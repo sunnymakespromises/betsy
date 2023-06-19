@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 143.87 64.52">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #1a1a1a;
+      }
+
+      .cls-2 {
+        fill: #f2f2f2;
+        font-family: Inter-Black, Inter;
+        font-size: 46.1px;
+        font-variation-settings: 'wght' 900, 'slnt' 0;
+      }
+    </style>
+  </defs>
+  <g id="Layer_1-2" data-name="Layer 1">
+    <g>
+      <rect class="cls-1" x="0" y="0" width="143.87" height="64.52" rx="18.08" ry="18.08"/>
+      <text class="cls-2" transform="translate(18.51 48.54)"><tspan x="0" y="0">LIVE</tspan></text>
+    </g>
+  </g>
+</svg>
