@@ -30,12 +30,12 @@ function Root() {
     const [sm, md, lg] = useBreakpoints()
     const location = useLocation()
     const navigate = useNavigate()
-    const data = useData()
+    const { data, refreshData } = useData()
     const [searchParams, setSearchParams] = useSearchParams()
     const isDarkMode = useThemes()
     const [currentUser, refreshCurrentUser, login, logout] = useAuthorize()
     const windowContext = { sm, md, lg, isDarkMode, location, navigate, searchParams, setSearchParams }
-    const rootContext = { currentUser, refreshCurrentUser, data, login, logout }
+    const rootContext = { currentUser, refreshCurrentUser, data, refreshData, login, logout }
 
     return (
         <WindowProvider value = {windowContext}>
