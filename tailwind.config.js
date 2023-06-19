@@ -90,5 +90,6 @@ module.exports = {
     },
     plugins: [
         require('tailwindcss-animatecss'),
+        require("tailwind-gradient-mask-image")
     ],
 }
