@@ -30,7 +30,9 @@ export default async function queryTable(table, query, attributes = null, single
                 if (words[i] === 'contains') {
                     filterExpression += '('
                     let arr = filterExpression.split(' ')
-                    filterExpression = (arr.with(i,arr[i-1]).with(i-1,arr[i]).join(' ')) + ',' + next
+                    arr[i-1] = arr[i] + arr[i-1]
+                    arr.pop()
+                    filterExpression = arr.join(' ') + ',' + next
                     next = ')'
                 }
                 expected = 'value'
