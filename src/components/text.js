@@ -13,6 +13,7 @@ export default function Text({ preset = 'main', styles, classes, children, ...ex
         'button': 'whitespace-nowrap select-none font-main font-semibold text-lg md:text-2xl text-reverse-0 dark:text-base-0',
         'profile-error': 'whitespace-nowrap select-none cursor-default font-main font-semibold text-xs md:text-xs text-reverse-0 dark:text-base-0',
         'explore-result': 'whitespace-nowrap select-none font-main font-semibold text-2xl md:text-2xl text-reverse-0 dark:text-base-0',
+        'competitor': 'whitespace-nowrap select-none font-main font-semibold text-lg md:text-2xl text-reverse-0 dark:text-base-0'
     }
 
     const getOption = () => {
