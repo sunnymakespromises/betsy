@@ -44,11 +44,11 @@ module.exports = {
                 },
                 accent: {
                     0: '#597DEF',
-                    100: '#FCCD51'
+                    100: '#57F27B'
                 }
             },
             borderRadius: {
-                main: '2rem',
+                main: '1rem',
                 small: '1rem'
             },
             borderWidth: {
