@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
 import { useWindowContext } from '../contexts/window'
 import { ExploreProvider as Provider, useExploreContext } from '../contexts/explore'
-import { IconShirtSport, IconSoccerField, IconBallFootball, IconTrophy, IconUser, IconClockFilled } from '@tabler/icons-react'
+import { IconShirtSport, IconSoccerField, IconBallFootball, IconTrophy, IconClockFilled } from '@tabler/icons-react'
 import { useSearch } from '../hooks/useSearch'
 import Text from '../components/text'
 import Image from '../components/image'
@@ -33,10 +33,10 @@ export default function Explore() {
         if (data) {
             setParams({
                 filters: {},
-                limits: { sports: 10, competitions: 30, events: 30, competitors: 30, users: 20 },
-                categories: ['sports', 'competitions', 'events', 'competitors', 'users'],
+                limits: { sports: 10, competitions: 30, events: 30, competitors: 30 },
+                categories: ['sports', 'competitions', 'events', 'competitors'],
                 spaces: data,
-                keys: { sports: ['name'], competitions: ['name', 'sport.name'], events: ['name', 'competition.name', 'competitors.name', 'sport.name'], competitors: ['name', 'competitions.name', 'sport.name'], users: ['username', 'display_name'] },
+                keys: { sports: ['name'], competitions: ['name', 'sport.name'], events: ['name', 'competition.name', 'competitors.name', 'sport.name'], competitors: ['name', 'competitions.name', 'sport.name'] },
                 emptyOnInitial: false
             })
         }
@@ -65,8 +65,7 @@ function Categories() {
         sports: <IconBallFootball size = {sm ? 36 : 44} className = {'transition-all duration-main text-reverse-0 dark:text-base-0  group-hover:opacity-100 ' + (currentCategory === 'sports' ? 'opacity-100' : 'opacity-main')}/>,
         competitions: <IconTrophy size = {sm ? 36 : 44} className = {'transition-all duration-main text-reverse-0 dark:text-base-0  group-hover:opacity-100 ' + (currentCategory === 'competitions' ? 'opacity-100' : 'opacity-main')}/>,
         events: <IconSoccerField size = {sm ? 36 : 44} className = {'transition-all duration-main text-reverse-0 dark:text-base-0  group-hover:opacity-100 ' + (currentCategory === 'events' ? 'opacity-100' : 'opacity-main')}/>,
-        competitors: <IconShirtSport size = {sm ? 36 : 44} className = {'transition-all duration-main text-reverse-0 dark:text-base-0  group-hover:opacity-100 ' + (currentCategory === 'competitors' ? 'opacity-100' : 'opacity-main')}/>,
-        users: <IconUser size = {sm ? 36 : 44} className = {'transition-all duration-main text-reverse-0 dark:text-base-0  group-hover:opacity-100 ' + (currentCategory === 'users' ? 'opacity-100' : 'opacity-main')}/>
+        competitors: <IconShirtSport size = {sm ? 36 : 44} className = {'transition-all duration-main text-reverse-0 dark:text-base-0  group-hover:opacity-100 ' + (currentCategory === 'competitors' ? 'opacity-100' : 'opacity-main')}/>
     }
     return (
         <div id = 'explore-search-categories' className = 'flex w-full h-min'>
@@ -101,20 +100,20 @@ function Results({results}) {
 
     function Result({result}) {
         switch (currentCategory) {
-            case 'users':
-                return (
-                    <Link to = {'/user?id=' + result?.id} className = {'transition-all duration-main explore-search-' + currentCategory + '-result-container w-min h-min flex flex-row items-center gap-small origin-left hover:scale-main'}>
-                        <Image external path = {result?.picture} classes = {'explore-search-' + currentCategory + '-result-image h-10 md:h-10 aspect-square rounded-full'}/>
-                        <div className = {'explore-search-' + currentCategory + '-result-text-container flex flex-col'}>
-                            <Text classes = {'explore-search-' + currentCategory + '-result-text-display_name !text-2xl md:!text-2xl'}>
-                                {result?.display_name}
-                            </Text>
-                            <Text classes = {'explore-search-' + currentCategory + '-result-text-username !text-xl md:!text-lg !text-opacity-main -mt-tiny'}>
-                                {'@' + result?.username}
-                            </Text>
-                        </div>
-                    </Link>
-                )
+            // case 'users':
+            //     return (
+            //         <Link to = {'/user?id=' + result?.id} className = {'transition-all duration-main explore-search-' + currentCategory + '-result-container w-min h-min flex flex-row items-center gap-small origin-left hover:scale-main'}>
+            //             <Image external path = {result?.picture} classes = {'explore-search-' + currentCategory + '-result-image h-10 md:h-10 aspect-square rounded-full'}/>
+            //             <div className = {'explore-search-' + currentCategory + '-result-text-container flex flex-col'}>
+            //                 <Text classes = {'explore-search-' + currentCategory + '-result-text-display_name !text-2xl md:!text-2xl'}>
+            //                     {result?.display_name}
+            //                 </Text>
+            //                 <Text classes = {'explore-search-' + currentCategory + '-result-text-username !text-xl md:!text-lg !text-opacity-main -mt-tiny'}>
+            //                     {'@' + result?.username}
+            //                 </Text>
+            //             </div>
+            //         </Link>
+            //     )
             case 'sports':
                 return (
                     <Link to = {'/sport?id=' + result?.id} className = {'group transition-all duration-main explore-search-' + currentCategory + '-result-container w-min h-min flex flex-row items-center gap-small origin-left hover:scale-main'}>
