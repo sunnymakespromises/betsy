@@ -20,6 +20,7 @@ export default function Settings() {
                     <Setting title = 'Odds Format' inputKey = 'odds_format' options = {['American', 'Decimal']}/>
                     <Setting title = 'Currency' inputKey = 'currency' options = {['Dollars', 'Pounds', 'Euros']}/>
                     <Donate/>
+                    <Footer/>
                 </div>
             </Page>
         </Provider>
@@ -65,6 +66,27 @@ function Donate() {
                     </Text>
                 </Button>
             </Link>
+        </div>
+    )
+}
+
+function Footer() {
+    return (
+        <div id = 'footer-container' className = 'w-full flex flex-row items-center opacity-more-visible'>
+            <div id = 'footer-powered-by-container' className = 'grow flex flex-row justify-center items-baseline gap-tiny'>
+                <Text classes = '!text-sm md:!text-base text-center'>Powered by</Text>
+                <Link to = 'https://the-odds-api.com'>
+                    <Text classes = '!text-lg md:!text-xl'>
+                        The Odds API
+                    </Text>
+                </Link>
+                <Text classes = '!text-sm md:!text-base text-center'>and</Text>
+                <Link to = 'https://the-odds-api.com/'>
+                    <Text classes = '!text-lg md:!text-xl'>
+                        Fanduel
+                    </Text>
+                </Link>
+            </div>
         </div>
     )
 }
