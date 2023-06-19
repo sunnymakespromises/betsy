@@ -43,16 +43,16 @@ async function getData() {
         response.messages.competitions = 'no competitions found.'
     }
 
-    const events = await getTable('Events', ['id', 'name', 'competition', 'competitors', 'start_time', 'slip_count'])
+    const events = await getTable('Events', ['id', 'name', 'competition', 'competitors', 'sport', 'is_outright', 'start_time', 'slip_count'])
     if (events.length > 0) {
-        response.data.events = events.sort((a, b) => (a.start_time - b.start_time) || (a.slip_count - b.slip_count)).map(c => { return {...c, start_time: new Date(c.start_time * 1000).toLocaleString()} })
+        response.data.events = events.sort((a, b) => (a.start_time - b.start_time) || (a.slip_count - b.slip_count))
         response.statuses.events = true
     }
     else {
         response.messages.events = 'no events found.'
     }
 
-    const competitors = await getTable('Competitors', ['id', 'name', 'picture', 'competitions', 'slip_count'])
+    const competitors = await getTable('Competitors', ['id', 'name', 'picture', 'competitions', 'sport', 'slip_count'])
     if (competitors.length > 0) { 
         response.data.competitors = competitors.sort((a, b) => (a.name.localeCompare(b.name)) || (a.slip_count - b.slip_count))
         response.statuses.competitors = true
