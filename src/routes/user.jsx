@@ -412,7 +412,6 @@ function SubscriptionsModal() {
     const { searchSpace, setSearchSpace } = useUserContext()
     const { input, onInputChange, results, setParams } = useSearch()
     const ref = useRef(null)
-    const inputRef = useRef(input)
     useCancelDetector(ref, () => setSearchSpace(null))
     useEffect(() => {
         if (searchSpace) {
@@ -429,7 +428,7 @@ function SubscriptionsModal() {
     return (
         <div id = 'subscriptions-modal-container' className = {'absolute w-full h-full flex flex-col items-center justify-center animate__animated z-20'}>
             <div ref = {ref} id = 'subscriptions-modal' className = 'w-[80%] md:w-[60%] h-[90%] md:h-[80%] flex flex-col gap-small bg-reverse-0 dark:bg-base-0 rounded-main overflow-scroll p-8'>
-                <Input ref = {inputRef} id = 'subscriptions-modal-search-input' preset = 'search' classes = '!text-base-0 dark:!text-reverse-0 !text-2xl md:!text-3xl' status = {null} value = {input} onChange = {(e) => onInputChange(null, e.target.value, 'text')} placeholder = 'Search...' autoComplete = 'off' autoFocus/>
+                <Input id = 'subscriptions-modal-search-input' preset = 'search' classes = '!text-base-0 dark:!text-reverse-0 !text-2xl md:!text-3xl' status = {null} value = {input} onChange = {(e) => onInputChange(null, e.target.value, 'text')} placeholder = 'Search...' autoComplete = 'off' autoFocus/>
                 {results.length > 0 && results.map((result, index) => {
                     return (
                         <Result key = {index} user = {result}/>
