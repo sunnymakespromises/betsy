@@ -46,7 +46,8 @@ function useSearch() {
                     }
                 }
                 else {
-                    newResults = params?.emptyOnInitial ? [] : params?.space.slice(0, params?.limit)
+                    newResults = params?.emptyOnInitial ? [] : params?.space
+                    if (!params?.fullSpaceOnInitial) { newResults = newResults.slice(0, params?.limit) }
                 }
                 setResults([...newResults])
             }
@@ -63,7 +64,8 @@ function useSearch() {
                         }
                     }
                     else {
-                        newResults[category] = params?.emptyOnInitial ? [] : params?.spaces[category].slice(0, params?.limits[category])
+                        newResults[category] = params?.emptyOnInitial ? [] : params?.spaces[category]
+                        if (!params?.fullSpaceOnInitial) { newResults[category] = newResults[category].slice(0, params?.limits[category]) }
                     }
                 }
                 setResults({...newResults})
