@@ -50,13 +50,13 @@ export default function Dev() {
                         <Upload data = {results} category = 'Competitions'/>
                         <Preview/>
                     </div>
-                    <Button id = 'dev-initialize-button' onClick = {() => initializeApiData()} classes = 'group h-min w-min rounded-small md:rounded-main'>
+                    <Button id = 'dev-run-button' onClick = {() => onRun()} classes = 'group h-min w-min rounded-small md:rounded-main'>
                         <Conditional value = {isLoading}>
-                            <ImageComponent id = 'dev-initialize-button-loading' path = 'images/loading.gif' classes = 'h-6 aspect-square m-1 opacity-main'/>
+                            <ImageComponent id = 'dev-run-button-loading' path = 'images/loading.gif' classes = 'h-6 aspect-square m-1 opacity-main'/>
                         </Conditional>
                         <Conditional value = {!isLoading}>
-                            <Text preset = 'button' id = 'dev-initialize-text' classes = 'transition-all duration-main !opacity-main group-hover:!opacity-100'>
-                                Initialize DB
+                            <Text preset = 'button' id = 'dev-run-text' classes = 'transition-all duration-main !opacity-main group-hover:!opacity-100'>
+                                Run
                             </Text>
                         </Conditional>
                     </Button>
@@ -65,7 +65,7 @@ export default function Dev() {
         </Provider>
     )
 
-    async function onInitialize() {
+    async function onRun() {
         await execute(async () => {
             const { status, message } = await initializeApiData()
             if (status) {
