@@ -123,13 +123,13 @@ function Results({results}) {
                 )
             case 'competitions':
                 return (
-                    <Link to = {'/competition?id=' + result?.id} className = {'group explore-search-' + currentCategory + '-result-container w-min h-min flex flex-row items-center'}>
-                        {/* <Image external path = {result?.picture} classes = {'explore-search-' + currentCategory + '-result-image h-10 md:h-10 aspect-square rounded-full'}/> */}
+                    <Link to = {'/competition?id=' + result?.id} className = {'group explore-search-' + currentCategory + '-result-container w-min h-min flex flex-row items-center gap-small'}>
                         <div className = {'explore-search-' + currentCategory + '-result-text-container flex flex-col'}>
                             <Text preset = 'explore-result' classes = {'explore-search-' + currentCategory + '-result-text-display_name'}>
                                 {result?.name}
                             </Text>
                         </div>
+                        <Image external path = {result?.country?.picture} classes = {'explore-search-' + currentCategory + '-result-image h-4 w-6 rounded-sm'}/>
                     </Link>
                 )
             case 'competitors':
