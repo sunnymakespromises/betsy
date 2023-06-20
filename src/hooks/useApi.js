@@ -1,17 +1,17 @@
-import { initializeApiData as _initializeApiData } from '../lib/api/initializeApiData'
+import { executeEdgeFunctions as _executeEdgeFunctions } from '../lib/api/executeEdgeFunctions'
 import { uploadPicture as _uploadPicture } from '../lib/api/uploadPicture'
 
 
 function useApi() {
-    async function initializeApiData() {
-        return await _initializeApiData()
+    async function executeEdgeFunctions() {
+        return await _executeEdgeFunctions()
     }
 
     async function uploadPicture(category, object, value) {
         return await _uploadPicture(category, object, value)
     }
 
-    return { initializeApiData, uploadPicture }
+    return { executeEdgeFunctions, uploadPicture }
 }
 
 export { useApi }

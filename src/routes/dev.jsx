@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { Helmet } from 'react-helmet'
+import { IconPhotoCheck } from '@tabler/icons-react'
 import { useRootContext } from '../contexts/root'
 import { DevProvider as Provider, useDevContext } from '../contexts/dev'
 import { useSearch } from '../hooks/useSearch'
@@ -11,11 +12,10 @@ import Input from '../components/input'
 import Conditional from '../components/conditional'
 import { default as ImageComponent } from '../components/image'
 import { useLoading } from '../hooks/useLoading'
-import { IconPhotoCheck } from '@tabler/icons-react'
 
 export default function Dev() {
     const { data, refreshData } = useRootContext()
-    const { initializeApiData, uploadPicture } = useApi()
+    const { executeEdgeFunctions, uploadPicture } = useApi()
     const [isLoading, execute] = useLoading()
     const { input, setParams, onInputChange, results } = useSearch()
     const pictureInput = useRef(null)
@@ -67,7 +67,7 @@ export default function Dev() {
 
     async function onRun() {
         await execute(async () => {
-            const { status, message } = await initializeApiData()
+            const { status, message } = await executeEdgeFunctions('test')
             if (status) {
                 refreshData()
             }

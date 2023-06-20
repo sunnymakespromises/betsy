@@ -19,13 +19,16 @@ const SOLO_SPORTS = ['Boxing', 'Golf', 'Tennis']
 const MARKET_NAMES = { h2h: 'Moneyline', spreads: 'Points Spread', totals: 'Total Score', outrights: 'Outright Winner', alternate_spreads: 'Alternate Spreads', alternate_totals: 'Alternate Totals', draw_no_bet: 'Draw No Bet', player_pass_tds: 'Passing Touchdowns', player_pass_yds: 'Passing Yards', player_pass_completions: 'Pass Completions', player_pass_attempts: 'Pass Attempts', player_pass_interceptions: 'Interceptions', player_rush_yds: 'Rushing Yards', player_rush_attempts: 'Rush Attempts', player_receptions: 'Receptions', player_reception_yds: 'Reception Yards', player_points: 'Points', player_rebounds: 'Rebounds', player_assists: 'Assists', player_threes: 'Threes', player_double_double: 'Double Double?', player_blocks: 'Blocks', player_steals: 'Steals', player_turnovers: 'Turnovers' }
 const PRIORITY_LEVELS = { veryHigh: { timeUntil: 0, timeToNext: 300000 }, high: { timeUntil: 600000, timeToNext: 600000}, medium: { }, low: { }, veryLow: {}, none: {}}
 const LAZY = false
+const TESTING = true
 
-async function initializeApiData() {
+async function executeEdgeFunctions(priority) {
     const response = {
         status: true,
         message: ''
     }
     let log = {
+        id: short.generate(),
+        timestamp: Date.now(),
         sports: {
             reads: 0,
             writes: 0,
@@ -44,6 +47,7 @@ async function initializeApiData() {
             reads: 0,
             writes: 0,
             requests: 0,
+            requests_remaining: 0,
             time: '0m0s',
             changes: []
         },
@@ -51,6 +55,7 @@ async function initializeApiData() {
             reads: 0,
             writes: 0,
             requests: 0,
+            requests_remaining: 0,
             time: '0m0s',
             changes: []
         },
@@ -58,10 +63,11 @@ async function initializeApiData() {
             reads: 0,
             writes: 0,
             requests: 0,
+            requests_remaining: 0,
             time: '0m0s',
             changes: []
         },
-        test: {
+        tests: {
             reads: 0,
             writes: 0,
             requests: 0,
@@ -72,24 +78,45 @@ async function initializeApiData() {
             reads: 0,
             writes: 0,
             requests: 0,
+            requests_remaining: 0,
             time: '0m0s'
         }
     }
     const startTime = Date.now()
-    // console.log('started..')
-    // await updateSports(log)
-    // console.log('done with sports in ', log.sports.time + '.')
-    // await updateCompetitions(log)
-    // console.log('done with competitions in ', log.competitions.time + '.')
-    // await updateCompetitors(log)
-    // console.log('done with competitors in ', log.competitors.time + '.')
-    // await updateEvents(log)
-    // console.log('done with events in ', log.events.time + '.')
-    await sweepEvents(log)
-    // await test(log)
+    if (TESTING) { console.log('executing', priority, 'functions') }
+    switch (priority) {
+        case 'low':
+            await updateSports(log)
+            if (TESTING) { console.log('done with sports in ', log.sports.time + '.') }
+            break
+        case 'medium':
+            await updateCompetitions(log)
+            if (TESTING) { console.log('done with competitions in ', log.competitions.time + '.') }
+            await updateCompetitors(log)
+            if (TESTING) { console.log('done with competitors in ', log.competitors.time + '.') }
+            break
+        case 'high':
+            await updateEvents(log)
+            if (TESTING) { console.log('done with events in ', log.events.time + '.') }
+            break
+        case 'veryHigh':
+            await sweepEvents(log)
+            if (TESTING) { console.log('done with event sweeps in ', log.eventSweeps.time + '.') }
+            break
+        case 'restart':
+            break
+        case 'test':
+            await test(log)
+            if (TESTING) { console.log('done with tests in ', log.tests.time + '.') }
+            break
+        default:
+            break
+    }
+    
     log.totals.time = millisToMS(Date.now() - startTime)
-    console.log('done in', ((Date.now() - startTime) / 1000), 's.' )
-    downloadJSON(log, 'log_' + Date.now() + '.json')
+    if (TESTING) { console.log('done in', ((Date.now() - startTime) / 1000), 's.' ) }
+    if (TESTING) { downloadJSON(log, 'log_' + log.timestamp + '.json') }
+    else { await uploadLog(log) }
 
     return response
 }
@@ -177,7 +204,7 @@ async function updateCompetitions(log) {
 
 // every 3 days @ 12:02am
 async function updateCompetitors(log) {
-    let usage = { reads: 0, writes: 0, requests: 0, time: Date.now() }
+    let usage = { reads: 0, writes: 0, requests: 0, requests_remaining: 0, time: Date.now() }
     let events = await getEvents(usage, false, null)
     let changeWasMade = false
     for (let eventGroup of events) { // for each competitions' events
@@ -225,7 +252,7 @@ async function updateCompetitors(log) {
 
 // every day @ 12:10
 async function updateEvents(log) {
-    let usage = { reads: 0, writes: 0, requests: 0, time: Date.now() }
+    let usage = { reads: 0, writes: 0, requests: 0, requests_remaining: 0, time: Date.now() }
     let events = await getEvents(usage, true, null)
     let allCompetitors = await getTable('Competitors', ['id', 'name', 'picture']);usage.reads++
     let changeWasMade = false
@@ -278,7 +305,7 @@ async function updateOdds(log) {
 
 // every 15 minutes
 async function sweepEvents(log) {
-    let usage = { reads: 0, writes: 0, requests: 0, time: Date.now() }
+    let usage = { reads: 0, writes: 0, requests: 0, requests_remainaing: 0, time: Date.now() }
     let competitions = await queryTable('Competitions', 'is_active = true', null, false);usage.reads++
     for (const competition of competitions) {
         console.log('starting', competition.name)
@@ -327,6 +354,7 @@ async function getEvents(usage, allMarkets, specificCompetitions = null) {
                 newReqs = res.headers.get('x-requests-used') // get the current # of requests used
                 if (oldReqs) { reqSize = (newReqs - oldReqs); usage.requests += reqSize } // if we have access to the previous number of requests used (basically every time but the first iteration), set reqSize to the difference and add it to requests
                 oldReqs = newReqs // sets oldReqs to newReqs
+                usage.requestsRemaining = res.headers.get('x-requests-remaining')
                 if (res.status === 200) {
                     res = await res.json()
                     if (res.length > 0) { // if the competition actually has events in it
@@ -336,7 +364,7 @@ async function getEvents(usage, allMarkets, specificCompetitions = null) {
             })
         }
         usage.requests += reqSize // adds another reqSize for the first loop, because it doesn't get counted on the first time as we don't know the previous number of requests used.
-        downloadJSON(events, 'events.json') // download events as json to cache for later (testing only)
+        if (TESTING) { downloadJSON(events, 'events.json') } // download events as json to cache for later (testing only)
     }
     return events
 }
@@ -353,6 +381,7 @@ async function getScores(usage, competition) {
         await fetch(url, options)
         .then(async (res) => {
             usage.requests += res.headers.get('x-requests-used') // get the current # of requests used
+            usage.requestsRemaining = res.headers.get('x-requests-remaining')
             if (res.status === 200) {
                 res = await res.json()
                 if (res.length > 0) { // if the competition actually has events in it
@@ -360,7 +389,7 @@ async function getScores(usage, competition) {
                 }
             }
         })
-        downloadJSON(scores, 'scores_' + competition.key + '.json') // download events as json to cache for later (testing only)
+        if (TESTING) { downloadJSON(scores, 'scores_' + competition.key + '.json') } // download events as json to cache for later (testing only)
     }
     return scores
 }
@@ -369,10 +398,20 @@ function addUsage(totals, inner, usage) {
     inner.reads = usage.reads
     inner.writes = usage.writes
     inner.requests = usage.requests
+    if (usage.requests_remaining) {
+        inner.requests_remaining = usage.requests_remaining
+    }
     inner.time = millisToMS(Date.now() - usage.time)
     totals.reads += usage.reads
     totals.writes += usage.writes
     totals.requests += usage.requests
+    if (usage.requests_remaining) {
+        totals.requests_remaining = usage.requests_remaining
+    }
 }
 
-export { initializeApiData }
+async function uploadLog(log) {
+    await insertItem('Logs', log)
+}
+
+export { executeEdgeFunctions }
