@@ -3,40 +3,28 @@ import { Link } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
 import { useWindowContext } from '../contexts/window'
 import { ExploreProvider as Provider, useExploreContext } from '../contexts/explore'
-import { IconShirtSport, IconSoccerField, IconBallFootball, IconTrophy, IconClockFilled } from '@tabler/icons-react'
 import { useSearch } from '../hooks/useSearch'
 import Text from '../components/text'
 import Image from '../components/image'
 import Page from '../components/page'
 import Input from '../components/input'
-import Competitor from '../components/competitor'
+import { default as CompetitorComponent } from '../components/competitor'
 import Conditional from '../components/conditional'
 import { useRootContext } from '../contexts/root'
 
 export default function Explore() {
-    const { searchParams } = useWindowContext()
     const { data } = useRootContext()
-    const [currentCategory, setCurrentCategory] = useState()
     const { input, setParams, onInputChange, results } = useSearch()
-    const context = { results, currentCategory, input }
-
-    useEffect(() => {
-        if (searchParams.get('category')) {
-            setCurrentCategory(searchParams.get('category'))
-        }
-        else {
-            setCurrentCategory('sports')
-        }
-    }, [searchParams])
+    const context = {  }
 
     useEffect(() => {
         if (data) {
             setParams({
                 filters: {},
-                limits: { sports: 10, competitions: 30, events: 30, competitors: 30 },
-                categories: ['sports', 'competitions', 'events', 'competitors'],
+                limits: { sports: 10, competitions: 12, events: 30, competitors: 32 },
+                categories: ['events', 'competitions', 'competitors', 'sports' ],
                 spaces: data,
-                keys: { sports: ['name'], competitions: ['name', 'sport.name'], events: ['name', 'competition.name', 'competitors.name', 'sport.name'], competitors: ['name', 'competitions.name', 'sport.name'] },
+                keys: { sports: ['name'], competitions: ['name', 'sport.name', 'competitors.name'], events: ['name', 'competition.name', 'competitors.name', 'sport.name'], competitors: ['name', 'competitions.name', 'sport.name'] },
                 emptyOnInitial: false
             })
         }
@@ -48,58 +36,36 @@ export default function Explore() {
                 <div id = 'explore-page' className = 'w-full h-full flex flex-col gap-smaller'>
                     <Helmet><title>Users | Betsy</title></Helmet>
                     <Input id = 'explore-search-input' preset = 'search' status = {null} value = {input} onChange = {(e) => onInputChange(null, e.target.value, 'text')} placeholder = {'Search...'} autoComplete = 'off'/>
-                    <div id = 'explore-search-results' className = {'transition-all duration-main w-full h-full flex flex-col rounded-main backdrop-blur-main overflow-hidden gap-smaller'}>
-                        <Categories/>
-                        <Results results = {results[currentCategory]}/>
-                    </div>
+                    <Results results = {results}/>
                 </div>
             </Page>
         </Provider>
     )
 }
 
-function Categories() {
-    const { sm, searchParams, setSearchParams } = useWindowContext()
-    const { currentCategory } = useExploreContext()
-    const icons = { 
-        sports: <IconBallFootball size = {sm ? 36 : 44} className = {'transition-all duration-main text-reverse-0 dark:text-base-0  group-hover:opacity-100 ' + (currentCategory === 'sports' ? 'opacity-100' : 'opacity-main')}/>,
-        competitions: <IconTrophy size = {sm ? 36 : 44} className = {'transition-all duration-main text-reverse-0 dark:text-base-0  group-hover:opacity-100 ' + (currentCategory === 'competitions' ? 'opacity-100' : 'opacity-main')}/>,
-        events: <IconSoccerField size = {sm ? 36 : 44} className = {'transition-all duration-main text-reverse-0 dark:text-base-0  group-hover:opacity-100 ' + (currentCategory === 'events' ? 'opacity-100' : 'opacity-main')}/>,
-        competitors: <IconShirtSport size = {sm ? 36 : 44} className = {'transition-all duration-main text-reverse-0 dark:text-base-0  group-hover:opacity-100 ' + (currentCategory === 'competitors' ? 'opacity-100' : 'opacity-main')}/>
-    }
-    return (
-        <div id = 'explore-search-categories' className = 'flex w-full h-min'>
-            {Object.keys(icons).map((category, index) => {
-                return (
-                    <div key = {index} className = {'group explore-search-category-container w-full h-full flex justify-center cursor-pointer px-tiny pt-tiny'} onClick = {() => onChangeCategory(category)} >
-                        {icons[category]}
-                    </div>
-                )
-            })}
-        </div>
-    )
-
-    function onChangeCategory(category) {
-        setSearchParams({...Object.fromEntries([...searchParams]), category: category})
-    }
-}
-
 function Results({results}) {
-    const { sm } = useWindowContext()
-    const { currentCategory } = useExploreContext()
-
+    const { sm, isDarkMode } = useWindowContext()
     return (
-        <div className = {'explore-search-' + currentCategory + '-results w-full h-full flex flex-col gap-smaller px-small pb-small overflow-scroll'}>
-            {results?.map((result, index) => {
+        <div className = {'transition-all duration-main explore-search-results w-full h-full flex flex-col gap-smaller overflow-scroll md:gradient-mask-b-0 hover:md:gradient-mask-b-90 md:opacity-more-visible md:hover:opacity-100'}>
+            {results && Object.keys(results)?.map((resultCategory, resultCategoryIndex) => {
                 return (
-                    <Result key = {index} result = {result}/>
+                    results[resultCategory].map((result, resultIndex) => {
+                        return (
+                            <React.Fragment key = {resultIndex}>
+                                <div className = 'transition-all duration-main w-min h-min'>
+                                    <Result category = {resultCategory} result = {result}/>
+                                </div>
+                                {/* <div className = 'w-full border opacity-faint'/> */}
+                            </React.Fragment>
+                        )
+                    })
                 )
             })}
         </div>
     )
 
-    function Result({result}) {
-        switch (currentCategory) {
+    function Result({ category, result, ...extras }) {
+        switch (category) {
             // case 'users':
             //     return (
             //         <Link to = {'/user?id=' + result?.id} className = {'transition-all duration-main explore-search-' + currentCategory + '-result-container w-min h-min flex flex-row items-center gap-small origin-left hover:scale-main'}>
@@ -116,9 +82,9 @@ function Results({results}) {
             //     )
             case 'sports':
                 return (
-                    <Link to = {'/sport?id=' + result?.id} className = {'group transition-all duration-main explore-search-' + currentCategory + '-result-container w-min h-min flex flex-row items-center gap-small origin-left hover:scale-main'}>
+                    <Link to = {'/sport?id=' + result?.id} className = {'explore-search-' + category + '-result-container w-min h-min flex flex-row items-center gap-small'} {...extras}>
                         {/* <Image external path = {result?.picture} classes = {'explore-search-' + currentCategory + '-result-image h-10 md:h-10 aspect-square rounded-full'}/> */}
-                        <Text preset = 'explore-result' classes = {'transition-all duration-main explore-search-' + currentCategory + '-result-text-display_name'}>
+                        <Text preset = 'explore-result' classes = {'explore-search-' + category + '-result-text-display_name'}>
                             {result?.name}
                         </Text>
                     </Link>
@@ -129,14 +95,7 @@ function Results({results}) {
                 )
             case 'competitors':
                 return (
-                    <Link to = {'/competitors?id=' + result?.id} className = {'group transition-all duration-main explore-search-' + currentCategory + '-result-container w-min h-min flex flex-row items-center gap-small origin-left hover:scale-main'}>
-                        {/* <Image external path = {result?.picture} classes = {'explore-search-' + currentCategory + '-result-image h-10 md:h-10 aspect-square rounded-full'}/> */}
-                        <div className = {'explore-search-' + currentCategory + '-result-text-container flex flex-col'}>
-                            <Text preset = 'explore-result' classes = {'explore-search-' + currentCategory + '-result-text-display_name'}>
-                                {result?.name}
-                            </Text>
-                        </div>
-                    </Link>
+                    <Competitor/>
                 )
             case 'events':
                 return (
@@ -148,56 +107,79 @@ function Results({results}) {
                 )
         }
 
-        function Competition() {
+        function Competitor() {
             return (
-                <Link to = {'/competition?id=' + result?.id} className = {'group transition-all duration-main explore-search-' + currentCategory + '-result-container relative w-min h-min flex flex-row items-center gap-small origin-left hover:scale-main'}>
-                    <div className = {'explore-search-' + currentCategory + '-result-text-container flex flex-col'}>
-                        <Text preset = 'explore-result' classes = {'explore-search-' + currentCategory + '-result-text-display_name'}>
+                <Link to = {'/competitors?id=' + result?.id} className = {'group transition-all duration-main explore-search-' + category + '-result-container w-min h-min flex flex-col'} {...extras}>
+                    {/* <Image external path = {result?.picture} classes = {'explore-search-' + currentCategory + '-result-image h-10 md:h-10 aspect-square rounded-full'}/> */}
+                    <Text preset = 'explore-result-subtitle'>
+                        {result?.sport.name}
+                    </Text>
+                    <div className = {'explore-search-' + category + '-result-text-container flex flex-row'}>
+                        <Text preset = 'explore-result' classes = {'explore-search-' + category + '-result-text-display_name'}>
                             {result?.name}
                         </Text>
                     </div>
-                    <Image external path = {result?.country?.picture} mode = 'cover' classes = {'explore-search-' + currentCategory + '-result-image h-4 w-6 rounded-sm'}/>
+                </Link>
+            )
+        }
+
+        function Competition() {
+            return (
+                <Link to = {'/competition?id=' + result?.id} className = {'group transition-all duration-main explore-search-' + category + '-result-container relative w-min h-min flex flex-col'} {...extras}>
+                    <Text preset = 'explore-result-subtitle'>
+                        {result?.sport.name}
+                    </Text>
+                    <div className = {'explore-search-' + category + '-result-text-container flex flex-row items-baseline gap-small'}>
+                        <Text preset = 'explore-result' classes = {'explore-search-' + category + '-result-text-display_name'}>
+                            {result?.name}
+                        </Text>
+                        <Image external path = {result?.country?.picture} mode = 'cover' classes = {'explore-search-' + category + '-result-image h-4 w-6 rounded-sm'}/>
+                    </div>
                 </Link>
             )
         }
 
         function Event() {
+            const isLive = (result?.start_time * 1000) < Date.now()
+
             return (
-                <Link to = {'/events?id=' + result?.id} className = {'group transition-all duration-main explore-search-' + currentCategory + '-result-container w-min h-min flex flex-row gap-small origin-left hover:scale-main'}>
-                        {/* <Image external path = {result?.picture} classes = {'explore-search-' + currentCategory + '-result-image h-10 md:h-10 aspect-square rounded-full'}/> */}
-                        <div className = {'explore-search-' + currentCategory + '-result-text-container flex flex-col'}>
-                            <Conditional value = {result?.is_outright}>
-                                <div className = {'expore-result-' + currentCategory + '-result-text-name w-min h-min flex flex-row items-center gap-small'}>
-                                    <Conditional value = {(result?.start_time * 1000) < Date.now()}>
-                                        <IconClockFilled size = {sm ? 18 : 22} className = 'transition-all duration-main text-reverse-0 dark:text-base-0 opacity-90'/>
-                                    </Conditional>
-                                    <Text preset = 'competitor' classes = {'explore-search-' + currentCategory + '-result-text-name'}>
-                                        {result?.name}
-                                    </Text>
-                                </div>
-                            </Conditional>
-                            <Conditional value = {!(result?.is_outright)}>
-                                <div className = {'expore-result-' + currentCategory + '-result-text-competitor-name w-min h-min flex flex-row items-center gap-small'}>
-                                    <Conditional value = {(result?.start_time * 1000) < Date.now()}>
-                                        <IconClockFilled size = {sm ? 18 : 22} className = 'transition-all duration-main text-reverse-0 dark:text-base-0 opacity-90'/>
-                                    </Conditional>
-                                    {result?.competitors?.map((competitor, index) => {
-                                        return (
-                                            <React.Fragment key = {index}>
-                                                <Competitor competitor = {competitor}/>
-                                                <Conditional value = {index !== result?.competitors.length - 1}>
-                                                    <Text preset = 'competitor' classes = '!text-opacity-main'>{result?.name.split(' ').find(w => w === '@' || w === 'v')}</Text>
-                                                </Conditional>
-                                            </React.Fragment>
-                                        )
-                                    })}
-                                </div>
-                            </Conditional>
-                            <Text classes = 'whitespace-nowrap !text-base md:!text-base !text-opacity-main'>
-                                {new Date(result?.start_time * 1000).toLocaleString('en-US', {month: 'long', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit'})}
-                            </Text>
-                        </div>
-                    </Link>
+                <Link to = {'/events?id=' + result?.id} className = {'group transition-all duration-main explore-search-' + category + '-result-container w-min h-min flex flex-row'} {...extras}>
+                    <div className = {'explore-search-' + category + '-result-text-container flex flex-col'}>
+                        <Text preset = 'explore-result-subtitle'>
+                            {result?.sport?.name + ' - ' + result?.competition?.name}
+                        </Text>
+                        <Conditional value = {result?.is_outright}>
+                            <div className = {'expore-result-' + category + '-result-text-name w-min h-min flex flex-row items-center gap-tiny'}>
+                                <Text preset = 'competitor' classes = {'explore-search-' + category + '-result-text-name'}>
+                                    {result?.name}
+                                </Text>
+                                <Conditional value = {isLive}>
+                                    <Image path = {'images/' + (isDarkMode ? 'dark' : 'light') + '/live.svg'} classes = 'h-3 ml-1 aspect-square'/>
+                                </Conditional>
+                            </div>
+                        </Conditional>
+                        <Conditional value = {!(result?.is_outright)}>
+                            <div className = {'expore-result-' + category + '-result-text-competitor-name w-min h-min flex flex-row items-center gap-tiny'}>
+                                {result?.competitors?.map((competitor, index) => {
+                                    return (
+                                        <React.Fragment key = {index}>
+                                            <CompetitorComponent competitor = {competitor}/>
+                                            <Conditional value = {index !== result?.competitors.length - 1}>
+                                                <Text preset = 'competitor' classes = '!text-opacity-main !text-lg md:!text-lg !no-underline'>{result?.name.split(' ').find(w => w === '@' || w === 'v')}</Text>
+                                            </Conditional>
+                                        </React.Fragment>
+                                    )
+                                })}
+                                <Conditional value = {isLive}>
+                                    <Image path = {'images/' + (isDarkMode ? 'dark' : 'light') + '/live.svg'} classes = 'h-3 ml-1 aspect-square'/>
+                                </Conditional>
+                            </div>
+                        </Conditional>
+                        <Text preset = 'explore-result-subtitle'>
+                            {new Date(result?.start_time * 1000).toLocaleString('en-US', {month: 'long', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit'}).replace('at', '-')}
+                        </Text>
+                    </div>
+                </Link>
             )
         }
     }
