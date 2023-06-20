@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
 import { useWindowContext } from '../contexts/window'
@@ -15,16 +15,16 @@ import { useRootContext } from '../contexts/root'
 export default function Explore() {
     const { data } = useRootContext()
     const { input, setParams, onInputChange, results } = useSearch()
-    const context = {  }
+    const context = { results  }
 
     useEffect(() => {
         if (data) {
             setParams({
                 filters: {},
-                limits: { sports: 10, competitions: 12, events: 30, competitors: 32 },
-                categories: ['events', 'competitions', 'competitors', 'sports' ],
+                limits: { events: 30, competitions: 12, competitors: 32 },
+                categories: ['events', 'competitions', 'competitors' ],
                 spaces: data,
-                keys: { sports: ['name'], competitions: ['name', 'sport.name', 'competitors.name'], events: ['name', 'competition.name', 'competitors.name', 'sport.name'], competitors: ['name', 'competitions.name', 'sport.name'] },
+                keys: { events: ['name', 'competition.name', 'competitors.name', 'sport.name'], competitions: ['name', 'sport.name', 'competitors.name'], competitors: ['name', 'competitions.name', 'sport.name'] },
                 emptyOnInitial: false
             })
         }
@@ -36,15 +36,16 @@ export default function Explore() {
                 <div id = 'explore-page' className = 'w-full h-full flex flex-col gap-smaller'>
                     <Helmet><title>Users | Betsy</title></Helmet>
                     <Input id = 'explore-search-input' preset = 'search' status = {null} value = {input} onChange = {(e) => onInputChange(null, e.target.value, 'text')} placeholder = {'Search...'} autoComplete = 'off'/>
-                    <Results results = {results}/>
+                    <Results/>
                 </div>
             </Page>
         </Provider>
     )
 }
 
-function Results({results}) {
-    const { sm, isDarkMode } = useWindowContext()
+function Results() {
+    const { results } = useExploreContext()
+    const { isDarkMode } = useWindowContext()
     return (
         <div className = {'transition-all duration-main explore-search-results w-full h-full flex flex-col gap-smaller overflow-scroll md:gradient-mask-b-0 hover:md:gradient-mask-b-90 md:opacity-more-visible md:hover:opacity-100'}>
             {results && Object.keys(results)?.map((resultCategory, resultCategoryIndex) => {
@@ -55,7 +56,6 @@ function Results({results}) {
                                 <div className = 'transition-all duration-main w-min h-min'>
                                     <Result category = {resultCategory} result = {result}/>
                                 </div>
-                                {/* <div className = 'w-full border opacity-faint'/> */}
                             </React.Fragment>
                         )
                     })
@@ -66,29 +66,6 @@ function Results({results}) {
 
     function Result({ category, result, ...extras }) {
         switch (category) {
-            // case 'users':
-            //     return (
-            //         <Link to = {'/user?id=' + result?.id} className = {'transition-all duration-main explore-search-' + currentCategory + '-result-container w-min h-min flex flex-row items-center gap-small origin-left hover:scale-main'}>
-            //             <Image external path = {result?.picture} classes = {'explore-search-' + currentCategory + '-result-image h-10 md:h-10 aspect-square rounded-full'}/>
-            //             <div className = {'explore-search-' + currentCategory + '-result-text-container flex flex-col'}>
-            //                 <Text classes = {'explore-search-' + currentCategory + '-result-text-display_name !text-2xl md:!text-2xl'}>
-            //                     {result?.display_name}
-            //                 </Text>
-            //                 <Text classes = {'explore-search-' + currentCategory + '-result-text-username !text-xl md:!text-lg !text-opacity-main -mt-tiny'}>
-            //                     {'@' + result?.username}
-            //                 </Text>
-            //             </div>
-            //         </Link>
-            //     )
-            case 'sports':
-                return (
-                    <Link to = {'/sport?id=' + result?.id} className = {'explore-search-' + category + '-result-container w-min h-min flex flex-row items-center gap-small'} {...extras}>
-                        {/* <Image external path = {result?.picture} classes = {'explore-search-' + currentCategory + '-result-image h-10 md:h-10 aspect-square rounded-full'}/> */}
-                        <Text preset = 'explore-result' classes = {'explore-search-' + category + '-result-text-display_name'}>
-                            {result?.name}
-                        </Text>
-                    </Link>
-                )
             case 'competitions':
                 return (
                     <Competition/>
