@@ -25,16 +25,16 @@ async function getData() {
         }
     }
 
-    const sports = await getTable('Sports', ['id', 'name', 'picture', 'slip_count'])
+    const sports = await getTable('Sports', ['id', 'name'])
     if (sports.length > 0) {
-        response.data.sports = sports.sort((a, b) => (a.name.localeCompare(b.name)) || (a.slip_count - b.slip_count))
+        response.data.sports = sports.sort((a, b) => (a.name.localeCompare(b.name)))
         response.statuses.sports = true
     }
     else {
         response.messages.sports = 'no sports found.'
     }
 
-    const competitions = await getTable('Competitions', ['id', 'name', 'picture', 'sport', 'country', 'slip_count'])
+    const competitions = await getTable('Competitions', ['id', 'name', 'picture', 'sport', 'country', 'competitors', 'slip_count'])
     if (competitions.length > 0) {
         response.data.competitions = competitions.sort((a, b) => (a.name.localeCompare(b.name)) || (a.slip_count - b.slip_count))
         response.statuses.competitions = true
