@@ -1,4 +1,5 @@
 export default function calculateCurrency(currency, amount, shortened) {
+    currency = currency ? currency : 'Dollars'
     const formats = {
         Dollars: {
             locale: 'en-US',
