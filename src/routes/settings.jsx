@@ -81,7 +81,7 @@ function Footer() {
                     </Text>
                 </Link>
                 <Text classes = '!text-sm md:!text-base text-center'>and</Text>
-                <Link to = 'https://the-odds-api.com/'>
+                <Link to = 'https://fanduel.com/'>
                     <Text classes = '!text-lg md:!text-xl'>
                         Fanduel
                     </Text>
