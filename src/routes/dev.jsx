@@ -32,7 +32,7 @@ export default function Dev() {
                 filters: {},
                 limit: 30,
                 space: data.competitions.concat(data.competitors).sort((a, b) => (a.name.localeCompare(b.name))),
-                keys: ['name'],
+                keys: ['name', 'competitions.name', 'sport.name'],
                 emptyOnInitial: false,
                 fullSpaceOnInitial: true
             })
