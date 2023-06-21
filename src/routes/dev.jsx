@@ -15,7 +15,7 @@ import { useLoading } from '../hooks/useLoading'
 
 export default function Dev() {
     const { data, refreshData } = useRootContext()
-    const { executeEdgeFunctions, uploadPicture } = useApi()
+    const { uploadPicture } = useApi()
     const [isLoading, execute] = useLoading()
     const { input, setParams, onInputChange, results } = useSearch()
     const pictureInput = useRef(null)
@@ -67,13 +67,7 @@ export default function Dev() {
 
     async function onRun() {
         await execute(async () => {
-            const { status, message } = await executeEdgeFunctions('test')
-            if (status) {
-                refreshData()
-            }
-            else {
-                console.log(message)
-            }
+            
         })
     }
 
