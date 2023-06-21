@@ -56,7 +56,7 @@ function Results() {
     const { sortedResults } = useExploreContext()
     const { isDarkMode } = useWindowContext()
     return (
-        <div className = {'transition-all duration-main explore-search-results w-full h-full flex flex-col gap-smaller overflow-scroll md:gradient-mask-b-0 hover:md:gradient-mask-b-90 md:opacity-more-visible md:hover:opacity-100'}>
+        <div className = 'transition-all duration-main explore-search-results w-full h-full flex flex-col gap-smaller overflow-scroll md:gradient-mask-b-0 hover:md:gradient-mask-b-90 md:opacity-more-visible md:hover:opacity-100'>
             {sortedResults.length > 0 && sortedResults.map((result, resultIndex) => {
                 return (
                     <React.Fragment key = {resultIndex}>
@@ -91,13 +91,13 @@ function Results() {
 
         function Competitor() {
             return (
-                <Link to = {'/competitors?id=' + result?.id} className = {'group transition-all duration-main explore-search-' + category + '-result-container w-min h-min flex flex-col'} {...extras}>
+                <Link to = {'/competitors?id=' + result?.id} className = 'group transition-all duration-main explore-search-competitor-result-container w-min h-min flex flex-col' {...extras}>
                     {/* <Image external path = {result?.picture} classes = {'explore-search-' + currentCategory + '-result-image h-10 md:h-10 aspect-square rounded-full'}/> */}
                     <Text preset = 'explore-result-subtitle'>
                         {result?.sport.name}
                     </Text>
-                    <div className = {'explore-search-' + category + '-result-text-container flex flex-row'}>
-                        <Text preset = 'explore-result' classes = {'explore-search-' + category + '-result-text-display_name'}>
+                    <div className = 'explore-search-competitor-result-text-container flex flex-row'>
+                        <Text preset = 'explore-result' classes = 'explore-search-competitor-result-text-display_name'>
                             {result?.name}
                         </Text>
                     </div>
@@ -107,15 +107,15 @@ function Results() {
 
         function Competition() {
             return (
-                <Link to = {'/competition?id=' + result?.id} className = {'group transition-all duration-main explore-search-' + category + '-result-container relative w-min h-min flex flex-col'} {...extras}>
+                <Link to = {'/competition?id=' + result?.id} className = 'group transition-all duration-main explore-search-competition-result-container relative w-min h-min flex flex-col' {...extras}>
                     <Text preset = 'explore-result-subtitle'>
                         {result?.sport.name}
                     </Text>
-                    <div className = {'explore-search-' + category + '-result-text-container flex flex-row items-baseline gap-small'}>
-                        <Text preset = 'explore-result' classes = {'explore-search-' + category + '-result-text-display_name'}>
+                    <div className = 'explore-search-competition-result-text-container flex flex-row items-baseline gap-small'>
+                        <Text preset = 'explore-result' classes = 'explore-search-competition-result-text-display_name'>
                             {result?.name}
                         </Text>
-                        <Image external path = {result?.country?.picture} mode = 'cover' classes = {'explore-search-' + category + '-result-image h-4 w-6 rounded-sm'}/>
+                        <Image external path = {result?.country?.picture} mode = 'cover' classes = 'explore-search-competition-result-image h-4 w-6 rounded-sm'/>
                     </div>
                 </Link>
             )
@@ -125,14 +125,14 @@ function Results() {
             const isLive = (result?.start_time * 1000) < Date.now()
 
             return (
-                <Link to = {'/events?id=' + result?.id} className = {'group transition-all duration-main explore-search-' + category + '-result-container w-min h-min flex flex-row'} {...extras}>
-                    <div className = {'explore-search-' + category + '-result-text-container flex flex-col'}>
+                <Link to = {'/events?id=' + result?.id} className = 'group transition-all duration-main explore-search-event-result-container w-min h-min flex flex-row' {...extras}>
+                    <div className = 'explore-search-event-result-text-container flex flex-col'>
                         <Text preset = 'explore-result-subtitle'>
                             {result?.sport?.name + ' - ' + result?.competition?.name}
                         </Text>
                         <Conditional value = {result?.is_outright}>
-                            <div className = {'expore-result-' + category + '-result-text-name w-min h-min flex flex-row items-center gap-tiny'}>
-                                <Text preset = 'competitor' classes = {'explore-search-' + category + '-result-text-name'}>
+                            <div className = 'expore-result-event-result-text-name w-min h-min flex flex-row items-center gap-tiny'>
+                                <Text preset = 'competitor' classes = 'explore-search-event-result-text-name'>
                                     {result?.name}
                                 </Text>
                                 <Conditional value = {isLive}>
@@ -141,7 +141,7 @@ function Results() {
                             </div>
                         </Conditional>
                         <Conditional value = {!(result?.is_outright)}>
-                            <div className = {'expore-result-' + category + '-result-text-competitor-name w-min h-min flex flex-row items-center gap-tiny'}>
+                            <div className = 'expore-result-event-result-text-competitor-name w-min h-min flex flex-row items-center gap-tiny'>
                                 {result?.name?.replace(' @ ', 'SPLIT')?.replace(' v ', 'SPLIT').split('SPLIT')?.map((competitor, index) => {
                                     return (
                                         <React.Fragment key = {index}>
