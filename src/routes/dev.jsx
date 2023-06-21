@@ -14,7 +14,7 @@ import { default as ImageComponent } from '../components/image'
 import { useLoading } from '../hooks/useLoading'
 
 export default function Dev() {
-    const { data, refreshData } = useRootContext()
+    const { currentUser, data, refreshData } = useRootContext()
     const { uploadPicture } = useApi()
     const [isLoading, execute] = useLoading()
     const { input, setParams, onInputChange, results } = useSearch()
@@ -39,30 +39,36 @@ export default function Dev() {
         }
     }, [data])
 
+    useEffect(() => {
+
+    }, [])
+
     return (
-        <Provider value = {context}>
-            <Page>
-                <div id = 'dev-page' className = 'w-full h-full flex flex-col gap-main'>
-                    <Helmet><title>Dev | Betsy</title></Helmet>
-                    <Input id = 'dev-data-items-search' preset = 'search' classes = 'h-min !text-2xl md:!text-3xl' status = {null} value = {input} onChange = {(e) => onInputChange(null, e.target.value, 'text')} placeholder = 'Search...' autoComplete = 'off' autoFocus/>
-                    <div id = 'dev-data-items-search-container' className = 'w-full h-full flex flex-row gap-small overflow-hidden'>
-                        <input id = 'dev-data-items-search-input' style = {{ display: 'none' }} type = 'file' onChange = {(e) => onUpload(e)} ref = {pictureInput} accept = '.jpg, .jpeg, .png, .gif, .webp'/>
-                        <Upload data = {results} category = 'Competitions'/>
-                        <Preview/>
+        <Conditional value = {currentUser?.is_admin}>
+            <Provider value = {context}>
+                <Page>
+                    <div id = 'dev-page' className = 'w-full h-full flex flex-col gap-main'>
+                        <Helmet><title>Dev | Betsy</title></Helmet>
+                        <Input id = 'dev-data-items-search' preset = 'search' classes = 'h-min !text-2xl md:!text-3xl' status = {null} value = {input} onChange = {(e) => onInputChange(null, e.target.value, 'text')} placeholder = 'Search...' autoComplete = 'off' autoFocus/>
+                        <div id = 'dev-data-items-search-container' className = 'w-full h-full flex flex-row gap-small overflow-hidden'>
+                            <input id = 'dev-data-items-search-input' style = {{ display: 'none' }} type = 'file' onChange = {(e) => onUpload(e)} ref = {pictureInput} accept = '.jpg, .jpeg, .png, .gif, .webp'/>
+                            <Upload data = {results} category = 'Competitions'/>
+                            <Preview/>
+                        </div>
+                        <Button id = 'dev-run-button' onClick = {() => onRun()} classes = 'group h-min w-min rounded-small md:rounded-main'>
+                            <Conditional value = {isLoading}>
+                                <ImageComponent id = 'dev-run-button-loading' path = 'images/loading.gif' classes = 'h-6 aspect-square m-1 opacity-main'/>
+                            </Conditional>
+                            <Conditional value = {!isLoading}>
+                                <Text preset = 'button' id = 'dev-run-text' classes = 'transition-all duration-main !opacity-main group-hover:!opacity-100'>
+                                    Run
+                                </Text>
+                            </Conditional>
+                        </Button>
                     </div>
-                    <Button id = 'dev-run-button' onClick = {() => onRun()} classes = 'group h-min w-min rounded-small md:rounded-main'>
-                        <Conditional value = {isLoading}>
-                            <ImageComponent id = 'dev-run-button-loading' path = 'images/loading.gif' classes = 'h-6 aspect-square m-1 opacity-main'/>
-                        </Conditional>
-                        <Conditional value = {!isLoading}>
-                            <Text preset = 'button' id = 'dev-run-text' classes = 'transition-all duration-main !opacity-main group-hover:!opacity-100'>
-                                Run
-                            </Text>
-                        </Conditional>
-                    </Button>
-                </div>
-            </Page>
-        </Provider>
+                </Page>
+            </Provider>
+        </Conditional>
     )
 
     async function onRun() {

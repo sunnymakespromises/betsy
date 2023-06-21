@@ -71,8 +71,7 @@ const pages = [
         title: 'Dev',
         element: <Dev/>,
         navigation: {
-            show: true,
-            index: 1
+            show: false
         }
     }
 ]
