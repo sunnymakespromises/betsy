@@ -17,7 +17,7 @@ export default function Login() {
                 <Helmet><title>Login | Betsy</title></Helmet>
                 <div id = 'login-container' className='w-min h-min flex flex-col gap-smaller'>
                     <div id = 'login-intro' className = 'w-min h-min flex flex-col items-center'>
-                        <Image path = {'images/' + (isDarkMode ? 'dark' : 'light') + '/logo-beta.svg'} classes = 'w-48 md:w-48 mb-tiny aspect-[1.16] animate__animated !animate__slow hover:animate__tada'/>
+                        <Image path = {'images/' + (isDarkMode ? 'dark' : 'light') + '/logo.svg'} classes = 'w-48 md:w-48 mb-tiny aspect-[1.16] animate__animated !animate__slow hover:animate__tada'/>
                         <Text classes = '!text-xl md:!text-3xl !font-black text-center'>
                             Betsy
                         </Text>
