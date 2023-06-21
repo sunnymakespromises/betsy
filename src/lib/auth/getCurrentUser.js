@@ -30,6 +30,10 @@ async function getCurrentUser(refresh_token, source) {
                 picture: authUser.picture,
                 auth_id: authUser.id,
                 auth_source: source,
+                notifications: [{ category: 'test', timestamp: Date.now(), title: 'Welcome to Betsy10!', message: 'This is a test notification!' }],
+                settings: {
+                    notifications: 'Off'
+                },
                 subscribers: [],
                 subscriptions: [],
                 favorites: {
