@@ -416,11 +416,10 @@ function SubscriptionsModal() {
     useEffect(() => {
         if (searchSpace) {
             setParams({
-                filters: {},
-                limit: 10,
+                limit: null,
                 space: searchSpace,
                 keys: ['username', 'display_name'],
-                emptyOnInitial: false
+                minimumLength: 3
             })
         }
     }, [searchSpace])
@@ -439,14 +438,15 @@ function SubscriptionsModal() {
     )
 
     function Result({user}) {
+        let id = 'subscription-modal-' + user.username + '-'
         return (
-            <Link to = {'/user?id=' + user.id} className = {'transition-all duration-main subscription-modal-' + user.username + '-container w-min h-min flex flex-row items-center gap-small origin-left hover:scale-main'} onClick = {() => setSearchSpace(null)}>
-                <Image external path = {user.picture} classes = {'subscription-modal-' + user.username + '-image h-10 md:h-10 aspect-square rounded-full'}/>
-                <div className = {'subscription-modal-' + user.username + '-text-container flex flex-col'}>
-                    <Text classes = {'subscription-modal-' + user.username + '-text-display_name !text-base-0 dark:!text-reverse-0 !text-2xl md:!text-2xl'}>
+            <Link to = {'/user?id=' + user.id} id = {id + 'container'} className = 'transition-all duration-main w-min h-min flex flex-row items-center gap-small origin-left hover:scale-main' onClick = {() => setSearchSpace(null)}>
+                <Image external path = {user.picture} id = {id + 'image'} classes = 'h-10 md:h-10 aspect-square rounded-full'/>
+                <div id = {id + 'text-container'} className = 'flex flex-col'>
+                    <Text id = {id + 'text-display_name'} classes = '!text-base-0 dark:!text-reverse-0 !text-2xl md:!text-2xl'>
                         {user.display_name}
                     </Text>
-                    <Text classes = {'subscription-modal-' + user.username + '-text-username !text-base-0 dark:!text-reverse-0 !text-xl md:!text-lg !text-opacity-main -mt-tiny'}>
+                    <Text id = {id + 'text-username'} classes = '!text-base-0 dark:!text-reverse-0 !text-xl md:!text-lg !text-opacity-main -mt-tiny'>
                         {'@' + user.username}
                     </Text>
                 </div>

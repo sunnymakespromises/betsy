@@ -37,10 +37,11 @@ function Setting({title, inputKey, options, children}) {
             <Conditional value = {!children}>
                 <div id = {'settings-setting-' + title} className = 'flex flex-col gap-tiny'>
                     {options && options.map((option, index) => {
+                        let id = 'settings-setting-' + title + '-' + option + '-'
                         return (
-                            <div key = {index} id = {'settings-setting-' + title + '-' + option} className = 'group flex items-center w-min gap-small cursor-pointer' onClick = {() => onInputChange(inputKey, option, 'text')}>
-                                <div id = {'settings-setting-' + title + '-' + option + '-selector'} className = {'transition-all duration-main h-[70%] aspect-square bg-reverse-0 dark:bg-base-0 group-hover:!bg-opacity-100 rounded-full ' + (input && input[inputKey] === option ? '!bg-opacity-100' : '!bg-opacity-main')}/>
-                                <Text id = {'settings-setting-' + title + '-' + option + '-text'} classes = '!text-2xl md:!text-2xl'>
+                            <div key = {index} id = {id + 'container'} className = 'group flex items-center w-min gap-small cursor-pointer' onClick = {() => onInputChange(inputKey, option, 'text')}>
+                                <div id = {id + 'selector'} className = {'transition-all duration-main h-[70%] aspect-square bg-reverse-0 dark:bg-base-0 group-hover:!bg-opacity-100 rounded-full ' + (input && input[inputKey] === option ? '!bg-opacity-100' : '!bg-opacity-main')}/>
+                                <Text id = {id + 'text'} classes = '!text-2xl md:!text-2xl'>
                                     {option}
                                 </Text>
                             </div>
