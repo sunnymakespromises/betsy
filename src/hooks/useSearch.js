@@ -13,11 +13,11 @@ function useSearch() {
 
     function initializeResults() {
         if (simpleSearch) {
-            setResults(params?.emptyOnInitial ? [] : params?.space)
+            setResults(params?.space)
         }
         else {
             const target = {}
-            params?.categories.forEach(category => target[category] = params?.emptyOnInital ? [] : params?.spaces[category])
+            params?.categories.forEach(category => target[category] = params?.spaces[category])
             setResults(target)
         }
     }
@@ -43,16 +43,19 @@ function useSearch() {
                 let newResults = []
                 if (input !== '') {
                     if ((params?.space).length > 0) {
-                        let fuse = new Fuse(params?.space, {
+                        let fuseParams = {
                             threshold: 0.15,
                             keys: params?.keys
-                        })
-                        newResults = fuse.search(input).slice(0, params?.limit).map(r => r.item)
+                        }
+                        if (params?.minimumLength) {fuseParams.minMatchCharLength = params?.minimumLength}
+                        let fuse = new Fuse(params?.space, fuseParams)
+                        newResults = fuse.search(input).map(r => r.item)
+                        if (params?.limit) { newResults = newResults.slice(0, params?.limit) }
                     }
                 }
                 else {
-                    newResults = params?.emptyOnInitial ? [] : params?.space
-                    if (!params?.fullSpaceOnInitial) { newResults = newResults.slice(0, params?.limit) }
+                    newResults = params?.space
+                    if (params?.limit) { newResults = newResults.slice(0, params?.limit) }
                 }
                 setResults([...newResults])
             }
@@ -61,19 +64,27 @@ function useSearch() {
                 for (const category of params?.categories) {
                     if (input !== '') {
                         if ((params?.spaces[category]).length > 0) {
-                            let fuse = new Fuse(params?.spaces[category], {
+                            let fuseParams = {
                                 threshold: 0.15,
                                 keys: params?.keys[category]
-                            })
-                            newResults[category] = fuse.search(input).slice(0, params?.limits[category]).map(r => r.item)
+                            }
+                            if (params?.minimumLength) {fuseParams.minMatchCharLength = params?.minimumLength}
+                            let fuse = new Fuse(params?.spaces[category], fuseParams)
+                            newResults[category] = fuse.search(input).map(r => r.item)
+                            if (params?.limits[category]) { newResults[category] = newResults[category].slice(0, params?.limits[category]) }
                         }
                     }
                     else {
-                        newResults[category] = params?.emptyOnInitial ? [] : params?.spaces[category]
-                        if (!params?.fullSpaceOnInitial) { newResults[category] = newResults[category].slice(0, params?.limits[category]) }
+                        newResults[category] = params?.spaces[category]
+                        if (params?.limits[category]) { newResults[category] = newResults[category].slice(0, params?.limits[category]) }
                     }
                 }
-                setResults({...newResults})
+                if (params?.singleArray) {
+                    setResults([...Object.keys(newResults).map(c => newResults[c].map(r => { return { category: c, item: r } })).flat(1)])
+                }
+                else {
+                    setResults({...newResults})
+                }
             }
         }
     }, [input, params])
