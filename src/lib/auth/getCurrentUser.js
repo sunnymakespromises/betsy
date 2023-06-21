@@ -1,6 +1,7 @@
 import authenticateUser from './authenticateUser'
 import insertItem from '../aws/db/insertItem'
 import queryTable from '../aws/db/queryTable'
+import now from '../util/now'
 const short = require('short-uuid')
 
 async function getCurrentUser(refresh_token, source) {
@@ -22,7 +23,7 @@ async function getCurrentUser(refresh_token, source) {
             const id = short.generate()
             const item = {
                 id: id,
-                join_date: Date.now(),
+                join_date: now(),
                 username: 'user' + id.substring(0, 8),
                 display_name: 'user' + id.substring(0, 8),
                 bio: 'my bio 💕',
@@ -30,7 +31,7 @@ async function getCurrentUser(refresh_token, source) {
                 picture: authUser.picture,
                 auth_id: authUser.id,
                 auth_source: source,
-                notifications: [{ category: 'test', timestamp: Date.now(), title: 'Welcome to Betsy10!', message: 'This is a test notification!' }],
+                notifications: [{ category: 'test', timestamp: now(), title: 'Welcome to Betsy10!', message: 'This is a test notification!' }],
                 settings: {
                     notifications: 'Off'
                 },
