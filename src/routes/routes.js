@@ -6,7 +6,9 @@ import Logout from './logout'
 import Explore from './explore'
 import User from './user'
 import Wallet from './wallet'
-import Dev from './dev'
+import Dev from './dev/dev'
+import {default as DevCompetitors} from './dev/competitors'
+
 
 const pages = [
     {
@@ -72,16 +74,32 @@ const pages = [
         element: <Dev/>,
         navigation: {
             show: false
-        }
+        },
+        children: [
+            {
+                path: '/dev/competitors',
+                title: 'Dev/Competitors',
+                element: <DevCompetitors/>,
+                navigation: {
+                    show: false
+                }
+            }
+        ]
     }
 ]
 
 const Routes = ({location}) => {
     return (
         <RoutesWrapper location = {location}>
-            {pages.map((page, index) => {
+            {pages.map((page, pageIndex) => {
                 return (
-                    <Route key = {index} path = {page.path} element = {page.element}/>
+                    <Route key = {pageIndex} path = {page.path} element = {page.element}>
+                        {page.children ? page.children.map((child, childIndex) => {
+                            return (
+                                <Route key = {childIndex} path = {child.path} element = {child.element}/>
+                            )
+                        }):null}
+                    </Route>
                 )
             })}
         </RoutesWrapper>

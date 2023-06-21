@@ -14,6 +14,8 @@ export default function Text({ preset = 'main', styles, classes, children, ...ex
         'profile-error': 'whitespace-nowrap select-none cursor-default font-main font-semibold text-xs md:text-xs text-reverse-0 dark:text-base-0',
         'explore-result': 'whitespace-nowrap select-none font-main font-semibold text-xl md:text-2xl text-reverse-0 dark:text-base-0',
         'explore-result-subtitle': 'whitespace-nowrap select-none font-main font-semibold text-xs md:text-sm !text-opacity-main text-reverse-0 dark:text-base-0',
+        'dev-result': 'whitespace-nowrap overflow-hidden text-ellipsis w-min select-none font-main font-semibold text-lg md:text-xl text-reverse-0 dark:text-base-0',
+        'dev-result-subtitle': 'whitespace-nowrap select-none font-main font-semibold text-xs md:text-sm !text-opacity-main text-reverse-0 dark:text-base-0',
         'competitor': 'whitespace-nowrap select-none font-main font-semibold text-lg md:text-2xl text-reverse-0 dark:text-base-0'
     }
 
