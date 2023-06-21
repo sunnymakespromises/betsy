@@ -56,7 +56,7 @@ function Panel({ title, showTitle = true, classes, children }) {
     return (
         <div id = {'home-panel-' + title + '-container'} className = {'home-panel' + (classes ? ' ' + classes : '')}>
             <Conditional value = {showTitle}>
-                <Text id = {'home-panel-' + title + '-link-text'} classes = '!text-xl md:!text-3xl !font-extrabold'>
+                <Text id = {'home-panel-' + title + '-link-text'} classes = '!text-xl md:!text-3xl'>
                     {title}
                 </Text>
             </Conditional>
