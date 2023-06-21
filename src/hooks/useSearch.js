@@ -29,7 +29,9 @@ function useSearch() {
     }, [params])
 
     useEffect(() => {
-        setSearchParams({...Object.fromEntries([...searchParams]), query: input}, { replace: true })
+        if (input && input !== '') {
+            setSearchParams({...Object.fromEntries([...searchParams]), query: input}, { replace: true })
+        }
     }, [input])
 
     useEffect(() => {
