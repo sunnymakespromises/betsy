@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
 import { useWindowContext } from '../contexts/window'
@@ -15,7 +15,8 @@ import { useRootContext } from '../contexts/root'
 export default function Explore() {
     const { data } = useRootContext()
     const { input, setParams, onInputChange, results } = useSearch()
-    const context = { results  }
+    const [sortedResults, setSortedResults] = useState(results)
+    const context = { sortedResults }
 
     useEffect(() => {
         if (data) {
@@ -29,6 +30,14 @@ export default function Explore() {
             })
         }
     }, [data])
+
+    useEffect(() => {
+        if (results) {
+            let newSortedResults = []
+            Object.keys(results).map(c => results[c].map(r => newSortedResults.push({ category: c, item: r })))
+            setSortedResults(newSortedResults)
+        }
+    }, [results])
 
     return (
         <Provider value = {context}>
@@ -44,21 +53,17 @@ export default function Explore() {
 }
 
 function Results() {
-    const { results } = useExploreContext()
+    const { sortedResults } = useExploreContext()
     const { isDarkMode } = useWindowContext()
     return (
         <div className = {'transition-all duration-main explore-search-results w-full h-full flex flex-col gap-smaller overflow-scroll md:gradient-mask-b-0 hover:md:gradient-mask-b-90 md:opacity-more-visible md:hover:opacity-100'}>
-            {results && Object.keys(results)?.map((resultCategory, resultCategoryIndex) => {
+            {sortedResults.length > 0 && sortedResults.map((result, resultIndex) => {
                 return (
-                    results[resultCategory].map((result, resultIndex) => {
-                        return (
-                            <React.Fragment key = {resultIndex}>
-                                <div className = 'transition-all duration-main w-min h-min'>
-                                    <Result category = {resultCategory} result = {result}/>
-                                </div>
-                            </React.Fragment>
-                        )
-                    })
+                    <React.Fragment key = {resultIndex}>
+                        <div className = 'transition-all duration-main w-min h-min'>
+                            <Result category = {result.category} result = {result.item}/>
+                        </div>
+                    </React.Fragment>
                 )
             })}
         </div>
@@ -137,10 +142,10 @@ function Results() {
                         </Conditional>
                         <Conditional value = {!(result?.is_outright)}>
                             <div className = {'expore-result-' + category + '-result-text-competitor-name w-min h-min flex flex-row items-center gap-tiny'}>
-                                {result?.competitors?.map((competitor, index) => {
+                                {result?.name?.replace(' @ ', 'SPLIT')?.replace(' v ', 'SPLIT').split('SPLIT')?.map((competitor, index) => {
                                     return (
                                         <React.Fragment key = {index}>
-                                            <CompetitorComponent competitor = {competitor}/>
+                                            <CompetitorComponent competitor = {result?.competitors?.find(c => c.name === competitor)}/>
                                             <Conditional value = {index !== result?.competitors.length - 1}>
                                                 <Text preset = 'competitor' classes = '!text-opacity-main !text-lg md:!text-lg !no-underline'>{result?.name.split(' ').find(w => w === '@' || w === 'v')}</Text>
                                             </Conditional>
