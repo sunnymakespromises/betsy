@@ -9,7 +9,6 @@ import Wallet from './wallet'
 import Dev from './dev/dev'
 import {default as DevCompetitors} from './dev/competitors'
 
-
 const pages = [
     {
         path: '/',
