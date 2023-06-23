@@ -1,9 +1,12 @@
 import { useCookies } from 'react-cookie'
 import { updateProfile as _updateProfile } from '../lib/updateProfile'
 import { getUserBy as _getUserBy } from '../lib/getUserBy'
-import { subscribe as _subscribe, unsubscribe as _unsubscribe } from '../lib/subscribe'
+import { subscribe as _subscribe, unsubscribe as _unsubscribe } from '../lib/subscription'
+import { addToFavorites as _addToFavorites, removeFromFavorites as _removeFromFavorites } from '../lib/favorite'
+import { useRootContext } from '../contexts/root'
 
 function useDatabase() {
+    const { refreshCurrentUser, refreshData } = useRootContext()
     const [cookies,,] = useCookies()
 
     async function insert() {
@@ -35,14 +38,38 @@ function useDatabase() {
     }
 
     async function subscribe(id) {
-        return await _subscribe(cookies['oauth_refresh_token'], cookies['oauth_source'], id)
+        const { status } = await _subscribe(cookies['oauth_refresh_token'], cookies['oauth_source'], id)
+        if (status) {
+            await refreshCurrentUser()
+            await refreshData()
+        }
     }
 
     async function unsubscribe(id) {
-        return await _unsubscribe(cookies['oauth_refresh_token'], cookies['oauth_source'], id)
+        const { status } = await _unsubscribe(cookies['oauth_refresh_token'], cookies['oauth_source'], id)
+        if (status) {
+            await refreshCurrentUser()
+            await refreshData()
+        }
     }
 
-    return { insert, get, query, update, remove, updateProfile, getUserBy, subscribe, unsubscribe }
+    async function addToFavorites(category, object) {
+        const { status } = await _addToFavorites(cookies['oauth_refresh_token'], cookies['oauth_source'], category, object)
+        if (status) {
+            await refreshCurrentUser()
+            await refreshData()
+        }
+    }
+
+    async function removeFromFavorites(category, object) {
+        const { status } = await _removeFromFavorites(cookies['oauth_refresh_token'], cookies['oauth_source'], category, object)
+        if (status) {
+            await refreshCurrentUser()
+            await refreshData()
+        }
+    }
+
+    return { insert, get, query, update, remove, updateProfile, getUserBy, subscribe, unsubscribe, addToFavorites, removeFromFavorites }
 }
 
 export { useDatabase }
