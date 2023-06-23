@@ -44,6 +44,12 @@ module.exports = {
                 accent: {
                     0: '#597DEF',
                     100: '#57F27B'
+                },
+                live: {
+                    0: '#F95364'
+                },
+                favorite: {
+                    0: '#F9DD53'
                 }
             },
             borderRadius: {
