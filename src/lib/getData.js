@@ -27,7 +27,7 @@ async function getData() {
 
     const sports = await getTable('Sports', ['id', 'name'])
     if (sports.length > 0) {
-        response.data.sports = sports.sort((a, b) => (a.name.localeCompare(b.name)))
+        response.data.sports = sports
         response.statuses.sports = true
     }
     else {
@@ -36,7 +36,7 @@ async function getData() {
 
     const competitions = await getTable('Competitions', ['id', 'name', 'picture', 'sport', 'country', 'competitors', 'slip_count'])
     if (competitions.length > 0) {
-        response.data.competitions = competitions.sort((a, b) => (a.name.localeCompare(b.name)) || (a.slip_count - b.slip_count))
+        response.data.competitions = competitions.sort((a, b) => (a.slip_count - b.slip_count))
         response.statuses.competitions = true
     }
     else {
@@ -54,7 +54,7 @@ async function getData() {
 
     const competitors = await getTable('Competitors', ['id', 'name', 'picture', 'competitions', 'sport', 'slip_count'])
     if (competitors.length > 0) { 
-        response.data.competitors = competitors.sort((a, b) => (a.name.localeCompare(b.name)) || (a.slip_count - b.slip_count))
+        response.data.competitors = competitors.sort((a, b) => (a.slip_count - b.slip_count))
         response.statuses.competitors = true
     }
     else {
