@@ -7,7 +7,7 @@ import Explore from './explore'
 import User from './user'
 import Wallet from './wallet'
 import Dev from './dev/dev'
-import {default as DevCompetitors} from './dev/competitors'
+import Images from './dev/images'
 
 const pages = [
     {
@@ -76,9 +76,9 @@ const pages = [
         },
         children: [
             {
-                path: '/dev/competitors',
-                title: 'Dev/Competitors',
-                element: <DevCompetitors/>,
+                path: '/dev/images',
+                title: 'Images',
+                element: <Images/>,
                 navigation: {
                     show: false
                 }
