@@ -25,7 +25,7 @@ const Input = forwardRef(function Input({ value, status, type = 'text', preset =
             null: ''
         },
         'search': {
-            classes: 'text-ellipsis overflow-hidden font-main font-bold w-full text-reverse-0 dark:text-base-0 text-3xl md:text-4xl placeholder:opacity-main placeholder:text-reverse-0 placeholder:dark:text-base-0 bg-transparent focus:outline-none',
+            classes: 'font-main font-bold w-full text-reverse-0 dark:text-base-0 text-3xl md:text-4xl placeholder:opacity-main placeholder:text-reverse-0 placeholder:dark:text-base-0 bg-transparent focus:outline-none',
             true: '',
             false: '',
             null: ''
