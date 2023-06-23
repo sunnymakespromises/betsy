@@ -294,7 +294,7 @@ function Subscriptions({ subscribers, subscriptions }) {
 
 function Action() {
     const { currentUser, refreshCurrentUser } = useRootContext()
-    const { user, setUser, isCurrentUser, getUser } = useUserContext()
+    const { user, isCurrentUser } = useUserContext()
     const { isEditing, setIsEditing, isLoading, execute, statuses, setStatus, input } = useProfileContext()
     const { updateProfile, subscribe, unsubscribe } = useDatabase()
     const [changes, setChanges] = useState()
@@ -393,16 +393,10 @@ function Action() {
         }
         else if (user) {
             if (currentUserIsSubscribedToUser()) {
-                if ((await unsubscribe(user.id)).status) {
-                    setUser(await getUser())
-                    await refreshCurrentUser()
-                }
+                await unsubscribe(user.id)
             }
             else {
-                if ((await subscribe(user.id)).status) { 
-                    setUser(await getUser())
-                    await refreshCurrentUser()
-                }
+                await subscribe(user.id)
             }
         }
     }
