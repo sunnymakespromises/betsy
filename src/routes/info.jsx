@@ -15,10 +15,8 @@ const Info = memo(function Info() {
 
     useEffect(() => {
         async function updateUser() {
-            let { status, item } = await getItem(category, id)
-            if (status) {
-                setItem(item)
-            }
+            let { item } = await getItem(category, id)
+            setItem(item)
         }
 
         updateUser()
@@ -29,7 +27,7 @@ const Info = memo(function Info() {
         <Page>
             <div id = {DOMId + 'container'} className = 'w-full h-full flex flex-col'>
                 <Helmet><title>{(item ? item.name : 'Info') + ' | Betsy'}</title></Helmet>
-                <Conditional value = {!item}>
+                <Conditional value = {item === null}>
                     <ErrorScreen category = {category} parentId = {DOMId}/>
                 </Conditional>
             </div>
