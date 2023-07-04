@@ -85,8 +85,8 @@ async function getData(category = null, currentUser = null) {
         }
 
         function getRecommendationScore(event) {
-            const FAVORITE_WEIGHT = 0.8
-            const TIME_WEIGHT = 0.2
+            const FAVORITE_WEIGHT = 0.4
+            const TIME_WEIGHT = 0.6
             return event.is_outright ? -100 : (favoriteEvents.includes(event) * FAVORITE_WEIGHT) + (((now() - event.start_time) / (60*60*24)) * TIME_WEIGHT)
         }
     }
