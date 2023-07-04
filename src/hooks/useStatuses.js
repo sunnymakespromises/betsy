@@ -1,44 +1,45 @@
-import { useEffect, useState } from 'react'
+import _ from 'lodash'
+import { useMemo, useRef, useState } from 'react'
 
 function useStatuses(list) {
-    const [statuses, setStatuses] = useState()
+    const [statuses, setStatuses] = useState(getEmptyStatuses())
+    const statusesAreEmpty = useMemo(() => _.isEqual(statuses, getEmptyStatuses()), [statuses])
+    const statusesRef = useRef()
+    statusesRef.current = statuses
 
-    function initializeStatuses() {
-        const target = {}
-        list.forEach(key => target[key] = {status: null, message: ''})
-        setStatuses(target)
-    }
-
-    useEffect(() => {
-        if (!statuses) {
-            initializeStatuses()
-        }
-    }, [])
-
-    function clearAllStatuses() {
-        initializeStatuses()
-    }
-
-    function setStatus(key, status, message, duration = null) {
-        let copy = {...statuses}
-        copy[key] = {status: status, message: message}
-        setStatuses(copy)
+    function setAllStatuses(newStatuses, duration = null) {
+        setStatuses({...newStatuses})
         if (duration) {
             setTimeout(() => {
-                let copy = {...statuses}
-                copy[key] = {status: null, message: ''}
-                setStatuses(copy)
+                setStatuses(getEmptyStatuses())
             }, duration)
         }
     }
 
-    function clearStatus() {
-        const target = {}
-        list.forEach(key => target[key] = {status: null, message: ''})
-        setStatuses(target)
+    function getEmptyStatuses() {
+        const empty = {}
+        list.forEach(key => empty[key] = {status: null, message: ''})
+        return empty
     }
 
-    return [statuses, setStatus, clearStatus, clearAllStatuses]
+    function clearAllStatuses() {
+        setStatuses(getEmptyStatuses)
+    }
+
+    function setStatus(key, status, message, duration = null) {
+        let newStatuses = {...statusesRef.current}
+        newStatuses[key] = { status: status, message: message }
+        setStatuses(newStatuses)
+        if (duration) {
+            setTimeout(() => {
+                let newStatuses = {...statusesRef.current}
+                newStatuses[key] = { status: null, message: '' }
+                setStatuses(newStatuses)
+            }, duration)
+        }
+    }
+
+    return { statuses, setStatuses: setAllStatuses, setStatus, clearAllStatuses, statusesAreEmpty }
 }
 
 export { useStatuses }

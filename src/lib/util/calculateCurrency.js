@@ -1,7 +1,7 @@
 export default function calculateCurrency(currency, amount, shortened) {
-    currency = currency ? currency : 'Dollars'
+    currency = currency ? currency : 'dollars'
     const formats = {
-        Dollars: {
+        dollars: {
             locale: 'en-US',
             symbol: {
                 symbol: '$',
@@ -11,7 +11,7 @@ export default function calculateCurrency(currency, amount, shortened) {
             thousands: '.',
             fractional: '.'
         },
-        Pounds: {
+        pounds: {
             locale: 'en-GB',
             symbol: {
                 symbol: '£',
@@ -21,7 +21,7 @@ export default function calculateCurrency(currency, amount, shortened) {
             thousands: '.',
             fractional: '.'
         },
-        Euros: {
+        euros: {
             locale: 'de-DE',
             symbol: {
                 symbol: '€',
@@ -31,7 +31,7 @@ export default function calculateCurrency(currency, amount, shortened) {
             thousands: '.',
             fractional: ','
         },
-        Yen: {
+        yen: {
             locale: 'ja-JP',
             symbol: {
                 symbol: '¥',
@@ -41,7 +41,7 @@ export default function calculateCurrency(currency, amount, shortened) {
             thousands: ',',
             fractional: '.'
         },
-        Yuan: {
+        yuan: {
             locale: 'zh-CN',
             symbol: {
                 symbol: '¥',
@@ -54,7 +54,6 @@ export default function calculateCurrency(currency, amount, shortened) {
     }
 
     const magnitudes = { 6: 'K', 9: 'M', 12: 'B', 15: 'T', 18: 'Qa', 21: 'Qi', 24: 'S' }
-
     function format(pre) {
         let formatted = (pre < 0 ? '-' : '') + (formats[currency].symbol.before ? formats[currency].symbol.symbol : '') + formats[currency].space
         let length = pre.toString().split('.')[0].length
@@ -63,7 +62,10 @@ export default function calculateCurrency(currency, amount, shortened) {
             let truncated = pre.toString().slice(0,truncatedLength)
             formatted += truncated.substr(0, truncatedLength - 1) + formats[currency].thousands + truncated.substr(truncatedLength - 1)
             for (const magnitude of Object.keys(magnitudes)) {
-                if (length <= magnitude) { formatted += magnitudes[magnitude];break }
+                if (length <= magnitude) {
+                    formatted += magnitudes[magnitude]
+                    break
+                }
             }
         }
         else {
@@ -73,11 +75,11 @@ export default function calculateCurrency(currency, amount, shortened) {
     }
 
     switch (currency) {
-        case 'Dollars': return format(amount)
-        case 'Pounds': return format(amount * 0.779)
-        case 'Euros': return format(amount * 0.9)
-        case 'Yen': return format(amount * 141.83502)
-        case 'Yuan': return format(amount * 7.1)
+        case 'dollars': return format(amount)
+        case 'pounds': return format(amount * 0.779)
+        case 'euros': return format(amount * 0.9)
+        case 'yen': return format(amount * 141.83502)
+        case 'yuan': return format(amount * 7.1)
         default: return format(amount)
     }
 }

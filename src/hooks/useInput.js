@@ -1,56 +1,59 @@
-import { useState, useEffect } from 'react'
+import _ from 'lodash'
+import { useState, useRef, useMemo, useCallback } from 'react'
 
 function useInput(list, initial = null) {
-    const [input, setInput] = useState()
     const simpleInput = !(list)
+    const [input, setInput] = useState(getEmptyInput())
+    const inputRef = useRef()
+    inputRef.current = input
+    const inputIsEmpty = useMemo(() => _.isEqual(input, getEmptyInput()), [input])
 
-    function initializeInput() {
+    function getEmptyInput() {
+        let empty
         if (simpleInput) {
-            setInput(initial ? initial : '')
+            empty = initial ? initial : ''
         }
         else {
-            const target = {}
+            empty = {}
             if (initial) {
                 for (let i = 0; i < list.length; i++) {
-                    target[list[i]] = initial[i]
+                    empty[list[i]] = initial[i]
                 }
             }
             else {
-                list.forEach(key => target[key] = '')
+                list.forEach(key => empty[key] = '')
             }
-            setInput(target)
         }
+        return empty
     }
 
-    useEffect(() => {
-        if (!input) {
-            initializeInput()
-        }
-    }, [])
-
-    const onInputChange = (category, value, type) => {
+    function onInputChange(category, value, type) {
         if (simpleInput) {
             setInput(type === 'text' ? value : value ? URL.createObjectURL(value) : null)
         }
         else {
             if (type === 'text') {
-                let newInput = input
+                let newInput = {...inputRef.current}
                 newInput[category] = value
-                setInput({...newInput})
+                setInput(newInput)
             }
             else {
                 if (value) {
-                    let newInput = input
+                    let newInput = {...inputRef.current}
                     newInput[category] = URL.createObjectURL(value)
-                    setInput({...newInput})
+                    setInput(newInput)
                 }
             }
         }
     }
 
+    const isThisInputEmpty = useCallback(function isThisInputEmpty(category) {
+        return initial ? input[category] === initial[category] : input[category] === ''
+    }, [input])
+
     function clearInput(input) {
         if (simpleInput) {
-            initializeInput()
+            setInput(getEmptyInput())
         }
         else {
             let newInput = input
@@ -60,10 +63,10 @@ function useInput(list, initial = null) {
     }
 
     function clearAllInput() {
-        initializeInput()
+        setInput(getEmptyInput())
     }
 
-    return { input, clearInput, clearAllInput, onInputChange }
+    return { input: inputRef.current, onInputChange, clearInput, clearAllInput, inputIsEmpty, isThisInputEmpty }
 }
 
 export { useInput }

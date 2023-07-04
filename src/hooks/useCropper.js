@@ -1,12 +1,15 @@
-import { useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 
 function useCropper(picture) {
     const [crop, setCrop] = useState({ x: 0, y: 0 })
     const [croppedArea, setCroppedArea] = useState()
     const [zoom, setZoom] = useState(1)
-    const [croppedImage, setCroppedImage] = useState()
+    const pictureRef = useRef()
+    pictureRef.current = picture
+    const croppedAreaRef = useRef()
+    croppedAreaRef.current = croppedArea
 
-    const params = {
+    const params = useMemo(() => { return {
         image: picture,
         crop: crop,
         onCropChange: setCrop,
@@ -17,7 +20,7 @@ function useCropper(picture) {
         showGrid: false,
         cropShape: 'round',
         objectFit: getObjectFit()
-    }
+    }}, [picture, crop, zoom])
 
     function getObjectFit() {
         const img = document.createElement('img')
@@ -27,7 +30,7 @@ function useCropper(picture) {
     
 
     async function onCrop() {
-        const image = await createImage(picture)
+        const image = await createImage(pictureRef.current)
         const canvas = document.createElement('canvas')
         const ctx = canvas.getContext('2d')
 
@@ -36,21 +39,21 @@ function useCropper(picture) {
 
         ctx.drawImage(
             image,
-            croppedArea.x,
-            croppedArea.y,
-            croppedArea.width,
-            croppedArea.height,
+            croppedAreaRef.current.x,
+            croppedAreaRef.current.y,
+            croppedAreaRef.current.width,
+            croppedAreaRef.current.height,
             0,
             0,
             canvas.width,
             canvas.height
         )
 
-        setCroppedImage(await new Promise((resolve) => {
+        return await new Promise((resolve) => {
             canvas.toBlob((blob) => {
                 resolve(blob)
-            }, 'image/jpeg')
-        }))
+            }, 'image/png')
+        })
     }
 
     const createImage = (url) =>
@@ -62,7 +65,7 @@ function useCropper(picture) {
             image.src = url
         })
 
-    return [params, onCrop, croppedImage]
+    return [params, onCrop]
 }
 
 export { useCropper }

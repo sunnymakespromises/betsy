@@ -1,16 +1,16 @@
-import { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import Text from './text'
 import Conditional from './conditional'
 import Image from './image'
 
-export default function Competitor({competitor, classes, textClasses, link = false, image = true}) {
+export default function Competitor({ id, picture, name, classes, textClasses, link = false, image = false, parentId }) {
     const ref = useRef()
     const [imageHeight, setImageHeight] = useState(0)
 
     useEffect(() => {
         getHeight()
-    }, [ref?.current?.clientHeight])
+    }, [ref.current?.clientHeight])
 
     useEffect(() => {
         if (typeof window === 'undefined') {
@@ -24,61 +24,33 @@ export default function Competitor({competitor, classes, textClasses, link = fal
         setImageHeight((getComputedStyle(ref?.current).height.replace('px', '')) * 0.8 + 'px')
     }
 
+    let DOMId = parentId + 'competitor-'
     if (link) {
         return (
-            <Link to = {'/competitors?id=' + competitor.id} ref = {ref} className = {'competitor flex flex-row items-center gap-tiny' + (classes ? ' ' + classes : '')}>
-                <Insides/>
+            <Link id = {DOMId + 'container'} to = {'/competitors?id=' + id} ref = {ref} className = {'group flex flex-row items-center gap-micro overflow-hidden' + (classes ? ' ' + classes : '')}>
+                <Insides parentId = {DOMId}/>
             </Link>
         )
     }
     else {
         return (
-            <div ref = {ref} className = {'competitor flex flex-row items-center gap-tiny' + (classes ? ' ' + classes : '')}>
-                <Insides/>
+            <div id = {DOMId + 'container'} className = {'group flex flex-row items-center gap-micro overflow-hidden' + (classes ? ' ' + classes : '')} ref = {ref}>
+                <Insides parentId = {DOMId}/>
             </div>
         )
     }
 
-    function Insides() {
+    function Insides({ parentId }) {
+        let DOMId = parentId
         return (
-            <>
-                <Conditional value = {competitor.picture}>
-                    <Image external path = {competitor.picture} classes = 'aspect-square rounded-full' styles = {{ height: imageHeight}}/>
+            <React.Fragment key = {parentId}>
+                <Conditional value = {image && picture}>
+                    <Image id = {DOMId + 'image'} external path = {picture} classes = {'transition-all duration-main aspect-square rounded-full'} styles = {{ height: imageHeight}}/>
                 </Conditional>
-                <Text preset = 'competitor' classes = {textClasses ? textClasses : ''}>
-                    {competitor.name}
+                <Text id = {DOMId + 'name'} preset = 'competitor' classes = {textClasses ? textClasses : ''}>
+                    {name}
                 </Text>
-            </>
+            </React.Fragment>
         )
     }
 }
-
-// export default function Money({amount, classes, textClasses, ...extras}) {
-//     const textRef = useRef()
-//     const [coinHeight, setCoinHeight] = useState(0)
-
-//     useEffect(() => {
-//         getHeight()
-//     }, [textRef?.current?.clientHeight, amount])
-
-//     useEffect(() => {
-//         if (typeof window === 'undefined') {
-//             return
-//         }
-//         window.addEventListener('resize', getHeight)
-//         return () => window.removeEventListener('resize', getHeight)
-//     }, [])
-
-//     function getHeight() {
-//         setCoinHeight((getComputedStyle(textRef?.current).height.replace('px', '') * 0.7) + 'px')
-//     }
-    
-//     return (
-//         <div ref = {textRef} className = {'money-container flex flex-row items-center gap-tiny md:gap-small' + (classes ? ' ' + classes : '')} {...extras}>
-//             <Text classes = {'money-value' + (textClasses ? ' ' + textClasses : '')}>
-//                 {amount ? amount : '0.00'}
-//             </Text>
-//             <Image path = {'images/coin.svg'} classes = 'money-coin aspect-square' styles = {{height: coinHeight}}/>
-//         </div>
-//     )
-// }

@@ -65,16 +65,24 @@ export default async function queryTable(table, query, attributes = null, single
     try {
         if (single) {
             const { Items } = await ddbDocClient.send(new ScanCommand(params))
-            if (Items.length > 0) { return Items[0] }
+            if (Items.length > 0) {
+                return Items[0]
+            }
         }
         else {
             let done = false
             let items = []
             while (!done) {
                 const { Items, LastEvaluatedKey } = await ddbDocClient.send(new ScanCommand(params))
-                for (let item of Items) { items.push(item) }
-                if (!LastEvaluatedKey) { done = true }
-                else { params.ExclusiveStartKey = LastEvaluatedKey }
+                for (let item of Items) {
+                    items.push(item)
+                }
+                if (!LastEvaluatedKey) {
+                    done = true
+                }
+                else {
+                    params.ExclusiveStartKey = LastEvaluatedKey
+                }
             }
             return items
         }

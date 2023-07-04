@@ -1,13 +1,15 @@
-import { useRootContext } from '../contexts/root'
+import { useDataContext } from '../contexts/data'
 import { uploadPicture as _uploadPicture } from '../lib/dev/uploadPicture'
 import getTable from '../lib/aws/db/getTable'
 
 
 function useDev() {
-    const { refreshData } = useRootContext()
+    const { updateData } = useDataContext()
     async function uploadPicture(category, object, value) {
         const { status } = await _uploadPicture(category, object, value)
-        if (status) { await refreshData() }
+        if (status) {
+            await updateData(category)
+        }
     }
 
     async function getLogs() {

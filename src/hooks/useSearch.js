@@ -1,164 +1,142 @@
-import { useEffect, useMemo, useState } from 'react'
-import { useWindowContext } from '../contexts/window'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import _ from 'lodash'
 import { useInput } from './useInput'
 import Fuse from 'fuse.js'
+import { useSearchParams } from 'react-router-dom'
 
-function useSearch() {
-    const { searchParams, setSearchParams } = useWindowContext()
-    const [params, setParams] = useState()
-    const queryParam = searchParams.get('query')
-    const filtersParam = useMemo(() => searchParams.get('filters')?.split(','), [searchParams])
-    const {input, onInputChange} = useInput(null, queryParam ? queryParam : '')
-    const [results, setResults] = useState({})
-    const [filters, setFilters] = useState()
-    const simpleSearch = !(params?.categories)
-
-    function initializeResults() {
-        if (simpleSearch) {
-            setResults(params?.space)
-        }
-        else {
-            let newResults = {}
-            params?.categories.forEach(category => newResults[category] = params?.spaces[category])
-            setResults(newResults)
-        }
-    }
-
-    function initializeFilters() {
+function useSearch(options) {
+    const [config, setConfig] = useState(options)
+    const isSimple = !(config.categories)
+    const [searchParams, setSearchParams] = useSearchParams()
+    const searchParamsRef = useRef()
+    searchParamsRef.current = searchParams
+    const queryParam = useMemo(() => searchParams.get('query'), [searchParams])
+    const filtersParam = useMemo(() => searchParams.get('filters'), [searchParams])
+    const filters = useMemo(() => {
         let newFilters = {}
-        Object.keys(params?.filters)?.forEach(filter => newFilters[filter] = (filtersParam?.includes(filter) ? true : false))
-        setFilterParams(newFilters)
-    }
+        let newFiltersParam = filtersParam?.split(',')
+        Object.keys(config.filters).forEach(filter => newFilters[filter] = {...config.filters[filter], active: newFiltersParam ? newFiltersParam.includes(filter) : false})
+        return newFilters
+    }, [searchParams])
+    const filtersRef = useRef()
+    filtersRef.current = filters
+    const {input, onInputChange} = useInput(null, queryParam ? queryParam : '')
+    const [results, setResults] = useState()
+    const hasResults = useMemo(() => config.shape === 'array' ? results && results.length > 0 : results && Object.keys(results)?.some(category => results[category].length > 0), [results])
 
     useEffect(() => {
-        if (params) {
-            initializeResults()
-            initializeFilters()
-        }
-    }, [params])
-
-    useEffect(() => {
-        if (params) {
-            let newFilters = {}
-            Object.keys(params?.filters)?.forEach(filter => newFilters[filter] = (filtersParam?.includes(filter) ? true : false))
-            setFilters(newFilters)
-        }
-    }, [params, filtersParam])
-
-    useEffect(() => {
-        if (input) {
-            setSearchParams({...Object.fromEntries([...searchParams]), query: input}, { replace: true })
-        }
-        else if (input === '') {
-            setSearchParams({...Object.fromEntries([...searchParams].filter(p => p[0] !== 'query'))}, { replace: true })
-        }
+        let value = input !== '' ? input : null
+        setSearchParam('query', value)
     }, [input])
 
     useEffect(() => {
-        if (params && filters) {
-            if (simpleSearch) {
+        if (config.space) {
+            if (isSimple) {
                 let newResults = []
-                if (input !== '') {
-                    if ((params?.space).length > 0) {
-                        let fuseParams = {
-                            threshold: 0.15,
-                            keys: params?.keys
-                        }
-                        if (params?.minimumLength) { fuseParams.minMatchCharLength = params?.minimumLength }
-                        let fuse = new Fuse(params?.space, fuseParams)
-                        newResults = fuse.search(input).map(r => r.item)
-                        newResults = filter(newResults)
-                        if (params?.limit) { newResults = newResults.slice(0, params?.limit) }
-                    }
+                if (input === '' || (config.minimumLength && input.length < config.minimumLength)) {
+                    newResults = getEmptyResults()
                 }
                 else {
-                    newResults = params?.space
-                    newResults = filter(newResults)
-                    if (params?.limit) { newResults = newResults.slice(0, params?.limit) }
+                    if (config.space.length > 0) {
+                        let fuseParams = {
+                            threshold: 0.05,
+                            keys: config.keys,
+                            minMatchCharLength: config.minimumLength ? config.minimumLength : 1
+                        }
+                        let fuse = new Fuse(config.space, fuseParams)
+                        newResults = fuse.search(input).map(r => r.item)
+                        newResults = filter(newResults).slice(0, config.limit)
+                    }
                 }
-                setResults([...newResults])
+                setResults(newResults)
             }
             else {
                 let newResults = {}
-                for (const category of params?.categories) {
-                    if (input !== '') {
-                        if ((params?.spaces[category]).length > 0) {
-                            let fuseParams = {
-                                threshold: 0.15,
-                                keys: params?.keys[category]
-                            }
-                            if (params?.minimumLength) {
-                                if (params?.minimumLength.constructor.name === 'Number') {
-                                    fuseParams.minMatchCharLength = params?.minimumLength
-                                }
-                                else {
-                                    fuseParams.minMatchCharLength = params?.minimumLength[category]
-                                }
-                            }
-                            let fuse = new Fuse(params?.spaces[category], fuseParams)
-                            newResults[category] = fuse.search(input).map(r => r.item)
-                            if (!params?.singleArray) {
-                                newResults[category] = filter(newResults[category])
-                                if (params?.limits[category]) { newResults[category] = newResults[category].slice(0, params?.limits[category]) }
-                            }
-                        }
-                    }
-                    else {
-                        newResults[category] = params?.spaces[category]
-                        if (!params?.singleArray) {
-                            newResults[category] = filter(newResults[category])
-                            if (params?.limits[category]) { newResults[category] = newResults[category].slice(0, params?.limits[category]) }
-                        }
-                    }
-                }
-                if (params?.singleArray) {
-                    newResults = Object.keys(newResults).map(c => newResults[c].map(r => { return { category: c, item: r } })).flat(1)
-                    newResults = filter(newResults)
-                    if (params?.limit) { newResults = newResults.slice(0, params?.limit) }
-                    setResults([...newResults])
+                if (input === '' || (config.minimumLength && input.length < config.minimumLength)) {
+                    newResults = getEmptyResults()
                 }
                 else {
-                    setResults({...newResults})
+                    for (const category of config.categories) {
+                        let fuseParams = {
+                            threshold: 0.05,
+                            keys: config.keys[category],
+                            minMatchCharLength: config.minimumLength ? config.minimumLength : 1
+                        }
+                        let fuse = new Fuse(config.space[category], fuseParams)
+                        newResults[category] = fuse.search(input).map(r => r.item)
+                        if (config.shape !== 'array') {
+                            newResults[category] = filter(newResults[category].map(r => { return { category: category, item: r } })).slice(0, config.limit)
+                        }
+                    }
+                    if (config.shape === 'array') {
+                        newResults = filter(Object.keys(newResults).map(c => newResults[c].map(r => { return { category: c, item: r } })).flat(1)).slice(0, config.limit)
+                    }
                 }
+                setResults(newResults)
             }
         }
-    }, [input, params, filters])
+    }, [queryParam, filtersParam])
+    
+    useEffect(() => {
+        let changes = Object.keys(options).filter(option => !(_.isEqual(options[option], config[option])))
+        if (changes.length > 0) {
+            let newConfig = {...config}
+            for (const change of changes) {
+                newConfig[change] = options[change]
+            }
+            setConfig(newConfig)
+        }
+    }, [options])
+
+    function loadSpace(data) {
+        let newConfig = {...config}
+        newConfig.space = data
+        setConfig(newConfig)
+    }
+
+    function getEmptyResults() {
+        if (isSimple || config.shape === 'array') {
+            return []
+        }
+        else {
+            return {}
+        }
+    }
 
     function setFilter(filter, value) {
-        let newFilters = {...filters}
-        newFilters[filter] = value
-        if (value === true && params?.filters[filter].turnsOff) {
-            for (const targetFilter of params?.filters[filter].turnsOff) {
-                if (newFilters[targetFilter]) {
-                    newFilters[targetFilter] = false
-                }
+        let newFilters = {...filtersRef.current}
+        newFilters[filter] = {...newFilters[filter], active: value}
+        if (value === true && config.filters[filter].turnsOff) {
+            for (const targetFilter of config.filters[filter].turnsOff) {
+                newFilters[targetFilter] = {...newFilters[targetFilter], active: false}
             }
         }
         setFilterParams(newFilters)
     }
 
     function setFilterParams(newFilters) {
-        if (Object.keys(newFilters).some(f => newFilters[f] === true)) {
-            setSearchParams({...Object.fromEntries([...searchParams]), filters: Object.keys(newFilters).filter(filter => newFilters[filter] === true).join(',')}, { replace: true })
-        }
-        else {
-            setSearchParams({...Object.fromEntries([...searchParams].filter(param => param[0] !== 'filters'))}, { replace: true })
-        }
+        let value = Object.keys(newFilters).some(f => newFilters[f].active === true) ? Object.keys(newFilters).filter(filter => newFilters[filter].active === true).join(',') : null
+        setSearchParam('filters', value)
+    }
+
+    function setSearchParam(param, value) {
+        let newSearchParams = {...Object.fromEntries(value ? [...searchParamsRef.current, [param, value]] : [...searchParamsRef.current].filter(p => p[0] !== param))}
+        setSearchParams(newSearchParams, { replace: true })
     }
 
     function filter(newResults) {
         let filteredResults = newResults
-        if (params?.filters) {
-            for (const filter of Object.keys(params?.filters)) {
-                if (filters[filter] === true) {
-                    filteredResults = params?.filters[filter]?.fn(filteredResults)
+        if (config.filters && filtersRef?.current) {
+            for (const filter of Object.keys(config.filters)) {
+                if (filtersRef.current[filter].active === true) {
+                    filteredResults = config.filters[filter]?.fn(filteredResults)
                 }
             }
         }
         return filteredResults
     }
 
-    return { input, onInputChange, results, filters, setFilter, setParams }
+    return { input, onInputChange, results, hasResults, filters, setFilter, loadSpace }
 }
 
 export { useSearch }

@@ -4,35 +4,31 @@ import { useCookies } from 'react-cookie'
 function useThemes() {
     const [cookies,,] = useCookies(['theme'])
     const setting = cookies['theme']
-    const [isDarkMode, setIsDarkMode] = useState(getCurrentTheme())
+    const [theme, setTheme] = useState(getCurrentTheme())
     
     useEffect(() => {
-        if (setting !== 'Light' && setting !== 'Dark') {
-            setIsDarkMode(getCurrentTheme())
+        if (setting === 'system') {
+            setTheme(getCurrentTheme())
             const mqListener = (e => {
-                setIsDarkMode(e.matches)
+                setTheme(e.matches ? 'dark' : 'light')
             })
             const darkThemeMq = window.matchMedia('(prefers-color-scheme: dark)')
             darkThemeMq.addListener(mqListener)
             return () => darkThemeMq.removeListener(mqListener)
         }
         else {
-            setIsDarkMode(getCurrentTheme())
+            setTheme(getCurrentTheme())
         }
     }, [setting])
 
     function getCurrentTheme() {
-        switch (setting) {
-            case 'Light':
-                return false
-            case 'Dark':
-                return true
-            default:
-                return window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (setting !== 'system') {
+            return setting
         }
+        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
     }
 
-    return isDarkMode
+    return theme
 }
 
 export { useThemes }

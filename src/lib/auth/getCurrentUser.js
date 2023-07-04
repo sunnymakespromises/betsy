@@ -15,8 +15,6 @@ async function getCurrentUser(refresh_token, source) {
         let betsyUser = await queryTable('Users', 'auth_id = ' + authUser.id, null, true)
         if (betsyUser) {
             response.status = true
-            betsyUser.subscriptions = await queryTable('Users', 'subscribers contains ' + betsyUser.id, ['id', 'username', 'display_name', 'picture'], false)
-            betsyUser.subscribers = await queryTable('Users', 'subscriptions contains ' + betsyUser.id, ['id', 'username', 'display_name', 'picture'], false)
             response.user = betsyUser
         }
         else {
@@ -24,7 +22,7 @@ async function getCurrentUser(refresh_token, source) {
             const item = {
                 id: id,
                 join_date: now(),
-                username: 'user' + id.substring(0, 8),
+                username: id.substring(0, 8),
                 display_name: 'user' + id.substring(0, 8),
                 bio: 'my bio 💕',
                 email: authUser.email,
@@ -38,13 +36,13 @@ async function getCurrentUser(refresh_token, source) {
                 subscribers: [],
                 subscriptions: [],
                 favorites: {
-                    sports: [],
                     competitions: [],
                     competitors: []
                 },
                 slips: [],
                 balance: 10.00,
-                is_locked: false
+                is_locked: false,
+                is_dev: false
             }
             await insertItem('Users', item)
             response.status = true

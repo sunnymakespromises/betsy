@@ -1,75 +1,67 @@
-import { useCookies } from 'react-cookie'
 import { updateProfile as _updateProfile } from '../lib/updateProfile'
 import { getUserBy as _getUserBy } from '../lib/getUserBy'
+import { getItem as _getItem } from '../lib/getItem'
 import { subscribe as _subscribe, unsubscribe as _unsubscribe } from '../lib/subscription'
 import { addToFavorites as _addToFavorites, removeFromFavorites as _removeFromFavorites } from '../lib/favorite'
-import { useRootContext } from '../contexts/root'
+import { useUserContext } from '../contexts/user'
+import { useCallback } from 'react'
 
 function useDatabase() {
-    const { refreshCurrentUser, refreshData } = useRootContext()
-    const [cookies,,] = useCookies()
+    const { currentUser, updateCurrentUser } = useUserContext()
 
-    async function insert() {
-        
-    }
+    const updateProfile = useCallback(async function updateProfile(key, value) {
+        const response = await _updateProfile(currentUser, key, value)
+        if (response.status) {
+            await updateCurrentUser(key, value)
+        }
+        return response
+    }, [currentUser])
 
-    async function get() {
-        
-    }
-
-    async function query() {
-        
-    }
-
-    async function update() {
-
-    }
-
-    async function remove() {
-        
-    }
-
-    async function updateProfile(key, value) {
-        return await _updateProfile(cookies['oauth_refresh_token'], cookies['oauth_source'], key, value)
-    }
-
-    async function getUserBy(key, value) {
+    const getUserBy = useCallback(async function getUserBy(key, value) {
         return await _getUserBy(key, value)
-    }
+    }, [currentUser])
 
-    async function subscribe(id) {
-        const { status } = await _subscribe(cookies['oauth_refresh_token'], cookies['oauth_source'], id)
+    const getItem = useCallback(async function getUserBy(category, id) {
+        return await _getItem(category, id)
+    }, [currentUser])
+
+    const subscribe = useCallback(async function subscribe(id) {
+        const { status, changes } = await _subscribe(currentUser, id)
         if (status) {
-            await refreshCurrentUser()
-            await refreshData()
+            for (const change of Object.keys(changes)) {
+                await updateCurrentUser(change, changes[change])
+            }
         }
-    }
+    }, [currentUser])
 
-    async function unsubscribe(id) {
-        const { status } = await _unsubscribe(cookies['oauth_refresh_token'], cookies['oauth_source'], id)
+    const unsubscribe = useCallback(async function unsubscribe(id) {
+        const { status, changes } = await _unsubscribe(currentUser, id)
         if (status) {
-            await refreshCurrentUser()
-            await refreshData()
+            for (const change of Object.keys(changes)) {
+                await updateCurrentUser(change, changes[change])
+            }
         }
-    }
+    }, [currentUser])
 
-    async function addToFavorites(category, object) {
-        const { status } = await _addToFavorites(cookies['oauth_refresh_token'], cookies['oauth_source'], category, object)
+    const addToFavorites = useCallback(async function addToFavorites(category, object) {
+        const { status, changes } = await _addToFavorites(currentUser, category, object)
         if (status) {
-            await refreshCurrentUser()
-            await refreshData()
+            for (const change of Object.keys(changes)) {
+                await updateCurrentUser(change, changes[change])
+            }
         }
-    }
+    }, [currentUser])
 
-    async function removeFromFavorites(category, object) {
-        const { status } = await _removeFromFavorites(cookies['oauth_refresh_token'], cookies['oauth_source'], category, object)
+    const removeFromFavorites = useCallback(async function removeFromFavorites(category, object) {
+        const { status, changes } = await _removeFromFavorites(currentUser, category, object)
         if (status) {
-            await refreshCurrentUser()
-            await refreshData()
+            for (const change of Object.keys(changes)) {
+                await updateCurrentUser(change, changes[change])
+            }
         }
-    }
+    }, [currentUser])
 
-    return { insert, get, query, update, remove, updateProfile, getUserBy, subscribe, unsubscribe, addToFavorites, removeFromFavorites }
+    return { updateProfile, getUserBy, getItem, subscribe, unsubscribe, addToFavorites, removeFromFavorites }
 }
 
 export { useDatabase }

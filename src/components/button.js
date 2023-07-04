@@ -1,3 +1,5 @@
+import { useMemo } from 'react'
+
 /**
  * A <div> representing a button with the given preset and triggers the given onClick function when pressed.
  * @param {string} preset the preset to the applied to the button.
@@ -9,15 +11,22 @@
  */
 export default function Button({ preset = 'main', styles, classes, onClick, children, ...extras }) {
     let options = {
-        'main': 'transition-all duration-slow bg-reverse-0 dark:bg-base-0 hover:scale-smaller !bg-opacity-faint hover:!bg-opacity-main rounded-full md:rounded-main p-4 cursor-pointer flex justify-center items-center',
+        login: 'transition-all duration-main flex justify-center items-center h-min w-full bg-base-main/muted hover:bg-base-main rounded-small p-small cursor-pointer',
+        logout: 'w-full flex justify-center items-center p-small bg-base-highlight hover:bg-primary-main rounded-small cursor-pointer',
+        main: 'transition-all duration-slow flex justify-center items-center bg-reverse-0 rounded-main p-small cursor-pointer',
     }
 
-    const getOption = () => {
-        return options[preset]
-    }
+    let option = useMemo(() => {
+        let presetPath = preset.split('-')
+        let option = options[presetPath[0]]
+        for (const path of presetPath.slice(1)) {
+            option = option[path]
+        }
+        return option ? option : ''
+    }, [preset])
 
     return (
-        <div className = {getOption() + (classes ? ' ' + classes : '') + ' cursor-pointer'} style = {styles} onClick = {onClick} {...extras}>
+        <div className = {option + (classes ? ' ' + classes : '') + ' cursor-pointer'} style = {styles} onClick = {onClick} {...extras}>
             {children ? children : null}
         </div>
     )

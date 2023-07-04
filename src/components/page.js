@@ -1,8 +1,11 @@
-export default function Page({ dim = null, children }) {
+import { memo } from 'react'
+
+const Page = memo(function Page({ children }) {
     return (
-        <div className = 'page absolute w-full h-full p-main z-0 overflow-hidden animate__animated'>
-            <div id = 'dimmer' className = {'transition-all duration-main absolute -top-[100%] -left-[100%] w-[9999px] h-[9999px] bg-base-0 ' + (dim ? 'opacity-80' : 'opacity-0') + ' pointer-events-none z-10'}/>
+        <div className = 'page absolute w-full h-full p-smaller md:p-main bg-base-main overflow-hidden animate-duration-300 shadow-shadow/5 shadow-main'>
             {children}
         </div>
     )
-}
+}, (b, a) => b.children === a.children)
+
+export default Page

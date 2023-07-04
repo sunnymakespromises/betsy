@@ -1,5 +1,5 @@
 import { useNavigate, useLocation } from 'react-router-dom'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useCookies } from 'react-cookie'
 import { googleLogout, useGoogleLogin } from '@react-oauth/google'
 import getCurrentUser from '../lib/auth/getCurrentUser'
@@ -7,20 +7,16 @@ import getRefreshToken from '../lib/auth/getRefreshToken'
 
 function useAuthorize() {
     const [user, setUser] = useState()
-    const [cookies, setCookie, removeCookie] = useCookies()
+    const userRef = useRef()
+    userRef.current = user
+    const [cookies, setCookie, removeCookie] = useCookies(['oauth_refresh_token', 'oauth_source'])
     const navigate = useNavigate()
     const location = useLocation()
-
-    async function refreshUser() {
-        const { status, message, user } = await getCurrentUser(cookies['oauth_refresh_token'], cookies['oauth_source'])
-        setUser(user)
-        if (!status) { console.log(message) }
-    }
 
     useEffect(() => {
         async function initial() {
             if (cookies['oauth_refresh_token']) {
-                await refreshUser()
+                await updateUser()
             }
             else {
                 setUser(null)
@@ -46,6 +42,21 @@ function useAuthorize() {
 
         route()
     }, [user])
+
+    async function updateUser(category = null, value = null) {
+        if (category && value) {
+            let newUser = {...userRef.current}
+            newUser[category] = value
+            setUser(newUser)
+        }
+        else {
+            const { status, message, user } = await getCurrentUser(cookies['oauth_refresh_token'], cookies['oauth_source'])
+            setUser(user)
+            if (!status) {
+                console.log(message)
+            }
+        }
+    }
 
     const login = useGoogleLogin({
         onSuccess: async (res) => {
@@ -74,15 +85,17 @@ function useAuthorize() {
         accessType: 'offline'
     })
 
-    const logout = () => {
-        googleLogout()
+    const logout = (source) => {
+        if (source === 'google') {
+            googleLogout()
+        }
         setUser(null)
         removeCookie('oauth_source')
         removeCookie('oauth_refresh_token')
         navigate('/login')
     }
 
-    return [ user, refreshUser, login, logout ]
+    return [user, updateUser, login, logout]
 }
 
 export { useAuthorize }

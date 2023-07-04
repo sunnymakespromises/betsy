@@ -1,6 +1,8 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 
-function useCancelDetector(ref, callback) {
+function useCancelDetector(callback) {
+    const ref = useRef(null)
+
     useEffect(() => {
         function handleClickOutside(event) {
             if (ref.current && !ref.current.contains(event.target)) {
@@ -19,7 +21,9 @@ function useCancelDetector(ref, callback) {
             document.removeEventListener('mousedown', handleClickOutside)
             document.removeEventListener('keydown', handleKeyPress)
         }
-    }, [ref])
+    }, [ref, callback])
+
+    return ref
 }
 
 export { useCancelDetector }
