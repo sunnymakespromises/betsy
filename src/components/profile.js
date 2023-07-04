@@ -48,8 +48,8 @@ const Profile = memo(function Profile({ userId = null, canEdit = true, parentId 
                 <Picture params = {pictureParams} picture = {user.picture} input = {input.picture} onInputChange = {onInputChange} isThisInputEmpty = {isThisInputEmpty} status = {statuses.picture} isCurrentUser = {isCurrentUser} isLoading = {isLoading} canEdit = {canEdit} parentId = {DOMId}/>
                 <div id = {DOMId + 'info-container'} className = {'w-full h-full flex flex-col justify-between'}>
                     <Info category = 'display_name' value = {user.display_name} input = {input.display_name} onInputChange = {onInputChange} isThisInputEmpty = {isThisInputEmpty} status = {statuses.display_name} isCurrentUser = {isCurrentUser} isLoading = {isLoading} canEdit = {canEdit} parentId = {DOMId}/>
-                    <Info category = 'username' classes = '-mt-tiny' value = {user.username} input = {input.username} onInputChange = {onInputChange} isThisInputEmpty = {isThisInputEmpty} status = {statuses.username} isCurrentUser = {isCurrentUser} isLoading = {isLoading} canEdit = {canEdit} parentId = {DOMId}/>
-                    <Info category = 'bio' classes = '-mt-tiny' value = {user.bio} input = {input.bio} onInputChange = {onInputChange} isThisInputEmpty = {isThisInputEmpty} status = {statuses.bio} isCurrentUser = {isCurrentUser} isLoading = {isLoading} canEdit = {canEdit} parentId = {DOMId}/>
+                    <Info category = 'username' classes = '-mt-micro' value = {user.username} input = {input.username} onInputChange = {onInputChange} isThisInputEmpty = {isThisInputEmpty} status = {statuses.username} isCurrentUser = {isCurrentUser} isLoading = {isLoading} canEdit = {canEdit} parentId = {DOMId}/>
+                    <Info category = 'bio' classes = '-mt-micro' value = {user.bio} input = {input.bio} onInputChange = {onInputChange} isThisInputEmpty = {isThisInputEmpty} status = {statuses.bio} isCurrentUser = {isCurrentUser} isLoading = {isLoading} canEdit = {canEdit} parentId = {DOMId}/>
                 </div>
                 <div id = {DOMId + 'actions-container'} className = 'flex flex-col w-6 gap-micro'>
                     <Conditional value = {!isCurrentUser && user}>
@@ -242,7 +242,7 @@ const Copy = memo(function Copy({ id, parentId }) {
 
 const Error = memo(function Error({ message, parentId }) {
     return (
-        <div id = {parentId + 'error'} className = {'w-full overflow-hidden transition-all duration-main ' + (message ? 'max-h-[99px]' : 'max-h-[0px]')}>
+        <div id = {parentId + 'error'} className = {'w-full overflow-hidden transition-all duration-main -mt-micro ' + (message ? 'max-h-[99px]' : 'max-h-[0px]')}>
             <Text id = {parentId + 'text'} preset = 'profile-error'>
                 {message}
             </Text>

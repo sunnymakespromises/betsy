@@ -52,9 +52,9 @@ const Text = memo(function Text({ preset = 'main-body', styles, classes, childre
         },
         profile: {
             display_name: 'whitespace-nowrap select-none font-main font-bold text-xl md:text-xl text-text-main',
-            username: 'whitespace-nowrap select-none font-main font-medium text-sm md:text-base text-text-main/muted',
-            bio: 'whitespace-nowrap select-none font-main font-light text-sm md:text-base text-text-main/muted',
-            error: 'whitespace-nowrap select-none font-main font-light text-xs md:text-xs italic text-text-main/killed'
+            username: 'whitespace-nowrap select-none font-main font-medium text-sm md:text-base text-text-main',
+            bio: 'whitespace-nowrap select-none font-main font-light text-sm md:text-base text-text-main',
+            error: 'whitespace-nowrap select-none font-main font-light text-xs md:text-xs text-text-main'
         },
         logout: 'whitespace-nowrap select-none font-main font-medium text-lg md:text-lg text-text-main',
         search: {
