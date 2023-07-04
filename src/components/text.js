@@ -31,7 +31,7 @@ const Text = memo(function Text({ preset = 'main-body', styles, classes, childre
             option: 'select-none font-main font-regular text-sm md:text-base text-text-main'
         },
         info: {
-            error: 'select-none font-main font-regular text-2xl md:text-2xl text-text-onPrimary'
+            error: 'select-none font-main font-regular text-2xl md:text-2xl text-text-primary'
         },
         settings: {
             title: 'whitespace-nowrap select-none font-main font-bold text-3xl md:text-3xl text-text-main',

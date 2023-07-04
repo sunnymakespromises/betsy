@@ -107,7 +107,7 @@ module.exports =  withAnimations({
                         divider: {
                             main: '#e9e7ec',
                             highlight: '#e1e1e1',
-                            onPrimary: '#0066eb'
+                            primary: '#0066eb'
                         },
                         reverse: {
                             main: '#221d27',
@@ -116,7 +116,7 @@ module.exports =  withAnimations({
                         text: {
                             main: '#49494a',
                             highlight: '#221d27',
-                            onPrimary: '#f3f1f6'
+                            primary: '#f3f1f6'
                         },
                         primary: {
                             main: '#027cff',
@@ -150,7 +150,7 @@ module.exports =  withAnimations({
                             divider: {
                                 main: '#1d1822',
                                 highlight: '#0c0711',
-                                onPrimary: '#e61a35'
+                                primary: '#e61a35'
                             },
                             reverse: {
                                 main: '#f3f1f6',
@@ -159,7 +159,7 @@ module.exports =  withAnimations({
                             text: {
                                 main: '#ebeaeb',
                                 highlight: '#FFFFFF',
-                                onPrimary: '#ebeaeb'
+                                primary: '#ebeaeb'
                             },
                             primary: {
                                 main: '#fa2e49',

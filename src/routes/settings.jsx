@@ -137,7 +137,7 @@ const Logout = memo(function Logout({ parentId }) {
     return (
         <Link to = '/logout'>
             <Button preset = 'logout' id = {DOMId + 'button'} classes = 'group/logout'>
-                <Text id = {DOMId + 'text'} preset = 'logout' classes = 'group-hover/logout:text-text-onPrimary'>
+                <Text id = {DOMId + 'text'} preset = 'logout' classes = 'group-hover/logout:text-text-primary'>
                     Sign Out
                 </Text>
             </Button>
