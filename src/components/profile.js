@@ -88,7 +88,7 @@ const Info = memo(function Info({ category, value, classes, input, onInputChange
                     </Text>
                 </Conditional>
                 <Conditional value = {status.status}>
-                    <CheckRounded id = {DOMId + 'icon'} className = {'!transition-all duration-main ' + (status.status ? '!w-4' : '!w-0') + ' !h-4 text-primary-main !animate-duration-300 animate-fadeOutRight'}/>
+                    <CheckRounded id = {DOMId + 'icon'} className = {'!transition-all duration-main ' + (status.status ? '!w-4' : '!w-0') + ' !h-4 text-primary-main !animate-duration-1000 animate-fadeOutRight'}/>
                 </Conditional>
             </div>
             <Error message = {status.message} parentId = {DOMId}/>
