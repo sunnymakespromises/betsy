@@ -46,7 +46,7 @@ module.exports =  withAnimations({
             },
             borderRadius: {
                 main: '1rem',
-                small: '1rem'
+                small: '0.5rem'
             },
             borderWidth: {
                 main: '2px',
