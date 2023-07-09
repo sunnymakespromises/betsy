@@ -11,10 +11,8 @@ async function subscribe(user, targetId) {
         if (user.id !== targetId) {
             const targetUser = await getItem('Users', targetId)
             if (targetUser) {
-                if (!(targetUser.subscribers.some(s => s.id === user.id))) {
-                    let updatedTargetSubscribers = [...targetUser.subscribers, { id: user.id, username: user.username, display_name: user.display_name, picture: user.picture }]
-                    await updateItem('Users', targetUser.id, { subscribers: updatedTargetSubscribers })
-                    let updatedUserSubscriptions = [...user.subscriptions, { id: targetUser.id, username: targetUser.username, display_name: targetUser.display_name, picture: targetUser.picture }]
+                if (!user.subscriptions.some(subscription => subscription === targetUser.d)) {
+                    let updatedUserSubscriptions = [...user.subscriptions, targetUser.id]
                     await updateItem('Users', user.id, { subscriptions: updatedUserSubscriptions })
                     response.changes = { subscriptions: updatedUserSubscriptions }
                     response.status = true
@@ -47,10 +45,8 @@ async function unsubscribe(user, targetId) {
     if (user.id !== targetId) {
         const targetUser = await getItem('Users', targetId)
         if (targetUser) {
-            if (targetUser.subscribers.some(s => s.id === user.id)) {
-                let updatedTargetSubscribers = targetUser.subscribers.filter(subscriber => subscriber.id !== user.id)
-                await updateItem('Users', targetUser.id, { subscribers: updatedTargetSubscribers})
-                let updatedUserSubscriptions = user.subscriptions.filter(subscription => subscription.id !== targetUser.id)
+            if (user.subscriptions.some(subscription => subscription === targetUser.id)) {
+                let updatedUserSubscriptions = user.subscriptions.filter(subscription => subscription !== targetUser.id)
                 await updateItem('Users', user.id, { subscriptions: updatedUserSubscriptions})
                 response.changes = { subscriptions: updatedUserSubscriptions }
                 response.status = true

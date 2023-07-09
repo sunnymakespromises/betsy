@@ -5,10 +5,10 @@ import getTable from '../lib/aws/db/getTable'
 
 function useDev() {
     const { updateData } = useDataContext()
-    async function uploadPicture(category, object, value) {
-        const { status } = await _uploadPicture(category, object, value)
+    async function uploadPicture(object, value) {
+        const { status } = await _uploadPicture(object, value)
         if (status) {
-            await updateData(category)
+            await updateData(object.category)
         }
     }
 

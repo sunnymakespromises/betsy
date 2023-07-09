@@ -1,4 +1,3 @@
-import queryTable from './aws/db/queryTable'
 import updateItem from './aws/db/updateItem'
 import insertFile from './aws/s3/insertFile'
 import removeFile from './aws/s3/removeFile'
@@ -10,29 +9,11 @@ async function updateProfile(user, key, value) {
         message: ''
     }
     switch (key) {
-        case 'username':
-            response.message = validate((value === ''), 'Username cannot be empty.', response.message)
-            response.message = validate((value.length < 6 || value.length > 12), 'Username must be between 6 and 12 characters.', response.message)
-            response.message = validate((!(/^[a-zA-Z0-9-_.]+$/.test(value))), 'Username cannot contain any special characters.', response.message)
-            response.message = validate((await queryTable('Users', 'username = ' + value, ['id'], true)), 'Username already taken.', response.message)
-            if (response.message === '') {
-                await updateItem('Users', user.id, {username: value})
-                response.status = true
-            }
-            break
         case 'display_name':
             response.message = validate((value === ''), 'Display name cannot be empty.', response.message)
             response.message = validate((value.length < 1 || value.length > 16), 'Display name must be between 1 and 16 characters.', response.message)
             if (response.message === '') {
                 await updateItem('Users', user.id, {display_name: value})
-                response.status = true
-            }
-            break
-        case 'bio':
-            response.message = validate((value === ''), 'Bio cannot be empty.', response.message)
-            response.message = validate((value.length < 0 || value.length > 50), 'Bio must be between 0 and 50 characters.', response.message)
-            if (response.message === '') {
-                await updateItem('Users', user.id, {bio: value})
                 response.status = true
             }
             break

@@ -35,11 +35,26 @@ export default async function queryTable(table, query, attributes = null, single
                     filterExpression = arr.join(' ') + ',' + next
                     next = ')'
                 }
+                if (words[i] === 'in') {
+                    filterExpression += ' (' + next
+                    next = ')'
+                }
                 expected = 'value'
                 break
             case 'value':
-                filterExpression += ' :' + letters[letterIndex] + next
-                expressionAttributeValues[':' + letters[letterIndex]] = getValue(words[i]);letterIndex++
+                if (words[i].includes('[') && words[i].includes(']')) {
+                    words[i] = words[i].replace('[', '').replace(']', '')
+                    let values = words[i].split('"').filter(value => value !== '' && value !== ',')
+                    for (let j = 0; j < values.length; j++) {
+                        filterExpression += (j !== 0 ? ' ' : '') + ':' + letters[letterIndex] + (j !== values.length - 1 ? ',' : '')
+                        expressionAttributeValues[':' + letters[letterIndex]] = getValue(values[j]);letterIndex++
+                    }
+                    filterExpression += next
+                }
+                else {
+                    filterExpression += ' :' + letters[letterIndex] + next
+                    expressionAttributeValues[':' + letters[letterIndex]] = getValue(words[i]);letterIndex++
+                }
                 expected = 'logic'
                 break
             case 'logic':

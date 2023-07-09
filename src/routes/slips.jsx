@@ -1,10 +1,10 @@
 import { memo } from 'react'
 import Page from '../components/page'
 import { Helmet } from 'react-helmet'
-import { useStore } from '../hooks/useStore'
+// import { useStore } from '../hooks/useStore'
 
 const Slips = memo(function Slips() {
-    const { store, addToStore, removeFromStore } = useStore('slips')
+    // const { store, addToStore, removeFromStore } = useStore('slips')
     let DOMId = 'slips-'
     return (
         <Page>

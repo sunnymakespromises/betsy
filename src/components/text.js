@@ -15,14 +15,14 @@ const Text = memo(function Text({ preset = 'main-body', styles, classes, childre
             body: 'select-none font-main font-light text-lg md:text-xl text-reverse-0',
             title: 'whitespace-nowrap select-none font-main font-bold text-xl md:text-xl text-text-main',
             button: 'whitespace-nowrap select-none font-main font-regular text-lg md:text-2xl text-reverse-100 group-hover:text-base-0',
+            money: 'select-none font-main font-light text-lg md:text-xl text-text-main'
         },
         home: {
-            events: {
-                name: 'whitespace-nowrap select-none font-main font-bold text-xl md:text-xl',
-                competition: 'select-none font-main font-regular text-base md:text-base text-text-main',
-                sport: 'select-none font-main font-regular text-base md:text-base text-text-main/muted',
-                date: 'select-none font-main font-regular text-base md:text-base text-text-main/muted'
-            }
+            panel: 'whitespace-nowrap select-none font-main font-bold text-xl md:text-xl text-text-main',
+        },
+        events: {
+            name: 'whitespace-nowrap overflow-hidden text-ellipsis select-none font-main font-medium text-base md:text-base text-primary-main',
+            subtitle: 'select-none font-main font-regular text-tiny md:text-tiny text-text-highlight',
         },
         login: {
             title: 'select-none font-main font-black text-6xl md:text-7xl text-text-main text-center',
@@ -31,63 +31,70 @@ const Text = memo(function Text({ preset = 'main-body', styles, classes, childre
             option: 'select-none font-main font-regular text-sm md:text-base text-text-main'
         },
         info: {
-            error: 'select-none font-main font-regular text-2xl md:text-2xl text-text-primary'
+            panel: 'whitespace-nowrap select-none font-main font-bold text-xl md:text-xl text-text-main',
+            item: {
+                title: 'whitespace-nowrap select-none font-main font-bold text-xl md:text-xl text-text-main',
+                subtitle: 'whitespace-nowrap select-none font-main font-regular text-xs md:text-xs text-text-main'
+            },
+            notFound: 'select-none font-main font-medium text-base md:text-base text-text-main/killed',
+            error: 'select-none font-main font-medium text-sm md:text-sm text-text-primary'
         },
         settings: {
-            title: 'whitespace-nowrap select-none font-main font-bold text-3xl md:text-3xl text-text-main',
+            title: 'whitespace-nowrap select-none font-main font-bold text-xl md:text-xl text-text-main',
             donate: {
-                body: 'select-none font-main font-regular text-xs md:text-xs text-text-main/muted text-center',
-                link: 'select-none font-main font-regular text-xs md:text-xs text-primary-main hover:text-primary-highlight'
+                body: 'select-none font-main font-regular text-tiny md:text-tiny text-text-main text-center',
+                link: 'select-none font-main font-regular text-tiny md:text-tiny text-primary-main'
             },
             setting: {
-                title: 'select-none whitespace-nowrap font-main font-medium text-xl md:text-xl text-text-main',
+                title: 'select-none whitespace-nowrap font-main font-medium text-base md:text-base text-text-main',
                 option: {
-                    title: 'select-none font-main font-regular text-base md:text-lg text-text-main'
+                    title: 'select-none font-main font-medium text-sm md:text-sm text-text-main'
                 }
             },
             footer: {
-                body: 'select-none whitespace-nowrap font-main font-light text-xs md:text-xs text-text-main/muted text-center',
-                link: 'select-none whitespace-nowrap font-main font-medium text-xs md:text-xs text-primary-main hover:text-primary-highlight'
+                body: 'select-none whitespace-nowrap font-main font-light text-tiny md:text-tiny text-text-main text-center',
+                link: 'select-none whitespace-nowrap font-main font-medium text-tiny md:text-tiny text-primary-main'
             },
+            logout: 'whitespace-nowrap select-none font-main font-medium text-base md:text-base text-text-main',
         },
         profile: {
-            display_name: 'whitespace-nowrap select-none font-main font-bold text-xl md:text-xl text-text-main',
-            username: 'whitespace-nowrap select-none font-main font-medium text-sm md:text-base text-text-main',
-            bio: 'whitespace-nowrap select-none font-main font-light text-sm md:text-base text-text-main',
-            error: 'whitespace-nowrap select-none font-main font-light text-xs md:text-xs text-text-main'
+            display_name: 'whitespace-nowrap select-none font-main font-medium text-base md:text-base text-text-main text-center',
+            subtitle: 'whitespace-nowrap select-none font-main font-medium text-tiny md:text-tiny text-text-main',
+            stat: {
+                title: 'whitespace-nowrap select-none font-main font-medium text-xs md:text-xs text-text-main',
+                value: 'whitespace-nowrap select-none font-main font-medium text-xs md:text-xs text-text-main'
+            },
+            error: 'select-none font-main font-medium text-tiny md:text-tiny text-text-main'
         },
-        logout: 'whitespace-nowrap select-none font-main font-medium text-lg md:text-lg text-text-main',
         search: {
             results: {
-                category: 'whitespace-nowrap select-none font-main font-regular text-xl md:text-lg text-text-main',
+                category: 'whitespace-nowrap select-none font-main font-medium text-base md:text-base text-primary-main',
             },
             result: {
-                title: 'overflow-hidden text-ellipsis whitespace-nowrap select-none font-main font-regular text-lg md:text-base text-text-main/muted',
-                subtitle: 'transition-all duration-main whitespace-nowrap select-none font-main font-light text-sm md:text-sm',
+                title: 'overflow-hidden text-ellipsis whitespace-nowrap select-none font-main font-regular text-sm md:text-sm text-text-main'
             }
         },
         dev: {
             stat: {
-                title: 'whitespace-nowrap select-none font-main font-medium text-xl md:text-xl text-text-main',
-                value: 'select-none font-main font-bold text-4xl md:text-4xl text-primary-main'
+                title: 'whitespace-nowrap select-none font-main font-medium text-tiny md:text-tiny text-text-main',
+                value: 'select-none font-main font-bold text-xl md:text-xl text-text-main'
             },
-            title: 'whitespace-nowrap select-none font-main font-bold text-xl md:text-3xl text-text-main',
+            title: 'whitespace-nowrap select-none font-main font-bold text-xl md:text-xl text-text-main',
             logs: {
-                title: 'whitespace-nowrap select-none font-main font-regular text-base md:text-xl text-text-main',
+                title: 'whitespace-nowrap select-none font-main font-medium text-xs md:text-sm text-primary-main',
                 change: {
-                    object: 'overflow-hidden text-ellipsis whitespace-nowrap select-none font-main font-regular text-sm md:text-lg text-primary-main',
-                    message: 'whitespace-nowrap select-none font-main font-light text-sm md:text-lg text-text-main'
+                    object: 'overflow-hidden text-ellipsis whitespace-nowrap select-none font-main font-regular text-xs md:text-xs text-primary-main',
+                    message: 'whitespace-nowrap select-none font-main font-regular text-xs md:text-xs text-text-main'
                 }
             },
             images: {
-                item: {
-                    name: 'select-none font-main font-light text-base md:text-xl text-text-main',
-                    subtitle: 'select-none font-main font-light text-tiny md:text-xs text-text-main',
-                }
+                item: 'select-none font-main font-medium text-sm md:text-sm text-primary-main cursor-pointer'
             },
         },
-        money: {
-            amount: 'select-none font-main font-light text-lg md:text-xl text-text-main'
+        odds: {
+            name: 'select-none font-main font-medium text-micro md:text-tiny text-text-main text-center',
+            value: 'select-none font-main font-bold text-sm md:text-lg text-text-main text-center',
+            notFound: 'select-none font-main font-medium text-tiny md:text-sm text-text-main/10 text-center'
         },
         competitor: 'whitespace-nowrap select-none font-main font-light md:font-regular text-lg md:text-xl text-reverse-0'
     }
@@ -104,6 +111,7 @@ const Text = memo(function Text({ preset = 'main-body', styles, classes, childre
     return (
         <p className = {option + (classes ? ' ' + classes : '')} style = {styles} {...extras}>{children}</p>
     )
-}, (b, a) => b.preset === a.preset && _.isEqual(b.styles, a.styles) && b.classes === a.classes && b.children === a.children && b.extras === a.extras)
+}, (b, a) => b.preset === a.preset && _.isEqual(b.styles, a.styles) && b.classes === a.classes && b.children === a.children && _.isEqual(b.extras, a.extras))
+
 
 export default Text

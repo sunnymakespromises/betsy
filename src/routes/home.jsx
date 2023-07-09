@@ -1,20 +1,16 @@
 import { memo, useMemo } from 'react'
 import { Helmet } from 'react-helmet'
-import { Link, useNavigate } from 'react-router-dom'
-import _ from 'lodash'
 import { useDataContext } from '../contexts/data'
 import Page from '../components/page'
-import {default as SearchComponent} from '../components/search'
-import { AutoAwesomeRounded, FavoriteRounded, SortByAlphaRounded } from '@mui/icons-material'
-import { useUserContext } from '../contexts/user'
 import Text from '../components/text'
-import toDate from '../lib/util/toDate'
-import Profile from '../components/profile'
+import { Event } from '../components/events'
 import List from '../components/list'
+import { useSearch } from '../hooks/useSearch'
+import { AlarmRounded, ListAltRounded } from '@mui/icons-material'
+import now from '../lib/util/now'
+import _ from 'lodash'
 
 const Home = memo(function Home() {
-    let navigate = useNavigate()
-    const { currentUser } = useUserContext()
     const { data } = useDataContext()
 
     let DOMId = 'home-'
@@ -22,93 +18,51 @@ const Home = memo(function Home() {
         <Page>
             <div id = {DOMId + 'page'} className = 'w-full h-full'>
                 <Helmet><title>Dashboard | Betsy</title></Helmet>
-                <Search data = {data} currentUser = {currentUser} navigate = {navigate} parentId = {DOMId}>
-                    <div id = {DOMId + 'container'} className = 'w-full h-full flex flex-col md:flex-row gap-small md:gap-main z-0 mt-small md:mt-small overflow-hidden'>
-                        <div id = {DOMId + 'group-3-container'} className = 'w-min h-full flex flex-col gap-smaller'>
-                            <Profile parentId = {DOMId} canEdit = {false}/>
-                        </div>
-                        <div id = {DOMId + 'group-2-container'} className = 'grow flex flex-col'>
-                        </div>
-                        <div id = {DOMId + 'group-1-container'} className = 'w-full md:w-min h-[50%] md:h-full flex flex-col gap-smaller'>
-                            <Events events = {data?.recommendations?.events} navigate = {navigate} parentId = {DOMId}/>
-                        </div>
-                    </div>
-                </Search>
+                <div id = {DOMId + 'container'} className = 'w-full h-full min-h-0 flex flex-col md:flex-row gap-small md:gap-main z-0'>
+                    <Events data = {data} parentId = {DOMId + 'events-'}/>
+                </div>
             </div>
         </Page>
     )
 })
 
-const Search = memo(function Search({ data, currentUser, navigate, parentId, children }) {
-    const searchConfig = useMemo(() => { return currentUser?.favorites && {
+const Events = memo(function Events({ data, parentId }) {
+    const searchConfig = useMemo(() => { return {
+        id: 'competitor',
         filters: {
-            alphabetical: {
-                title: 'Sort Alphabetically',
-                icon: (props) => <SortByAlphaRounded {...props}/>,
-                fn: (a) => a.sort((a, b) => a.item.name.localeCompare(b.item.name)),
-                turnsOff: ['popular']
+            live: {
+                title: 'Live Events',
+                icon: (props) => <AlarmRounded {...props}/>,
+                fn: (a, category) => a.filter(r => category === 'events' && r.start_time < now()).sort((a, b) => a.start_time - b.start_time),
+                turnsOff: ['popular', 'alphabetical']
             },
-            favorites: {
-                title: 'Favorites',
-                icon: (props) => <FavoriteRounded {...props}/>,
-                fn: (a) => a.filter(r => r.category === 'events' ? (currentUser.favorites?.competitors?.some(favoriteCompetitor => r.item.competitors.some(eventCompetitor => eventCompetitor.id === favoriteCompetitor.id)) || currentUser.favorites?.competitions?.some(favoriteCompetition => r.item.competition.id === favoriteCompetition.id) ) : currentUser.favorites[r.category]?.some(favorite => favorite.id === r.item.id))
-            },
-            popular: {
-                title: 'Popular',
-                icon: (props) => <AutoAwesomeRounded {...props}/>,
-                fn: (a) => a.sort((a, b) => a.slip_count - b.slip_count),
-                turnsOff: ['alphabetical']
+            has_bets: {
+                title: 'Has Bets',
+                icon: (props) => <ListAltRounded {...props}/>,
+                fn: (a, category) => a.filter(r => category === 'events' && r.odds && r.odds.length > 0).sort((a, b) => a.start_time - b.start_time)
             }
         },
-        categories: ['events', 'competitors', 'competitions'],
-        spaces: null,
-        keys: { events: ['name', 'competition.name', 'competitors.name', 'sport.name'], competitors: ['name', 'competitions.name', 'sport.name'], competitions: ['name', 'sport.name', 'competitors.name']},
-        minimumLength: 3
-    }}, [currentUser.favorites])
-
-    if (data && currentUser) {
-        return (
-            <SearchComponent favorites = {currentUser.favorites} searchConfig = {searchConfig} data = {data ? {events: data.events, competitors: data.competitors, competitions: data.competitions} : null} onResultClick = {onResultClick} parentId = {parentId}>
-                {children}
-            </SearchComponent>
-        )
-    }
-
-    function onResultClick(category, result) {
-        navigate('/info?category=' + category + '&id=' + result.id)
-    }
-}, (b, a) => _.isEqual(b.data, a.data) && _.isEqual(b.currentUser, a.currentUser) && b.children === a.children)
-
-const Events = memo(function Events({ events, navigate, parentId }) {
-    const Item = memo(function Item({ item, parentId }) {
-        const isLive = useMemo(() => item.group === 'live', [item])
-        const textColor = useMemo(() => {return {main: isLive ? 'text-primary-main' : 'text-text-main', muted: isLive ? 'text-primary-main/muted' : 'text-text-main/muted', killed: isLive ? 'text-primary-main/muted' : 'text-text-main/muted'} }, [isLive])
-        return (
-            <Link to = {'/info?category=events&id=' + item.id} id = {parentId + 'info'} className = {'group/event w-full h-full'}>
-                <Text id = {parentId + 'date'} preset = 'home-events-date'>
-                    {toDate(item.start_time)}
+        space: data ? { events: data.recommendations.favorites } : null,
+        categories: ['events'],
+        keys: { events: ['name', 'competition.name', 'competitors.name', 'sport.name'] },
+        showAllOnInitial: true
+    }}, [data])
+    const { results } = useSearch(searchConfig)
+    let DOMId = parentId + 'panel-'
+    return (
+        <div id = {DOMId + 'container'} className = 'w-full h-full min-h-0 flex flex-col rounded-main border-thin border-divider-main md:shadow'>
+            <div id = {DOMId + 'title-container'} className = 'w-full h-min flex flex-row items-center p-main'>
+                <Text id = {DOMId + 'title'} preset = 'home-panel'>
+                    Events
                 </Text>
-                <Text id = {parentId + 'name'} preset = 'home-events-name' classes = {'-mt-micro ' + textColor.main}>
-                    {item.name}
-                </Text>
-                <div id = {parentId + 'subtitle-container'} className = 'flex flex-row'>
-                    <Text id = {parentId + 'competition'} preset = 'home-events-competition'>
-                        {item.competition.name}&nbsp;
-                    </Text>
-                    <Text id = {parentId + 'sport'} preset = 'home-events-sport'>
-                        {item.sport.name}
-                    </Text>
-                </div>
-            </Link>
-        )
-    }, (b, a) => _.isEqual(b.item, a.item))
-
-    let DOMId = parentId + 'events-'
-    if (events) {
-        return (
-            <List items = {events} element = {Item} parentId = {DOMId}/>
-        )
-    }
-}, (b, a) => _.isEqual(b.events, a.events))
+                {/* <SearchBar input = {input} hasResults = {hasResults} filters = {filters} setFilter = {setFilter} onInputChange = {onInputChange} isExpanded = {false} autoFocus = {false} canExpand = {false} parentId = {DOMId}/> */}
+            </div>
+            <div className = 'divider border-t-thin border-divider-main'/>
+            <div id = {DOMId + 'child-container'} className = 'min-h-0 w-full'>
+                <List items = {results} element = {Event} dividers parentId = {DOMId + 'events-'}/>
+            </div>
+        </div>
+    )
+}, (b, a) => _.isEqual(b.data, a.data))
 
 export default Home

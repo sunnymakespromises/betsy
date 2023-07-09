@@ -7,7 +7,7 @@ async function addToFavorites(user, category, target) {
         message: ''
     }
     if (user.favorites[category].every(f => f.id !== target.id)) {
-        let updatedFavorites = {...user.favorites, [category]: [...user.favorites[category], { id: target.id, name: target.name, picture: target.picture }]}
+        let updatedFavorites = {...user.favorites, [category]: [...user.favorites[category], target.id]}
         await updateItem('Users', user.id, { favorites: updatedFavorites })
         response.changes = { favorites: updatedFavorites }
         response.status = true
@@ -26,7 +26,7 @@ async function removeFromFavorites(user, category, target) {
         message: ''
     }
     if (user.favorites[category].some(f => f.id === target.id)) {
-        let updatedFavorites = {...user.favorites, [category]: user.favorites[category].filter(f => f.id !== target.id)}
+        let updatedFavorites = { ...user.favorites, [category]: user.favorites[category].filter(f => f !== target.id)}
         await updateItem('Users', user.id, { favorites: updatedFavorites })
         response.changes = { favorites: updatedFavorites }
         response.status = true

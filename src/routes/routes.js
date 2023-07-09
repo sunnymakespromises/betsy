@@ -7,7 +7,7 @@ import User from './user'
 import Dev from './dev'
 import Info from './info'
 import Slips from './slips'
-import { ExitToApp, DevicesRounded, DashboardRounded, VpnKeyRounded, AccountCircleRounded, SettingsRounded, ContactsRounded, ListAltRounded } from '@mui/icons-material'
+import { ExitToApp, DevicesRounded, DashboardRounded, VpnKeyRounded, SettingsRounded, ContactsRounded, ListAltRounded, FaceRounded } from '@mui/icons-material'
 
 const routes = [
     {
@@ -47,7 +47,7 @@ const routes = [
     },
     {
         path: '/user',
-        icon: (props) => <AccountCircleRounded {...props}/>,
+        icon: (props) => <FaceRounded {...props}/>,
         element: <User/>,
         show: true,
         is_dev: false

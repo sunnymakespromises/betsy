@@ -9,10 +9,10 @@ async function getUserBy(key, value) {
     }
     let user
     if (key === 'id') {
-        user = await getItem('Users', value, ['id', 'balance', 'bio', 'display_name', 'email', 'favorites', 'is_locked', 'join_date', 'picture', 'slips', 'subscribers', 'username'])
+        user = await getItem('Users', value, ['id', 'balances', 'display_name', 'email', 'favorites', 'is_locked', 'join_date', 'picture', 'slips', 'subscriptions'])
     }
     else {
-        user = await queryTable('Users', [key] + ' = ' + value, ['id', 'balance', 'bio', 'display_name', 'email', 'favorites', 'is_locked', 'join_date', 'picture', 'slips', 'subscribers', 'username'], true)
+        user = await queryTable('Users', [key] + ' = ' + value, ['id', 'balances', 'display_name', 'email', 'favorites', 'is_locked', 'join_date', 'picture', 'slips', 'subscriptions'], true)
     }
     if (user) {
         response.status = true

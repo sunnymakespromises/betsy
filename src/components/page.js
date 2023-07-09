@@ -1,8 +1,8 @@
 import { memo } from 'react'
 
-const Page = memo(function Page({ children }) {
+const Page = memo(function Page({ canScroll = false, children }) {
     return (
-        <div className = 'page absolute w-full h-full p-smaller md:p-main bg-base-main overflow-hidden animate-duration-300 shadow-shadow/5 shadow-main'>
+        <div className = {'page absolute w-full p-main overflow-auto no-scrollbar md:overflow-hidden bg-base-main !animate-duration-300' + (canScroll ? '' : ' h-full')}>
             {children}
         </div>
     )

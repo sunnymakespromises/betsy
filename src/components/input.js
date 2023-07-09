@@ -21,37 +21,43 @@ const Input = memo(forwardRef(function Input({ value, status, type = 'text', pre
         },
         profile: {
             display_name: {
-                classes: 'transition-all duration-main select-none w-full font-main font-bold text-xl md:text-xl text-primary-main placeholder:text-text-main/killed bg-transparent focus:outline-none',
+                classes: 'transition-all duration-main select-none w-full font-main font-medium text-base md:text-base text-primary-main text-center placeholder:text-primary-main/killed bg-transparent focus:outline-none',
                 true: '',
-                false: 'text-red-0',
-                null: ''
-            },
-            username: {
-                classes: 'transition-all duration-main select-none w-full font-main font-medium text-sm md:text-base text-primary-main placeholder:text-text-main/killed bg-transparent focus:outline-none',
-                true: '',
-                false: 'text-red-0',
-                null: ''
-            },
-            bio: {
-                classes: 'transition-all duration-main select-none w-full font-main font-light text-sm md:text-base text-primary-main placeholder:text-text-main/killed bg-transparent focus:outline-none',
-                true: '',
-                false: 'text-red-0',
+                false: '',
                 null: ''
             }
         },
+        info: {
+            classes: 'px-main py-smaller font-main font-medium w-full text-sm md:text-sm text-text-highlight placeholder:text-text-highlight/killed focus:outline-none bg-base-main z-10',
+            true: '',
+            false: '',
+            null: ''
+        },
         search: {
-            classes: 'transition-all duration-main px-main p-small font-main font-medium w-full text-2xl md:text-lg text-text-main placeholder:text-text-main/killed focus:outline-none bg-base-highlight z-10',
+            classes: 'px-main py-smaller font-main font-medium w-full text-sm md:text-sm text-text-main placeholder:text-text-highlight/killed focus:outline-none bg-base-main z-10',
             true: '',
             false: '',
             null: ''
         },
         dev: {
             images: {
-                classes: 'transition-all duration-main px-main p-small font-main font-medium w-full text-2xl md:text-lg text-text-main placeholder:text-text-main/killed focus:outline-none bg-base-highlight z-10 rounded-main',
+                classes: 'px-main py-smaller font-main font-medium w-full text-sm md:text-sm text-text-main placeholder:text-text-highlight/killed focus:outline-none bg-base-main z-10',
+                true: '',
+                false: '',
+                null: ''
+            },
+            logs: {
+                classes: 'py-small p-main font-main font-medium w-full text-sm md:text-sm text-text-main placeholder:text-text-highlight/killed focus:outline-none bg-base-main z-10',
                 true: '',
                 false: '',
                 null: ''
             }
+        },
+        events: {
+            classes: 'px-main py-smaller font-main font-medium w-full text-sm md:text-sm text-text-main placeholder:text-text-highlight/killed focus:outline-none bg-base-main !border-0 !shadow-none z-10',
+            true: '',
+            false: '',
+            null: ''
         }
     }
 

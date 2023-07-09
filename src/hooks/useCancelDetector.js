@@ -1,7 +1,9 @@
 import { useEffect, useRef } from 'react'
+import { useKeyListener } from './useKeyListener'
 
 function useCancelDetector(callback) {
     const ref = useRef(null)
+    useKeyListener(['Escape'], () => callback())
 
     useEffect(() => {
         function handleClickOutside(event) {
@@ -9,17 +11,10 @@ function useCancelDetector(callback) {
                 callback()
             }
         }
-        function handleKeyPress(event) {
-            if (event.key === 'Escape') {
-                callback()
-            }
-        }
 
         document.addEventListener('mousedown', handleClickOutside)
-        document.addEventListener('keydown', handleKeyPress)
         return () => {
             document.removeEventListener('mousedown', handleClickOutside)
-            document.removeEventListener('keydown', handleKeyPress)
         }
     }, [ref, callback])
 

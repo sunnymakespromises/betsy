@@ -12,7 +12,7 @@ export default function Login() {
     let DOMId = 'login-'
     return (
         <Page>
-            <div id = {DOMId + 'page'} className = 'w-full h-full flex flex-col bg-base-highlight rounded-main p-main'>
+            <div id = {DOMId + 'page'} className = 'w-full h-full flex flex-col bg-base-main rounded-main p-main'>
                 <Helmet><title>Login | Betsy</title></Helmet>
                 <div id = {DOMId + 'title-container'} className = 'w-min bg-gradient-to-r from-primary-highlight to-accent-highlight bg-clip-text py-micro'>
                     <Text id = {DOMId + 'title'} preset = 'login-title' classes = '!text-transparent'>

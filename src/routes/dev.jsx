@@ -2,10 +2,9 @@ import React, { memo, useMemo, useRef, useState  } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
 import _ from 'lodash'
-import { ExpandMoreRounded, SortByAlphaRounded } from '@mui/icons-material'
+import { AddRounded, CloseRounded, ExpandMoreRounded, FolderRounded, RemoveRounded } from '@mui/icons-material'
 import { useDataContext } from '../contexts/data'
 import { useUserContext } from '../contexts/user'
-import { useCancelDetector } from '../hooks/useCancelDetector'
 import Page from '../components/page'
 import Search from '../components/search'
 import { useDev } from '../hooks/useDev'
@@ -15,6 +14,9 @@ import Text from '../components/text'
 import List from '../components/list'
 import {default as ImageComponent} from '../components/image'
 import toDate from '../lib/util/toDate'
+import { useSearch } from '../hooks/useSearch'
+import SearchBar from '../components/searchBar'
+import JSZip from 'jszip'
 
 const Dev = memo(function Dev() {
     const [searchParams, setSearchParams] = useSearchParams()
@@ -29,43 +31,34 @@ const Dev = memo(function Dev() {
             for (const item of searchParams.get('selected').split(',')) {
                 let category = item.split('+')[0]
                 let id = item.split('+')[1]
-                newSelected.push({...data[category]?.find(c => c.id === id), category: category, group: category})
+                newSelected.push({...data[category]?.find(c => c.id === id), category: category})
             }
         }
         return newSelected
     }, [searchParams, data])
-    const searchConfig = {
-        filters: { 
-            alphabetical: { 
-                title: 'Sort Alphabetically', 
-                icon: (props) => <SortByAlphaRounded {...props}/>,
-                fn: (a) => a.sort((a, b) => (a.item.name.localeCompare(b.item.name)))
-            }
-        },
+    const searchConfig = useMemo(() => { return {
+        id: 'dev',
+        space: data ? { competitions: data.competitions, competitors: data.competitors } : null,
         categories: ['competitions', 'competitors'],
-        spaces: null,
         keys: { competitions: ['name', 'competitions.name', 'sport.name'], competitors: ['name', 'competitions.name', 'sport.name'] }
-    }
+    }}, [data])
 
-    if (isDev) {
+    if (isDev && data) {
         let DOMId = 'dev-'
         return (
             <Page>
-                <div id = {DOMId + 'page'} className = 'w-full h-full'>
+                <div id = {DOMId + 'page'} className = 'relative w-full h-full flex flex-col gap-main'>
                     <Helmet><title>Developer | Betsy</title></Helmet>
-                    <Search searchConfig = {searchConfig} data = {data ? { competitions: data.competitions, competitors: data.competitors } : null} onResultClick = {onResultClick} parentId = {DOMId}>
-                        <div id = {DOMId + 'container'} className = 'w-full h-full flex flex-col md:flex-row-reverse gap-small mt-small overflow-auto no-scrollbar md:overflow-hidden'>
-                            <Conditional value = {selected?.length > 0}>
-                                <div id = {DOMId + 'group-1-container'} className = 'w-full md:w-96 h-min md:h-full flex flex-col gap-smaller md:overflow-hidden'>
-                                    <Selected selected = {selected} searchParams = {searchParamsRef.current} setSearchParams = {setSearchParams} parentId = {DOMId}/>
-                                </div>
-                            </Conditional>
-                            <div id = {DOMId + 'logs-container'} className = 'grow h-min md:h-full flex flex-col md:flex-row gap-small md:gap-smaller'>
-                                <Stats logs = {data?.logs} parentId = {DOMId + 'logs-'}/>
-                                <Logs logs = {data?.logs} parentId = {DOMId + 'logs-'}/>
-                            </div>
+                    <Search searchConfig = {searchConfig} onResultClick = {onResultClick} inputPreset = 'dev-images' parentId = {DOMId}/>
+                    <div id = {DOMId + 'container'} className = 'w-full h-full md:min-h-0 flex flex-col md:flex-row gap-main z-0'>
+                        <div id = {DOMId + 'logs-container'} className = 'w-full md:h-full flex flex-col md:flex-row gap-main'>
+                            <Stats logs = {data?.logs} parentId = {DOMId + 'logs-'}/>
+                            <Logs logs = {data?.logs} parentId = {DOMId + 'logs-'}/>
                         </div>
-                    </Search>
+                        <div id = {DOMId + 'group-1-container'} className = 'relative w-full h-full flex flex-col gap-smaller'>
+                            <Selected selected = {selected} searchParams = {searchParamsRef.current} setSearchParams = {setSearchParams} parentId = {DOMId}/>
+                        </div>
+                    </div>
                 </div>
             </Page>
         )
@@ -86,41 +79,49 @@ const Dev = memo(function Dev() {
 })
 
 const Selected = memo(function Selected({ selected, searchParams, setSearchParams, parentId }) {
-    let [uploadedItem, setUploadedItem] = useState()
+    let [targetItem, setTargetItem] = useState()
     const { uploadPicture } = useDev()
-    const pictureInput = useRef(null)
+    const fileInput = useRef(null)
+    const folderInput = useRef(null)
     const Item = memo(function Item({ item, parentId }) {
         return (
-            <div id = {parentId + 'container'} className = 'flex flex-row items-center gap-tiny cursor-pointer'>
-                <Conditional value = {item.picture}>
-                    <ImageComponent id = {parentId + 'image'} external path = {item.picture} classes = 'w-8 h-8'/>
-                </Conditional>
-                <div id = {parentId + 'text-container'} className = 'flex flex-col'>
-                    <div id = {parentId + 'subtitle-container'} className = 'flex flex-row'>
-                        <Conditional value = {item.competition}>
-                            <Text id = {parentId + 'competition'} preset = 'dev-images-item-subtitle'>
-                                {item?.competition?.name}&nbsp;
-                            </Text>
-                        </Conditional>
-                        <Text id = {parentId + 'sport'} preset = 'dev-images-item-subtitle'>
-                            {item.sport.name}
-                        </Text>
-                    </div>
-                    <Text id = {parentId + 'name'} preset = 'dev-images-item-name' classes = '-mt-micro'>
+            <div id = {parentId + 'container'} className = 'relative h-min flex flex-row items-center gap-small'>
+                <div id = {parentId + 'name-container'} className = 'flex flex-row items-center gap-tiny'>
+                    <Conditional value = {item.picture}>
+                        <ImageComponent id = {parentId + 'image'} external path = {item.picture} classes = 'w-4 h-4'/>
+                    </Conditional>
+                    <Text id = {parentId + 'name'} preset = 'dev-images-item' onClick = {() => onClickFile(item)}>
                         {item.name}
                     </Text>
                 </div>
+                <CloseRounded className = '!h-4 !w-4 text-primary-main cursor-pointer' onClick = {() => onRemove(item)}/>
             </div>
         )
     }, (b, a) => _.isEqual(b.item, a.item))
 
     let DOMId = parentId + 'selected-'
     return (
-        <div id = {DOMId + 'container'} className = 'w-full h-min flex flex-col z-0 overflow-hidden'>
-            <input id = {DOMId + 'input'} style = {{ display: 'none' }} type = 'file' onChange = {(e) => onUpload(e)} ref = {pictureInput} accept = '.jpg, .jpeg, .png, .gif, .webp'/>
-            <List items = {selected} element = {Item} onClick = {onClick} onRemove = {onRemove} parentId = {DOMId}/>
+        <div id = {DOMId + 'container'} className = 'w-full h-full flex flex-col overflow-hidden rounded-main border-thin border-divider-main md:shadow'>
+            <input id = {DOMId + 'file-input'} style = {{ display: 'none' }} type = 'file' onChange = {(e) => onUploadFile(e)} ref = {fileInput} accept = '.jpg, .jpeg, .png, .gif, .webp'/>
+            <input id = {DOMId + 'folder-input'} style = {{ display: 'none' }} type = 'file' onChange = {(e) => onUploadFolder(e)} ref = {folderInput} accept = '.zip'/>
+            <div id = {DOMId + 'title-container'} className = 'w-full flex flex-row justify-between items-center p-main z-10'>
+                <Text id = {DOMId + 'title'} preset = 'dev-title'>
+                    Upload
+                </Text>
+                <div id = {DOMId + 'actions-container'} className = 'flex flex-row gap-small'>
+                    <FolderRounded className = '!h-full !aspect-square text-primary-main cursor-pointer' onClick = {() => onClickFolder()}/>
+                    <CloseRounded className = '!h-full !aspect-square text-primary-main cursor-pointer' onClick = {() => removeAll()}/>
+                </div>
+            </div>
+            <div className = 'divider border-t-thin border-divider-main'/>
+            <List items = {selected} element = {Item} classes = 'p-main gap-small' parentId = {DOMId}/>
         </div>
     )
+
+    function removeAll() {
+        let newSearchParams = {...Object.fromEntries([...searchParams].filter(p => p[0] !== 'selected'))}
+        setSearchParams(newSearchParams, { replace: true })
+    }
 
     function onRemove(item) {
         let newSelected = searchParams.get('selected').split(',').filter(p => p.split('+')[1] !== item.id).join(',')
@@ -128,14 +129,42 @@ const Selected = memo(function Selected({ selected, searchParams, setSearchParam
         setSearchParams(newSearchParams, { replace: true })
     }
 
-    async function onClick(item) {
+    async function onClickFile(item) {
         if (item) {
-            setUploadedItem(item)
-            pictureInput.current.click()
+            setTargetItem(item)
+            fileInput.current.click()
         }
     }
 
-    async function onUpload(e) {
+    async function onClickFolder() {
+        if (selected?.length > 0) {
+            folderInput.current.click()
+        }
+    }
+
+    async function onUploadFolder(e) {
+        if (e.target.files[0]) {
+            await JSZip.loadAsync(e.target.files[0]).then((zip) => {
+                let files = Object.keys(zip.files).filter(filename => (zip.files[filename].dir) === false)
+                files = files.map(filename => {
+                    let name = zip.files[filename].name.split('/').pop().replace('.png', '')
+                    let item = selected.find(item => item.category === 'competitions' ? item.key === name : item.category === 'competitors' ? item.name === name : false)
+                    return {
+                        filename: filename,
+                        item: item
+                    }
+                })
+                files.forEach(async file => {
+                    if (file.item) {
+                        let value = URL.createObjectURL(await zip.files[file.filename].async('blob'))
+                        await uploadPicture(file.item, value)
+                    }
+                })
+            })
+        }
+    }
+
+    async function onUploadFile(e) {
         const createImage = (url) => new Promise((resolve, reject) => {
             const image = new Image()
             image.addEventListener('load', () => resolve(image))
@@ -148,8 +177,8 @@ const Selected = memo(function Selected({ selected, searchParams, setSearchParam
             const image = await createImage(URL.createObjectURL(e.target.files[0]))
             const canvas = document.createElement('canvas')
             const ctx = canvas.getContext('2d')
-            canvas.width = 720
-            canvas.height = 720
+            canvas.width = 400
+            canvas.height = 400
             let x, y, width, height
             const aspectRatio = image.width / image.height // >1 = landscape, <1 = portrait
             x = aspectRatio >= 1 ? (image.width - image.height) / 2 : 0
@@ -157,13 +186,13 @@ const Selected = memo(function Selected({ selected, searchParams, setSearchParam
             width = aspectRatio >= 1 ? image.height : image.width
             height = aspectRatio >= 1 ? image.height : image.width
             ctx.drawImage(image, x, y, width, height, 0, 0, canvas.width, canvas.height)
-            let objectURL = URL.createObjectURL(await new Promise((resolve) => {
+            let value = URL.createObjectURL(await new Promise((resolve) => {
                 canvas.toBlob((blob) => {
                     resolve(blob)
                 }, 'image/png')
             }))
-            if (uploadedItem && uploadedItem.category && objectURL) {
-                await uploadPicture(uploadedItem.category, uploadedItem, objectURL)
+            if (targetItem && value) {
+                await uploadPicture(targetItem, value)
             }
         }
     }
@@ -190,13 +219,13 @@ const Stats = memo(function Stats({ logs, parentId }) {
     ]
     let DOMId = parentId + 'stats-' 
     return (
-        <div id = {DOMId + 'container'} className = 'w-full md:w-min h-min flex flex-row flex-wrap md:flex-col gap-smaller md:gap-small bg-base-highlight rounded-main p-small'>
+        <div id = {DOMId + 'container'} className = 'w-full md:w-min h-min flex flex-row flex-wrap md:flex-col gap-smaller md:gap-small rounded-main p-main border-thin border-divider-main md:shadow'>
             <Map array = {stats} callback = {(stat, index) => {
                 let statId = DOMId + 'stat-' + index + '-'; return (
                 <React.Fragment key = {index}>
                     <Stat title = {stat.title} value = {stat.value()} parentId = {statId}/>
                     <Conditional value = {index !== stats.length - 1}>
-                        <div className = 'divider border-t-thin border-l-thin border-divider-highlight'/>
+                        <div className = 'divider border-t-thin border-l-thin border-divider-main'/>
                     </Conditional>
                 </React.Fragment>
             )}}/>
@@ -219,61 +248,77 @@ const Stat = memo(function Stat({ title, value, parentId }) {
 }, (b, a) => b.title === a.title && b.value === a.value)
 
 const Logs = memo(function Logs({ logs, parentId }) {
-    let changes = useMemo(() => {
+    const changes = useMemo(() => {
         let newChanges = []
-        if (logs) {
-            for (const log of logs) {
-                let logChanges = []
-                let changes = Object.keys(log).filter(category => log[category].changes).map(category => log[category].changes)
+        for (const log of logs) {
+            let changes = log.totals.changes
+            if (changes) {
                 for (const change of changes) {
-                    logChanges = [...logChanges, ...change]
+                    newChanges.push({ id: log.id, title: toDate(log.timestamp), messages: change.messages, objects: change.objects, categories: change.categories})
                 }
-                newChanges.push({
-                    title: toDate(log.timestamp),
-                    changes: logChanges
-                })
             }
         }
-        return newChanges
+        return _.groupBy(newChanges, 'title')
     }, [logs])
+    const searchConfig = useMemo(() => { return {
+        id: 'dev_logs',
+        filters: {
+            removal: {
+                title: 'Removal',
+                icon: (props) => <RemoveRounded {...props}/>,
+                fn: (a) => a.filter(r => r.messages.includes('Removed')),
+                turnsOff: ['addition']
+            },
+            addition: {
+                title: 'Addition',
+                icon: (props) => <AddRounded {...props}/>,
+                fn: (a) => a.filter(r => r.messages.includes('Added')),
+                turnsOff: ['removal']
+            }
+        },
+        categories: Object.keys(changes),
+        keys: Object.fromEntries(Object.entries(changes).map(([k,]) => [k, ['messages', 'objects.name']])),
+        space: changes,
+        showAllOnInitial: true
+    }}, [logs])
+    const { input, results, filters, setFilter, onInputChange } = useSearch(searchConfig)
 
     let DOMId = parentId + 'changes-'
-    return (
-        <div id = {DOMId + 'container'} className = 'w-full h-full flex flex-col gap-tiny md:overflow-hidden bg-base-highlight rounded-main p-small'>
-            <Text id = {DOMId + 'title'} preset = 'dev-title'>
-                Logs
-            </Text>
-            <div id = {DOMId + 'logs-container'} className = 'w-full h-full flex flex-col md:overflow-hidden'>
-                <div id = {DOMId + 'logs'} className = 'w-full h-min md:overflow-auto no-scrollbar'>
-                    <Map array = {changes} callback = {(log, index) => {
+    if (results) {
+        return (
+            <div id = {DOMId + 'container'} className = 'relative w-full h-full flex flex-col rounded-main border-thin border-divider-main md:shadow'>
+                <div id = {DOMId + 'title-container'} className = 'md:sticky md:top-0 w-full flex flex-row justify-between items-center p-main z-10'>
+                    <Text id = {DOMId + 'title'} preset = 'dev-title'>
+                        Logs
+                    </Text>
+                    <SearchBar inputPreset = 'dev-logs' input = {input} onInputChange = {onInputChange} canExpand = {false} filters = {filters} setFilter = {setFilter} autoFocus = {false} parentId = {DOMId}/>
+                </div>
+                <div className = 'divider border-t-thin border-divider-main'/>
+                <div id = {DOMId + 'logs'} className = 'w-full h-full flex flex-col p-main overflow-hidden md:overflow-y-auto md:no-scrollbar'>
+                    <Map array = {results && Object.keys(results)} callback = {(log, index) => {
                         let logId = DOMId + 'log-' + index + '-'; return (
-                            <React.Fragment key = {index}>
-                            <div className = 'divider border-t-thin border-divider-highlight'/>
-                            <Log key = {index} log = {log} hasDivider = {index !== changes.length - 1} parentId = {logId}/>
-                            <Conditional value = {index === changes.length - 1}>
-                                <div className = 'divider border-b-thin border-divider-highlight'/>
-                            </Conditional>
-                        </React.Fragment>
+                        <Conditional key = {index} value = {results[log] && results[log].length > 0}>
+                            <Log changes = {results[log]} title = {log} parentId = {logId}/>
+                        </Conditional>
                     )}}/>
                 </div>
             </div>
-        </div>
-    )
+        )
+    }
 }, (b, a) => _.isEqual(b.logs, a.logs))
 
-const Log = memo(function Log({ log, parentId }) {
-    const [isVisible, setIsVisible] = useState()
-    const clickRef = useCancelDetector(() => isVisible ? setIsVisible(false) : null)
+const Log = memo(function Log({ changes, title, parentId }) {
+    let [isExpanded, setisExpanded] = useState(false)
     return (
-        <div ref = {clickRef} id = {parentId + 'container'} className = {'w-full h-min flex flex-col py-tiny md:py-small overflow-hidden'}>
-            <div id = {parentId + 'title-container'} className = 'w-full flex flex-row items-center  gap-micro cursor-pointer' onClick = {onClick}>
+        <div id = {parentId + 'container'} className = {'w-full h-min flex flex-col'}>
+            <div id = {parentId + 'title-container'} className = {'w-full flex flex-row items-center gap-micro cursor-pointer'} onClick = {() => onClick()}>
                 <Text id = {parentId + 'title'} preset = 'dev-logs-title'>
-                    {log.title}
+                    {title}
                 </Text>
-                <ExpandMoreRounded className = {'!transition-all duration-main !h-full aspect-square text-primary-main ' + (isVisible ? 'rotate-180' : '')}/>
+                <ExpandMoreRounded className = {'!transition-all duration-main !h-full aspect-square text-primary-main ' + (isExpanded ? 'rotate-180' : '')}/>
             </div>
-            <div id = {parentId + 'changes'} className = {'flex flex-col overflow-hidden ' + (isVisible ? 'h-min md:pt-micro' : 'h-0 md:pt-0')}>
-                <Map array = {log.changes} callback = {(change, index) => {
+            <div id = {parentId + 'changes'} className = {'w-full h-min flex-col overflow-hidden gap-y-micro ' + (isExpanded ? 'flex' : 'hidden')}>
+                <Map array = {changes} callback = {(change, index) => {
                     let changeId = parentId + 'change-' + index + '-'; return (
                     <Change key = {index} change = {change} parentId = {changeId}/>
                 )}}/>
@@ -282,9 +327,9 @@ const Log = memo(function Log({ log, parentId }) {
     )
 
     function onClick() {
-        setIsVisible(!isVisible)
+        setisExpanded(!isExpanded)
     }
-}, (b, a) => _.isEqual(b.log, a.log))
+}, (b, a) => _.isEqual(b.changes, a.changes) && b.title === a.title)
 
 const Change = memo(function Change({ change, parentId }) {
     let sentence = useMemo(() => {
@@ -302,7 +347,7 @@ const Change = memo(function Change({ change, parentId }) {
     let DOMId = parentId + 'change-'
     if (sentence?.length > 0) {
         return (
-            <div id = {DOMId + 'container'} className = 'h-min w-full flex flex-row items-baseline gap-micro'>
+            <div id = {DOMId + 'container'} className = 'h-min w-full flex flex-row flex-wrap items-baseline gap-x-tiny'>
                 {sentence}
             </div>
         )

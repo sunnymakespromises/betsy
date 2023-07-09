@@ -13,7 +13,13 @@ module.exports =  withAnimations({
                 fast: '0.15s'
             },
             fontFamily: {
-                main: ['SF Pro', ...defaultTheme.fontFamily.sans],
+                main: ['Inter', ...defaultTheme.fontFamily.sans],
+            },
+            colors: {
+                live: {
+                    main: '#fa2e49',
+                    highlight: '#FF5162'
+                }
             },
             fontSize: {
                 tiny: ['0.625rem', {
@@ -24,28 +30,31 @@ module.exports =  withAnimations({
                 }]
             },
             padding: {
-                main: '1.5rem',
-                smaller: '1rem',
-                small: '0.75rem',
-                tiny: '0.5rem',
-                micro: '0.25rem'
+                large: '1.5rem',
+                main: '0.75rem',
+                smaller: '0.5rem',
+                small: '0.3rem',
+                tiny: '0.2rem',
+                micro: '0.1rem'
             },
             margin: {
-                main: '2rem',
-                smaller: '1.5rem',
-                small: '1rem',
-                tiny: '0.5rem',
-                micro: '0.25rem'
+                large: '1.5rem',
+                main: '0.75rem',
+                smaller: '0.5rem',
+                small: '0.3rem',
+                tiny: '0.2rem',
+                micro: '0.1rem'
             },
             gap: {
-                main: '2rem',
-                smaller: '1rem',
-                small: '0.75rem',
-                tiny: '0.5rem',
-                micro: '0.25rem'
+                large: '1.5rem',
+                main: '0.75rem',
+                smaller: '0.5rem',
+                small: '0.3rem',
+                tiny: '0.2rem',
+                micro: '0.1rem'
             },
             borderRadius: {
-                main: '1rem',
+                main: '0.75rem',
                 small: '0.5rem'
             },
             borderWidth: {
@@ -94,29 +103,33 @@ module.exports =  withAnimations({
         require('tailwindcss-themer')({
             defaultTheme: {
                 extend: {
+                    backgroundImage: {
+                        base: "url('images/light/bg.png')"
+                    },
                     opacity: {
                         muted: '60%',
                         killed: '20%'
                     },
                     colors: {
                         base: {
-                            main: '#f3f1f6',
-                            highlight: '#ffffff'
+                            main: '#FFFFFF',
+                            highlight: '#f4f4f5',
                         },
                         shadow: '#5b5b5c',
                         divider: {
-                            main: '#e9e7ec',
+                            main: '#e4e4e7',
                             highlight: '#e1e1e1',
                             primary: '#0066eb'
                         },
                         reverse: {
-                            main: '#221d27',
+                            main: '#09090b',
                             highlight: '#38343a'
                         },
                         text: {
-                            main: '#49494a',
+                            main: '#221d27',
                             highlight: '#221d27',
-                            primary: '#f3f1f6'
+                            primary: '#f3f1f6',
+                            reverse: '#f3f1f6'
                         },
                         primary: {
                             main: '#027cff',
@@ -135,35 +148,39 @@ module.exports =  withAnimations({
                 {
                     name: 'dark',
                     extend: {
+                        backgroundImage: {
+                            base: "url('images/dark/bg.png')"
+                        },
                         opacity: {
                             muted: '40%',
                             killed: '20%'
                         },
                         colors: {
                             base: {
-                                // main: '#221d27',
-                                // highlight: '#38343a'
-                                main: '#000000',
-                                highlight: '#1c1c1e'
+                                main: '#09090b',
+                                highlight: '#27272a'
+                                // main: '#000000',
+                                // highlight: '#1c1c1e'
                             },
                             shadow: '#000000',
                             divider: {
-                                main: '#1d1822',
+                                main: '#27272a',
                                 highlight: '#0c0711',
                                 primary: '#e61a35'
                             },
                             reverse: {
-                                main: '#f3f1f6',
+                                main: '#FFFFFF',
                                 highlight: '#ffffff'
                             },
                             text: {
-                                main: '#ebeaeb',
+                                main: '#FFFFFF',
                                 highlight: '#FFFFFF',
-                                primary: '#ebeaeb'
+                                primary: '#ebeaeb',
+                                reverse: '#221d27'
                             },
                             primary: {
-                                main: '#fa2e49',
-                                highlight: '#FF5162'
+                                main: '#027cff',
+                                highlight: '#5E93FD'
                             },
                             accent: {
                                 main: '#027cff',

@@ -13,8 +13,8 @@ const User = memo(function User() {
         <Page>
             <div id = {DOMId + 'page'} className = 'w-full h-full flex flex-col md:flex-row items-start gap-small'>
                 <Helmet><title>User | Betsy</title></Helmet>
-                <div id = {DOMId + 'group-1-container'} className = 'w-full md:w-min h-min md:h-full'>
-                    <Profile userId = {userId} parentId = {DOMId}/>
+                <div id = {DOMId + 'group-1-container'} className = 'w-full md:w-min h-min md:h-full flex flex-col'>
+                    <Profile userId = {userId} parentId = {DOMId} canEdit = {false}/>
                 </div>
                 <div id = {DOMId + 'group-2-container'} className = 'grow h-full'>
 
