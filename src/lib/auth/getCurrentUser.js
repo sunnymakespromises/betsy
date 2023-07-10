@@ -18,7 +18,7 @@ async function getCurrentUser(refresh_token, source) {
         if (betsyUser) {
             response.status = true
             response.user = betsyUser
-            response.user.subscriptions = await queryTable('Users', 'id in ' + JSON.stringify(betsyUser.subscriptions), ['id', 'display_name', 'picture'])
+            response.user.subscriptions = betsyUser.subscriptions.length > 0 ? await queryTable('Users', 'id in ' + JSON.stringify(betsyUser.subscriptions), ['id', 'display_name', 'picture']) : []
             for (const category of Object.keys(betsyUser.favorites).filter(category => betsyUser.favorites[category].length > 0)) {
                 response.user.favorites[category] = await queryTable(_.startCase(category), 'id in ' + JSON.stringify(betsyUser.favorites[category]), ['id', 'name', 'picture'])
             } 
