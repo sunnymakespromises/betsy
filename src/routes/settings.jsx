@@ -105,7 +105,7 @@ const Setting = memo(function Setting({ title, inputKey, options, defaultValue, 
     function onClick() {
         setIsExpanded(!isExpanded)
     }
-}, (b, a) => _.isEqual(b.options, a.options))
+}, (b, a) => b.title === a.title && b.inputKey === a.inputKey && b.defaultValue === a.defaultValue && _.isEqual(b.options, a.options))
 
 const Donate = memo(function Donate() {
     return (

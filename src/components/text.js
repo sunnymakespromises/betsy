@@ -111,7 +111,7 @@ const Text = memo(function Text({ preset = 'main-body', styles, classes, childre
     return (
         <p className = {option + (classes ? ' ' + classes : '')} style = {styles} {...extras}>{children}</p>
     )
-}, (b, a) => b.preset === a.preset && _.isEqual(b.styles, a.styles) && b.classes === a.classes && b.children === a.children && _.isEqual(b.extras, a.extras))
+}, (b, a) => b.preset === a.preset && b.classes === a.classes && b.children === a.children && _.isEqual(b.extras, a.extras) && _.isEqual(b.styles, a.styles))
 
 
 export default Text

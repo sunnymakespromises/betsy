@@ -58,7 +58,7 @@ const Profile = memo(function Profile({ userId = null, canEdit = true, classes, 
             </div>
         )
     }
-}, (b, a) => _.isEqual(b.userId, a.userId) && b.canEdit === a.canEdit && b.classes === a.classes)
+}, (b, a) => b.canEdit === a.canEdit && b.classes === a.classes && _.isEqual(b.userId, a.userId))
 
 const Subtitle = memo(function Memo({ balances, date, parentId }) {
     const { getAmount } = useCurrency()
@@ -73,7 +73,7 @@ const Subtitle = memo(function Memo({ balances, date, parentId }) {
             </Text>
         </div>
     )
-}, (b, a) => _.isEqual(b.balances, a.balances) && b.date === a.date)
+}, (b, a) => b.date === a.date && _.isEqual(b.balances, a.balances))
 
 const Tag = memo(function Tag({ id, parentId }) {
     return (
@@ -124,7 +124,7 @@ const Info = memo(function Info({ category, value, classes, input, onInputChange
             onInputChange(category, event.target.value, 'text')
         }
     }
-}, (b, a) => b.category === a.category && b.value === a.value && b.classes === a.classes && b.input === a.input && b.isThisInputEmpty === a.isThisInputEmpty && _.isEqual(b.status, a.status) && b.isCurrentUser === a.isCurrentUser && b.isLoading === a.isLoading && b.canEdit === a.canEdit)
+}, (b, a) => b.category === a.category && b.value === a.value && b.classes === a.classes && b.input === a.input && b.isThisInputEmpty === a.isThisInputEmpty && b.isCurrentUser === a.isCurrentUser && b.isLoading === a.isLoading && b.canEdit === a.canEdit && _.isEqual(b.status, a.status))
 
 const Picture = memo(function Picture({ params, picture, input, onInputChange, isThisInputEmpty, status, isCurrentUser, isLoading, canEdit, isLocked, parentId }) {
     const thisInputIsEmpty = useMemo(() => isThisInputEmpty('picture'), [input])
@@ -165,7 +165,7 @@ const Picture = memo(function Picture({ params, picture, input, onInputChange, i
             pictureInput.current.click()
         }
     }
-}, (b, a) => _.isEqual(JSON.stringify(b.params), JSON.stringify(a.params)) && b.picture === a.picture && b.input === a.input && _.isEqual(b.status, a.status) && b.isCurrentUser === a.isCurrentUser && b.isLoading === a.isLoading && b.canEdit === a.canEdit && b.isLocked === a.isLocked)
+}, (b, a) => b.picture === a.picture && b.input === a.input && b.isCurrentUser === a.isCurrentUser && b.isLoading === a.isLoading && b.canEdit === a.canEdit && b.isLocked === a.isLocked && _.isEqual(b.status, a.status) && _.isEqual(JSON.stringify(b.params), JSON.stringify(a.params)))
 
 const Actions = memo(function Actions({ currentUser, user, isCurrentUser, input, onCrop, statuses, setStatuses, execute, inputIsEmpty, clearAllInput, canEdit, parentId }) {
     let DOMId = parentId + 'actions-'
@@ -180,7 +180,7 @@ const Actions = memo(function Actions({ currentUser, user, isCurrentUser, input,
             </Conditional>
         </div>
     )
-}, (b, a) => _.isEqual(b.currentUser, a.currentUser) && b.isCurrentUser === a.isCurrentUser && _.isEqual(b.user, a.user) && _.isEqual(b.input, a.input) && _.isEqual(b.statuses, a.statuses) && b.inputIsEmpty === a.inputIsEmpty)
+}, (b, a) =>  b.inputIsEmpty === a.inputIsEmpty && b.isCurrentUser === a.isCurrentUser && _.isEqual(b.currentUser, a.currentUser)  && _.isEqual(b.user, a.user) && _.isEqual(b.input, a.input) && _.isEqual(b.statuses, a.statuses))
 
 const Save = memo(function Save({ currentUser, input, onCrop, statuses, setStatuses, execute, inputIsEmpty, clearAllInput, parentId }) {
     const { updateProfile } = useDatabase()
@@ -226,7 +226,7 @@ const Save = memo(function Save({ currentUser, input, onCrop, statuses, setStatu
             })
         })
     }
-}, (b, a) => _.isEqual(b.currentUser, a.currentUser) && _.isEqual(b.input, a.input) && _.isEqual(b.statuses, a.statuses) && b.inputIsEmpty === a.inputIsEmpty)
+}, (b, a) => b.inputIsEmpty === a.inputIsEmpty && _.isEqual(b.currentUser, a.currentUser) && _.isEqual(b.input, a.input) && _.isEqual(b.statuses, a.statuses))
 
 const Subscription = memo(function Subscription({ user, subscriptions, parentId }) {
     const { subscribe, unsubscribe } = useDatabase()
@@ -254,7 +254,7 @@ const Locked = memo(function Locked({ isLocked, parentId }) {
             <LockRounded id = {DOMId + 'icon'} className = '!w-3 !h-3 text-text-main'/>
         </Conditional>
     )
-}, (b, a) => b.isLocked === a.isLocked)
+})
 
 const Copy = memo(function Copy({ id, parentId }) {
     const [isClicked, setIsClicked] = useState()
@@ -277,7 +277,7 @@ const Copy = memo(function Copy({ id, parentId }) {
             setIsClicked(false)
         }, 1000)
     }
-}, (b, a) => b.id === a.id)
+})
 
 const Error = memo(function Error({ message, parentId }) {
     return (
@@ -287,6 +287,6 @@ const Error = memo(function Error({ message, parentId }) {
             </Text>
         </div>
     )
-}, (b, a) => b.message === a.message)
+})
 
 export default Profile

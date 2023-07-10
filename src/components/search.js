@@ -29,7 +29,7 @@ const Search = memo(forwardRef(function Search({ searchConfig, onResultClick, in
             {results && <Results results = {results} hasResults = {hasResults} isExpanded = {isExpanded} offset = {barSize.height} onResultClick = {(category, result) => {setIsExpanded(false); onResultClick(category, result)}} parentId = {DOMId}/>}
         </div>
     )
-}), (b, a) => _.isEqual(JSON.stringify(b.searchConfig), JSON.stringify(a.searchConfig)) && b.classes === a.classes)
+}), (b, a) => b.classes === a.classes && _.isEqual(JSON.stringify(b.searchConfig), JSON.stringify(a.searchConfig)))
 
 const Results = memo(function Results({ results, hasResults, isExpanded, offset, onResultClick, parentId }) {
     let maxHeight = 'calc(100% - ' + offset + 'px)'
@@ -68,7 +68,7 @@ const Results = memo(function Results({ results, hasResults, isExpanded, offset,
             </div>
         )
     }
-}, (b, a) => _.isEqual(b.results, a.results) && b.hasResults === a.hasResults && b.isExpanded === a.isExpanded && b.offset === a.offset)
+}, (b, a) => b.hasResults === a.hasResults && b.isExpanded === a.isExpanded && b.offset === a.offset && _.isEqual(b.results, a.results))
 
 const Result = memo(function Result({ category, item, onResultClick, parentId }) {
     let { isFavorite, Favorite } = useFavorite(category, item)

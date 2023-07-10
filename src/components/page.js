@@ -6,6 +6,6 @@ const Page = memo(function Page({ canScroll = false, children }) {
             {children}
         </div>
     )
-}, (b, a) => b.children === a.children)
+})
 
 export default Page

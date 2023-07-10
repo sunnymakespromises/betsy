@@ -186,15 +186,7 @@ const Panel = memo(function Panel({ title, classes, parentId, children }) {
             </div>
         </div>
     )
-    // return (
-    //     <div id = {DOMId + 'container'} className = {'flex flex-col gap-tiny' + (classes ? ' ' + classes : '')}>
-    //         <Text id = {DOMId + 'title'} preset = 'info-panel'>
-    //             {title}
-    //         </Text>
-    //         {children}
-    //     </div>
-    // )
-}, (b, a) => b.title === a.title && b.classes === a.classes && b.children === a.children)
+})
 
 const Title = memo(function Title({ name, category, item, parentId }) {
     let { isFavorite, Favorite } = useFavorite(category, item)
@@ -367,6 +359,6 @@ const ErrorScreen = memo(function ErrorScreen({ category, parentId }) {
             </div>
         </div>
     )
-}, (b, a) => b.category === a.category)
+})
 
 export default Info

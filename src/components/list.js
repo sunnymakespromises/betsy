@@ -13,7 +13,7 @@ const List = memo(function List({ items, element, dividers, classes, parentId })
             )}}/>
         </div>
     )
-}, (b, a) => _.isEqual(b.items, a.items) && b.element === a.element && b.dividers === a.dividers && b.classes === a.classes)
+}, (b, a) => b.element === a.element && b.dividers === a.dividers && b.classes === a.classes && _.isEqual(b.items, a.items))
 
 const Item = memo(function Item({ item, Element, hasDivider, parentId }) {
     let DOMId = parentId
@@ -25,6 +25,6 @@ const Item = memo(function Item({ item, Element, hasDivider, parentId }) {
             </Conditional>
         </>
     )
-}, (b, a) => _.isEqual(b.item, a.item) && b.hasDivider === a.hasDivider)
+}, (b, a) => b.hasDivider === a.hasDivider && _.isEqual(b.item, a.item))
 
 export default List

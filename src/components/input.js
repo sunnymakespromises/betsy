@@ -73,6 +73,6 @@ const Input = memo(forwardRef(function Input({ value, status, type = 'text', pre
     return (
         <input className = {option.classes + (status === false ? ' ' + option.false : '') + (status === true ? ' ' + option.true : '') + (status === null ? ' ' + option.null : '') + (classes ? ' ' + classes : '')} style = {styles} value = {value ? value : ''} type = {type} onChange = {onChange} ref = {ref} {...extras}/>
     )
-}), (b, a) => b.value === a.value && _.isEqual(b.status, a.status) && b.type === a.type && b.preset === a.preset && _.isEqual(b.styles, a.styles) && b.classes === a.classes)
+}), (b, a) => b.value === a.value && b.classes === a.classes && b.type === a.type && b.preset === a.preset && _.isEqual(b.status, a.status) && _.isEqual(b.styles, a.styles))
 
 export default Input

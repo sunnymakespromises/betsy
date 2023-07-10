@@ -26,7 +26,7 @@ function useFavorite(category, item) {
                 }
             }
         }
-    }, (b, a) => b.isFavorite === a.isFavorite && b.classes === a.classes && b.iconClasses === a.iconClasses && b.canEdit === a.canEdit)
+    })
 
     return { isFavorite, Favorite }
 }

@@ -16,7 +16,7 @@ const SearchBar = memo(forwardRef(function SearchBar({ input, hasResults, filter
             <Input id = {DOMId + 'input'} preset = {inputPreset} status = {null} value = {input} autoFocus = {autoFocus} onChange = {(e) => onInputChange(null, e.target.value, 'text')} placeholder = {'Search...'} autoComplete = 'off' onClick = {() => !isExpanded && canExpand ? setIsExpanded(true) : null} classes = {'md:shadow-sm border-thin border-divider-main ' + (canExpand && hasResults && isExpanded ? 'rounded-t-small' : 'rounded-small')}/>
         </div>
     )
-}), (b, a) => _.isEqual(JSON.stringify(b.searchConfig), JSON.stringify(a.searchConfig)) && b.input === a.input && b.hasResults === a.hasResults && _.isEqual(b.filters, a.filters) && b.isExpanded === a.isExpanded && b.inputPreset === a.inputPreset && b.autoFocus === a.autoFocus && b.canExpand === a.canExpand && b.classes === a.classes)
+}), (b, a) => b.input === a.input && b.hasResults === a.hasResults && b.isExpanded === a.isExpanded && b.inputPreset === a.inputPreset && b.autoFocus === a.autoFocus && b.canExpand === a.canExpand && b.classes === a.classes && _.isEqual(b.filters, a.filters) && _.isEqual(JSON.stringify(b.searchConfig), JSON.stringify(a.searchConfig)))
 
 const Filters = memo(function Filters({ filters, setFilter, parentId }) {
     const [isVisible, setIsVisible] = useState(false)
@@ -49,6 +49,6 @@ const Filter = memo(function Filter({ filterKey, filter, isActive, setFilter, pa
             <Icon id = {DOMId + 'icon'} className = {'!w-full !h-full ' + (isActive ? 'text-primary-main' : 'text-text-highlight/killed group-hover/filter:text-primary-main')}/>
         </div>
     )
-}, (b, a) => b.filterKey === a.filterKey && _.isEqual(b.filter, a.filter) && b.isActive === a.isActive )
+}, (b, a) => b.filterKey === a.filterKey && b.isActive === a.isActive && _.isEqual(b.filter, a.filter))
 
 export default SearchBar

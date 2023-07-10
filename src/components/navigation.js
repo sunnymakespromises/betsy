@@ -17,7 +17,7 @@ const Navigation = memo(function Header({ location, currentUser }) {
         )
     }
     return null
-}, (b, a) => _.isEqual(b.currentUser, a.currentUser) && b.location.pathname === a.location.pathname && b.location.search === a.location.search)
+}, (b, a) => b.location.pathname === a.location.pathname && b.location.search === a.location.search && _.isEqual(b.currentUser, a.currentUser))
 
 const Icon = memo(function Icon({ index, page, isDev, isCurrent, parentId }) {
     const Icon = page.icon
@@ -29,6 +29,6 @@ const Icon = memo(function Icon({ index, page, isDev, isCurrent, parentId }) {
             </Link>
         )
     }
-}, (b, a) => b.index === a.index && _.isEqual(b.page, a.page) && b.isDev === a.isDev && b.isCurrent === a.isCurrent)
+}, (b, a) => b.index === a.index && b.isDev === a.isDev && b.isCurrent === a.isCurrent && _.isEqual(b.page, a.page))
 
 export default Navigation

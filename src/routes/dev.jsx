@@ -245,7 +245,7 @@ const Stat = memo(function Stat({ title, value, parentId }) {
             </Text>
         </div>
     )
-}, (b, a) => b.title === a.title && b.value === a.value)
+})
 
 const Logs = memo(function Logs({ logs, parentId }) {
     const changes = useMemo(() => {
@@ -329,7 +329,7 @@ const Log = memo(function Log({ changes, title, parentId }) {
     function onClick() {
         setisExpanded(!isExpanded)
     }
-}, (b, a) => _.isEqual(b.changes, a.changes) && b.title === a.title)
+}, (b, a) => b.title === a.title && _.isEqual(b.changes, a.changes))
 
 const Change = memo(function Change({ change, parentId }) {
     let sentence = useMemo(() => {
