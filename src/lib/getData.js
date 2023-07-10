@@ -36,7 +36,7 @@ async function getData(category = null, currentUser = null) {
             },
             users: {
                 table: 'Users',
-                attributes: ['id', 'picture', 'display_name'],
+                attributes: ['id', 'picture', 'display_name', 'slips'],
                 sort: null
             }
         }
@@ -74,23 +74,20 @@ async function getData(category = null, currentUser = null) {
         }
 
         if (!category || category === 'recommendations') {
-            let events
-            if (response.events) {
-                events = response.events
-            }
-            else {
-                events = params.events.sort(await getTable(params.events.table, params.events.attributes))
-            }
-            response.data.recommendations = getRecommendations(events)
+            let events = response.events ? response.events : params.events.sort(await getTable(params.events.table, params.events.attributes))
+            let users = response.users ? response.users : params.events.sort(await getTable(params.users.table, params.users.attributes))
+            response.data.recommendations = getRecommendations(events, users)
         }
     }
 
-    function getRecommendations(events) {
-        let favoriteEvents = events.filter(e => e.competitors.some(c => currentUser.favorites.competitors.some(fc => fc.id === c.id)) || currentUser.favorites.competitions.some(fc => fc.id === e.competition.id)).sort((a, b) => a.start_time - b.start_time) // all of the events that have to do with the user's favorite
-        let upcomingEvents = events.filter(e => e.start_time < (now() + (60*60*24*3))).sort((a, b) => a.start_time - b.start_time).slice(0, 24)
+    function getRecommendations(events, users) {
+        let favoriteEvents = events.filter(event => event.competitors.some(competitor => currentUser.favorites.competitors.some(favorite => favorite.id === competitor.id)) || currentUser.favorites.competitions.some(favorite => favorite.id === event.competition.id)).sort((a, b) => a.start_time - b.start_time) // all of the events that have to do with the user's favorite
+        let upcomingEvents = events.filter(event => event.start_time < (now() + (60*60*24*3))).sort((a, b) => a.start_time - b.start_time).slice(0, 24)
+        let subscriptionSlips = users.filter(user => currentUser.subscriptions.includes(user.id)).sort((a, b) => b.timestamp - a.timestamp).slice(0, 24)
         return {
             favorites: favoriteEvents,
-            upcoming: upcomingEvents
+            upcoming: upcomingEvents,
+            subscriptions: subscriptionSlips
         }
 
         // function getRecommendationScore(event) {
