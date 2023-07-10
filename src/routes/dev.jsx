@@ -2,7 +2,7 @@ import React, { memo, useMemo, useRef, useState  } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
 import _ from 'lodash'
-import { AddRounded, CloseRounded, ExpandMoreRounded, FolderRounded, RemoveRounded } from '@mui/icons-material'
+import { AddRounded, CloseRounded, DeleteRounded, ExpandMoreRounded, FolderRounded, RemoveRounded } from '@mui/icons-material'
 import { useDataContext } from '../contexts/data'
 import { useUserContext } from '../contexts/user'
 import Page from '../components/page'
@@ -86,6 +86,7 @@ const Selected = memo(function Selected({ selected, searchParams, setSearchParam
     const Item = memo(function Item({ item, parentId }) {
         return (
             <div id = {parentId + 'container'} className = 'relative h-min flex flex-row items-center gap-small'>
+                <CloseRounded className = '!h-4 !w-4 text-primary-main cursor-pointer' onClick = {() => onRemove(item)}/>
                 <div id = {parentId + 'name-container'} className = 'flex flex-row items-center gap-tiny'>
                     <Conditional value = {item.picture}>
                         <ImageComponent id = {parentId + 'image'} external path = {item.picture} classes = 'w-4 h-4'/>
@@ -94,7 +95,6 @@ const Selected = memo(function Selected({ selected, searchParams, setSearchParam
                         {item.name}
                     </Text>
                 </div>
-                <CloseRounded className = '!h-4 !w-4 text-primary-main cursor-pointer' onClick = {() => onRemove(item)}/>
             </div>
         )
     }, (b, a) => _.isEqual(b.item, a.item))
@@ -110,7 +110,7 @@ const Selected = memo(function Selected({ selected, searchParams, setSearchParam
                 </Text>
                 <div id = {DOMId + 'actions-container'} className = 'flex flex-row gap-small'>
                     <FolderRounded className = '!h-full !aspect-square text-primary-main cursor-pointer' onClick = {() => onClickFolder()}/>
-                    <CloseRounded className = '!h-full !aspect-square text-primary-main cursor-pointer' onClick = {() => removeAll()}/>
+                    <DeleteRounded className = '!h-full !aspect-square text-primary-main cursor-pointer' onClick = {() => removeAll()}/>
                 </div>
             </div>
             <div className = 'divider border-t-thin border-divider-main'/>
