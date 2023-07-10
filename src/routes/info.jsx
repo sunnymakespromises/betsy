@@ -197,7 +197,7 @@ const Panel = memo(function Panel({ title, classes, parentId, children }) {
 }, (b, a) => b.title === a.title && b.classes === a.classes && b.children === a.children)
 
 const Title = memo(function Title({ name, category, item, parentId }) {
-    let { isFavorite, Favorite } = useFavorite('competitors', item)
+    let { isFavorite, Favorite } = useFavorite(category, item)
     let title = useMemo(() => {
         if (category === 'competitors' || category === 'competitions') {
             return (
@@ -210,7 +210,7 @@ const Title = memo(function Title({ name, category, item, parentId }) {
                             {name}
                         </Text>
                     </div>
-                    <Favorite isFavorite = {isFavorite} category = 'competitors' item = {item} canEdit classes = '!h-5' parentId = {parentId}/>
+                    <Favorite isFavorite = {isFavorite} canEdit classes = '!h-5' parentId = {parentId}/>
                 </>
             )
         }
