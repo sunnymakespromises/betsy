@@ -6,7 +6,6 @@ import { useSetting } from '../hooks/useSetting'
 import Text from '../components/text'
 import Page from '../components/page'
 import Map from '../components/map'
-import Button from '../components/button'
 import Profile from '../components/profile'
 import { CheckRounded, ExpandMoreRounded } from '@mui/icons-material'
 import { useCancelDetector } from '../hooks/useCancelDetector'
@@ -80,16 +79,16 @@ const Setting = memo(function Setting({ title, inputKey, options, defaultValue, 
                 {title}
             </Text>
             <div id = {DOMId + 'options-container'} className = 'relative w-min h-min'>
-                <div id = {DOMId + 'value'} className = {'w-full flex flex-row items-center border-thin border-divider-main md:shadow-sm cursor-pointer py-tiny px-smaller rounded-small'} onClick = {() => onClick()}>
+                <div id = {DOMId + 'value'} className = {'w-full flex flex-row items-center border-thin border-divider-main md:shadow-sm cursor-pointer py-tiny px-smaller rounded-small ' + (isExpanded ? 'bg-base-highlight' : 'hover:bg-base-highlight')} onClick = {() => onClick()}>
                     <Text preset = 'settings-setting-option-title' classes = '!text-text-main'>
                         {options.find(option => option.value === input)?.title}
                     </Text>
                     <ExpandMoreRounded className = {'!w-5 !h-5 text-primary-main ' + (isExpanded ? 'rotate-180' : 'rotate-0')}/>
                 </div>
-                <div id = {DOMId + 'options'} className = {'absolute top-full right-0 w-min flex flex-col mt-small overflow-hidden h-min bg-base-main py-tiny px-smaller rounded-small border-thin border-divider-main md:shadow' + (!isExpanded ? ' hidden' : '')}>
+                <div id = {DOMId + 'options'} className = {'absolute top-full right-0 w-min flex flex-col mt-small overflow-hidden h-min bg-base-main rounded-small border-thin border-divider-main md:shadow' + (!isExpanded ? ' hidden' : '')}>
                     <Map array = {options} callback = {(option, index) => {
                         let optionId = DOMId + option.value + '-'; return (
-                        <div key = {index} id = {optionId + 'container'} className = 'group/option w-full h-min flex flex-row items-center gap-small cursor-pointer' onClick = {() => onInputChange(option.value)}>
+                        <div key = {index} id = {optionId + 'container'} className = 'group/option w-full h-min flex flex-row items-center gap-small py-tiny px-smaller hover:bg-base-highlight cursor-pointer' onClick = {() => onInputChange(option.value)}>
                             <Text id = {optionId + 'title'} preset = 'settings-setting-option-title'>
                                 {option.title}
                             </Text>
@@ -146,11 +145,11 @@ const Logout = memo(function Logout({ parentId }) {
     let DOMId = parentId + 'logout-'
     return (
         <Link to = '/logout' className = 'relative z-10'>
-            <Button preset = 'logout' id = {DOMId + 'button'} classes = 'group/logout'>
+            <div id = {DOMId + 'button'} className = 'group/logout relative w-full flex justify-center items-center p-small rounded-b-main cursor-pointer border-thin border-divider-main md:shadow hover:bg-base-highlight'>
                 <Text id = {DOMId + 'text'} preset = 'settings-logout'>
                     Sign Out
                 </Text>
-            </Button>
+            </div>
         </Link>
     )
 })
