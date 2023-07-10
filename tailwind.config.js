@@ -12,6 +12,9 @@ module.exports =  withAnimations({
             animationDuration: {
                 fast: '0.15s'
             },
+            transitionDuration: {
+                main: '100ms'
+            },
             fontFamily: {
                 main: ['Inter', ...defaultTheme.fontFamily.sans],
             },
