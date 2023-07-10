@@ -118,11 +118,11 @@ const Competition = memo(function Competition({ competition, data, parentId }) {
     let DOMId = parentId + 'competition-'
     return (
         <div id = {DOMId + 'container'} className = 'w-full h-full flex flex-col gap-main'>
-            <div id = {DOMId + 'group-1-container'} className = 'grow flex flex-row justify-between items-center'>
+            <div id = {DOMId + 'group-1-container'} className = 'grow flex flex-row justify-between'>
                 <Title name = {competition.name} category = 'competitions' item = {competition} parentId = {DOMId}/>
                 <SearchBar inputPreset = 'info' classes = 'w-1/3' input = {input} hasResults = {hasResults} filters = {filters} setFilter = {setFilter} onInputChange = {onInputChange} isExpanded = {false} autoFocus = {true} canExpand = {false} parentId = {DOMId}/>
             </div>
-            <div id = {DOMId + 'group-2-container'} className = 'w-full md:w-[28rem] min-h-0 h-full flex flex-row gap-main'>
+            <div id = {DOMId + 'data-container'} className = 'w-full md:w-[28rem] min-h-0 h-full flex flex-row gap-main'>
                 <Panel title = 'Events' classes = 'h-full w-full' parentId = {DOMId + 'events-'}>
                     <List items = {results?.events} element = {EventItem} dividers parentId = {parentId}/>
                 </Panel>
@@ -158,11 +158,11 @@ const Competitor = memo(function Competitors({ data, competitor, parentId }) {
     let DOMId = parentId
     return (
         <div id = {DOMId + 'container'} className = 'w-full h-full flex flex-col gap-main'>
-            <div id = {DOMId + 'group-1-container'} className = 'grow flex flex-row justify-between items-center'>
+            <div id = {DOMId + 'group-1-container'} className = 'grow flex flex-row justify-between'>
                 <Title name = {competitor.name} category = 'competitors' item = {competitor} parentId = {DOMId}/>
                 <SearchBar inputPreset = 'info' classes = 'w-1/3' input = {input} hasResults = {hasResults} filters = {filters} setFilter = {setFilter} onInputChange = {onInputChange} isExpanded = {false} autoFocus = {true} canExpand = {false} parentId = {DOMId}/>
             </div>
-            <div id = {DOMId + 'group-2-container'} className = 'w-full md:w-[28rem] min-h-0 h-full flex flex-row gap-main'>
+            <div id = {DOMId + 'data-container'} className = 'w-full md:w-[28rem] min-h-0 h-full flex flex-row gap-main'>
                 <Panel title = 'Events' classes = 'h-full w-full' parentId = {DOMId + 'events-'}>
                     <List items = {results?.events} element = {EventItem} dividers parentId = {parentId}/>
                 </Panel>
