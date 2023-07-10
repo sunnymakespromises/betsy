@@ -1,7 +1,7 @@
-import authenticateUser from './authenticateUser'
-import insertItem from '../aws/db/insertItem'
-import queryTable from '../aws/db/queryTable'
-import now from '../util/now'
+import authenticateUser from './auth/authenticateUser'
+import insertItem from './aws/db/insertItem'
+import queryTable from './aws/db/queryTable'
+import now from './util/now'
 import _ from 'lodash'
 const short = require('short-uuid')
 

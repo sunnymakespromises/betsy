@@ -2,7 +2,7 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { useEffect, useRef, useState } from 'react'
 import { useCookies } from 'react-cookie'
 import { googleLogout, useGoogleLogin } from '@react-oauth/google'
-import getCurrentUser from '../lib/auth/getCurrentUser'
+import getCurrentUser from '../lib/getCurrentUser'
 import getRefreshToken from '../lib/auth/getRefreshToken'
 
 function useAuthorize() {
