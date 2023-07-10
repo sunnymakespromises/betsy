@@ -7,17 +7,7 @@ function useFavorite(category, item) {
     const { currentUser } = useUserContext()
     const { addToFavorites, removeFromFavorites } = useDatabase()
     const favorites = useMemo(() => currentUser ? currentUser.favorites : null, [currentUser])
-    const isFavorite = useMemo(() => {
-        if (favorites && item) {
-            if (category === 'events') {
-                return favorites.competitors.some(f => item.competitors.some(c => c.id === f.id)) || favorites.competitions.some(f => item.competition.id === f.id)
-            }
-            else {
-                return favorites[category]?.some(f => f.id === item.id)
-            }
-        }
-        return false
-    }, [favorites, category, item])
+    const isFavorite = useMemo(() => category === 'events' ? favorites.competitors.some(f => item.competitors.some(c => c.id === f.id)) || favorites.competitions.some(f => item.competition.id === f.id) : favorites[category].some(f => f.id === item.id), [favorites, category, item])
 
     const Favorite = memo(function Favorite({ isFavorite, classes, iconClasses, canEdit = false, parentId }) {
         let DOMId = parentId + 'favorite-'

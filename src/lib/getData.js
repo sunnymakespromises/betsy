@@ -86,7 +86,7 @@ async function getData(category = null, currentUser = null) {
     }
 
     function getRecommendations(events) {
-        let favoriteEvents = events.filter(e => e.competitors?.some(c => currentUser.favorites.competitors?.some(fc => fc.id === c.id)) || e.competitions?.some(c => currentUser.favorites.competitions?.some(fc => fc.id === c.id))).sort((a, b) => a.start_time - b.start_time) // all of the events that have to do with the user's favorite
+        let favoriteEvents = events.filter(e => e.competitors.some(c => currentUser.favorites.competitors.some(fc => fc.id === c.id)) || currentUser.favorites.competitions.some(fc => fc.id === e.competition.id)).sort((a, b) => a.start_time - b.start_time) // all of the events that have to do with the user's favorite
         let upcomingEvents = events.filter(e => e.start_time < (now() + (60*60*24*3))).sort((a, b) => a.start_time - b.start_time).slice(0, 24)
         return {
             favorites: favoriteEvents,

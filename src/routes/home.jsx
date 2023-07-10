@@ -42,7 +42,7 @@ const Events = memo(function Events({ data, parentId }) {
                 fn: (a, category) => a.filter(r => category === 'events' && r.odds && r.odds.length > 0).sort((a, b) => a.start_time - b.start_time)
             }
         },
-        space: data ? { events: data.recommendations.favorites } : null,
+        space: { events: data.recommendations.favorites },
         categories: ['events'],
         keys: { events: ['name', 'competition.name', 'competitors.name', 'sport.name'] },
         showAllOnInitial: true

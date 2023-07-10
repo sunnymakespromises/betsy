@@ -41,7 +41,7 @@ async function uploadPicture(item, value) {
                             ...odd,
                             outcomes: odd.outcomes.map(outcome => { return {
                                 ...outcome,
-                                ...( outcome?.competitor ? {competitor: outcome?.competitor?.id === competitor.id ? { id: outcome.competitor.id, name: outcome.competitor.name, picture: picture } : outcome.competitor } : {})
+                                ...( outcome?.competitor ? {competitor: outcome.competitor.id === competitor.id ? { id: outcome.competitor.id, name: outcome.competitor.name, picture: picture } : outcome.competitor } : {})
                             }})
                         }})
                         await updateItem('Events', event.id, { competitors: competitors, odds: odds })

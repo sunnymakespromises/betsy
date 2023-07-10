@@ -47,9 +47,10 @@ function Root() {
         <WindowProvider value = {windowContext}>
             <UserProvider value = {userContext}>
                 <DataProvider value = {dataContext}>
+                    {(location.pathname === '/login' || data) &&
                     <div id = 'root' className = {theme + ' relative w-full h-full flex flex-col-reverse md:flex-row bg-base-main'}>
                         <Conditional value = {currentUser !== undefined}>
-                            <Search currentUser = {currentUser} data = {data} />
+                            {currentUser && <Search currentUser = {currentUser} data = {data} />}
                             <Navigation currentUser = {currentUser} location = {location}/>
                             <div id = 'body' className = 'relative w-full h-full animate-slideInDown !animate-duration-150 overflow-auto no-scrollbar'>
                                 <TransitionGroup component = {null}>
@@ -69,7 +70,7 @@ function Root() {
                                 </TransitionGroup>
                             </div>
                         </Conditional>
-                    </div>
+                    </div>}
                 </DataProvider>
             </UserProvider>
         </WindowProvider>
@@ -78,7 +79,7 @@ function Root() {
 
 const Search = memo(function Search({ currentUser, data }) {
     const navigate = useNavigate()
-    const searchConfig = useMemo(() => { return currentUser?.favorites && {
+    const searchConfig = useMemo(() => { return currentUser.favorites && {
         id: 'root',
         filters: {
             upcoming: {
@@ -96,7 +97,14 @@ const Search = memo(function Search({ currentUser, data }) {
             favorites: {
                 title: 'Favorites',
                 icon: (props) => <FavoriteRounded {...props}/>,
-                fn: (a, category) => a.filter(r => category === 'events' ? (currentUser.favorites?.competitors?.some(favoriteCompetitor => r.competitors.some(eventCompetitor => eventCompetitor.id === favoriteCompetitor.id)) || currentUser.favorites?.competitions?.some(favoriteCompetition => r.competition.id === favoriteCompetition.id) ) : currentUser.favorites[category]?.some(favorite => favorite.id === r.id))
+                fn: (a, category) => a.filter(r => { 
+                    if (category === 'events') {
+                        return (currentUser.favorites.competitors.some(favoriteCompetitor => r.competitors.some(eventCompetitor => eventCompetitor.id === favoriteCompetitor.id)) || currentUser.favorites.competitions.some(favoriteCompetition => r.competition.id === favoriteCompetition.id) )
+                    }
+                    else {
+                        return currentUser.favorites[category].some(favorite => favorite.id === r.id)
+                    }
+                })
             },
             popular: {
                 title: 'Popular',
@@ -105,11 +113,11 @@ const Search = memo(function Search({ currentUser, data }) {
                 turnsOff: ['alphabetical']
             }
         },
-        space: data ? {events: data.events, competitors: data.competitors, competitions: data.competitions} : null,
+        space: {events: data.events, competitors: data.competitors, competitions: data.competitions},
         minimumLength: 3,
         categories: ['events', 'competitors', 'competitions'],
         keys: { events: ['name', 'competition.name', 'competitors.name', 'sport.name'], competitors: ['name', 'competitions.name', 'sport.name'], competitions: ['name', 'sport.name', 'competitors.name']}
-    }}, [data, currentUser?.favorites])
+    }}, [data, currentUser.favorites])
     const [isVisible, setIsVisible] = useState()
     const cancelRef = useCancelDetector(() => isVisible ? setIsVisible(false) : null)
     useKeyListener(['CtrlKeyK'], () => setIsVisible(!isVisible))

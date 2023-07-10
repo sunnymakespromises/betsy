@@ -21,7 +21,7 @@ const Profile = memo(function Profile({ userId = null, canEdit = true, classes, 
     const { currentUser } = useUserContext()
     const [user, setUser] = useState()
     const { getUserBy } = useDatabase()
-    const isCurrentUser = useMemo(() => userId ? currentUser?.id === userId : true, [currentUser, userId])
+    const isCurrentUser = useMemo(() => userId ? currentUser.id === userId : true, [currentUser, userId])
     const { statuses, setStatuses } = useStatuses(['display_name', 'picture'])
     const { input, onInputChange, inputIsEmpty, isThisInputEmpty, clearAllInput } = useInput(['display_name', 'picture'])
     const [pictureParams, onCrop] = useCropper(input.picture)
@@ -172,7 +172,7 @@ const Actions = memo(function Actions({ currentUser, user, isCurrentUser, input,
     return (
         <div id = {parentId + 'actions'} className = 'absolute top-2 right-2 flex flex-row h-4 gap-micro'>
             <Conditional value = {!isCurrentUser && user}>
-                <Subscription user = {user} subscriptions = {currentUser?.subscriptions} isCurrentUser = {isCurrentUser} parentId = {DOMId}/>
+                <Subscription user = {user} subscriptions = {currentUser.subscriptions} isCurrentUser = {isCurrentUser} parentId = {DOMId}/>
             </Conditional>
             <Copy id = {user.id} parentId = {DOMId}/>
             <Conditional value = {isCurrentUser && canEdit}>

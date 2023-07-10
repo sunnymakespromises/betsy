@@ -31,7 +31,7 @@ const Dev = memo(function Dev() {
             for (const item of searchParams.get('selected').split(',')) {
                 let category = item.split('+')[0]
                 let id = item.split('+')[1]
-                newSelected.push({...data[category]?.find(c => c.id === id), category: category})
+                newSelected.push({...data[category].find(c => c.id === id), category: category})
             }
         }
         return newSelected
@@ -43,7 +43,7 @@ const Dev = memo(function Dev() {
         keys: { competitions: ['name', 'competitions.name', 'sport.name'], competitors: ['name', 'competitions.name', 'sport.name'] }
     }}, [data])
 
-    if (isDev && data) {
+    if (isDev) {
         let DOMId = 'dev-'
         return (
             <Page>
@@ -52,8 +52,8 @@ const Dev = memo(function Dev() {
                     <Search searchConfig = {searchConfig} onResultClick = {onResultClick} inputPreset = 'dev-images' parentId = {DOMId}/>
                     <div id = {DOMId + 'container'} className = 'w-full h-full md:min-h-0 flex flex-col md:flex-row gap-main z-0'>
                         <div id = {DOMId + 'logs-container'} className = 'w-full md:h-full flex flex-col md:flex-row gap-main'>
-                            <Stats logs = {data?.logs} parentId = {DOMId + 'logs-'}/>
-                            <Logs logs = {data?.logs} parentId = {DOMId + 'logs-'}/>
+                            <Stats logs = {data.logs} parentId = {DOMId + 'logs-'}/>
+                            <Logs logs = {data.logs} parentId = {DOMId + 'logs-'}/>
                         </div>
                         <div id = {DOMId + 'group-1-container'} className = 'relative w-full h-full flex flex-col gap-smaller'>
                             <Selected selected = {selected} searchParams = {searchParamsRef.current} setSearchParams = {setSearchParams} parentId = {DOMId}/>
@@ -67,7 +67,7 @@ const Dev = memo(function Dev() {
     function onResultClick(category, result) {
         let newSelected = searchParamsRef.current?.get('selected')?.length > 0 ? searchParamsRef.current.get('selected').includes(category + '+' + result.id) ? searchParamsRef.current.get('selected') : searchParamsRef.current.get('selected') + ',' + category + '+' + result.id : category + '+' + result.id
         if (category === 'competitions') {
-            for (const competitor of data?.competitions?.find(c => c.id === result.id)?.competitors) {
+            for (const competitor of data.competitions.find(c => c.id === result.id)?.competitors) {
                 if (!newSelected.includes('competitors+' + competitor.id)) {
                     newSelected += ',competitors+' + competitor.id
                 }
@@ -124,8 +124,8 @@ const Selected = memo(function Selected({ selected, searchParams, setSearchParam
     }
 
     function onRemove(item) {
-        let newSelected = searchParams.get('selected').split(',').filter(p => p.split('+')[1] !== item.id).join(',')
-        let newSearchParams = {...Object.fromEntries(newSelected?.length > 0 ? [...searchParams, ['selected', newSelected]] : [...searchParams].filter(p => p[0] !== 'selected'))}
+        let newSelected = searchParams.get('selected')?.split(',')?.filter(p => p.split('+')[1] !== item.id)?.join(',')
+        let newSearchParams = {...Object.fromEntries(newSelected ? [...searchParams, ['selected', newSelected]] : [...searchParams].filter(p => p[0] !== 'selected'))}
         setSearchParams(newSearchParams, { replace: true })
     }
 
@@ -345,7 +345,7 @@ const Change = memo(function Change({ change, parentId }) {
         return newSentence
     }, [change])
     let DOMId = parentId + 'change-'
-    if (sentence?.length > 0) {
+    if (sentence.length > 0) {
         return (
             <div id = {DOMId + 'container'} className = 'h-min w-full flex flex-row flex-wrap items-baseline gap-x-tiny'>
                 {sentence}

@@ -50,7 +50,7 @@ const Info = memo(function Info() {
 })
 
 const Item = memo(function Item({ category, item, data, parentId }) {
-    if (item && data) {
+    if (item) {
         switch (category) {
             case 'events':
                 return <Event event = {item} parentId = {parentId}/>
@@ -93,7 +93,7 @@ const Event = memo(function Event({ event, parentId }) {
 }, (b, a) => _.isEqual(b.event, a.event))
 
 const Competition = memo(function Competition({ competition, data, parentId }) {
-    let events = useMemo(() => data ? competition?.events?.map(e => data.events.find(event => event.id === e.id)).sort((a, b) => a.start_time - b.start_time) : null, [data, competition])
+    let events = useMemo(() => competition.events.length > 0 && competition.events.map(e => data.events.find(event => event.id === e.id)).sort((a, b) => a.start_time - b.start_time), [data, competition])
     const searchConfig = useMemo(() => { return {
         id: 'competition',
         filters: {
@@ -109,7 +109,7 @@ const Competition = memo(function Competition({ competition, data, parentId }) {
                 fn: (a, category) => a.filter(r => category === 'events' && r.odds && r.odds.length > 0).sort((a, b) => a.start_time - b.start_time)
             }
         },
-        space: data ? { events: events } : null,
+        space: { events: events },
         categories: ['events'],
         keys: { events: ['name', 'competition.name', 'competitors.name', 'sport.name'] },
         showAllOnInitial: true
@@ -133,7 +133,7 @@ const Competition = memo(function Competition({ competition, data, parentId }) {
 }, (b, a) => _.isEqual(b.competition, a.competition) && _.isEqual(b.data, a.data))
 
 const Competitor = memo(function Competitors({ data, competitor, parentId }) {
-    let events = useMemo(() => data ? competitor?.events?.map(e => data.events.find(event => event.id === e.id)).sort((a, b) => a.start_time - b.start_time) : null, [data, competitor])
+    let events = useMemo(() => competitor.events.length > 0 && competitor.events.map(e => data.events.find(event => event.id === e.id)).sort((a, b) => a.start_time - b.start_time), [data, competitor])
     const searchConfig = useMemo(() => { return {
         id: 'competitor',
         filters: {
@@ -149,7 +149,7 @@ const Competitor = memo(function Competitors({ data, competitor, parentId }) {
                 fn: (a, category) => a.filter(r => category === 'events' && r.odds && r.odds.length > 0).sort((a, b) => a.start_time - b.start_time)
             }
         },
-        space: data ? { events: events } : null,
+        space: { events: events },
         categories: ['events'],
         keys: { events: ['name', 'competition.name', 'competitors.name', 'sport.name'] },
         showAllOnInitial: true

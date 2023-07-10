@@ -26,7 +26,7 @@ const Search = memo(forwardRef(function Search({ searchConfig, onResultClick, in
     return (
         <div ref = {(el) => {cancelRef.current = el; if (ref) {ref.current = el}}} id = {DOMId + 'container'} className = {'w-full flex flex-col rounded-main' + (classes ? ' ' + classes : '')}>
             <SearchBar input = {input} ref = {barSizeRef} hasResults = {hasResults} filters = {filters} setFilter = {setFilter} onInputChange = {onInputChange} isExpanded = {isExpanded} setIsExpanded = {setIsExpanded} canExpand = {true} inputPreset = {inputPreset} parentId = {DOMId}/>
-            <Results results = {results} hasResults = {hasResults} isExpanded = {isExpanded} offset = {barSize.height} onResultClick = {(category, result) => {setIsExpanded(false); onResultClick(category, result)}} parentId = {DOMId}/>
+            {results && <Results results = {results} hasResults = {hasResults} isExpanded = {isExpanded} offset = {barSize.height} onResultClick = {(category, result) => {setIsExpanded(false); onResultClick(category, result)}} parentId = {DOMId}/>}
         </div>
     )
 }), (b, a) => _.isEqual(JSON.stringify(b.searchConfig), JSON.stringify(a.searchConfig)) && b.classes === a.classes)
@@ -34,12 +34,12 @@ const Search = memo(forwardRef(function Search({ searchConfig, onResultClick, in
 const Results = memo(function Results({ results, hasResults, isExpanded, offset, onResultClick, parentId }) {
     let maxHeight = 'calc(100% - ' + offset + 'px)'
     let DOMId = parentId + 'results-'
-    if (results?.constructor?.name === 'Object') {
+    if (results.constructor.name === 'Object') {
         return (
             <div id = {parentId + 'results'} style = {{ maxHeight: maxHeight, marginTop: offset + 'px' }} className = {'absolute top-0 left-0 right-0 flex-col md:flex-row gap-micro md:gap-smaller overflow-auto no-scrollbar scroll-smooth md:overflow-hidden p-main pt-0 bg-base-main rounded-b-main shadow border-thin border-t-0 border-divider-main z-20 ' + (hasResults && isExpanded ? 'flex' : 'hidden')}>
                 <Map array = {results && Object.keys(results)} callback = {(category, categoryIndex) => {
                     let categoryId = DOMId + category + '-'; return (
-                    <Conditional key = {categoryIndex} value = {results[category]?.length > 0}>
+                    <Conditional key = {categoryIndex} value = {results[category].length > 0}>
                         <div id = {categoryId + 'container'} className = 'w-full flex flex-col md:overflow-hidden'>
                             <div id = {categoryId + 'title-container'} className = 'w-full h-min sticky top-0 bg-base-main pt-main z-10'>
                                 <Text id = {categoryId + 'title'} preset = 'search-results-category'>

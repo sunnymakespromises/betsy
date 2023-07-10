@@ -125,15 +125,15 @@ function useSearch(config) {
 
     function filter(newResults) {
         let filteredResults = newResults
-        if (config.filters && filtersRef?.current) {
+        if (config.filters && filtersRef.current) {
             for (const filter of Object.keys(config.filters)) {
                 if (filtersRef.current[filter].active === true) {
                     if (filteredResults.constructor.name === 'Array') {
-                        filteredResults = config.filters[filter]?.fn(filteredResults)
+                        filteredResults = config.filters[filter].fn(filteredResults)
                     }
                     else {
                         for (const category of Object.keys(filteredResults)) {
-                            filteredResults[category] = config.filters[filter]?.fn(filteredResults[category], category)
+                            filteredResults[category] = config.filters[filter].fn(filteredResults[category], category)
                         }
                     }
                 }

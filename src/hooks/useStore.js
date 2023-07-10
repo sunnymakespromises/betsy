@@ -21,7 +21,7 @@ function useStore(category, shape, defaults) {
             setCookie(storeName, [...storeRef.current, value])
         }
         else {
-            if (storeRef?.current[category]) {
+            if (storeRef.current[category]) {
                 setCookie(storeName, {...storeRef.current, [category]: [...storeRef.current[category], value]})
             }
         }
@@ -33,7 +33,7 @@ function useStore(category, shape, defaults) {
             setCookie(storeName, storeRef.current.filter(item => !(_.isEqual(item, value))))
         }
         else {
-            if (storeRef?.current[category]) {
+            if (storeRef.current[category]) {
                 setCookie(storeName, {...storeRef.current, [category]: storeRef.current[category].filter(item => !(_.isEqual(item, value)))})
             }
         }
