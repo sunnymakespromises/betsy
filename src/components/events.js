@@ -89,26 +89,25 @@ const Name = memo(function Name({ event, parentId }) {
         )
     }
     else {
-        let competitorNames = (event.name.includes('@') ? event.name.split(' @ ') : event.name.split(' v ')).map(name => event.competitors.find(competitor => competitor.name === name))
         return (
             <>
                 <div id = {parentId + 'competitor-1'} className = 'flex flex-row items-center gap-tiny overflow-hidden'>
-                    <Conditional value = {competitorNames?.length > 1 && competitorNames[0].picture}>
-                        <Image id = {parentId + 'competitor-1-image'} external path = {competitorNames[0].picture} classes = 'h-4 aspect-square'/>
+                    <Conditional value = {event.competitors[0].picture}>
+                        <Image id = {parentId + 'competitor-1-image'} external path = {event.competitors[0].picture} classes = 'h-4 aspect-square'/>
                     </Conditional>
                     <Text id = {parentId + 'competitor-1-name'} preset = 'events-name' classes = '!text-primary-main'>
-                        {competitorNames[0].name}
+                        {event.competitors[0].name}
                     </Text>
                 </div>
                 <Text preset = 'events-name' classes = '!overflow-visible w-min flex'>
                     {event.name.includes('@') ? '@' : 'v'}
                 </Text>
                 <div id = {parentId + 'competitor-2'} className = 'flex flex-row items-center gap-tiny overflow-hidden'>
-                    <Conditional value = {competitorNames?.length > 1 && competitorNames[1].picture}>
-                        <Image id = {parentId + 'competitor-2-image'} external path = {competitorNames[1].picture} classes = 'h-4 aspect-square'/>
+                    <Conditional value = {event.competitors[1].picture}>
+                        <Image id = {parentId + 'competitor-2-image'} external path = {event.competitors[1].picture} classes = 'h-4 aspect-square'/>
                     </Conditional>
                     <Text id = {parentId + 'competitor-2-name'} preset = 'events-name' classes = '!text-primary-main'>
-                        {competitorNames[1].name}
+                        {event.competitors[1].name}
                     </Text>
                 </div>
             </>

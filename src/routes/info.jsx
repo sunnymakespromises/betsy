@@ -19,7 +19,6 @@ import SearchBar from '../components/searchBar'
 import List from '../components/list'
 import Odds from '../components/odds'
 
-
 const Info = memo(function Info() {
     let [searchParams,] = useSearchParams()
     const { data } = useDataContext()
@@ -222,19 +221,18 @@ const Title = memo(function Title({ name, category, item, parentId }) {
             }
             else {
                 if (item.competitors) {
-                    let competitorNames = (name.includes('@') ? name.split(' @ ') : name.split(' v ')).map(name => item.competitors.find(competitor => competitor.name === name))
                     return (
                     <>
                         <Conditional value = {isLive}>
                             <CircleRounded id = {parentId + 'live-icon'} className = '!h-3 !w-3 text-live-main'/>
                         </Conditional>
                         <div id = {parentId + 'competitor-1-container'} className = 'flex flex-row items-center gap-tiny'>
-                            <Conditional value = {competitorNames[0].picture}>
-                                <Image id = {parentId + 'image'} external path = {competitorNames[0].picture} classes = 'h-5 aspect-square'/>
+                            <Conditional value = {item.competitors[0].picture}>
+                                <Image id = {parentId + 'image'} external path = {item.competitors[0].picture} classes = 'h-5 aspect-square'/>
                             </Conditional>
-                            <Link to = {'/info?category=competitors&id=' + competitorNames[0].id}>
+                            <Link to = {'/info?category=competitors&id=' + item.competitors[0].id}>
                                 <Text id = {parentId + 'competitor-1-name'} preset = 'info-item-title' classes = '!text-primary-main'>
-                                    {competitorNames[0].name}
+                                    {item.competitors[0].name}
                                 </Text>
                             </Link>
                         </div>
@@ -242,12 +240,12 @@ const Title = memo(function Title({ name, category, item, parentId }) {
                             {name.includes('@') ? '@' : 'v'}
                         </Text>
                         <div id = {parentId + 'competitor-2-container'} className = 'flex flex-row items-center gap-tiny'>
-                            <Conditional value = {competitorNames[1].picture}>
-                                <Image id = {parentId + 'image'} external path = {competitorNames[1].picture} classes = 'h-5 aspect-square'/>
+                            <Conditional value = {item.competitors[1].picture}>
+                                <Image id = {parentId + 'image'} external path = {item.competitors[1].picture} classes = 'h-5 aspect-square'/>
                             </Conditional>
-                            <Link to = {'/info?category=competitors&id=' + competitorNames[1].id}>
+                            <Link to = {'/info?category=competitors&id=' + item.competitors[1].id}>
                                 <Text id = {parentId + 'competitor-2-name'} preset = 'info-item-title' classes = '!text-primary-main'>
-                                    {competitorNames[1].name}
+                                    {item.competitors[1].name}
                                 </Text>
                             </Link>
                         </div>
