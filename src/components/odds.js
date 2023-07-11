@@ -9,11 +9,11 @@ import { useCancelDetector } from '../hooks/useCancelDetector'
 import Conditional from './conditional'
 
 
-const Odds = memo(function Odds({ event, parentId }) {
+const Odds = memo(function Odds({ event, classes, parentId }) {
     let DOMId = parentId + '-odds'
     if (event.odds) {
         return (
-            <div id = {DOMId} className = 'w-full h-full grid grid-cols-4 gap-small'>
+            <div id = {DOMId} className = {'w-full h-full grid grid-cols-4 gap-small' + (classes ? ' ' + classes : '')}>
                 <Map array = {event.odds} callback = {(odds, oddsIndex) => {
                     let values = odds.outcomes[0].values
                     if (values) { return (
@@ -26,7 +26,7 @@ const Odds = memo(function Odds({ event, parentId }) {
             </div>
         )
     }
-}, (b, a) => _.isEqual(b.event, a.event) && _.isEqual(b.competitor, a.competitor))
+}, (b, a) => b.classes === a.classes && _.isEqual(b.event, a.event) && _.isEqual(b.competitor, a.competitor))
 
 const Odd = memo(function Odd({ category, name, outcome, parentId }) {
     let options = [
