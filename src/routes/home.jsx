@@ -1,6 +1,7 @@
 import { memo, useMemo } from 'react'
 import { Helmet } from 'react-helmet'
 import { useDataContext } from '../contexts/data'
+import { useWindowContext } from '../contexts/window'
 import Page from '../components/page'
 import Text from '../components/text'
 import { Event } from '../components/events'
@@ -13,6 +14,7 @@ import SearchBar from '../components/searchBar'
 
 const Home = memo(function Home() {
     const { data } = useDataContext()
+    const { isLandscape } = useWindowContext()
 
     let DOMId = 'home'
     return (
@@ -20,14 +22,14 @@ const Home = memo(function Home() {
             <div id = {DOMId} className = 'w-full h-full'>
                 <Helmet><title>Dashboard | Betsy</title></Helmet>
                 <div id = {DOMId + '-body'} className = 'w-full h-full min-h-0 flex flex-col md:flex-row gap-small md:gap-main z-0'>
-                    <Events data = {data} parentId = {DOMId + '-body'}/>
+                    <Events data = {data} isLandscape = {isLandscape} parentId = {DOMId + '-body'}/>
                 </div>
             </div>
         </Page>
     )
 })
 
-const Events = memo(function Events({ data, parentId }) {
+const Events = memo(function Events({ data, isLandscape, parentId }) {
     const searchConfig = useMemo(() => { return {
         id: 'competitor',
         filters: {
@@ -53,7 +55,7 @@ const Events = memo(function Events({ data, parentId }) {
     let DOMId = parentId + '-panel'
     return (
         <div id = {DOMId} className = 'w-full h-full min-h-0 flex flex-col rounded-main border-thin border-divider-main md:shadow'>
-            <div id = {DOMId + '-bar'} className = 'w-full h-min flex flex-row items-center p-main'>
+            <div id = {DOMId + '-bar'} className = 'w-full h-min flex flex-row justify-between items-center p-main'>
                 <Text id = {DOMId + '-title'} preset = 'home-panel'>
                     Events
                 </Text>
@@ -65,6 +67,6 @@ const Events = memo(function Events({ data, parentId }) {
             </div>
         </div>
     )
-}, (b, a) => _.isEqual(b.data, a.data))
+}, (b, a) => b.isLandscape === a.isLandscape && _.isEqual(b.data, a.data))
 
 export default Home

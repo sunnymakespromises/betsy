@@ -18,25 +18,15 @@ import toDate from '../lib/util/toDate'
 import { useSearch } from '../hooks/useSearch'
 import SearchBar from '../components/searchBar'
 import JSZip from 'jszip'
+import { useCookies } from 'react-cookie'
 
 const Dev = memo(function Dev() {
-    const [searchParams, setSearchParams] = useSearchParams()
-    const searchParamsRef = useRef()
-    searchParamsRef.current = searchParams
+    let cookieName = 'dev_selections'
+    let [cookies, setCookie, removeCookie] = useCookies([cookieName])
     const { currentUser } = useUserContext()
     const { data } = useDataContext()
     const isDev = useMemo(() => currentUser && currentUser.is_dev, [currentUser])
-    const selected = useMemo(() =>  { 
-        let newSelected = []
-        if (data && searchParams.get('selected')) {
-            for (const item of searchParams.get('selected').split(',')) {
-                let category = item.split('+')[0]
-                let id = item.split('+')[1]
-                newSelected.push({...data[category].find(c => c.id === id), category: category})
-            }
-        }
-        return newSelected
-    }, [searchParams, data])
+    const selected = useMemo(() => cookies[cookieName] ? cookies[cookieName] : [], [cookies])
     const searchConfig = useMemo(() => { return {
         id: 'dev',
         space: data ? { competitions: data.competitions, competitors: data.competitors } : null,
@@ -53,7 +43,7 @@ const Dev = memo(function Dev() {
                     <Search searchConfig = {searchConfig} onResultClick = {onResultClick} inputPreset = 'dev-images' parentId = {DOMId}/>
                     <div id = {DOMId + '-body'} className = 'w-full h-full md:min-h-0 flex flex-col md:flex-row gap-main z-0'>
                         <Data logs = {data.logs} parentId = {DOMId}/>
-                        <Upload selected = {selected} searchParams = {searchParamsRef.current} setSearchParams = {setSearchParams} parentId = {DOMId}/>
+                        <Upload selected = {selected} cookieName = {cookieName} setCookie = {setCookie} removeCookie = {removeCookie} parentId = {DOMId}/>
                     </div>
                 </div>
             </Page>
@@ -61,20 +51,23 @@ const Dev = memo(function Dev() {
     }
 
     function onResultClick(category, result) {
-        let newSelected = searchParamsRef.current?.get('selected')?.length > 0 ? searchParamsRef.current.get('selected').includes(category + '+' + result.id) ? searchParamsRef.current.get('selected') : searchParamsRef.current.get('selected') + ',' + category + '+' + result.id : category + '+' + result.id
+        let newSelected = cookies[cookieName]
+        console.log(newSelected)
+        if (!newSelected.some(selection => selection.id === result.id)) {
+            newSelected.push(result)
+        }
         if (category === 'competitions') {
             for (const competitor of data.competitions.find(c => c.id === result.id)?.competitors) {
-                if (!newSelected.includes('competitors+' + competitor.id)) {
-                    newSelected += ',competitors+' + competitor.id
+                if (!newSelected.some(selection => selection.id === competitor.id)) {
+                    newSelected.push(competitor)
                 }
             }
         }
-        let newSearchParams = {...Object.fromEntries([...searchParams, ['selected', newSelected]])}
-        setSearchParams(newSearchParams, { replace: true })
+        setCookie(cookieName, newSelected)
     }
 })
 
-const Upload = memo(function Upload({ selected, searchParams, setSearchParams, parentId }) {
+const Upload = memo(function Upload({ selected, cookieName, setCookie, removeCookie, parentId }) {
     let [isLoading, execute] = useLoading()
     let [targetItem, setTargetItem] = useState()
     const { uploadPicture } = useDev()
@@ -120,14 +113,12 @@ const Upload = memo(function Upload({ selected, searchParams, setSearchParams, p
     )
 
     function removeAll() {
-        let newSearchParams = {...Object.fromEntries([...searchParams].filter(p => p[0] !== 'selected'))}
-        setSearchParams(newSearchParams, { replace: true })
+        removeCookie(cookieName)
     }
 
     function onRemove(item) {
-        let newSelected = searchParams.get('selected')?.split(',')?.filter(p => p.split('+')[1] !== item.id)?.join(',')
-        let newSearchParams = {...Object.fromEntries(newSelected ? [...searchParams, ['selected', newSelected]] : [...searchParams].filter(p => p[0] !== 'selected'))}
-        setSearchParams(newSearchParams, { replace: true })
+        let newSelected = selected.filter(selection => selection.id !== item.id)
+        setCookie(cookieName, newSelected)
     }
 
     async function onClickFile(item) {
@@ -202,7 +193,7 @@ const Upload = memo(function Upload({ selected, searchParams, setSearchParams, p
             }
         }
     }
-}, (b, a) => _.isEqual(b.selected, a.selected) && _.isEqual(b.searchParams, a.searchParams))
+}, (b, a) => b.cookieName === a.cookieName && _.isEqual(b.selected, a.selected))
 
 const Data = memo(function Data({ logs, parentId }) {
     let DOMId = parentId + '-data'

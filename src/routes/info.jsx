@@ -62,16 +62,6 @@ const Item = memo(function Item({ category, item, data, isLandscape, parentId })
 }, (b, a) => b.isLandscape === a.isLandscape && _.isEqual(b.item, a.item) && _.isEqual(b.data, a.data))
 
 const Competition = memo(function Competition({ competition, data, isLandscape, parentId }) {
-    for (const competitor of competition.competitors) {
-        if (!competitor.picture) {
-            console.log(competitor.name)
-        }
-    }
-    for (const event of competition.events) {
-        if (event.competitors?.some(competitor => !competitor.picture)) {
-            console.log(event.name)
-        }
-    }
     let events = useMemo(() => competition.events.length > 0 ? competition.events.map(e => data.events.find(event => event.id === e.id)).sort((a, b) => a.start_time - b.start_time) : [], [data, competition])
     const searchConfig = useMemo(() => { return {
         id: 'competition',
@@ -121,7 +111,7 @@ const Competition = memo(function Competition({ competition, data, isLandscape, 
 }, (b, a) => b.isLandscape === a.isLandscape && _.isEqual(b.competition, a.competition) && _.isEqual(b.data, a.data))
 
 const Competitor = memo(function Competitors({ data, competitor, isLandscape, parentId }) {
-    let events = useMemo(() => competitor.events.length > 0 && competitor.events.map(e => data.events.find(event => event.id === e.id)).sort((a, b) => a.start_time - b.start_time), [data, competitor])
+    let events = useMemo(() => competitor.events.length > 0 ? competitor.events.map(e => data.events.find(event => event.id === e.id)).sort((a, b) => a.start_time - b.start_time) : [], [data, competitor])
     const searchConfig = useMemo(() => { return {
         id: 'competitor',
         filters: {
@@ -238,7 +228,7 @@ const Title = memo(function Title({ name, category, item, parentId }) {
             return (
                 <>
                     <Text id = {DOMId + '-intro'} preset = 'info-item-subtitle'>
-                        Hosts&nbsp;{item.sport.name}&nbsp;in&nbsp;
+                        Plays&nbsp;{item.sport.name}&nbsp;in&nbsp;
                     </Text>
                     <div id = {DOMId + '-country'} className = 'flex flex-row items-center gap-tiny'>
                         <Text id = {DOMId + '-country-name'} preset = 'info-item-subtitle'>

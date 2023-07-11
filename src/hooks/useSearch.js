@@ -8,8 +8,6 @@ function useSearch(config) {
     const queryId = config.id + '_query'
     const filtersId = config.id + '_filters'
     const [cookies, _setCookie, _removeCookie] = useCookies([queryId, filtersId])
-    let cookiesRef = useRef()
-    cookiesRef.current = cookies
     const queryParam = useMemo(() => cookies[queryId], [cookies])
     const filtersParam = useMemo(() => cookies[filtersId], [cookies])
     const filters = useMemo(() => {
