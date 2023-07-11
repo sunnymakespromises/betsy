@@ -13,39 +13,37 @@ async function uploadPicture(item, value) {
         const file = new File([await fetch(value).then(async res => await res.blob())], fileName, { type: 'image/png' })
         let bucket = process.env.REACT_APP_AWS_PICTURES_BUCKET
         if (await insertFile(bucket, file)) {
-            if (!item.picture) {
-                let picture = 'https://' + bucket + '.s3.amazonaws.com/' + encodeURI(fileName)
-                await updateItem(_.startCase(item.category), item.id, { picture: picture })
-                if (item.category === 'competitions') {
-                    let competition = await getItem('Competitions', item.id, ['id', 'name', 'sport', 'events', 'competitors'])
-                    let competitions = (await getItem('Sports', competition.sport.id, ['id', 'competitions'])).competitions.map(c => { return c.id === competition.id ? { id: c.id, name: c.name, picture: picture } : c })
-                    await updateItem('Sports', competition.sport.id, { competitions: competitions })
-                    for (const event of competition.events) {
-                        await updateItem('Events', event.id, { competition: { id: competition.id, name: competition.name, picture: picture } })
-                    }
-                    for (const competitor of competition.competitors) {
-                        let competitions = (await getItem('Competitors', competitor.id, ['id', 'competitions'])).competitions.map(c => { return c.id === competition.id ?  { id: c.id, name: c.name, picture: picture } : c })
-                        await updateItem('Competitors', competitor.id, { competitions: competitions })
-                    }
+            let picture = 'https://' + bucket + '.s3.amazonaws.com/' + encodeURI(fileName)
+            await updateItem(_.startCase(item.category), item.id, { picture: picture })
+            if (item.category === 'competitions') {
+                let competition = await getItem('Competitions', item.id, ['id', 'name', 'sport', 'events', 'competitors'])
+                let competitions = (await getItem('Sports', competition.sport.id, ['id', 'competitions'])).competitions.map(c => { return c.id === competition.id ? { id: c.id, name: c.name, picture: picture } : c })
+                await updateItem('Sports', competition.sport.id, { competitions: competitions })
+                for (const event of competition.events) {
+                    await updateItem('Events', event.id, { competition: { id: competition.id, name: competition.name, picture: picture } })
                 }
-                else if (item.category === 'competitors') {
-                    let competitor = await getItem('Competitors', item.id, ['id', 'name', 'events', 'competitions'])
-                    for (let competition of competitor.competitions) {
-                        let competitors = (await getItem('Competitions', competition.id, ['id', 'competitors'])).competitors.map(c => { return c.id === competitor.id ? { id: c.id, name: c.name, picture: picture } : c })
-                        await updateItem('Competitions', competition.id, { competitors: competitors })
-                    }
-                    for (let event of competitor.events) {
-                        event = await getItem('Events', event.id, ['id', 'competitors', 'odds'])
-                        let competitors = event.competitors.map(c => { return c.id === competitor.id ? { id: c.id, name: c.name, picture: picture } : c })
-                        let odds = event.odds?.map(odd => { return {
-                            ...odd,
-                            outcomes: odd.outcomes.map(outcome => { return {
-                                ...outcome,
-                                ...( outcome?.competitor ? {competitor: outcome.competitor.id === competitor.id ? { id: outcome.competitor.id, name: outcome.competitor.name, picture: picture } : outcome.competitor } : {})
-                            }})
+                for (const competitor of competition.competitors) {
+                    let competitions = (await getItem('Competitors', competitor.id, ['id', 'competitions'])).competitions.map(c => { return c.id === competition.id ?  { id: c.id, name: c.name, picture: picture } : c })
+                    await updateItem('Competitors', competitor.id, { competitions: competitions })
+                }
+            }
+            else if (item.category === 'competitors') {
+                let competitor = await getItem('Competitors', item.id, ['id', 'name', 'events', 'competitions'])
+                for (let competition of competitor.competitions) {
+                    let competitors = (await getItem('Competitions', competition.id, ['id', 'competitors'])).competitors.map(c => { return c.id === competitor.id ? { id: c.id, name: c.name, picture: picture } : c })
+                    await updateItem('Competitions', competition.id, { competitors: competitors })
+                }
+                for (let event of competitor.events) {
+                    event = await getItem('Events', event.id, ['id', 'competitors', 'odds'])
+                    let competitors = event.competitors.map(c => { return c.id === competitor.id ? { id: c.id, name: c.name, picture: picture } : c })
+                    let odds  = event.odds?.map(odd => { return {
+                        ...odd,
+                        outcomes: odd.outcomes.map(outcome => { return {
+                            ...outcome,
+                            ...( outcome?.competitor ? {competitor: outcome.competitor.id === competitor.id ? { id: outcome.competitor.id, name: outcome.competitor.name, picture: picture } : outcome.competitor } : {})
                         }})
-                        await updateItem('Events', event.id, { competitors: competitors, odds: odds })
-                    }
+                    }})
+                    await updateItem('Events', event.id, { competitors: competitors, ...(event.odds ? {odds: odds} : {}) })
                 }
             }
             response.status = true
