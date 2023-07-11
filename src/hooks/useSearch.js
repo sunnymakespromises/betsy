@@ -1,28 +1,27 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useInput } from './useInput'
 import Fuse from 'fuse.js'
-import { useSearchParams } from 'react-router-dom'
+import { useCookies } from 'react-cookie'
 
 function useSearch(config) {
     const isSimple = !(config.categories)
-    const [searchParams, setSearchParams] = useSearchParams()
-    const searchParamsRef = useRef()
-    searchParamsRef.current = searchParams
     const queryId = config.id + '_query'
-    const queryParam = useMemo(() => searchParams.get(queryId), [searchParams])
     const filtersId = config.id + '_filters'
-    const filtersParam = useMemo(() => searchParams.get(filtersId), [searchParams])
+    const [cookies, _setCookie, _removeCookie] = useCookies([queryId, filtersId])
+    let cookiesRef = useRef()
+    cookiesRef.current = cookies
+    const queryParam = useMemo(() => cookies[queryId], [cookies])
+    const filtersParam = useMemo(() => cookies[filtersId], [cookies])
     const filters = useMemo(() => {
         if (config.filters) {
             let newFilters = {}
-            let newFiltersParam = filtersParam?.split(',')
-            Object.keys(config.filters).forEach(filter => newFilters[filter] = {...config.filters[filter], active: newFiltersParam ? newFiltersParam.includes(filter) : false})
+            Object.keys(config.filters).forEach(filter => newFilters[filter] = {...config.filters[filter], active: filtersParam ? filtersParam[filter].active : false})
             return newFilters
         }
         else {
             return null
         }
-    }, [searchParams])
+    }, [cookies])
     const filtersRef = useRef()
     filtersRef.current = filters
     const {input, onInputChange} = useInput(null, queryParam ? queryParam : '')
@@ -31,7 +30,7 @@ function useSearch(config) {
 
     useEffect(() => {
         let value = input !== '' ? input : null
-        setSearchParam(queryId, value)
+        setCookie(queryId, value)
     }, [input])
 
 
@@ -110,17 +109,16 @@ function useSearch(config) {
                 newFilters[targetFilter] = {...newFilters[targetFilter], active: false}
             }
         }
-        setFilterParams(newFilters)
+        setCookie(filtersId, newFilters)
     }
 
-    function setFilterParams(newFilters) {
-        let value = Object.keys(newFilters).some(f => newFilters[f].active === true) ? Object.keys(newFilters).filter(filter => newFilters[filter].active === true).join(',') : null
-        setSearchParam(filtersId, value)
-    }
-
-    function setSearchParam(param, value) {
-        let newSearchParams = {...Object.fromEntries(value ? [...searchParamsRef.current, [param, value]] : [...searchParamsRef.current].filter(p => p[0] !== param))}
-        setSearchParams(newSearchParams, { replace: true })
+    function setCookie(param, value) {
+        if (value) {
+            _setCookie(param, value)
+        }
+        else {
+            _removeCookie(param)
+        }
     }
 
     function filter(newResults) {
