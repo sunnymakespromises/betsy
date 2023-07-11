@@ -22,7 +22,7 @@ const Text = memo(function Text({ preset = 'main-body', styles, classes, childre
         },
         events: {
             name: 'whitespace-nowrap overflow-hidden text-ellipsis select-none font-main font-medium text-base md:text-base text-primary-main',
-            subtitle: 'select-none font-main font-regular text-tiny md:text-tiny text-text-highlight',
+            subtitle: 'select-none font-main font-regular text-tiny md:text-tiny text-text-main',
         },
         login: {
             title: 'select-none font-main font-black text-6xl md:text-7xl text-text-main text-center',
@@ -65,6 +65,7 @@ const Text = memo(function Text({ preset = 'main-body', styles, classes, childre
                 value: 'whitespace-nowrap select-none font-main font-medium text-xs md:text-xs text-text-main'
             },
             favorites: {
+                title: 'whitespace-nowrap select-none font-main font-medium text-tiny md:text-tiny text-text-main',
                 placeholder: 'whitespace-nowrap select-none font-main font-medium text-tiny md:text-tiny text-text-main uppercase'
             },
             error: 'select-none font-main font-medium text-tiny md:text-tiny text-text-main'
