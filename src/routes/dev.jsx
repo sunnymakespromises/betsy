@@ -2,12 +2,13 @@ import React, { memo, useMemo, useRef, useState  } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
 import _ from 'lodash'
-import { AddRounded, CloseRounded, DeleteRounded, ExpandMoreRounded, FolderRounded, RemoveRounded } from '@mui/icons-material'
+import { AddRounded, BackupRounded, CloseRounded, DeleteRounded, ExpandMoreRounded, FolderRounded, RemoveRounded } from '@mui/icons-material'
 import { useDataContext } from '../contexts/data'
 import { useUserContext } from '../contexts/user'
 import Page from '../components/page'
 import Search from '../components/search'
 import { useDev } from '../hooks/useDev'
+import { useLoading } from '../hooks/useLoading'
 import Map from '../components/map'
 import Conditional from '../components/conditional'
 import Text from '../components/text'
@@ -74,6 +75,7 @@ const Dev = memo(function Dev() {
 })
 
 const Upload = memo(function Upload({ selected, searchParams, setSearchParams, parentId }) {
+    let [isLoading, execute] = useLoading()
     let [targetItem, setTargetItem] = useState()
     const { uploadPicture } = useDev()
     const fileInput = useRef(null)
@@ -105,6 +107,9 @@ const Upload = memo(function Upload({ selected, searchParams, setSearchParams, p
                     Upload
                 </Text>
                 <div id = {DOMId + '-actions'} className = 'flex flex-row gap-small'>
+                    <Conditional value = {isLoading}>
+                        <BackupRounded id = {DOMId + '-sync-icon'} className = '!h-full !aspect-square text-text-main animate-twPulse animate-repeat-[infinite]'/>
+                    </Conditional>
                     <FolderRounded id = {DOMId + '-folder-icon'} className = '!h-full !aspect-square text-primary-main cursor-pointer' onClick = {() => onClickFolder()}/>
                     <DeleteRounded id = {DOMId + '-delete-icon'} className = '!h-full !aspect-square text-primary-main cursor-pointer' onClick = {() => removeAll()}/>
                 </div>
@@ -140,20 +145,22 @@ const Upload = memo(function Upload({ selected, searchParams, setSearchParams, p
 
     async function onUploadFolder(e) {
         if (e.target.files[0]) {
-            await JSZip.loadAsync(e.target.files[0]).then((zip) => {
-                let files = Object.keys(zip.files).filter(filename => (zip.files[filename].dir) === false)
-                files = files.map(filename => {
-                    let name = zip.files[filename].name.split('/').pop().replace('.png', '')
-                    let item = selected.find(item => item.category === 'competitions' ? item.key === name : item.category === 'competitors' ? item.name === name : false)
-                    return {
-                        filename: filename,
-                        item: item
-                    }
-                })
-                files.forEach(async file => {
-                    if (file.item) {
-                        let value = URL.createObjectURL(await zip.files[file.filename].async('blob'))
-                        await uploadPicture(file.item, value)
+            await execute(async () => {
+                await JSZip.loadAsync(e.target.files[0]).then(async (zip) => {
+                    let files = Object.keys(zip.files).filter(filename => (zip.files[filename].dir) === false)
+                    files = files.map(filename => {
+                        let name = zip.files[filename].name.split('/').pop().replace('.png', '')
+                        let item = selected.find(item => item.category === 'competitions' ? item.key === name : item.category === 'competitors' ? item.name === name : false)
+                        return {
+                            filename: filename,
+                            item: item
+                        }
+                    })
+                    for (const file of files) {
+                        if (file.item) {
+                            let value = URL.createObjectURL(await zip.files[file.filename].async('blob'))
+                            await uploadPicture(file.item, value)
+                        }
                     }
                 })
             })
