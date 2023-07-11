@@ -4,11 +4,11 @@ import Map from './map'
 import Conditional from './conditional'
 
 const List = memo(function List({ items, element, dividers, classes, parentId }) {
-    let DOMId = parentId + 'items-'
+    let DOMId = parentId + '-items'
     return (
-        <div id = {DOMId + 'container'} className = {'w-full max-h-full min-h-0 flex flex-col overflow-auto no-scrollbar' + (classes ? ' ' + classes : '')}>
+        <div id = {DOMId} className = {'w-full max-h-full min-h-0 flex flex-col overflow-auto no-scrollbar' + (classes ? ' ' + classes : '')}>
             <Map array = {items} callback = {(item, index) => {
-                let itemId = DOMId + 'item-' + index + '-'; return (
+                let itemId = DOMId + '-item' + index; return (
                 <Item key = {index} item = {item} Element = {element} hasDivider = {dividers && index !== items.length - 1} parentId = {itemId}/>
             )}}/>
         </div>
@@ -21,7 +21,7 @@ const Item = memo(function Item({ item, Element, hasDivider, parentId }) {
         <>
             <Element item = {item} parentId = {DOMId}/>
             <Conditional value = {hasDivider}>
-                <div className = 'divider border-t-thin border-divider-main'/>
+                <div className = 'border-t-thin border-divider-main'/>
             </Conditional>
         </>
     )

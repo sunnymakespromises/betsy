@@ -11,7 +11,6 @@ import { useMemo } from 'react'
  */
 export default function Button({ preset = 'main', styles, classes, onClick, children, ...extras }) {
     let options = {
-        login: 'transition-all duration-main flex justify-center items-center h-min w-full bg-base-main/muted hover:bg-base-main rounded-main p-small cursor-pointer',
         main: 'transition-all duration-slow flex justify-center items-center bg-reverse-0 rounded-main p-small cursor-pointer',
     }
 

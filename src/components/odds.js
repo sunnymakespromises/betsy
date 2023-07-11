@@ -7,10 +7,10 @@ import calculateOdds from '../lib/util/calculateOdds'
 
 
 const Odds = memo(function Odds({ event, parentId }) {
-    let DOMId = parentId + 'odds-'
+    let DOMId = parentId + '-odds'
     if (event.odds) {
         return (
-            <div id = {DOMId + 'container'} className = 'w-full h-full grid grid-cols-4 gap-small'>
+            <div id = {DOMId} className = 'w-full h-full grid grid-cols-4 gap-small'>
                 <Map array = {event.odds} callback = {(odds, oddsIndex) => {
                     let values = odds.outcomes[0].values
                     if (values) {
@@ -68,9 +68,9 @@ const Name = memo(function Name({ category, name, outcome, parentId }) {
         return string
     }, [category, name, outcome])
 
-    let DOMId = parentId + 'text-'
+    let DOMId = parentId + '-name'
     return (
-        <Text id = {DOMId + 'name'} preset = 'odds-name'>
+        <Text id = {DOMId} preset = 'odds-name'>
             {string}
         </Text>
     )
@@ -78,12 +78,12 @@ const Name = memo(function Name({ category, name, outcome, parentId }) {
 
 const Odd = memo(function Odd({value, preset, parentId }) {
     const [cookies,,] = useCookies(['odds_format'])
-    let DOMId = parentId + 'money-'
+    let DOMId = parentId + '-value'
     return (
-        <Text id = {DOMId + 'value'} preset = {preset}>
+        <Text id = {DOMId} preset = {preset}>
             {calculateOdds(cookies['odds_format'], value ? value : 100)}
         </Text>
     )
-}, (b, a) => b.amount === a.amount)
+})
 
 export default Odds

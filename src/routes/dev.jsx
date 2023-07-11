@@ -44,20 +44,15 @@ const Dev = memo(function Dev() {
     }}, [data])
 
     if (isDev) {
-        let DOMId = 'dev-'
+        let DOMId = 'dev'
         return (
-            <Page>
-                <div id = {DOMId + 'page'} className = 'relative w-full h-full flex flex-col gap-main'>
+            <Page DOMId = {DOMId}>
+                <div id = {DOMId} className = 'relative w-full h-full flex flex-col gap-main'>
                     <Helmet><title>Developer | Betsy</title></Helmet>
                     <Search searchConfig = {searchConfig} onResultClick = {onResultClick} inputPreset = 'dev-images' parentId = {DOMId}/>
-                    <div id = {DOMId + 'container'} className = 'w-full h-full md:min-h-0 flex flex-col md:flex-row gap-main z-0'>
-                        <div id = {DOMId + 'logs-container'} className = 'w-full md:h-full flex flex-col md:flex-row gap-main'>
-                            <Stats logs = {data.logs} parentId = {DOMId + 'logs-'}/>
-                            <Logs logs = {data.logs} parentId = {DOMId + 'logs-'}/>
-                        </div>
-                        <div id = {DOMId + 'group-1-container'} className = 'relative w-full h-full flex flex-col gap-smaller'>
-                            <Selected selected = {selected} searchParams = {searchParamsRef.current} setSearchParams = {setSearchParams} parentId = {DOMId}/>
-                        </div>
+                    <div id = {DOMId + '-body'} className = 'w-full h-full md:min-h-0 flex flex-col md:flex-row gap-main z-0'>
+                        <Data logs = {data.logs} parentId = {DOMId}/>
+                        <Upload selected = {selected} searchParams = {searchParamsRef.current} setSearchParams = {setSearchParams} parentId = {DOMId}/>
                     </div>
                 </div>
             </Page>
@@ -78,20 +73,21 @@ const Dev = memo(function Dev() {
     }
 })
 
-const Selected = memo(function Selected({ selected, searchParams, setSearchParams, parentId }) {
+const Upload = memo(function Upload({ selected, searchParams, setSearchParams, parentId }) {
     let [targetItem, setTargetItem] = useState()
     const { uploadPicture } = useDev()
     const fileInput = useRef(null)
     const folderInput = useRef(null)
     const Item = memo(function Item({ item, parentId }) {
+        let DOMId = parentId
         return (
-            <div id = {parentId + 'container'} className = 'relative h-min flex flex-row items-center gap-small'>
-                <CloseRounded className = '!h-4 !w-4 text-primary-main cursor-pointer' onClick = {() => onRemove(item)}/>
-                <div id = {parentId + 'name-container'} className = 'flex flex-row items-center gap-tiny'>
+            <div id = {DOMId} className = 'relative h-min flex flex-row items-center gap-small'>
+                <CloseRounded id = {DOMId + '-close-icon'} className = '!h-4 !w-4 text-primary-main cursor-pointer' onClick = {() => onRemove(item)}/>
+                <div id = {DOMId + '-info'} className = 'flex flex-row items-center gap-tiny'>
                     <Conditional value = {item.picture}>
-                        <ImageComponent id = {parentId + 'image'} external path = {item.picture} classes = 'w-4 h-4'/>
+                        <ImageComponent id = {DOMId + '-image'} external path = {item.picture} classes = 'w-4 h-4'/>
                     </Conditional>
-                    <Text id = {parentId + 'name'} preset = 'dev-images-item' onClick = {() => onClickFile(item)}>
+                    <Text id = {DOMId + '-name'} preset = 'dev-images-item' onClick = {() => onClickFile(item)}>
                         {item.name}
                     </Text>
                 </div>
@@ -99,21 +95,21 @@ const Selected = memo(function Selected({ selected, searchParams, setSearchParam
         )
     }, (b, a) => _.isEqual(b.item, a.item))
 
-    let DOMId = parentId + 'selected-'
+    let DOMId = parentId + '-upload'
     return (
-        <div id = {DOMId + 'container'} className = 'w-full h-full flex flex-col overflow-hidden rounded-main border-thin border-divider-main md:shadow'>
-            <input id = {DOMId + 'file-input'} style = {{ display: 'none' }} type = 'file' onChange = {(e) => onUploadFile(e)} ref = {fileInput} accept = '.jpg, .jpeg, .png, .gif, .webp'/>
-            <input id = {DOMId + 'folder-input'} style = {{ display: 'none' }} type = 'file' onChange = {(e) => onUploadFolder(e)} ref = {folderInput} accept = '.zip'/>
-            <div id = {DOMId + 'title-container'} className = 'w-full flex flex-row justify-between items-center p-main z-10'>
-                <Text id = {DOMId + 'title'} preset = 'dev-title'>
+        <div id = {DOMId} className = 'w-full h-full flex flex-col overflow-hidden rounded-main border-thin border-divider-main md:shadow'>
+            <input id = {DOMId + '-file-input'} style = {{ display: 'none' }} type = 'file' onChange = {(e) => onUploadFile(e)} ref = {fileInput} accept = '.jpg, .jpeg, .png, .gif, .webp'/>
+            <input id = {DOMId + '-folder-input'} style = {{ display: 'none' }} type = 'file' onChange = {(e) => onUploadFolder(e)} ref = {folderInput} accept = '.zip'/>
+            <div id = {DOMId + '-bar'} className = 'w-full flex flex-row justify-between items-center p-main z-10'>
+                <Text id = {DOMId + '-title'} preset = 'dev-title'>
                     Upload
                 </Text>
-                <div id = {DOMId + 'actions-container'} className = 'flex flex-row gap-small'>
-                    <FolderRounded className = '!h-full !aspect-square text-primary-main cursor-pointer' onClick = {() => onClickFolder()}/>
-                    <DeleteRounded className = '!h-full !aspect-square text-primary-main cursor-pointer' onClick = {() => removeAll()}/>
+                <div id = {DOMId + '-actions'} className = 'flex flex-row gap-small'>
+                    <FolderRounded id = {DOMId + '-folder-icon'} className = '!h-full !aspect-square text-primary-main cursor-pointer' onClick = {() => onClickFolder()}/>
+                    <DeleteRounded id = {DOMId + '-delete-icon'} className = '!h-full !aspect-square text-primary-main cursor-pointer' onClick = {() => removeAll()}/>
                 </div>
             </div>
-            <div className = 'divider border-t-thin border-divider-main'/>
+            <div className = 'border-t-thin border-divider-main'/>
             <List items = {selected} element = {Item} classes = 'p-main gap-small' parentId = {DOMId}/>
         </div>
     )
@@ -198,6 +194,16 @@ const Selected = memo(function Selected({ selected, searchParams, setSearchParam
     }
 }, (b, a) => _.isEqual(b.selected, a.selected) && _.isEqual(b.searchParams, a.searchParams))
 
+const Data = memo(function Data({ logs, parentId }) {
+    let DOMId = parentId + '-data'
+    return (
+        <div id = {DOMId} className = 'w-full md:h-full flex flex-col md:flex-row gap-main'>
+            <Stats logs = {logs} parentId = {DOMId}/>
+            <Logs logs = {logs} parentId = {DOMId}/>
+        </div>
+    )
+}, (b, a) => _.isEqual(b.data, a.data))
+
 const Stats = memo(function Stats({ logs, parentId }) {
     const stats = [
         {
@@ -217,15 +223,15 @@ const Stats = memo(function Stats({ logs, parentId }) {
             }
         },
     ]
-    let DOMId = parentId + 'stats-' 
+    let DOMId = parentId + '-stats' 
     return (
-        <div id = {DOMId + 'container'} className = 'w-full md:w-min h-min flex flex-row flex-wrap md:flex-col gap-smaller md:gap-small rounded-main p-main border-thin border-divider-main md:shadow'>
+        <div id = {DOMId} className = 'w-full md:w-min h-min flex flex-row flex-wrap md:flex-col gap-smaller md:gap-small rounded-main p-main border-thin border-divider-main md:shadow'>
             <Map array = {stats} callback = {(stat, index) => {
-                let statId = DOMId + 'stat-' + index + '-'; return (
+                let statId = DOMId + '-stat' + index; return (
                 <React.Fragment key = {index}>
                     <Stat title = {stat.title} value = {stat.value()} parentId = {statId}/>
                     <Conditional value = {index !== stats.length - 1}>
-                        <div className = 'divider border-t-thin border-l-thin border-divider-main'/>
+                        <div className = 'border-t-thin border-l-thin border-divider-main'/>
                     </Conditional>
                 </React.Fragment>
             )}}/>
@@ -235,12 +241,13 @@ const Stats = memo(function Stats({ logs, parentId }) {
 }, (b, a) => _.isEqual(b.logs, a.logs))
 
 const Stat = memo(function Stat({ title, value, parentId }) {
+    let DOMId = parentId
     return (
-        <div id = {parentId + 'container'} className = 'w-min flex flex-col'>
-            <Text id = {parentId + 'title'} preset = 'dev-stat-title'>
+        <div id = {DOMId} className = 'w-min flex flex-col'>
+            <Text id = {DOMId + '-title'} preset = 'dev-stat-title'>
                 {title}
             </Text>
-            <Text id = {parentId + 'amount'} preset = 'dev-stat-value'>
+            <Text id = {DOMId + '-amount'} preset = 'dev-stat-value'>
                 {value}
             </Text>
         </div>
@@ -283,24 +290,23 @@ const Logs = memo(function Logs({ logs, parentId }) {
     }}, [logs])
     const { input, results, filters, setFilter, onInputChange } = useSearch(searchConfig)
 
-    let DOMId = parentId + 'changes-'
+    let DOMId = parentId + '-logs'
     if (results) {
         return (
-            <div id = {DOMId + 'container'} className = 'relative w-full h-full flex flex-col rounded-main border-thin border-divider-main md:shadow'>
-                <div id = {DOMId + 'title-container'} className = 'md:sticky md:top-0 w-full flex flex-row justify-between items-center p-main z-10'>
-                    <Text id = {DOMId + 'title'} preset = 'dev-title'>
+            <div id = {DOMId} className = 'relative w-full h-full flex flex-col rounded-main border-thin border-divider-main md:shadow'>
+                <div id = {DOMId + '-bar'} className = 'md:sticky md:top-0 w-full flex flex-row justify-between items-center p-main z-10'>
+                    <Text id = {DOMId + '-title'} preset = 'dev-title'>
                         Logs
                     </Text>
                     <SearchBar inputPreset = 'dev-logs' input = {input} onInputChange = {onInputChange} canExpand = {false} filters = {filters} setFilter = {setFilter} autoFocus = {false} parentId = {DOMId}/>
                 </div>
-                <div className = 'divider border-t-thin border-divider-main'/>
-                <div id = {DOMId + 'logs'} className = 'w-full h-full flex flex-col p-main overflow-hidden md:overflow-y-auto md:no-scrollbar'>
+                <div className = 'border-t-thin border-divider-main'/>
+                <div id = {DOMId + '-items'} className = 'w-full h-full flex flex-col p-main overflow-hidden md:overflow-y-auto md:no-scrollbar'>
                     <Map array = {results && Object.keys(results)} callback = {(log, index) => {
-                        let logId = DOMId + 'log-' + index + '-'; return (
-                        <Conditional key = {index} value = {results[log] && results[log].length > 0}>
-                            <Log changes = {results[log]} title = {log} parentId = {logId}/>
-                        </Conditional>
-                    )}}/>
+                        let logId = DOMId + '-log' + index; 
+                        if (results[log]?.length > 0) {return (
+                        <Log key = {index} changes = {results[log]} title = {log} parentId = {logId}/>
+                    )}}}/>
                 </div>
             </div>
         )
@@ -309,17 +315,18 @@ const Logs = memo(function Logs({ logs, parentId }) {
 
 const Log = memo(function Log({ changes, title, parentId }) {
     let [isExpanded, setisExpanded] = useState(false)
+    let DOMId = parentId
     return (
-        <div id = {parentId + 'container'} className = {'w-full h-min flex flex-col'}>
-            <div id = {parentId + 'title-container'} className = {'w-full flex flex-row items-center gap-micro cursor-pointer'} onClick = {() => onClick()}>
-                <Text id = {parentId + 'title'} preset = 'dev-logs-title'>
+        <div id = {DOMId} className = {'w-full h-min flex flex-col'}>
+            <div id = {DOMId + '-bar'} className = {'w-full flex flex-row items-center gap-micro cursor-pointer'} onClick = {() => onClick()}>
+                <Text id = {DOMId + '-title'} preset = 'dev-logs-title'>
                     {title}
                 </Text>
-                <ExpandMoreRounded className = {'!transition-all duration-main !h-full aspect-square text-primary-main ' + (isExpanded ? 'rotate-180' : '')}/>
+                <ExpandMoreRounded id = {DOMId + '-expand-icon'} className = {'!transition-all duration-main !h-full aspect-square text-primary-main ' + (isExpanded ? 'rotate-180' : '')}/>
             </div>
-            <div id = {parentId + 'changes'} className = {'w-full h-min flex-col overflow-hidden gap-y-micro ' + (isExpanded ? 'flex' : 'hidden')}>
+            <div id = {DOMId + '-changes'} className = {'w-full h-min flex-col overflow-hidden gap-y-micro ' + (isExpanded ? 'flex' : 'hidden')}>
                 <Map array = {changes} callback = {(change, index) => {
-                    let changeId = parentId + 'change-' + index + '-'; return (
+                    let changeId = parentId + '-change' + index; return (
                     <Change key = {index} change = {change} parentId = {changeId}/>
                 )}}/>
             </div>
@@ -344,10 +351,10 @@ const Change = memo(function Change({ change, parentId }) {
         }
         return newSentence
     }, [change])
-    let DOMId = parentId + 'change-'
+    let DOMId = parentId
     if (sentence.length > 0) {
         return (
-            <div id = {DOMId + 'container'} className = 'h-min w-full flex flex-row flex-wrap items-baseline gap-x-tiny'>
+            <div id = {DOMId} className = 'h-min w-full flex flex-row flex-wrap items-baseline gap-x-tiny'>
                 {sentence}
             </div>
         )

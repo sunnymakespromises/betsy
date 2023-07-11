@@ -35,15 +35,15 @@ const Events = memo(function Events({ search = true, searchKey, events, parentId
     }
     const { input, results, hasResults, filters, setFilter, onInputChange } = useSearch(searchConfig)
 
-    let DOMId = parentId + 'events-'
+    let DOMId = parentId + '-events'
     if (events) {
         return (
-            <div id = {parentId + 'container'} className = 'h-full min-h-0 flex flex-col'>
+            <div id = {DOMId} className = 'h-full min-h-0 flex flex-col'>
                 <Conditional value = {search}>
                     <SearchBar inputPreset = 'events' input = {input} hasResults = {hasResults} filters = {filters} setFilter = {setFilter} onInputChange = {onInputChange} isExpanded = {false} autoFocus = {false} canExpand = {false} parentId = {DOMId}/>
-                    <div className = 'divider border-t-thin border-divider-main'/>
+                    <div className = 'border-t-thin border-divider-main'/>
                 </Conditional>
-                <List items = {results} element = {Event} dividers parentId = {parentId}/>
+                <List items = {results} element = {Event} dividers parentId = {DOMId}/>
             </div>
         )
     }
@@ -52,38 +52,40 @@ const Events = memo(function Events({ search = true, searchKey, events, parentId
 
 export const Event = memo(function Event({ item: event, parentId }) {
     const isLive = useMemo(() => event.start_time < now(), [event])
+    let DOMId = parentId + '-event'
     return (
-        <div id = {parentId + 'info'} className = {'group/event relative w-full h-min flex flex-col gap-small p-main'}>
-            <div id = {parentId + 'name'} className = 'w-full flex flex-col'>
-                <div id = {parentId + 'subtitle'} className = 'flex flex-row items-center'>
-                    <div id = {parentId + 'competition'} className = 'flex flex-row items-center gap-micro'>
+        <div id = {DOMId} className = {'group/event relative w-full h-min flex flex-col gap-small p-main'}>
+            <div id = {DOMId + '-info'} className = 'w-full flex flex-col'>
+                <div id = {DOMId + '-subtitle'} className = 'flex flex-row items-center'>
+                    <div id = {DOMId + '-competition'} className = 'flex flex-row items-center gap-micro'>
                         <Conditional value = {event.competition.picture}>
-                            <Image id = {parentId + 'image'} external path = {event.competition.picture} classes = 'h-3 aspect-square'/>
+                            <Image id = {DOMId + '-competition-image'} external path = {event.competition.picture} classes = 'h-3 aspect-square'/>
                         </Conditional>
-                        <Text preset = 'events-subtitle'>
+                        <Text id = {DOMId + '-competition-name'} preset = 'events-subtitle'>
                             {event.competition.name}
                         </Text>
                     </div>
-                    <Text id = {parentId + 'date'} preset = 'events-subtitle'>
+                    <Text id = {DOMId + '-date'} preset = 'events-subtitle'>
                         &nbsp;{'• ' + toDate(event.start_time)}
                     </Text>
                 </div>
-                <Link to = {'/info?category=events&id=' + event.id} id = {parentId + 'name'} className = 'w-full flex flex-row items-center gap-tiny overflow-hidden'>
+                <Link to = {'/info?category=events&id=' + event.id} id = {DOMId + '-name-link'} className = 'w-min max-w-full flex flex-row items-center gap-tiny overflow-hidden'>
                     <Conditional value = {isLive}>
-                        <CircleRounded id = {parentId + 'live-icon'} className = '!h-3 !w-3 text-live-main'/>
+                        <CircleRounded id = {DOMId + '-live-icon'} className = '!h-3 !w-3 text-live-main'/>
                     </Conditional>
-                    <Name event = {event} parentId = {parentId}/>
+                    <Name event = {event} parentId = {DOMId}/>
                 </Link>
             </div>
-            <Odds event = {event} parentId = {parentId}/>
+            <Odds event = {event} parentId = {DOMId}/>
         </div>
     )
 }, (b, a) => _.isEqual(b.item, a.item))
 
 const Name = memo(function Name({ event, parentId }) {
+    let DOMId = parentId
     if (event.is_outright) {
         return (
-            <Text preset = 'events-name'>
+            <Text id = {DOMId + '-name'} preset = 'events-name'>
                 {event.name}
             </Text>
         )
@@ -91,22 +93,22 @@ const Name = memo(function Name({ event, parentId }) {
     else {
         return (
             <>
-                <div id = {parentId + 'competitor-1'} className = 'flex flex-row items-center gap-tiny overflow-hidden'>
+                <div id = {DOMId + '-competitor0'} className = 'flex flex-row items-center gap-tiny overflow-hidden'>
                     <Conditional value = {event.competitors[0].picture}>
-                        <Image id = {parentId + 'competitor-1-image'} external path = {event.competitors[0].picture} classes = 'h-4 aspect-square'/>
+                        <Image id = {DOMId + '-competitor0-image'} external path = {event.competitors[0].picture} classes = 'h-4 aspect-square'/>
                     </Conditional>
-                    <Text id = {parentId + 'competitor-1-name'} preset = 'events-name' classes = '!text-primary-main'>
+                    <Text id = {DOMId + '-competitor0-name'} preset = 'events-name' classes = '!text-primary-main'>
                         {event.competitors[0].name}
                     </Text>
                 </div>
-                <Text preset = 'events-name' classes = '!overflow-visible w-min flex'>
+                <Text id = {DOMId + '-competitors-separator'} preset = 'events-name' classes = '!overflow-visible w-min flex'>
                     {event.name.includes('@') ? '@' : 'v'}
                 </Text>
-                <div id = {parentId + 'competitor-2'} className = 'flex flex-row items-center gap-tiny overflow-hidden'>
+                <div id = {DOMId + 'competitor1'} className = 'flex flex-row items-center gap-tiny overflow-hidden'>
                     <Conditional value = {event.competitors[1].picture}>
-                        <Image id = {parentId + 'competitor-2-image'} external path = {event.competitors[1].picture} classes = 'h-4 aspect-square'/>
+                        <Image id = {DOMId + 'competitor1-image'} external path = {event.competitors[1].picture} classes = 'h-4 aspect-square'/>
                     </Conditional>
-                    <Text id = {parentId + 'competitor-2-name'} preset = 'events-name' classes = '!text-primary-main'>
+                    <Text id = {DOMId + 'competitor1-name'} preset = 'events-name' classes = '!text-primary-main'>
                         {event.competitors[1].name}
                     </Text>
                 </div>

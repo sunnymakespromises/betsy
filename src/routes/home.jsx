@@ -9,17 +9,18 @@ import { useSearch } from '../hooks/useSearch'
 import { AlarmRounded, ListAltRounded } from '@mui/icons-material'
 import now from '../lib/util/now'
 import _ from 'lodash'
+import SearchBar from '../components/searchBar'
 
 const Home = memo(function Home() {
     const { data } = useDataContext()
 
-    let DOMId = 'home-'
+    let DOMId = 'home'
     return (
-        <Page>
-            <div id = {DOMId + 'page'} className = 'w-full h-full'>
+        <Page DOMId = {DOMId}>
+            <div id = {DOMId} className = 'w-full h-full'>
                 <Helmet><title>Dashboard | Betsy</title></Helmet>
-                <div id = {DOMId + 'container'} className = 'w-full h-full min-h-0 flex flex-col md:flex-row gap-small md:gap-main z-0'>
-                    <Events data = {data} parentId = {DOMId + 'events-'}/>
+                <div id = {DOMId + '-body'} className = 'w-full h-full min-h-0 flex flex-col md:flex-row gap-small md:gap-main z-0'>
+                    <Events data = {data} parentId = {DOMId + '-body'}/>
                 </div>
             </div>
         </Page>
@@ -47,19 +48,20 @@ const Events = memo(function Events({ data, parentId }) {
         keys: { events: ['name', 'competition.name', 'competitors.name', 'sport.name'] },
         showAllOnInitial: true
     }}, [data])
-    const { results } = useSearch(searchConfig)
-    let DOMId = parentId + 'panel-'
+    const { input, results, hasResults, filters, setFilter, onInputChange } = useSearch(searchConfig)
+
+    let DOMId = parentId + '-panel'
     return (
-        <div id = {DOMId + 'container'} className = 'w-full h-full min-h-0 flex flex-col rounded-main border-thin border-divider-main md:shadow'>
-            <div id = {DOMId + 'title-container'} className = 'w-full h-min flex flex-row items-center p-main'>
-                <Text id = {DOMId + 'title'} preset = 'home-panel'>
+        <div id = {DOMId} className = 'w-full h-full min-h-0 flex flex-col rounded-main border-thin border-divider-main md:shadow'>
+            <div id = {DOMId + '-bar'} className = 'w-full h-min flex flex-row items-center p-main'>
+                <Text id = {DOMId + '-title'} preset = 'home-panel'>
                     Events
                 </Text>
-                {/* <SearchBar input = {input} hasResults = {hasResults} filters = {filters} setFilter = {setFilter} onInputChange = {onInputChange} isExpanded = {false} autoFocus = {false} canExpand = {false} parentId = {DOMId}/> */}
+                <SearchBar input = {input} hasResults = {hasResults} filters = {filters} setFilter = {setFilter} onInputChange = {onInputChange} isExpanded = {false} autoFocus = {false} canExpand = {false} parentId = {DOMId}/>
             </div>
-            <div className = 'divider border-t-thin border-divider-main'/>
-            <div id = {DOMId + 'child-container'} className = 'min-h-0 w-full'>
-                <List items = {results} element = {Event} dividers parentId = {DOMId + 'events-'}/>
+            <div className = 'border-t-thin border-divider-main'/>
+            <div id = {DOMId + '-items'} className = 'min-h-0 w-full'>
+                <List items = {results?.events} element = {Event} dividers parentId = {DOMId + '-events'}/>
             </div>
         </div>
     )

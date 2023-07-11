@@ -122,7 +122,7 @@ const Search = memo(function Search({ currentUser, data }) {
     const cancelRef = useCancelDetector(() => isVisible ? setIsVisible(false) : null)
     useKeyListener(['CtrlKeyK'], () => setIsVisible(!isVisible))
 
-    let DOMId = 'root-'
+    let DOMId = 'root'
     if (currentUser && data && isVisible) {
         return (
             <div id = {DOMId + 'search'} className = 'absolute top-0 left-0 w-full h-full flex justify-end z-30 p-main'>

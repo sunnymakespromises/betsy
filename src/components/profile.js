@@ -10,11 +10,11 @@ import { useCropper } from '../hooks/useCropper'
 import { useLoading } from '../hooks/useLoading'
 import { useCancelDetector } from '../hooks/useCancelDetector'
 import { useDatabase } from '../hooks/useDatabase'
+import { useCurrency } from '../hooks/useCurrency'
 import Conditional from './conditional'
 import Input from './input'
 import Text from './text'
 import Image from './image'
-import { useCurrency } from '../hooks/useCurrency'
 import toDate from '../lib/util/toDate'
 
 const Profile = memo(function Profile({ userId = null, canEdit = true, classes, parentId }) {
@@ -43,28 +43,38 @@ const Profile = memo(function Profile({ userId = null, canEdit = true, classes, 
         updateUser()
     }, [currentUser, userId])
 
-    let DOMId = parentId + 'profile-'
+    let DOMId = parentId + '-profile'
     if (user) {
         return (
-            <div id = {DOMId + 'container'} className = {'relative flex flex-col items-center w-full min-w-[12rem] h-min rounded-main p-main gap-small border-divider-main border-thin md:shadow' + (classes ? ' ' + classes : '')}>
+            <div id = {DOMId} className = {'relative flex flex-col items-center w-full min-w-[12rem] rounded-main p-main gap-small border-divider-main border-thin md:shadow' + (classes ? ' ' + classes : '')}>
+                <Tag id = {user.id} parentId = {DOMId}/>
+                <Actions currentUser = {currentUser} isCurrentUser = {isCurrentUser} user = {user}  onCrop = {onCrop} input = {input} statuses = {statuses} setStatuses = {setStatuses} execute = {execute} inputIsEmpty = {inputIsEmpty} clearAllInput = {clearAllInput} canEdit = {canEdit} parentId = {DOMId}/>
                 <Picture params = {pictureParams} picture = {user.picture} input = {input.picture} onInputChange = {onInputChange} isThisInputEmpty = {isThisInputEmpty} status = {statuses.picture} isCurrentUser = {isCurrentUser} isLoading = {isLoading} canEdit = {canEdit && !user.is_locked} isLocked = {user.is_locked} parentId = {DOMId}/>
-                <div id = {DOMId + 'info-container'} className = {'w-full h-min flex flex-row justify-center items-center gap-small'}>
+                <div id = {DOMId + '-info'} className = {'w-full h-min flex flex-row justify-center items-center gap-small'}>
                     <Info category = 'display_name' value = {user.display_name} input = {input.display_name} onInputChange = {onInputChange} isThisInputEmpty = {isThisInputEmpty} status = {statuses.display_name} isCurrentUser = {isCurrentUser} isLoading = {isLoading} canEdit = {canEdit && !user.is_locked} parentId = {DOMId}/>
                     <Locked isLocked = {user.is_locked} parentId = {DOMId}/>
                 </div>
                 <Subtitle balances = {user.balances} date = {user.join_date} parentId = {DOMId}/>
-                <Tag id = {user.id} parentId = {DOMId}/>
-                <Actions currentUser = {currentUser} isCurrentUser = {isCurrentUser} user = {user}  onCrop = {onCrop} input = {input} statuses = {statuses} setStatuses = {setStatuses} execute = {execute} inputIsEmpty = {inputIsEmpty} clearAllInput = {clearAllInput} canEdit = {canEdit} parentId = {DOMId}/>
+                <Favorites favorites = {user.favorites} canEdit = {canEdit} isLocked = {user.is_locked} parentId = {DOMId}/>
             </div>
         )
     }
 }, (b, a) => b.canEdit === a.canEdit && b.classes === a.classes && _.isEqual(b.userId, a.userId))
 
-const Subtitle = memo(function Memo({ balances, date, parentId }) {
-    const { getAmount } = useCurrency()
-    let DOMId = parentId + 'subtitle-'
+const Favorites = memo(function Favorites({ favorites, canEdit, isLocked, parentId }) {
+    let DOMId = parentId + '-favorites'
     return (
-        <div id = {parentId + 'subtitle'} className = 'flex items-center'>
+        <div id = {DOMId}>
+
+        </div>
+    )
+}, (b, a) => b.canEdit === a.canEdit && b.isLocked === a.isLocked && _.isEqual(b.favorites, a.favorites))
+
+const Subtitle = memo(function Subtitle({ balances, date, parentId }) {
+    const { getAmount } = useCurrency()
+    let DOMId = parentId + '-subtitle'
+    return (
+        <div id = {DOMId} className = 'flex items-center'>
             <Text id = {DOMId + '-balance'} preset = {'profile-subtitle'}>
                 {getAmount(balances[balances.length - 1].value)}&nbsp;•&nbsp;
             </Text>
@@ -76,8 +86,9 @@ const Subtitle = memo(function Memo({ balances, date, parentId }) {
 }, (b, a) => b.date === a.date && _.isEqual(b.balances, a.balances))
 
 const Tag = memo(function Tag({ id, parentId }) {
+    let DOMId = parentId
     return (
-        <Text id = {parentId + 'id'} preset = {'profile-subtitle'} classes = 'absolute top-2 left-2 py-tiny px-small rounded-main border-thin border-divider-main'>
+        <Text id = {DOMId + '-id'} preset = {'profile-subtitle'} classes = 'absolute top-2 left-2 p-small rounded-main border-thin border-divider-main md:shadow-sm'>
             {'@' + id}
         </Text>
     )
@@ -93,20 +104,20 @@ const Info = memo(function Info({ category, value, classes, input, onInputChange
         }
     }, [isLoading])
 
-    let DOMId = parentId + category + '-'
+    let DOMId = parentId + '-' + category
     return (
-        <div ref = {cancelRef} id = {DOMId + 'container'} className = {'relative max-w-full flex flex-col' + (classes ? ' ' + classes : '')} onClick = {() => onClick()}>
-            <div id = {DOMId + 'value-container'} className = {'w-full h-min flex flex-row justify-center items-center' + (isCurrentUser && canEdit ? ' cursor-pointer' : '')}>
+        <div ref = {cancelRef} id = {DOMId} className = {'relative max-w-full flex flex-col' + (classes ? ' ' + classes : '')} onClick = {() => onClick()}>
+            <div id = {DOMId + '-value'} className = {'w-full h-min flex flex-row justify-center items-center' + (isCurrentUser && canEdit ? ' cursor-pointer' : '')}>
                 <Conditional value = {(canEdit && (isEditing || (isLoading && !thisInputIsEmpty)) && !status.status)}>
-                    <Input id = {DOMId + 'input'} preset = {'profile-' + category} status = {status.status} value = {input} onChange = {(e) => onChange(e)} placeholder = {value} autoFocus autoComplete = 'off'/>
+                    <Input id = {DOMId + '-input'} preset = {'profile-' + category} status = {status.status} value = {input} onChange = {(e) => onChange(e)} placeholder = {value} autoFocus autoComplete = 'off'/>
                 </Conditional>
                 <Conditional value = {(!isEditing || (isLoading && thisInputIsEmpty)) || (status.status)}>
-                    <Text id = {DOMId + 'text'} preset = {'profile-' + category} classes = {(isCurrentUser && canEdit ? ' !text-primary-main' : '')}>
+                    <Text id = {DOMId + '-text'} preset = {'profile-' + category} classes = {(isCurrentUser && canEdit ? ' !text-primary-main' : '')}>
                         {value}
                     </Text>
                 </Conditional>
                 <Conditional value = {canEdit && status.status}>
-                    <CheckRounded id = {DOMId + 'icon'} className = 'absolute top-[50%] -translate-y-[50%] left-[100%] !transition-all duration-main !h-4 !aspect-square text-primary-main !animate-duration-700 animate-fadeOut'/>
+                    <CheckRounded id = {DOMId + '-valid-icon'} className = 'absolute top-[50%] -translate-y-[50%] left-[100%] !transition-all duration-main !h-4 !aspect-square text-primary-main !animate-duration-700 animate-fadeOut'/>
                 </Conditional>
             </div>
             <Error message = {status.message} parentId = {DOMId}/>
@@ -137,11 +148,11 @@ const Picture = memo(function Picture({ params, picture, input, onInputChange, i
         }
     }, [isLoading])
 
-    let DOMId = parentId + 'picture-'
+    let DOMId = parentId + '-picture'
     return (
-        <div id = {DOMId + 'container'} className = {'transition-all duration-main relative flex flex-col justify-center items-center h-12 aspect-square z-10' + (status.message ? ' w-min' : '') + (isLocked ? ' grayscale' : '')}>
-            <input id = {DOMId + 'input'} className = 'hidden' type = 'file' onChange = {(e) => onUpload(e)} ref = {pictureInput} accept = '.jpg, .jpeg, .png, .gif, .webp'/>
-            <Image external id = {DOMId + 'image'} path = {isCropping ? '' : input ? input : picture} classes = {'transition-all duration-main relative h-full aspect-square rounded-full overflow-hidden z-10' + ( isCurrentUser && canEdit ? ' cursor-pointer' : '') + (thisInputIsEmpty ? '' : ' border-thin border-primary-main')} mode = 'cover' onClick = {() => onPictureClick()}>
+        <div id = {DOMId} className = {'relative flex flex-col justify-center items-center h-12 aspect-square z-10' + (status.message ? ' w-min' : '') + (isLocked ? ' grayscale' : '')}>
+            <input id = {DOMId + '-input'} className = 'hidden' type = 'file' onChange = {(e) => onUpload(e)} ref = {pictureInput} accept = '.jpg, .jpeg, .png, .gif, .webp'/>
+            <Image external id = {DOMId + '-image'} path = {isCropping ? '' : input ? input : picture} classes = {'relative h-full aspect-square rounded-full overflow-hidden z-10' + ( isCurrentUser && canEdit ? ' cursor-pointer' : '') + (thisInputIsEmpty ? '' : ' border-thin border-primary-main')} mode = 'cover' onClick = {() => onPictureClick()}>
                 <Conditional value = {isCropping}>
                     <Cropper {...params}/>
                     <Error message = {status.message} parentId = {DOMId}/>
@@ -168,9 +179,9 @@ const Picture = memo(function Picture({ params, picture, input, onInputChange, i
 }, (b, a) => b.picture === a.picture && b.input === a.input && b.isCurrentUser === a.isCurrentUser && b.isLoading === a.isLoading && b.canEdit === a.canEdit && b.isLocked === a.isLocked && _.isEqual(b.status, a.status) && _.isEqual(JSON.stringify(b.params), JSON.stringify(a.params)))
 
 const Actions = memo(function Actions({ currentUser, user, isCurrentUser, input, onCrop, statuses, setStatuses, execute, inputIsEmpty, clearAllInput, canEdit, parentId }) {
-    let DOMId = parentId + 'actions-'
+    let DOMId = parentId + '-actions'
     return (
-        <div id = {parentId + 'actions'} className = 'absolute top-2 right-2 flex flex-row h-4 gap-micro'>
+        <div id = {DOMId} className = 'absolute top-2 right-2 flex flex-row h-4 gap-micro'>
             <Conditional value = {!isCurrentUser && user}>
                 <Subscription user = {user} subscriptions = {currentUser.subscriptions} isCurrentUser = {isCurrentUser} parentId = {DOMId}/>
             </Conditional>
@@ -202,10 +213,10 @@ const Save = memo(function Save({ currentUser, input, onCrop, statuses, setStatu
         }
     }, [statuses])
 
-    let DOMId = parentId + 'save-'
+    let DOMId = parentId + '-save'
     if (currentUser && !inputIsEmpty) {
         return (
-            <DownloadDoneRounded id = {DOMId + 'icon'} className = {'!w-4 !h-4 text-primary-main cursor-pointer animate-duration-300' + (atLeastOneChangeFailed ? ' animate-headShake' : '')} onClick = {() => onAction()}/>
+            <DownloadDoneRounded id = {DOMId + '-icon'} className = {'!w-4 !h-4 text-primary-main cursor-pointer animate-duration-300' + (atLeastOneChangeFailed ? ' animate-headShake' : '')} onClick = {() => onAction()}/>
         )
     }
 
@@ -232,9 +243,9 @@ const Subscription = memo(function Subscription({ user, subscriptions, parentId 
     const { subscribe, unsubscribe } = useDatabase()
     const currentUserIsSubscribedToUser = useMemo(() => subscriptions && subscriptions.some(subscription => subscription === user.id), [subscriptions, user])
 
-    let DOMId = parentId + 'subscription-'
+    let DOMId = parentId + '-subscription'
     return (
-        <IconHeart id = {DOMId + 'icon'} className = {'transition-all duration-main w-4 h-4 cursor-pointer text-primary-main ' + (currentUserIsSubscribedToUser ? 'fill-primary-main' : 'hover:fill-primary-main')} onClick = {() => onClick()}/>
+        <IconHeart id = {DOMId + '-icon'} className = {'w-4 h-4 cursor-pointer text-primary-main ' + (currentUserIsSubscribedToUser ? 'fill-primary-main' : 'hover:fill-primary-main')} onClick = {() => onClick()}/>
     )
 
     async function onClick() {
@@ -248,27 +259,21 @@ const Subscription = memo(function Subscription({ user, subscriptions, parentId 
 }, (b, a) => _.isEqual(b.user, a.user) && _.isEqual(b.subscriptions, a.subscriptions))
 
 const Locked = memo(function Locked({ isLocked, parentId }) {
-    let DOMId = parentId + 'locked-'
-    return (
-        <Conditional value = {isLocked}>
-            <LockRounded id = {DOMId + 'icon'} className = '!w-3 !h-3 text-text-main'/>
-        </Conditional>
-    )
+    let DOMId = parentId + '-locked'
+    if (isLocked) {
+        return <LockRounded id = {DOMId + '-icon'} className = '!w-3 !h-3 text-text-main'/>
+    }
 })
 
 const Copy = memo(function Copy({ id, parentId }) {
     const [isClicked, setIsClicked] = useState()
-    let DOMId = parentId + 'copy-'
-    return (
-        <>
-            <Conditional value = {!isClicked}>
-                <ContentCopyRounded id = {DOMId + 'icon'} className = '!w-4 !h-4 text-primary-main cursor-pointer' onClick = {() => onClick()}/>
-            </Conditional>
-            <Conditional value = {isClicked}>
-                <CheckRounded id = {DOMId + 'icon'} className = '!w-4 !h-4 text-primary-main' onClick = {() => onClick()}/>
-            </Conditional>
-        </>
-    )
+    let DOMId = parentId + '-copy'
+    if (!isClicked) {
+        return  <ContentCopyRounded id = {DOMId + '-icon'} className = '!w-4 !h-4 text-primary-main cursor-pointer' onClick = {() => onClick()}/>
+    }
+    else {
+        return <CheckRounded id = {DOMId + '-icon'} className = '!w-4 !h-4 text-primary-main' onClick = {() => onClick()}/>
+    }
 
     function onClick() {
         navigator.clipboard.writeText(process.env.REACT_APP_BASE_URL + '/user?id=' + id)
@@ -280,9 +285,10 @@ const Copy = memo(function Copy({ id, parentId }) {
 })
 
 const Error = memo(function Error({ message, parentId }) {
+    let DOMId = parentId + '-error'
     return (
-        <div id = {parentId + 'error'} className = {'w-full overflow-hidden transition-all duration-main -mt-micro ' + (message ? 'max-h-[99px]' : 'max-h-[0px]')}>
-            <Text id = {parentId + 'text'} preset = 'profile-error'>
+        <div id = {DOMId} className = {'w-full overflow-hidden transition-all duration-main -mt-micro ' + (message ? 'max-h-[99px]' : 'max-h-[0px]')}>
+            <Text id = {DOMId + '-text'} preset = 'profile-error'>
                 {message}
             </Text>
         </div>

@@ -5,10 +5,10 @@ import { Helmet } from 'react-helmet'
 
 const Slips = memo(function Slips() {
     // const { store, addToStore, removeFromStore } = useStore('slips')
-    let DOMId = 'slips-'
+    let DOMId = 'slips'
     return (
         <Page>
-            <div id = {DOMId + 'container'} className = 'w-full h-full flex flex-col'>
+            <div id = {DOMId} className = 'w-full h-full flex flex-col'>
                 <Helmet><title>Slips | Betsy</title></Helmet>
             </div>
         </Page>

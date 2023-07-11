@@ -36,9 +36,9 @@ const Info = memo(function Info() {
         updateUser()
     }, [category, id])
 
-    let DOMId = 'info-'
+    let DOMId = 'info'
     return (
-        <Page>
+        <Page parentId = {DOMId}>
             <Helmet><title>{(item ? item.name : 'Info') + ' | Betsy'}</title></Helmet>
             <Item category = {category} item = {item} data = {data} parentId = {DOMId}/>
             <Conditional value = {item === null}>
@@ -73,18 +73,16 @@ const Event = memo(function Event({ event, parentId }) {
     //     showAllOnInitial: true
     // }}, [event])
     // const { input, results, hasResults, filters, setFilter, onInputChange } = useSearch(searchConfig)
-    let DOMId = parentId + 'event-'
+    let DOMId = parentId + '-event'
     return (
-        <div id = {DOMId + 'container'} className = 'w-full h-full flex flex-col gap-main'>
-            <div id = {DOMId + 'group-1-container'} className = 'grow flex flex-row justify-between items-center'>
+        <div id = {DOMId} className = 'w-full h-full flex flex-col gap-main'>
+            <div id = {DOMId + '-bar'} className = 'grow flex flex-row justify-between items-center'>
                 <Title name = {event.name} category = 'events' item = {event} parentId = {DOMId}/>
                 {/* <SearchBar inputPreset = 'info' classes = 'w-1/3' input = {input} hasResults = {hasResults} filters = {filters} setFilter = {setFilter} onInputChange = {onInputChange} isExpanded = {false} autoFocus = {true} canExpand = {false} parentId = {DOMId}/> */}
             </div>
-            <div id = {DOMId + 'group-2-container'} className = 'w-full md:w-[28rem] min-h-0 h-full flex flex-row gap-main'>
-                <Panel title = 'Odds' classes = 'h-full w-full' parentId = {DOMId + 'events-'}>
-                    <div className = 'w-full h-full flex p-main'>
-                        <Odds event = {event} parentId = {DOMId}/>
-                    </div>
+            <div id = {DOMId + '-data'} className = 'w-full md:w-[28rem] min-h-0 h-full flex flex-row gap-main'>
+                <Panel title = 'Odds' classes = 'h-full w-full' parentId = {DOMId + '-odds'}>
+                    <Odds event = {event} parentId = {DOMId}/>
                 </Panel>
             </div>
         </div>
@@ -115,16 +113,16 @@ const Competition = memo(function Competition({ competition, data, parentId }) {
     }}, [data, events])
     const { input, results, hasResults, filters, setFilter, onInputChange } = useSearch(searchConfig)
 
-    let DOMId = parentId + 'competition-'
+    let DOMId = parentId + '-competition'
     return (
-        <div id = {DOMId + 'container'} className = 'w-full h-full flex flex-col gap-main'>
-            <div id = {DOMId + 'group-1-container'} className = 'grow flex flex-row justify-between'>
+        <div id = {DOMId } className = 'w-full h-full flex flex-col gap-main'>
+            <div id = {DOMId + '-bar'} className = 'grow flex flex-row justify-between'>
                 <Title name = {competition.name} category = 'competitions' item = {competition} parentId = {DOMId}/>
                 <SearchBar inputPreset = 'info' classes = 'w-1/3' input = {input} hasResults = {hasResults} filters = {filters} setFilter = {setFilter} onInputChange = {onInputChange} isExpanded = {false} autoFocus = {true} canExpand = {false} parentId = {DOMId}/>
             </div>
-            <div id = {DOMId + 'data-container'} className = 'w-full md:w-[28rem] min-h-0 h-full flex flex-row gap-main'>
-                <Panel title = 'Events' classes = 'h-full w-full' parentId = {DOMId + 'events-'}>
-                    <List items = {results?.events} element = {EventItem} dividers parentId = {parentId}/>
+            <div id = {DOMId + '-data'} className = 'w-full md:w-[28rem] min-h-0 h-full flex flex-row gap-main'>
+                <Panel title = 'Events' classes = 'h-full w-full' parentId = {DOMId + '-events'}>
+                    <List items = {results?.events} element = {EventItem} dividers parentId = {DOMId}/>
                 </Panel>
             </div>
         </div>
@@ -155,16 +153,16 @@ const Competitor = memo(function Competitors({ data, competitor, parentId }) {
     }}, [data, events])
     const { input, results, hasResults, filters, setFilter, onInputChange } = useSearch(searchConfig)
 
-    let DOMId = parentId
+    let DOMId = parentId + '-competitor'
     return (
-        <div id = {DOMId + 'container'} className = 'w-full h-full flex flex-col gap-main'>
-            <div id = {DOMId + 'group-1-container'} className = 'grow flex flex-row justify-between'>
+        <div id = {DOMId} className = 'w-full h-full flex flex-col gap-main'>
+            <div id = {DOMId + '-bar'} className = 'grow flex flex-row justify-between'>
                 <Title name = {competitor.name} category = 'competitors' item = {competitor} parentId = {DOMId}/>
                 <SearchBar inputPreset = 'info' classes = 'w-1/3' input = {input} hasResults = {hasResults} filters = {filters} setFilter = {setFilter} onInputChange = {onInputChange} isExpanded = {false} autoFocus = {true} canExpand = {false} parentId = {DOMId}/>
             </div>
-            <div id = {DOMId + 'data-container'} className = 'w-full md:w-[28rem] min-h-0 h-full flex flex-row gap-main'>
-                <Panel title = 'Events' classes = 'h-full w-full' parentId = {DOMId + 'events-'}>
-                    <List items = {results?.events} element = {EventItem} dividers parentId = {parentId}/>
+            <div id = {DOMId + '-data'} className = 'w-full md:w-[28rem] min-h-0 h-full flex flex-row gap-main'>
+                <Panel title = 'Events' classes = 'h-full w-full' parentId = {DOMId + '-events'}>
+                    <List items = {results?.events} element = {EventItem} dividers parentId = {DOMId}/>
                 </Panel>
             </div>
         </div>
@@ -172,16 +170,14 @@ const Competitor = memo(function Competitors({ data, competitor, parentId }) {
 }, (b, a) => _.isEqual(b.data, a.data) && _.isEqual(b.competitor, a.competitor))
 
 const Panel = memo(function Panel({ title, classes, parentId, children }) {
-    let DOMId = parentId + 'panel-'
+    let DOMId = parentId + '-panel'
     return (
-        <div id = {DOMId + 'container'} className = {'min-h-0 flex flex-col rounded-main border-thin border-divider-main md:shadow' + (classes ? ' ' + classes : '')}>
-            <div id = {DOMId + 'title-container'} className = 'w-full h-min flex flex-row items-center p-main'>
-                <Text id = {DOMId + 'title'} preset = 'info-panel'>
-                    {title}
-                </Text>
-            </div>
-            <div className = 'divider border-t-thin border-divider-main'/>
-            <div id = {DOMId + 'child-container'} className = 'min-h-0 w-full'>
+        <div id = {DOMId} className = {'min-h-0 flex flex-col rounded-main border-thin border-divider-main md:shadow' + (classes ? ' ' + classes : '')}>
+            <Text id = {DOMId + '-title'} preset = 'info-panel' classes = 'w-full h-min flex flex-row items-center p-main'>
+                {title}
+            </Text>
+            <div className = 'border-t-thin border-divider-main'/>
+            <div id = {DOMId + '-child'} className = 'min-h-0 w-full'>
                 {children}
             </div>
         </div>
@@ -191,52 +187,51 @@ const Panel = memo(function Panel({ title, classes, parentId, children }) {
 const Title = memo(function Title({ name, category, item, parentId }) {
     let { isFavorite, Favorite } = useFavorite(category, item)
     let title = useMemo(() => {
+        let DOMId = parentId + '-title'
         if (category === 'competitors' || category === 'competitions') {
             return (
                 <>
-                    <div id = {parentId + 'competitor-container'} className = 'flex flex-row items-center gap-tiny'>
-                        <Conditional value = {item.picture}>
-                            <Image id = {parentId + 'image'} external path = {item.picture} classes = 'h-5 aspect-square'/>
-                        </Conditional>
-                        <Text preset = 'info-item-title'>
-                            {name}
-                        </Text>
-                    </div>
-                    <Favorite isFavorite = {isFavorite} canEdit classes = '!h-5' parentId = {parentId}/>
+                    <Conditional value = {item.picture}>
+                        <Image id = {DOMId + '-image'} external path = {item.picture} classes = 'h-5 aspect-square'/>
+                    </Conditional>
+                    <Text id = {DOMId + '-name'} preset = 'info-item-title'>
+                        {name}
+                    </Text>
+                    <Favorite isFavorite = {isFavorite} canEdit classes = '!h-5' parentId = {DOMId}/>
                 </>
             )
         }
         else if (category === 'events') {
             const isLive = item.start_time < now()
             if (item.is_outright) {
-                return <Text id = {parentId + 'name'} preset = 'info-item-title'>{name}</Text>
+                return <Text id = {DOMId + '-name'} preset = 'info-item-title'>{name}</Text>
             }
             else {
                 if (item.competitors) {
                     return (
                     <>
                         <Conditional value = {isLive}>
-                            <CircleRounded id = {parentId + 'live-icon'} className = '!h-3 !w-3 text-live-main'/>
+                            <CircleRounded id = {DOMId + '-live-icon'} className = '!h-3 !w-3 text-live-main'/>
                         </Conditional>
-                        <div id = {parentId + 'competitor-1-container'} className = 'flex flex-row items-center gap-tiny'>
+                        <div id = {DOMId + '-competitor1'} className = 'flex flex-row items-center gap-tiny'>
                             <Conditional value = {item.competitors[0].picture}>
-                                <Image id = {parentId + 'image'} external path = {item.competitors[0].picture} classes = 'h-5 aspect-square'/>
+                                <Image id = {DOMId + '-competitor1-image'} external path = {item.competitors[0].picture} classes = 'h-5 aspect-square'/>
                             </Conditional>
-                            <Link to = {'/info?category=competitors&id=' + item.competitors[0].id}>
-                                <Text id = {parentId + 'competitor-1-name'} preset = 'info-item-title' classes = '!text-primary-main'>
+                            <Link to = {'/info?category=competitors&id=' + item.competitors[0].id} id = {DOMId + '-competitor1-link'}>
+                                <Text id = {DOMId + '-competitor1-name'} preset = 'info-item-title' classes = '!text-primary-main'>
                                     {item.competitors[0].name}
                                 </Text>
                             </Link>
                         </div>
-                        <Text preset = 'info-item-title'>
+                        <Text id = {DOMId + '-separator'} preset = 'info-item-title'>
                             {name.includes('@') ? '@' : 'v'}
                         </Text>
-                        <div id = {parentId + 'competitor-2-container'} className = 'flex flex-row items-center gap-tiny'>
+                        <div id = {DOMId + '-competitor2'} className = 'flex flex-row items-center gap-tiny'>
                             <Conditional value = {item.competitors[1].picture}>
-                                <Image id = {parentId + 'image'} external path = {item.competitors[1].picture} classes = 'h-5 aspect-square'/>
+                                <Image id = {DOMId + '-competitor2-image'} external path = {item.competitors[1].picture} classes = 'h-5 aspect-square'/>
                             </Conditional>
-                            <Link to = {'/info?category=competitors&id=' + item.competitors[1].id}>
-                                <Text id = {parentId + 'competitor-2-name'} preset = 'info-item-title' classes = '!text-primary-main'>
+                            <Link to = {'/info?category=competitors&id=' + item.competitors[1].id} id = {DOMId + '-competitor2-link'}>
+                                <Text id = {DOMId + '-competitor2-name'} preset = 'info-item-title' classes = '!text-primary-main'>
                                     {item.competitors[1].name}
                                 </Text>
                             </Link>
@@ -247,34 +242,35 @@ const Title = memo(function Title({ name, category, item, parentId }) {
         }
     }, [name, category, item, isFavorite])
     let subtitle = useMemo(() => {
+        let DOMId = parentId + '-subtitle'
         if (category === 'competitors') {
             return (
                 <>
-                    <Text id = {parentId + 'plays-in'} preset = 'info-item-subtitle'>
+                    <Text id = {DOMId + '-intro'} preset = 'info-item-subtitle'>
                         Plays&nbsp;{item.sport.name}&nbsp;in the&nbsp;
                     </Text>
                     <Map array = {item.competitions} callback = {(competition, index) => {
                         let prefix = index === 0 ? '' : index !== item.competitions.length - 1 ? ',' : item.competitions.length > 1 ? ', and' : ''
                         let suffix = (index === item.competitions.length - 1 ? '.' : ' ')
-                        let subtitleId = parentId + 'subtitle-' + index + '-'; return (
+                        let competitionId = DOMId + '-competition' + index; return (
                         <React.Fragment key = {index}>
                             <Conditional value = {prefix !== ''}>
-                                <Text id = {subtitleId + 'name-prefix'} preset = 'info-item-subtitle'>
+                                <Text id = {competitionId + '-prefix'} preset = 'info-item-subtitle'>
                                     {prefix}&nbsp;
                                 </Text>
                             </Conditional>
-                            <div id = {parentId + 'competition-container'} className = 'flex flex-row items-center gap-tiny'>
+                            <div id = {competitionId + '-competition'} className = 'flex flex-row items-center gap-tiny'>
                                 <Conditional value = {competition.picture}>
-                                    <Image id = {parentId + 'image'} external path = {competition.picture} classes = 'h-3 aspect-square'/>
+                                    <Image id = {competitionId + '-competition-image'} external path = {competition.picture} classes = 'h-3 aspect-square'/>
                                 </Conditional>
-                                <Link to = {'/info?category=competitions&id=' + competition.id} id = {subtitleId + 'container'}>
-                                    <Text id = {subtitleId + 'name'} preset = 'info-item-subtitle' classes = '!text-primary-main'>
+                                <Link to = {'/info?category=competitions&id=' + competition.id} id = {competitionId + 'competition-link'}>
+                                    <Text id = {competitionId + '-competition-name'} preset = 'info-item-subtitle' classes = '!text-primary-main'>
                                         {competition.name}
                                     </Text>
                                 </Link>
                             </div>
                             <Conditional value = {suffix !== ''}>
-                                <Text id = {subtitleId + 'name-suffix'} preset = 'info-item-subtitle'>
+                                <Text id = {competitionId + '-suffix'} preset = 'info-item-subtitle'>
                                     {suffix}
                                 </Text>
                             </Conditional>
@@ -287,20 +283,20 @@ const Title = memo(function Title({ name, category, item, parentId }) {
             const isLive = item.start_time < now()
             return (
                 <>
-                    <Text id = {parentId + 'subtitle-intro'} preset = 'info-item-subtitle'>
+                    <Text id = {DOMId + '-intro'} preset = 'info-item-subtitle'>
                         {isLive ? 'Being' : 'To be'}&nbsp;played in the&nbsp;
                     </Text>
-                    <div id = {parentId + 'competition-container'} className = 'flex flex-row items-center gap-tiny'>
+                    <div id = {DOMId + '-competition'} className = 'flex flex-row items-center gap-tiny'>
                         <Conditional value = {item.competition.picture}>
-                            <Image id = {parentId + 'image'} external path = {item.competition.picture} classes = 'h-3 aspect-square'/>
+                            <Image id = {DOMId + '-competition-image'} external path = {item.competition.picture} classes = 'h-3 aspect-square'/>
                         </Conditional>
-                        <Link to = {'/info?category=competitions&id=' + item.competition.id} id = {parentId + 'competition-link'}>
-                            <Text id = {parentId + 'subtitle-name'} preset = 'info-item-subtitle' classes = '!text-primary-main'>
+                        <Link to = {'/info?category=competitions&id=' + item.competition.id} id = {DOMId + '-competition-link'}>
+                            <Text id = {DOMId + '-competition-name'} preset = 'info-item-subtitle' classes = '!text-primary-main'>
                                 {item.competition.name}
                             </Text>
                         </Link>
                     </div>
-                    <Text id = {parentId + 'subtitle-time'} preset = 'info-item-subtitle'>
+                    <Text id = {DOMId + '-date'} preset = 'info-item-subtitle'>
                         &nbsp;{'at ' + toDate(item.start_time) + '.'}
                     </Text>
                 </>
@@ -309,27 +305,28 @@ const Title = memo(function Title({ name, category, item, parentId }) {
         else {
             return (
                 <>
-                    <Text id = {parentId + 'plays-in'} preset = 'info-item-subtitle'>
+                    <Text id = {DOMId + '-intro'} preset = 'info-item-subtitle'>
                         Hosts&nbsp;{item.sport.name}&nbsp;in&nbsp;
                     </Text>
-                    <div id = {parentId + 'country-container'} className = 'flex flex-row items-center gap-tiny'>
-                        <Text id = {parentId + 'subtitle-name'} preset = 'info-item-subtitle'>
+                    <div id = {DOMId + '-country'} className = 'flex flex-row items-center gap-tiny'>
+                        <Text id = {DOMId + '-country-name'} preset = 'info-item-subtitle'>
                             {item.country.name}
                         </Text>
                         <Conditional value = {item.country.picture}>
-                            <Image id = {parentId + 'image'} external path = {item.country.picture} classes = 'h-3 aspect-square'/>
+                            <Image id = {DOMId + '-country-image'} external path = {item.country.picture} classes = 'h-3 aspect-square'/>
                         </Conditional>
                     </div>
                 </>
             )
         }
     }, [name, category, item])
+    let DOMId = parentId
     return (
-        <div id = {parentId + 'text-container'} className = 'w-min flex flex-col'>
-            <div id = {parentId + 'name-container'} className = 'w-min flex flex-row items-center gap-tiny'>
+        <div id = {DOMId} className = 'w-min flex flex-col'>
+            <div id = {DOMId + '-title'} className = 'w-min flex flex-row items-center gap-tiny'>
                 {title}
             </div>
-            <div id = {parentId + 'subtitle-container'} className = 'w-min flex flex-row items-center'>
+            <div id = {DOMId + '-subtitle'} className = 'w-min flex flex-row items-center'>
                 {subtitle}
             </div>
         </div>
@@ -349,11 +346,11 @@ const ErrorScreen = memo(function ErrorScreen({ category, parentId }) {
                 return 'This ' + category + ' cannot be found.'
         }
     }, [category])
-    let DOMId = parentId + 'error-'
+    let DOMId = parentId + '-error'
     return (
-        <div id = {DOMId + 'container'} className = 'w-full h-full backdrop-blur-main z-20'>
-            <div id = {DOMId + 'banner'} className = 'w-full h-min bg-primary-main rounded-main p-main !animate-duration-300 animate-slideInDown'>
-                <Text id = {DOMId + 'message'} preset = 'info-error'>
+        <div id = {DOMId} className = 'w-full h-full backdrop-blur-main z-20'>
+            <div id = {DOMId + '-banner'} className = 'w-full h-min bg-primary-main rounded-main p-main !animate-duration-300 animate-slideInDown'>
+                <Text id = {DOMId + '-message'} preset = 'info-error'>
                     {message}
                 </Text>
             </div>
