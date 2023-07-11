@@ -81,8 +81,8 @@ const Result = memo(function Result({ category, item, onResultClick, parentId })
             <Text id = {DOMId + '-name'} preset = 'search-result-title' classes = 'group-hover/result:text-primary-main'>
                 {item.name}
             </Text>
-            <Conditional value = {category !== 'events' && isFavorite}>
-                <Favorite isFavorite = {isFavorite} category = {category} canEdit = {false} item = {item} classes = '!h-4 !w-4' parentId = {DOMId}/>
+            <Conditional value = {category !== 'events'}>
+                <Favorite isFavorite = {isFavorite} category = {category} canEdit = {true} item = {item} classes = '!h-4 !w-4' parentId = {DOMId}/>
             </Conditional>
         </div>
     )

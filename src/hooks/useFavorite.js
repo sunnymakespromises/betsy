@@ -13,11 +13,13 @@ function useFavorite(category, item) {
         let DOMId = parentId + '-favorite'
         return (
             <div id = {DOMId} className = {'h-full aspect-square flex flex-col items-center justify-center' + (classes ? ' ' + classes : '')}>
-                <IconHeart id = {DOMId + '-icon'} className = {'w-full h-full ' + (isFavorite ? 'fill-primary-main text-primary-main' : 'text-primary-main fill-transparent') + (canEdit ? ' hover:fill-primary-main cursor-pointer' : '') + (iconClasses ? ' ' + iconClasses : '')} onClick = {onClick}/>
+                <IconHeart id = {DOMId + '-icon'} className = {'w-full h-full ' + (isFavorite ? 'fill-primary-main text-primary-main' : 'text-primary-main fill-transparent') + (canEdit ? ' hover:fill-primary-main cursor-pointer' : '') + (iconClasses ? ' ' + iconClasses : '')} onClick = {(e) => onClick(e)}/>
             </div>
         )
     
-        function onClick() {
+        function onClick(e) {
+            e.stopPropagation()
+            e.nativeEvent.stopImmediatePropagation()
             if (canEdit) {
                 if (isFavorite) {
                     removeFromFavorites(category, item)
