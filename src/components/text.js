@@ -92,9 +92,12 @@ const Text = memo(function Text({ preset = 'main-body', styles, classes, childre
             },
         },
         odds: {
-            name: 'select-none font-main font-medium text-micro md:text-tiny text-text-main text-center',
+            name: 'select-none font-main font-medium text-tiny md:text-tiny text-text-main text-center',
             value: 'select-none font-main font-bold text-sm md:text-lg text-text-main text-center',
-            notFound: 'select-none font-main font-medium text-tiny md:text-sm text-text-main/10 text-center'
+            notFound: 'select-none font-main font-medium text-tiny md:text-sm text-text-main/10 text-center',
+            option: {
+                title: 'select-none font-main font-medium text-micro md:text-tiny text-text-main text-center'
+            }
         },
         competitor: 'whitespace-nowrap select-none font-main font-light md:font-regular text-lg md:text-xl text-reverse-0'
     }
