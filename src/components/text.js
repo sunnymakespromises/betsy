@@ -64,6 +64,9 @@ const Text = memo(function Text({ preset = 'main-body', styles, classes, childre
                 title: 'whitespace-nowrap select-none font-main font-medium text-xs md:text-xs text-text-main',
                 value: 'whitespace-nowrap select-none font-main font-medium text-xs md:text-xs text-text-main'
             },
+            favorites: {
+                placeholder: 'whitespace-nowrap select-none font-main font-medium text-tiny md:text-tiny text-text-main uppercase'
+            },
             error: 'select-none font-main font-medium text-tiny md:text-tiny text-text-main'
         },
         search: {
