@@ -66,16 +66,15 @@ const Profile = memo(function Profile({ userId = null, canEdit = true, classes, 
 const Favorites = memo(function Favorites({ favorites, canEdit, isLocked, parentId }) {
     let { removeFromFavorites } = useDatabase()
     let [isExpanded, setIsExpanded] = useState(false)
-    let limit = useMemo(() => isExpanded ? undefined : 5, [isExpanded])
+    let limit = useMemo(() => isExpanded ? undefined : 4, [isExpanded])
     let length = useMemo(() => Object.values(favorites).flat(1)?.length, [favorites])
     let favoritesList = useMemo(() => Object.keys(favorites)?.map(category => favorites[category].map(favorite => {return {...favorite, category: category}})).flat(1)?.slice(0, limit), [limit, favorites])
-    const cancelRef = useCancelDetector(() => isExpanded ? setIsExpanded(false) : null)
 
     let DOMId = parentId + '-favorites'
     if (favoritesList && favoritesList.length > 0) {
         return (
-            <div ref = {cancelRef} id = {DOMId} className = 'relative w-full h-min flex flex-row md:flex-col justify-center md:justify-start items-center'>
-                <div id = {DOMId + '-items'} className = 'max-w-full md:w-full flex flex-wrap justify-center md:justify-center items-center gap-y-tiny'>
+            <div id = {DOMId} className = 'relative w-full h-min flex flex-row md:flex-col justify-center md:justify-start items-center'>
+                <div id = {DOMId + '-items'} className = 'max-w-full md:w-full flex flex-wrap justify-center md:justify-center items-center gap-tiny'>
                     <Map array = {favoritesList} callback = {(favorite, index) => {
                         let favoriteId = DOMId + '-favorite' + index; return (
                         <Link key = {index} to = {'/info?category=' + favorite.category + '&id=' + favorite.id} className = 'group/favorite relative w-8 h-8 flex justify-center items-center rounded-full border-thin border-divider-main md:shadow-sm cursor-pointer' title = {favorite.name}>
