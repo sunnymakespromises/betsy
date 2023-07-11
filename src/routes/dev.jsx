@@ -156,12 +156,15 @@ const Upload = memo(function Upload({ selected, searchParams, setSearchParams, p
                             item: item
                         }
                     })
+                    let objects = [] 
+                    let values = []
                     for (const file of files) {
                         if (file.item) {
-                            let value = URL.createObjectURL(await zip.files[file.filename].async('blob'))
-                            await uploadPicture(file.item, value)
+                            objects.push(file.item)
+                            values.push(URL.createObjectURL(await zip.files[file.filename].async('blob')))
                         }
                     }
+                    await uploadPicture(objects, values, false)
                 })
             })
         }
@@ -195,7 +198,7 @@ const Upload = memo(function Upload({ selected, searchParams, setSearchParams, p
                 }, 'image/png')
             }))
             if (targetItem && value) {
-                await uploadPicture(targetItem, value)
+                await uploadPicture(targetItem, value, true)
             }
         }
     }

@@ -5,10 +5,20 @@ import getTable from '../lib/aws/db/getTable'
 
 function useDev() {
     const { updateData } = useDataContext()
-    async function uploadPicture(object, value) {
-        const { status } = await _uploadPicture(object, value)
-        if (status) {
-            await updateData(object.category)
+    async function uploadPicture(object, value, single) {
+        if (single) {
+            const { status } = await _uploadPicture(object, value)
+            if (status) {
+                await updateData(object.category)
+            }
+        }
+        else {
+            for (let i = 0; i < object.length; i++) {
+                await _uploadPicture(object[i], value[i])
+            }
+            for (const category of [...new Set(object.map(obj => obj.category))]) {
+                await updateData(category)
+            }
         }
     }
 
