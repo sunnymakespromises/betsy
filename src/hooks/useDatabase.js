@@ -2,7 +2,7 @@ import { updateProfile as _updateProfile } from '../lib/updateProfile'
 import { getUserBy as _getUserBy } from '../lib/getUserBy'
 import { getItem as _getItem } from '../lib/getItem'
 import { subscribe as _subscribe, unsubscribe as _unsubscribe } from '../lib/subscription'
-import { addToFavorites as _addToFavorites, removeFromFavorites as _removeFromFavorites } from '../lib/favorite'
+import { addToFavorites as _addToFavorites, removeFromFavorites as _removeFromFavorites, rearrangeFavorites as _rearrangeFavorites } from '../lib/favorite'
 import { useUserContext } from '../contexts/user'
 import { useCallback } from 'react'
 
@@ -61,7 +61,16 @@ function useDatabase() {
         }
     }, [currentUser])
 
-    return { updateProfile, getUserBy, getItem, subscribe, unsubscribe, addToFavorites, removeFromFavorites }
+    const rearrangeFavorites = useCallback(async function rearrangeFavorites(category, source, target) {
+        const { status, changes } = await _rearrangeFavorites(currentUser, category, source, target)
+        if (status) {
+            for (const change of Object.keys(changes)) {
+                await updateCurrentUser(change, changes[change])
+            }
+        }
+    }, [currentUser])
+
+    return { updateProfile, getUserBy, getItem, subscribe, unsubscribe, addToFavorites, removeFromFavorites, rearrangeFavorites }
 }
 
 export { useDatabase }

@@ -1,4 +1,5 @@
 import updateItem from './aws/db/updateItem'
+import arraymove from './util/arraymove'
 
 async function addToFavorites(user, category, target) {
     const response = {
@@ -48,4 +49,24 @@ async function removeFromFavorites(user, category, target) {
     return response
 }
 
-export { addToFavorites, removeFromFavorites }
+async function rearrangeFavorites(user, category, source, target) {
+    const response = {
+        status: false,
+        changes: null,
+        message: ''
+    }
+    let updatedFavorites = {}
+    for (const category of Object.keys(user.favorites)) {
+        updatedFavorites[category] = [...(user.favorites[category]).map(favorite => favorite.id)]
+    }
+    let sourceIndex = updatedFavorites[category].indexOf(source.id)
+    let targetIndex = updatedFavorites[category].indexOf(target.id)
+    updatedFavorites[category] = arraymove(updatedFavorites[category], sourceIndex, targetIndex)
+    await updateItem('Users', user.id, { favorites: updatedFavorites })
+    response.changes = {favorites: {...user.favorites, [category]: arraymove(user.favorites[category], sourceIndex, targetIndex)}}
+    response.status = true
+
+    return response
+}
+
+export { addToFavorites, removeFromFavorites, rearrangeFavorites }

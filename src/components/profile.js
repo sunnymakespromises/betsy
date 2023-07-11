@@ -1,8 +1,8 @@
-import React, { memo, useEffect, useMemo, useRef, useState } from 'react'
+import React, { forwardRef, memo, useEffect, useMemo, useRef, useState } from 'react'
 import Cropper from 'react-easy-crop'
 import { IconHeart } from '@tabler/icons-react'
 import _ from 'lodash'
-import { CancelRounded, CheckRounded, ContentCopyRounded, DownloadDoneRounded, ExpandMoreRounded, LockRounded } from '@mui/icons-material'
+import { CancelRounded, CheckRounded, ContentCopyRounded, DownloadDoneRounded, LockRounded } from '@mui/icons-material'
 import { useUserContext } from '../contexts/user'
 import { useStatuses } from '../hooks/useStatuses'
 import { useInput } from '../hooks/useInput'
@@ -18,6 +18,7 @@ import Image from './image'
 import Map from './map'
 import toDate from '../lib/util/toDate'
 import { Link } from 'react-router-dom'
+import Sort, { Sortable } from './sort'
 
 const Profile = memo(function Profile({ userId = null, canEdit = true, classes, parentId }) {
     const { currentUser } = useUserContext()
@@ -64,43 +65,68 @@ const Profile = memo(function Profile({ userId = null, canEdit = true, classes, 
 }, (b, a) => b.canEdit === a.canEdit && b.classes === a.classes && _.isEqual(b.userId, a.userId))
 
 const Favorites = memo(function Favorites({ favorites, canEdit, isLocked, parentId }) {
-    let { removeFromFavorites } = useDatabase()
-    let [isExpanded, setIsExpanded] = useState(false)
-    let limit = useMemo(() => isExpanded ? undefined : 4, [isExpanded])
-    let length = useMemo(() => Object.values(favorites).flat(1)?.length, [favorites])
-    let favoritesList = useMemo(() => Object.keys(favorites)?.map(category => favorites[category].map(favorite => {return {...favorite, category: category}})).flat(1)?.slice(0, limit), [limit, favorites])
+    let { removeFromFavorites, rearrangeFavorites } = useDatabase()
+    let processedFavorites = useMemo(() => {
+        let newFavorites = Object.fromEntries(Object.keys(favorites).filter(category => favorites[category].length > 0).map(category => [category, favorites[category]]))
+        if (Object.keys(newFavorites).length > 0) {
+            Object.keys(newFavorites).forEach(category => newFavorites[category] = favorites[category].map(favorite => { return { ...favorite, category: category }}))
+        }
+        return newFavorites
+    }, [favorites])
+
+    const Favorite = forwardRef(function Favorite({ favorite, parentId, ...sortProps }, ref) {
+        return (
+            <Link id = {parentId} to = {'/info?category=' + favorite.category + '&id=' + favorite.id} className = 'group/favorite relative w-8 h-8 flex justify-center items-center bg-base-main rounded-full border-thin border-divider-main md:shadow-sm cursor-pointer' title = {favorite.name} {...sortProps} ref = {ref}>
+                <Conditional value = {favorite.picture}>
+                    <Image id = {parentId + '-image'} external path = {favorite.picture} classes = 'w-full h-full rounded-full'/>
+                </Conditional>
+                <Conditional value = {!favorite.picture}>
+                    <Text id = {parentId + '-text'} preset = 'profile-favorites-placeholder'>
+                        {favorite.name.substr(0, 1)}
+                    </Text>
+                </Conditional>
+                <Conditional value = {canEdit}>
+                    <CancelRounded className = 'absolute -top-1 -right-1 !h-4 !w-4 text-primary-main bg-base-main rounded-full cursor-pointer' onClick = {(e) => onClick(e, favorite)}/>
+                </Conditional>
+            </Link>
+        )
+    })
 
     let DOMId = parentId + '-favorites'
-    if (favoritesList && favoritesList.length > 0) {
+    if (Object.keys(processedFavorites).length > 0) {
         return (
-            <div id = {DOMId} className = 'relative w-full h-min flex flex-row md:flex-col justify-center md:justify-start items-center'>
-                <div id = {DOMId + '-items'} className = 'max-w-full md:w-full flex flex-wrap justify-center md:justify-center items-center gap-tiny'>
-                    <Map array = {favoritesList} callback = {(favorite, index) => {
-                        let favoriteId = DOMId + '-favorite' + index; return (
-                        <Link key = {index} to = {'/info?category=' + favorite.category + '&id=' + favorite.id} className = 'group/favorite relative w-8 h-8 flex justify-center items-center rounded-full border-thin border-divider-main md:shadow-sm cursor-pointer' title = {favorite.name}>
-                            <Conditional value = {favorite.picture}>
-                                <Image id = {favoriteId + '-image'} external path = {favorite.picture} classes = 'w-full h-full rounded-full'/>
-                            </Conditional>
-                            <Conditional value = {!favorite.picture}>
-                                <Text id = {favoriteId + '-text'} preset = 'profile-favorites-placeholder'>
-                                    {favorite.name.substr(0, 1)}
-                                </Text>
-                            </Conditional>
-                            <Conditional value = {canEdit}>
-                                <CancelRounded className = 'absolute -top-1 -right-1 !h-4 !w-4 text-primary-main bg-base-main rounded-full cursor-pointer' onClick = {(e) => onClick(e, favorite)}/>
-                            </Conditional>
-                        </Link>
-                    )}}/>
-                </div>
-                <Conditional value = {!isLocked && (isExpanded || length > limit)}>
-                    <ExpandMoreRounded id = {DOMId + '-expand-icon'} className = {'!w-6 !h-6 text-primary-main cursor-pointer ' + (isExpanded ? 'rotate-90 md:rotate-180' : '-rotate-90 md:rotate-0')} onClick = {() => onExpand()}/>
-                </Conditional>
+            <div id = {DOMId} className = 'relative w-full h-min flex flex-col items-center gap-small'>
+                <Map array = {Object.keys(processedFavorites)} callback = {(category, index) => {
+                    let categoryId = DOMId + '-category' + index; return (
+                    <React.Fragment key = {index}>
+                        <div id = {categoryId + '-items'} className = 'max-w-full w-full flex flex-wrap gap-tiny'>
+                            {canEdit && 
+                            <Sort items = {processedFavorites[category]} onPlace = {onPlace}>
+                                <Map array = {processedFavorites[category]} callback = {(favorite, index) => {
+                                    let favoriteId = categoryId + '-favorite' + index; return (
+                                    <Sortable key = {index} id = {favorite.id}>
+                                        <Favorite favorite = {favorite} parentId = {favoriteId}/>
+                                    </Sortable>
+                                )}}/>
+                            </Sort>}
+                            {!canEdit && 
+                            <Map array = {processedFavorites[category]} callback = {(favorite, index) => {
+                                let favoriteId = categoryId + '-favorite' + index; return (
+                                <Favorite key = {index} favorite = {favorite} parentId = {favoriteId}/>
+                            )}}/>}
+                        </div>
+                        <Conditional value = {index !== Object.keys(processedFavorites).length - 1}>
+                            <div className = 'w-full border-t-thin border-divider-main'/>
+                        </Conditional>
+                    </React.Fragment>
+                    )
+                }}/>
             </div>
         )
     }
 
-    function onExpand() {
-        setIsExpanded(!isExpanded)
+    function onPlace(active, over) {
+        rearrangeFavorites(active.category, active, over)
     }
 
     function onClick(e, favorite) {
