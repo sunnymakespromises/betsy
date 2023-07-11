@@ -1,5 +1,7 @@
+import _ from 'lodash'
 import getItem from './aws/db/getItem'
 import queryTable from './aws/db/queryTable'
+import getItems from './aws/db/getItems'
 
 async function getUserBy(key, value) {
     const response = {
@@ -9,14 +11,17 @@ async function getUserBy(key, value) {
     }
     let user
     if (key === 'id') {
-        user = await getItem('Users', value, ['id', 'balances', 'display_name', 'email', 'favorites', 'is_locked', 'join_date', 'picture', 'slips', 'subscriptions'])
+        user = await getItem('Users', value, ['id', 'balances', 'display_name', 'favorites', 'is_locked', 'join_date', 'picture', 'slips'])
     }
     else {
-        user = await queryTable('Users', [key] + ' = ' + value, ['id', 'balances', 'display_name', 'email', 'favorites', 'is_locked', 'join_date', 'picture', 'slips', 'subscriptions'], true)
+        user = await queryTable('Users', [key] + ' = ' + value, ['id', 'balances', 'display_name', 'favorites', 'is_locked', 'join_date', 'picture', 'slips'], true)
     }
     if (user) {
         response.status = true
         response.user = user
+        for (const category of Object.keys(user.favorites).filter(category => user.favorites[category].length > 0)) {
+            response.user.favorites[category] = await getItems(_.startCase(category), user.favorites[category], ['id', 'name', 'picture'])
+        } 
     }
     else {
         response.message = 'no user found with that ' + key + '.'

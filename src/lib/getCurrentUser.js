@@ -1,4 +1,5 @@
 import authenticateUser from './auth/authenticateUser'
+import getItems from './aws/db/getItems'
 import insertItem from './aws/db/insertItem'
 import queryTable from './aws/db/queryTable'
 import now from './util/now'
@@ -20,7 +21,7 @@ async function getCurrentUser(refresh_token, source) {
             response.user = betsyUser
             response.user.subscriptions = betsyUser.subscriptions.length > 0 ? await queryTable('Users', 'id in ' + JSON.stringify(betsyUser.subscriptions), ['id', 'display_name', 'picture']) : []
             for (const category of Object.keys(betsyUser.favorites).filter(category => betsyUser.favorites[category].length > 0)) {
-                response.user.favorites[category] = await queryTable(_.startCase(category), 'id in ' + JSON.stringify(betsyUser.favorites[category]), ['id', 'name', 'picture'])
+                response.user.favorites[category] = await getItems(_.startCase(category), betsyUser.favorites[category], ['id', 'name', 'picture'])
             } 
         }
         else {
