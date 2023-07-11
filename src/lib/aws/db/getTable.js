@@ -3,8 +3,6 @@ import { ScanCommand } from '@aws-sdk/lib-dynamodb'
 import reserved_keywords from './aws_reserved_keywords'
 
 export default async function getTable(table, attributes = null) {
-    let done = false
-    let items = []
     const params = {
         TableName: 'Betsy_' + table
     }
@@ -22,6 +20,8 @@ export default async function getTable(table, attributes = null) {
         }
     }
     try {
+        let done = false
+        let items = []
         while (!done) {
             const { Items, LastEvaluatedKey } = await ddbDocClient.send(new ScanCommand(params))
             for (let item of Items) {
