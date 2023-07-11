@@ -82,7 +82,16 @@ const Event = memo(function Event({ event, parentId }) {
             </div>
             <div id = {DOMId + '-data'} className = 'w-full md:w-[28rem] min-h-0 h-full flex flex-row gap-main'>
                 <Panel title = 'Odds' classes = 'h-full w-full' parentId = {DOMId + '-odds'}>
-                    <Odds event = {event} parentId = {DOMId}/>
+                    <Conditional value = {!event.odds || event.odds?.length < 1}>
+                        <div id = {DOMId + '-odds-not-found'} className = 'w-full h-full flex justify-center items-center'>
+                            <Text preset = 'info-notFound'>
+                                No odds found.
+                            </Text>
+                        </div>
+                    </Conditional>
+                    <Conditional value = {event.odds?.length > 0}>
+                        <Odds event = {event} classes = 'h-min p-main' parentId = {DOMId}/>
+                    </Conditional>
                 </Panel>
             </div>
         </div>
@@ -90,7 +99,7 @@ const Event = memo(function Event({ event, parentId }) {
 }, (b, a) => _.isEqual(b.event, a.event))
 
 const Competition = memo(function Competition({ competition, data, parentId }) {
-    let events = useMemo(() => competition.events.length > 0 && competition.events.map(e => data.events.find(event => event.id === e.id)).sort((a, b) => a.start_time - b.start_time), [data, competition])
+    let events = useMemo(() => competition.events.length > 0 ? competition.events.map(e => data.events.find(event => event.id === e.id)).sort((a, b) => a.start_time - b.start_time) : [], [data, competition])
     const searchConfig = useMemo(() => { return {
         id: 'competition',
         filters: {
@@ -122,7 +131,16 @@ const Competition = memo(function Competition({ competition, data, parentId }) {
             </div>
             <div id = {DOMId + '-data'} className = 'w-full md:w-[28rem] min-h-0 h-full flex flex-row gap-main'>
                 <Panel title = 'Events' classes = 'h-full w-full' parentId = {DOMId + '-events'}>
-                    <List items = {results?.events} element = {EventItem} dividers parentId = {DOMId}/>
+                    <Conditional value = {results?.events?.length > 0}>
+                        <List items = {results?.events} element = {EventItem} dividers parentId = {DOMId + '-events'}/>
+                    </Conditional>
+                    <Conditional value = {results?.events?.length < 1}>
+                        <div id = {DOMId + '-event-not-found'} className = 'w-full h-full flex justify-center items-center'>
+                            <Text preset = 'info-notFound'>
+                                No events found.
+                            </Text>
+                        </div>
+                    </Conditional>
                 </Panel>
             </div>
         </div>
@@ -177,9 +195,7 @@ const Panel = memo(function Panel({ title, classes, parentId, children }) {
                 {title}
             </Text>
             <div className = 'border-t-thin border-divider-main'/>
-            <div id = {DOMId + '-child'} className = 'min-h-0 w-full'>
-                {children}
-            </div>
+            {children}
         </div>
     )
 })
