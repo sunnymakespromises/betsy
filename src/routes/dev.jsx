@@ -1,5 +1,5 @@
 import React, { memo, useMemo, useRef, useState  } from 'react'
-import { Link, useSearchParams } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
 import _ from 'lodash'
 import { AddRounded, BackupRounded, CloseRounded, DeleteRounded, ExpandMoreRounded, FolderRounded, RemoveRounded } from '@mui/icons-material'
@@ -18,15 +18,14 @@ import toDate from '../lib/util/toDate'
 import { useSearch } from '../hooks/useSearch'
 import SearchBar from '../components/searchBar'
 import JSZip from 'jszip'
-import { useCookies } from 'react-cookie'
+import { useStore } from '../hooks/useStore'
 
 const Dev = memo(function Dev() {
-    let cookieName = 'dev_selections'
-    let [cookies, setCookie, removeCookie] = useCookies([cookieName])
+    const { store, addToStore, removeFromStore, emptyStore } = useStore('dev_selections', 'array', null, { duplicates: false })
     const { currentUser } = useUserContext()
     const { data } = useDataContext()
     const isDev = useMemo(() => currentUser && currentUser.is_dev, [currentUser])
-    const selected = useMemo(() => cookies[cookieName] ? cookies[cookieName] : [], [cookies])
+
     const searchConfig = useMemo(() => { return {
         id: 'dev',
         space: data ? { competitions: data.competitions, competitors: data.competitors } : null,
@@ -43,31 +42,43 @@ const Dev = memo(function Dev() {
                     <Search searchConfig = {searchConfig} onResultClick = {onResultClick} inputPreset = 'dev-images' parentId = {DOMId}/>
                     <div id = {DOMId + '-body'} className = 'w-full h-full md:min-h-0 flex flex-col md:flex-row gap-main z-0'>
                         <Data logs = {data.logs} parentId = {DOMId}/>
-                        <Upload selected = {selected} cookieName = {cookieName} setCookie = {setCookie} removeCookie = {removeCookie} parentId = {DOMId}/>
+                        <Upload data = {data} store = {store} onRemove = {onRemove} onRemoveAll = {onRemoveAll} parentId = {DOMId}/>
                     </div>
                 </div>
             </Page>
         )
     }
 
+    function onRemoveAll() {
+        emptyStore()
+    }
+
+    function onRemove(item) {
+        item = { id: item.id, category: item.category }
+        removeFromStore(item)
+    }
+
     function onResultClick(category, result) {
-        let newSelected = cookies[cookieName]
-        console.log(newSelected)
-        if (!newSelected.some(selection => selection.id === result.id)) {
-            newSelected.push(result)
-        }
+        result = {id: result.id, category: category}
         if (category === 'competitions') {
-            for (const competitor of data.competitions.find(c => c.id === result.id)?.competitors) {
-                if (!newSelected.some(selection => selection.id === competitor.id)) {
-                    newSelected.push(competitor)
-                }
+            let competitors = data.competitions.find(c => c.id === result.id)?.competitors?.map(competitor => {return {id: competitor.id, category: 'competitors'}})
+            if (competitors.length > 0) {
+                addToStore([result, ...competitors]) 
             }
         }
-        setCookie(cookieName, newSelected)
+        else {
+            addToStore(result)
+        }
     }
 })
 
-const Upload = memo(function Upload({ selected, cookieName, setCookie, removeCookie, parentId }) {
+const Upload = memo(function Upload({ data, store, onRemove, onRemoveAll, parentId }) {
+    let selected = useMemo(() => store.map(item => {
+        return {
+            ...data[item.category].find(item2 => item2.id === item.id),
+            category: item.category
+        }
+    }), [store, data])
     let [isLoading, execute] = useLoading()
     let [targetItem, setTargetItem] = useState()
     const { uploadPicture } = useDev()
@@ -104,22 +115,13 @@ const Upload = memo(function Upload({ selected, cookieName, setCookie, removeCoo
                         <BackupRounded id = {DOMId + '-sync-icon'} className = '!h-full !aspect-square text-text-main animate-twPulse animate-repeat-[infinite]'/>
                     </Conditional>
                     <FolderRounded id = {DOMId + '-folder-icon'} className = '!h-full !aspect-square text-primary-main cursor-pointer' onClick = {() => onClickFolder()}/>
-                    <DeleteRounded id = {DOMId + '-delete-icon'} className = '!h-full !aspect-square text-primary-main cursor-pointer' onClick = {() => removeAll()}/>
+                    <DeleteRounded id = {DOMId + '-delete-icon'} className = '!h-full !aspect-square text-primary-main cursor-pointer' onClick = {() => onRemoveAll()}/>
                 </div>
             </div>
             <div className = 'border-t-thin border-divider-main'/>
             <List items = {selected} element = {Item} classes = 'p-main gap-small' parentId = {DOMId}/>
         </div>
     )
-
-    function removeAll() {
-        removeCookie(cookieName)
-    }
-
-    function onRemove(item) {
-        let newSelected = selected.filter(selection => selection.id !== item.id)
-        setCookie(cookieName, newSelected)
-    }
 
     async function onClickFile(item) {
         if (item) {
@@ -193,7 +195,7 @@ const Upload = memo(function Upload({ selected, cookieName, setCookie, removeCoo
             }
         }
     }
-}, (b, a) => b.cookieName === a.cookieName && _.isEqual(b.selected, a.selected))
+}, (b, a) => _.isEqual(b.store, a.store) && _.isEqual(b.data, a.data))
 
 const Data = memo(function Data({ logs, parentId }) {
     let DOMId = parentId + '-data'
