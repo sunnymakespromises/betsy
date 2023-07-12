@@ -106,9 +106,6 @@ module.exports =  withAnimations({
         require('tailwindcss-themer')({
             defaultTheme: {
                 extend: {
-                    backgroundImage: {
-                        base: "url('images/light/bg.png')"
-                    },
                     opacity: {
                         muted: '60%',
                         killed: '20%'
@@ -151,9 +148,6 @@ module.exports =  withAnimations({
                 {
                     name: 'dark',
                     extend: {
-                        backgroundImage: {
-                            base: "url('images/dark/bg.png')"
-                        },
                         opacity: {
                             muted: '40%',
                             killed: '20%'
