@@ -6,16 +6,21 @@ import Input from '../components/input'
 import Conditional from '../components/conditional'
 import Map from '../components/map'
 
-const SearchBar = memo(forwardRef(function SearchBar({ input, hasResults, filters, setFilter, onInputChange, isExpanded, setIsExpanded, canExpand = true, inputPreset = 'search', autoFocus = true, classes, parentId }, ref) {
+const SearchBar = memo(forwardRef(function SearchBar({ input, hasResults, filters, setFilter, onInputChange, isExpanded, setIsExpanded, canExpand = true, inputPreset = 'search', autoFocus = true, selectAllOnFocus = true, classes, parentId }, ref) {
     let DOMId = parentId + '-searchbar'
     return (
         <div ref = {ref} id = {DOMId} className = {'relative h-min' + (classes ? ' ' + classes : '')}>
             <Conditional value = {filters}>
                 <Filters filters = {filters} setFilter = {setFilter} parentId = {DOMId}/>
             </Conditional>
-            <Input id = {DOMId + '-input'} preset = {inputPreset} status = {null} value = {input} autoFocus = {autoFocus} onChange = {(e) => onInputChange(null, e.target.value, 'text')} placeholder = {'Search...'} autoComplete = 'off' onClick = {() => !isExpanded && canExpand ? setIsExpanded(true) : null} classes = {'md:shadow-sm border-thin border-divider-main ' + (canExpand && hasResults && isExpanded ? 'rounded-t-small' : 'rounded-small')}/>
+            <Input id = {DOMId + '-input'} preset = {inputPreset} status = {null} value = {input} autoFocus = {autoFocus} onFocus = {handleFocus} onChange = {(e) => onInputChange(null, e.target.value, 'text')} placeholder = {'Search...'} autoComplete = 'off' onClick = {() => !isExpanded && canExpand ? setIsExpanded(true) : null} classes = {'md:shadow-sm border-thin border-divider-main ' + (canExpand && hasResults && isExpanded ? 'rounded-t-small' : 'rounded-small')}/>
         </div>
     )
+    function handleFocus(event) {
+        if (selectAllOnFocus) {
+            event.target.select()
+        }
+    }
 }), (b, a) => b.input === a.input && b.hasResults === a.hasResults && b.isExpanded === a.isExpanded && b.inputPreset === a.inputPreset && b.autoFocus === a.autoFocus && b.canExpand === a.canExpand && b.classes === a.classes && _.isEqual(b.filters, a.filters) && _.isEqual(JSON.stringify(b.searchConfig), JSON.stringify(a.searchConfig)))
 
 const Filters = memo(function Filters({ filters, setFilter, parentId }) {
