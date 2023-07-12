@@ -10,7 +10,7 @@ import SearchBar from './searchBar'
 import { useFavorite } from '../hooks/useFavorite'
 import Image from './image'
 
-const Search = memo(forwardRef(function Search({ searchConfig, onResultClick, inputPreset = 'search', classes, parentId }, ref) {
+const Search = memo(forwardRef(function Search({ searchConfig, onResultClick, closeOnClick = true, inputPreset = 'search', classes, parentId }, ref) {
     const { input, results, hasResults, filters, setFilter, onInputChange } = useSearch(searchConfig)
     let [isExpanded, setIsExpanded] = useState(true)
     let cancelRef = useCancelDetector(() => hasResults ? setIsExpanded(false) : null)
@@ -26,9 +26,16 @@ const Search = memo(forwardRef(function Search({ searchConfig, onResultClick, in
     return (
         <div ref = {(el) => {cancelRef.current = el; if (ref) {ref.current = el}}} id = {DOMId} className = {'w-full flex flex-col rounded-main' + (classes ? ' ' + classes : '')}>
             <SearchBar input = {input} ref = {barSizeRef} hasResults = {hasResults} filters = {filters} setFilter = {setFilter} onInputChange = {onInputChange} isExpanded = {isExpanded} setIsExpanded = {setIsExpanded} canExpand = {true} inputPreset = {inputPreset} parentId = {DOMId}/>
-            {results && <Results results = {results} hasResults = {hasResults} isExpanded = {isExpanded} offset = {barSize.height} onResultClick = {(category, result) => {setIsExpanded(false); onResultClick(category, result)}} parentId = {DOMId}/>}
+            {results && <Results results = {results} hasResults = {hasResults} isExpanded = {isExpanded} offset = {barSize.height} onResultClick = {(category, result) => onClick(category, result)} parentId = {DOMId}/>}
         </div>
     )
+
+    function onClick(category, result) {
+        if (closeOnClick) {
+            setIsExpanded(false)
+        }
+        onResultClick(category, result)
+    }
 }), (b, a) => b.classes === a.classes && _.isEqual(JSON.stringify(b.searchConfig), JSON.stringify(a.searchConfig)))
 
 const Results = memo(function Results({ results, hasResults, isExpanded, offset, onResultClick, parentId }) {
