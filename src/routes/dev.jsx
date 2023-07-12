@@ -143,10 +143,13 @@ const Upload = memo(function Upload({ data, store, onRemove, onRemoveAll, parent
                     let files = Object.keys(zip.files).filter(filename => (zip.files[filename].dir) === false)
                     files = files.map(filename => {
                         let name = zip.files[filename].name.split('/').pop().replace('.png', '')
-                        let item = selected.find(item => item.category === 'competitions' ? item.key === name : item.category === 'competitors' ? item.name === name : false)
+                        let item = selected.find(item => item.category === 'competitions' ? normalize(item.key) === normalize(name) : item.category === 'competitors' ? normalize(item.name) === normalize(name) : false)
                         return {
                             filename: filename,
                             item: item
+                        }
+                        function normalize(string) {
+                            return string.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
                         }
                     })
                     let objects = [] 
