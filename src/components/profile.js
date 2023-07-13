@@ -99,7 +99,7 @@ const Favorites = memo(function Favorites({ favorites, canEdit, isLocked, parent
                 <Map array = {Object.keys(processedFavorites)} callback = {(category, index) => {
                     let categoryId = DOMId + '-category' + index; return (
                     <React.Fragment key = {index}>
-                        <div id = {categoryId + '-items'} className = 'max-w-full w-full flex flex-wrap gap-tiny'>
+                        <div id = {categoryId + '-items'} className = 'max-w-full w-full flex justify-center md:justify-start flex-wrap gap-tiny'>
                             {canEdit && 
                             <Sort items = {processedFavorites[category]} onPlace = {onPlace}>
                                 <Map array = {processedFavorites[category]} callback = {(favorite, index) => {
