@@ -47,8 +47,8 @@ function Root() {
         <WindowProvider value = {windowContext}>
             <UserProvider value = {userContext}>
                 <DataProvider value = {dataContext}>
-                    {(location.pathname === '/login' || data) &&
                     <div id = 'root' className = {theme + ' relative w-full h-full flex flex-col-reverse md:flex-row bg-base-main'}>
+                    {(location.pathname === '/login' || data) &&
                         <Conditional value = {currentUser !== undefined}>
                             {currentUser && <Search currentUser = {currentUser} data = {data} />}
                             <Navigation currentUser = {currentUser} location = {location}/>
@@ -69,8 +69,8 @@ function Root() {
                                     </CSSTransition>
                                 </TransitionGroup>
                             </div>
-                        </Conditional>
-                    </div>}
+                        </Conditional>}
+                    </div>
                 </DataProvider>
             </UserProvider>
         </WindowProvider>
