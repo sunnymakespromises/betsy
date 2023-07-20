@@ -25,7 +25,7 @@ const Icon = memo(function Icon({ path, title, icon, isCurrent, parentId }) {
     let DOMId = parentId
     return (
         <Link id = {DOMId} to = {path} className = {'group/icon w-14 h-14 p-main cursor-pointer'}>
-            <Icon id = {DOMId + '-icon'} title = {title} className = {'!w-full !h-full ' + (isCurrent ? 'text-primary-main' : 'text-text-highlight/killed group-hover/icon:text-primary-main')}/>
+            <Icon id = {DOMId + '-icon'} title = {title} className = {'!transition-colors duration-main !w-full !h-full ' + (isCurrent ? 'text-primary-main' : 'text-text-highlight/killed group-hover/icon:text-primary-main')}/>
         </Link>
     )
 })

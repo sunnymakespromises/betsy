@@ -20,6 +20,7 @@ function useFavorite(category, item) {
         function onClick(e) {
             e.stopPropagation()
             e.nativeEvent.stopImmediatePropagation()
+            e.preventDefault()
             if (canEdit) {
                 if (isFavorite) {
                     removeFromFavorites(category, item)
@@ -30,7 +31,7 @@ function useFavorite(category, item) {
         }
     })
 
-    return { isFavorite, Favorite }
+    return [isFavorite, Favorite]
 }
 
 export { useFavorite }

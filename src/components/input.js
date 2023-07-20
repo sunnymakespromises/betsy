@@ -40,18 +40,10 @@ const Input = memo(forwardRef(function Input({ value, status, type = 'text', pre
             null: ''
         },
         dev: {
-            images: {
-                classes: 'px-main py-smaller font-main font-medium w-full text-sm md:text-sm text-text-main placeholder:text-text-highlight/killed focus:outline-none bg-base-main z-10',
-                true: '',
-                false: '',
-                null: ''
-            },
-            logs: {
-                classes: 'py-small p-main font-main font-medium w-full text-sm md:text-sm text-text-main placeholder:text-text-highlight/killed focus:outline-none bg-base-main z-10',
-                true: '',
-                false: '',
-                null: ''
-            }
+            classes: 'py-small p-main font-main font-medium w-full text-sm md:text-sm text-text-main placeholder:text-text-highlight/killed focus:outline-none bg-base-main z-10',
+            true: '',
+            false: '',
+            null: ''
         },
         events: {
             classes: 'px-main py-smaller font-main font-medium w-full text-sm md:text-sm text-text-main placeholder:text-text-highlight/killed focus:outline-none bg-base-main !border-0 !shadow-none z-10',

@@ -1,12 +1,18 @@
 import { useEffect, useRef, useState } from 'react'
 
-function useSizeDetector() {
+function useSizeDetector(id = null) {
     const ref = useRef()
     const [size, setSize] = useState(0)
 
     useEffect(() => {
         getSize()
-    }, [ref.current?.clientHeight, ref.current?.clientWidth])
+    }, [ref.current?.clientHeight, ref.current?.clientWidth, ref.current?.clientTop, ref.current?.clientLeft])
+
+    useEffect(() => {
+        if (id) {
+            ref.current = document.getElementById(id)
+        }
+    }, [id])
 
     useEffect(() => {
         if (typeof window === 'undefined') {
@@ -17,8 +23,8 @@ function useSizeDetector() {
     }, [])
 
     function getSize() {
-        let style = getComputedStyle(ref?.current)
-        setSize({ height: style.height.replace('px', ''), width: style.width.replace('px', '') })
+        let rect = ref?.current ? ref.current.getBoundingClientRect() : {}
+        setSize({ height: rect.height, width: rect.width, top: rect.top, left: rect.left, bottom: rect.top + rect.height, right: rect.left + rect.width })
     }
 
     return [ref, size]

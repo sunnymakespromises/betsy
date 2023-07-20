@@ -13,23 +13,6 @@
       -ms-overflow-style: none;
       scrollbar-width: none;
     }
-
-    /* width */
-    ::-webkit-scrollbar {
-        width: 10px;
-        height: 10px;
-    }
-
-    /* Track */
-    ::-webkit-scrollbar-track,::-webkit-scrollbar-corner {
-        background: #00000000; 
-    }
-
-    /* Handle */
-    ::-webkit-scrollbar-thumb {
-        background: #0000001A;
-        border-radius: 10px;
-    }
 }
 
 @media (prefers-reduced-motion: reduce) {

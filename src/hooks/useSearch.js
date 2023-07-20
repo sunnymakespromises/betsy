@@ -5,34 +5,43 @@ import { useCookies } from 'react-cookie'
 
 function useSearch(config) {
     const isSimple = !(config.categories)
-    const queryId = config.id + '_query'
-    const filtersId = config.id + '_filters'
-    const [cookies, _setCookie, _removeCookie] = useCookies([queryId, filtersId])
-    const queryParam = useMemo(() => cookies[queryId], [cookies])
-    const filtersParam = useMemo(() => cookies[filtersId], [cookies])
+    const queryId = useRef()
+    queryId.current = config.id + '_query'
+    const filtersId = useRef()
+    filtersId.current = config.id + '_filters'
+    const [cookies, _setCookie, _removeCookie] = useCookies([queryId?.current, filtersId?.current])
+    const queryParam = useMemo(() => cookies[queryId?.current], [cookies, config])
+    const filtersParam = useMemo(() => cookies[filtersId?.current], [cookies, config])
     const filters = useMemo(() => {
         if (config.filters) {
             let newFilters = {}
-            Object.keys(config.filters).forEach(filter => newFilters[filter] = {...config.filters[filter], active: filtersParam ? filtersParam[filter].active : false})
+            Object.keys(config.filters).forEach(filter => newFilters[filter] = {...config.filters[filter], active: filtersParam && filtersParam[filter] ? filtersParam[filter].active : false})
             return newFilters
         }
         else {
             return null
         }
-    }, [cookies])
+    }, [cookies, config])
     const filtersRef = useRef()
     filtersRef.current = filters
     const {input, onInputChange} = useInput(null, queryParam ? queryParam : '')
-    const [results, setResults] = useState()
-    const hasResults = useMemo(() => input !== '' ? config.shape === 'array' ? results && results.length > 0 : results && Object.keys(results)?.some(category => results[category].length > 0) : null, [results])
+    const [results, setResults] = useState(getResults())
+    const hasResults = useMemo(() => {
+        return input !== '' ? config.shape === 'array' ? results?.length > 0 : Object.keys(results)?.some(category => results[category]?.length > 0) : null
+    }, [results])
+    const hasActiveFilter = useMemo(() => filters ? Object.keys(filters).some(filter => filters[filter].active === true) : false, [filters])
 
     useEffect(() => {
         let value = input !== '' ? input : null
-        setCookie(queryId, value)
+        setCookie(queryId.current, value)
     }, [input])
 
 
     useEffect(() => {
+        setResults(getResults())
+    }, [queryParam, filtersParam, config.space])
+
+    function getResults() {
         if (config.space) {
             if (isSimple) {
                 let newResults = []
@@ -47,14 +56,15 @@ function useSearch(config) {
                         let fuseParams = {
                             threshold: 0.15,
                             keys: config.keys,
-                            minMatchCharLength: config.minimumLength ? config.minimumLength : 1
+                            minMatchCharLength: config.minimumLength ? config.minimumLength : 1,
+                            ignoreLocation: true,
                         }
                         let fuse = new Fuse(config.space, fuseParams)
                         newResults = fuse.search(input).map(r => r.item)
                         newResults = filter(newResults).slice(0, config.limit)
                     }
                 }
-                setResults(newResults)
+                return newResults
             }
             else {
                 let newResults = {}
@@ -72,23 +82,28 @@ function useSearch(config) {
                         let fuseParams = {
                             threshold: 0.15,
                             keys: config.keys[category],
-                            minMatchCharLength: config.minimumLength ? config.minimumLength : 1
+                            minMatchCharLength: config.minimumLength ? config.minimumLength : 1,
+                            ignoreLocation: true,
+                            ...(config.shape === 'array' ? { includeScore: true } : {})
                         }
                         let fuse = new Fuse(config.space[category], fuseParams)
-                        newResults[category] = fuse.search(input).map(r => r.item)
+                        newResults[category] = fuse.search(input)
+                        if (config.shape !== 'array') {
+                            newResults[category] = newResults[category].map(r => r.item)
+                        }
                     }
                     if (config.shape === 'array') {
-                        newResults = filter(Object.keys(newResults).map(c => newResults[c].map(r => { return { category: c, item: r } })).flat(1)).slice(0, config.limit)
+                        newResults = filter(Object.keys(newResults).map(c => newResults[c].map(r => { return { category: c, item: r.item, score: r.score} })).flat(1).sort((a, b) => a.score - b.score)).slice(0, config.limit).map(r => { return { category: r.category, item: r.item }})
                     }
                     else {
                         newResults = filter(newResults)
                         newResults = Object.fromEntries(Object.entries(newResults).map(([k, v]) => [k, v.slice(0, config.limit)]))
                     }
                 }
-                setResults(newResults)
+                return newResults
             }
         }
-    }, [queryParam, filtersParam, config.space])
+    }
 
     function getEmptyResults() {
         if (isSimple || config.shape === 'array') {
@@ -107,7 +122,7 @@ function useSearch(config) {
                 newFilters[targetFilter] = {...newFilters[targetFilter], active: false}
             }
         }
-        setCookie(filtersId, newFilters)
+        setCookie(filtersId.current, newFilters)
     }
 
     function setCookie(param, value) {
@@ -138,7 +153,7 @@ function useSearch(config) {
         return filteredResults
     }
 
-    return { input, onInputChange, results, hasResults, filters, setFilter }
+    return { input, onInputChange, results, hasResults, filters, hasActiveFilter, setFilter }
 }
 
 export { useSearch }

@@ -49,7 +49,7 @@ const Profile = memo(function Profile({ userId = null, canEdit = true, classes, 
     let DOMId = parentId + '-profile'
     if (user) {
         return (
-            <div id = {DOMId} className = {'relative flex flex-col items-center w-full min-w-[12rem] rounded-main p-main gap-small border-divider-main border-thin md:shadow' + (classes ? ' ' + classes : '') + (currentUser.is_locked ? ' grayscale' : '')}>
+            <div id = {DOMId} className = {'relative flex flex-col items-center w-full min-w-[12rem] bg-base-main rounded-main p-main gap-small border-divider-main border-thin ' + (classes ? ' ' + classes : '') + (currentUser.is_locked ? ' grayscale' : '')}>
                 <Tag id = {user.id} parentId = {DOMId}/>
                 <Actions currentUser = {currentUser} isCurrentUser = {isCurrentUser} user = {user}  onCrop = {onCrop} input = {input} statuses = {statuses} setStatuses = {setStatuses} execute = {execute} inputIsEmpty = {inputIsEmpty} clearAllInput = {clearAllInput} canEdit = {canEdit} isLocked = {user.is_locked} parentId = {DOMId}/>
                 <Picture params = {pictureParams} picture = {user.picture} input = {input.picture} onInputChange = {onInputChange} isThisInputEmpty = {isThisInputEmpty} status = {statuses.picture} isCurrentUser = {isCurrentUser} isLoading = {isLoading} canEdit = {canEdit && !user.is_locked} parentId = {DOMId}/>
@@ -58,13 +58,13 @@ const Profile = memo(function Profile({ userId = null, canEdit = true, classes, 
                     <Locked isLocked = {user.is_locked} parentId = {DOMId}/>
                 </div>
                 <Subtitle balances = {user.balances} date = {user.join_date} parentId = {DOMId}/>
-                <Favorites favorites = {user.favorites} canEdit = {canEdit} isLocked = {user.is_locked} parentId = {DOMId}/>
+                <Favorites favorites = {user.favorites} canEdit = {canEdit && !user.is_locked} parentId = {DOMId}/>
             </div>
         )
     }
 }, (b, a) => b.canEdit === a.canEdit && b.classes === a.classes && _.isEqual(b.userId, a.userId))
 
-const Favorites = memo(function Favorites({ favorites, canEdit, isLocked, parentId }) {
+const Favorites = memo(function Favorites({ favorites, canEdit, parentId }) {
     let { removeFromFavorites, rearrangeFavorites } = useDatabase()
     let processedFavorites = useMemo(() => {
         let newFavorites = Object.fromEntries(Object.keys(favorites).filter(category => favorites[category].length > 0).map(category => [category, favorites[category]]))
@@ -74,19 +74,20 @@ const Favorites = memo(function Favorites({ favorites, canEdit, isLocked, parent
         return newFavorites
     }, [favorites])
 
-    const Favorite = forwardRef(function Favorite({ favorite, parentId, ...sortProps }, ref) {
+    const Favorite = forwardRef(function Favorite({ favorite, parentId, ...sortProps }, sortRef) {
+        let DOMId = parentId
         return (
-            <Link id = {parentId} to = {'/info?category=' + favorite.category + '&id=' + favorite.id} className = 'group/favorite relative w-8 h-8 flex justify-center items-center bg-base-main rounded-full border-thin border-divider-main md:shadow-sm cursor-pointer' title = {favorite.name} {...sortProps} ref = {ref}>
+            <Link id = {DOMId} to = {'/info?category=' + favorite.category + '&id=' + favorite.id} className = 'group/favorite relative w-8 h-8 flex justify-center items-center p-tiny bg-base-main rounded-full border-thin border-divider-main cursor-pointer' title = {favorite.name} {...sortProps} ref = {sortRef}>
                 <Conditional value = {favorite.picture}>
-                    <Image id = {parentId + '-image'} external path = {favorite.picture} classes = 'w-full h-full rounded-full'/>
+                    <Image id = {DOMId + '-image'} external path = {favorite.picture} classes = 'w-full h-full'/>
                 </Conditional>
                 <Conditional value = {!favorite.picture}>
-                    <Text id = {parentId + '-text'} preset = 'profile-favorites-placeholder'>
+                    <Text id = {DOMId + '-text'} preset = 'profile-favorites-placeholder'>
                         {favorite.name.substr(0, 1)}
                     </Text>
                 </Conditional>
                 <Conditional value = {canEdit}>
-                    <CancelRounded className = 'absolute -top-1 -right-1 !h-4 !w-4 text-primary-main bg-base-main rounded-full cursor-pointer' onClick = {(e) => onClick(e, favorite)}/>
+                    <CancelRounded id = {DOMId + '-cancel-icon'} className = 'absolute -top-1 -right-1 !transition-colors duration-main !h-4 !w-4 text-primary-main hover:text-primary-highlight bg-base-main rounded-full cursor-pointer' onClick = {(e) => onRemove(e, favorite)}/>
                 </Conditional>
             </Link>
         )
@@ -125,17 +126,17 @@ const Favorites = memo(function Favorites({ favorites, canEdit, isLocked, parent
         )
     }
 
-    function onPlace(active, over) {
+    async function onPlace(active, over) {
         rearrangeFavorites(active.category, active, over)
     }
 
-    function onClick(e, favorite) {
+    function onRemove(e, favorite) {
         e.preventDefault()
         e.stopPropagation()
         e.nativeEvent.stopImmediatePropagation()
         removeFromFavorites(favorite.category, favorite)
     }
-}, (b, a) => b.canEdit === a.canEdit && b.isLocked === a.isLocked && _.isEqual(b.favorites, a.favorites))
+}, (b, a) => b.canEdit === a.canEdit && _.isEqual(b.favorites, a.favorites))
 
 const Subtitle = memo(function Subtitle({ balances, date, parentId }) {
     const { getAmount } = useCurrency()
@@ -155,7 +156,7 @@ const Subtitle = memo(function Subtitle({ balances, date, parentId }) {
 const Tag = memo(function Tag({ id, parentId }) {
     let DOMId = parentId
     return (
-        <Text id = {DOMId + '-id'} preset = {'profile-subtitle'} classes = 'absolute top-2 left-2 p-small rounded-main border-thin border-divider-main md:shadow-sm'>
+        <Text id = {DOMId + '-id'} preset = {'profile-subtitle'} classes = 'absolute top-2 left-2 p-small rounded-main border-thin border-divider-main'>
             {'@' + id}
         </Text>
     )
@@ -164,7 +165,7 @@ const Tag = memo(function Tag({ id, parentId }) {
 const Info = memo(function Info({ category, value, classes, input, onInputChange, isThisInputEmpty, status, isCurrentUser, isLoading, canEdit, parentId }) {
     const thisInputIsEmpty = useMemo(() => isThisInputEmpty(category), [input])
     const [isEditing, setIsEditing] = useState(false)
-    const cancelRef = useCancelDetector(() => (isCurrentUser && thisInputIsEmpty) ? setIsEditing(false) : null)
+    const cancelRef = useCancelDetector(() => (isCurrentUser && thisInputIsEmpty) && setIsEditing(false))
     useEffect(() => {
         if (!isLoading) {
             setIsEditing(false)
@@ -179,12 +180,12 @@ const Info = memo(function Info({ category, value, classes, input, onInputChange
                     <Input id = {DOMId + '-input'} preset = {'profile-' + category} status = {status.status} value = {input} onChange = {(e) => onChange(e)} placeholder = {value} autoFocus autoComplete = 'off'/>
                 </Conditional>
                 <Conditional value = {(!isEditing || (isLoading && thisInputIsEmpty)) || (status.status)}>
-                    <Text id = {DOMId + '-text'} preset = {'profile-' + category} classes = {(isCurrentUser && canEdit ? ' !text-primary-main' : '')}>
+                    <Text id = {DOMId + '-text'} preset = {'profile-' + category} classes = {(isCurrentUser && canEdit ? ' transition-colors duration-main !text-primary-main hover:!text-primary-highlight' : '')}>
                         {value}
                     </Text>
                 </Conditional>
                 <Conditional value = {canEdit && status.status}>
-                    <CheckRounded id = {DOMId + '-valid-icon'} className = 'absolute top-[50%] -translate-y-[50%] left-[100%] !transition-all duration-main !h-4 !aspect-square text-primary-main !animate-duration-700 animate-fadeOut'/>
+                    <CheckRounded id = {DOMId + '-valid-icon'} className = 'absolute top-[50%] -translate-y-[50%] left-[100%] !h-4 !aspect-square text-primary-main !animate-duration-700 animate-fadeOut'/>
                 </Conditional>
             </div>
             <Error message = {status.message} parentId = {DOMId}/>

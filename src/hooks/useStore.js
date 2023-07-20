@@ -76,7 +76,7 @@ function useStore(category, shape, defaults, options) {
         return defaults ? defaults : shape === 'array' ? [] : {}
     }
 
-    return { store, addToStore, removeFromStore, emptyStore }
+    return [ store, addToStore, removeFromStore, emptyStore ]
 }
 
 export { useStore }

@@ -1,14 +1,20 @@
 import { useEffect, useRef, useState } from 'react'
 import { getData } from '../lib/getData'
+import { usePrevious } from './usePrevious'
+import _ from 'lodash'
 
 function useData(currentUser) {
     const [data, setData] = useState()
     const dataRef = useRef()
     dataRef.current = data
+    let previousCurrentUser = usePrevious(currentUser)
     
     useEffect(() => {
-        if (currentUser && !data) {
+        if ((currentUser && !data )) {
             updateData()
+        }
+        else if (!_.isEqual(previousCurrentUser?.favorites, currentUser?.favorites)) {
+            updateData('recommendations')
         }
     }, [currentUser])
 

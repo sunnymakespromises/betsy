@@ -60,7 +60,7 @@ const Blurb = memo(function Blurb({ subtitle, body, parentId }) {
 const Option = memo(function Option({ source, image, login, parentId }) {
     let DOMId = parentId
     return (
-        <div id = {DOMId} className = 'w-full h-min flex justify-center items-center gap-small p-small bg-base-main hover:bg-base-highlight rounded-main border-thin border-divider-main md:shadow cursor-pointer' onClick = {() => login(source)}>
+        <div id = {DOMId} className = 'w-full h-min flex justify-center items-center gap-small p-small bg-base-main hover:bg-base-highlight rounded-main border-thin border-divider-main shadow-sm md:shadow cursor-pointer' onClick = {() => login(source)}>
             <Text id = {DOMId + '-sign-in-text'} preset = 'login-option'>
                 Sign in with
             </Text>

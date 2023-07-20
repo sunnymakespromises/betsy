@@ -13,7 +13,7 @@ const Text = memo(function Text({ preset = 'main-body', styles, classes, childre
     let options = {
         main: {
             body: 'select-none font-main font-light text-lg md:text-xl text-reverse-0',
-            title: 'whitespace-nowrap select-none font-main font-bold text-xl md:text-xl text-text-main',
+            title: 'whitespace-nowrap select-none font-main font-bold text-lg md:text-lg text-text-main',
             button: 'whitespace-nowrap select-none font-main font-regular text-lg md:text-2xl text-reverse-100 group-hover:text-base-0',
             money: 'select-none font-main font-light text-lg md:text-xl text-text-main'
         },
@@ -21,7 +21,7 @@ const Text = memo(function Text({ preset = 'main-body', styles, classes, childre
             panel: 'whitespace-nowrap select-none font-main font-bold text-xl md:text-xl text-text-main',
         },
         events: {
-            name: 'whitespace-nowrap overflow-hidden text-ellipsis select-none font-main font-medium text-base md:text-base text-primary-main',
+            name: 'transition-colors duration-main whitespace-nowrap overflow-hidden text-ellipsis select-none font-main font-medium text-base md:text-base text-primary-main group-hover/name:text-primary-highlight',
             subtitle: 'select-none font-main font-regular text-tiny md:text-tiny text-text-main',
         },
         login: {
@@ -32,15 +32,15 @@ const Text = memo(function Text({ preset = 'main-body', styles, classes, childre
         },
         info: {
             panel: 'whitespace-nowrap select-none font-main font-bold text-xl md:text-xl text-text-main',
-            item: {
-                title: 'whitespace-nowrap select-none font-main font-bold text-xl md:text-xl text-text-main',
-                subtitle: 'whitespace-nowrap select-none font-main font-regular text-xs md:text-xs text-text-main'
+            title: 'whitespace-nowrap select-none overflow-hidden text-ellipsis font-main font-bold text-xl md:text-xl text-text-main',
+            subtitle: 'whitespace-nowrap select-none font-main font-regular text-xs md:text-xs text-text-main',
+            competitor: {
+                title: 'transition-colors duration-main select-none font-main font-medium text-tiny md:text-tiny text-text-main group-hover/item:text-primary-main text-center'
             },
             notFound: 'select-none font-main font-medium text-base md:text-base text-text-main/killed',
             error: 'select-none font-main font-medium text-sm md:text-sm text-text-primary'
         },
         settings: {
-            title: 'whitespace-nowrap select-none font-main font-bold text-xl md:text-xl text-text-main',
             donate: {
                 body: 'select-none font-main font-regular text-tiny md:text-tiny text-text-main text-center',
                 link: 'select-none font-main font-regular text-tiny md:text-tiny text-primary-main'
@@ -75,7 +75,7 @@ const Text = memo(function Text({ preset = 'main-body', styles, classes, childre
                 category: 'whitespace-nowrap select-none font-main font-medium text-base md:text-base text-primary-main',
             },
             result: {
-                title: 'overflow-hidden text-ellipsis whitespace-nowrap select-none font-main font-regular text-sm md:text-sm text-text-main'
+                title: 'transition-colors duration-main overflow-hidden text-ellipsis whitespace-nowrap select-none font-main font-medium text-sm md:text-sm text-text-main'
             }
         },
         dev: {
@@ -83,25 +83,30 @@ const Text = memo(function Text({ preset = 'main-body', styles, classes, childre
                 title: 'whitespace-nowrap select-none font-main font-medium text-tiny md:text-tiny text-text-main',
                 value: 'select-none font-main font-bold text-xl md:text-xl text-text-main'
             },
-            title: 'whitespace-nowrap select-none font-main font-bold text-xl md:text-xl text-text-main',
             logs: {
-                title: 'whitespace-nowrap select-none font-main font-medium text-xs md:text-sm text-primary-main',
+                title: 'transition-colors duration-main whitespace-nowrap select-none font-main font-medium text-xs md:text-sm text-primary-main group-hover/bar:text-primary-highlight',
                 change: {
-                    object: 'overflow-hidden text-ellipsis whitespace-nowrap select-none font-main font-regular text-xs md:text-xs text-primary-main',
+                    object: 'transition-colors duration-main overflow-hidden text-ellipsis whitespace-nowrap select-none font-main font-regular text-xs md:text-xs text-primary-main hover:text-primary-highlight',
                     message: 'whitespace-nowrap select-none font-main font-regular text-xs md:text-xs text-text-main'
                 }
             },
-            images: {
-                item: 'select-none font-main font-medium text-sm md:text-sm text-primary-main cursor-pointer'
+            upload: {
+                count: 'select-none font-main font-medium text-sm md:text-sm text-text-main/muted',
+                item: {
+                    title: 'transition-colors duration-main select-none font-main font-medium text-xs md:text-sm text-text-main group-hover/item:text-primary-main text-center'
+                }
             },
         },
-        odds: {
-            name: 'select-none font-main font-medium text-tiny md:text-tiny text-text-main text-center',
-            value: 'select-none font-main font-bold text-sm md:text-lg text-text-main text-center',
-            notFound: 'select-none font-main font-medium text-tiny md:text-sm text-text-main/10 text-center',
-            option: {
-                title: 'select-none font-main font-medium text-micro md:text-tiny text-text-main text-center'
-            }
+        bet: {
+            outcome: {
+                title: 'select-none font-main font-medium text-micro md:text-micro text-text-main/muted',
+                name: 'select-none font-main font-medium text-xs md:text-xs text-text-main',
+                value: 'select-none font-main font-bold text-lg md:text-xl text-text-main',
+            },
+            notFound: 'select-none font-main font-medium text-tiny md:text-sm text-text-main/10'
+        },
+        tray: {
+            new: 'transition-colors duration-main select-none font-main font-medium text-sm md:text-base text-text-main/killed text-center'
         },
         competitor: 'whitespace-nowrap select-none font-main font-light md:font-regular text-lg md:text-xl text-reverse-0'
     }

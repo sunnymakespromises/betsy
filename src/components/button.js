@@ -25,7 +25,7 @@ export default function Button({ preset = 'main', styles, classes, onClick, chil
 
     return (
         <div className = {option + (classes ? ' ' + classes : '') + ' cursor-pointer'} style = {styles} onClick = {onClick} {...extras}>
-            {children ? children : null}
+            {children && children}
         </div>
     )
 }

@@ -4,8 +4,17 @@ import { SortableContext, useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 
 function Sort({ items, onPlace, children }) {
-    const mouseSensor = useSensor(MouseSensor)
-    const touchSensor = useSensor(TouchSensor)
+    const mouseSensor = useSensor(MouseSensor, {
+        activationConstraint: {
+            distance: 10,
+        }
+    })
+    const touchSensor = useSensor(TouchSensor, {
+        activationConstraint: {
+            delay: 250,
+            tolerance: 5,
+        }
+    })
     const keyboardSensor = useSensor(KeyboardSensor)
     const sensors = useSensors(
         mouseSensor,
@@ -40,7 +49,11 @@ export function Sortable({ id, children }) {
         transition,
         isDragging
     } = useSortable({ 
-        id: id
+        id: id,
+        transition: {
+            duration: 150,
+            easing: 'ease-in-out',
+        }
     })
 
     const style = {

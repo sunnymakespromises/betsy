@@ -34,16 +34,19 @@ async function uploadPicture(item, value) {
                     await updateItem('Competitions', competition.id, { competitors: competitors })
                 }
                 for (let event of competitor.events) {
-                    event = await getItem('Events', event.id, ['id', 'competitors', 'odds'])
+                    event = await getItem('Events', event.id, ['id', 'competitors', 'bets'])
                     let competitors = event.competitors.map(c => { return c.id === competitor.id ? { id: c.id, name: c.name, picture: picture } : c })
-                    let odds  = event.odds?.map(odd => { return {
-                        ...odd,
-                        outcomes: odd.outcomes.map(outcome => { return {
-                            ...outcome,
-                            ...( outcome?.competitor ? {competitor: outcome.competitor.id === competitor.id ? { id: outcome.competitor.id, name: outcome.competitor.name, picture: picture } : outcome.competitor } : {})
+                    let bets  = event.bets?.map(bet => { return {
+                        ...bet,
+                        values: bet.values.map(value => { return {
+                            ...value,
+                            outcomes: value.outcomes.map(outcome => { return {
+                                ...outcome,
+                                ...( outcome?.competitor ? {competitor: outcome.competitor.id === competitor.id ? { id: outcome.competitor.id, name: outcome.competitor.name, picture: picture } : outcome.competitor } : {})
+                            }})
                         }})
                     }})
-                    await updateItem('Events', event.id, { competitors: competitors, ...(event.odds ? {odds: odds} : {}) })
+                    await updateItem('Events', event.id, { competitors: competitors, ...(event.bets ? {bets: bets} : {}) })
                 }
             }
             response.status = true

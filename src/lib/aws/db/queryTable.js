@@ -68,8 +68,7 @@ export default async function queryTable(table, query, attributes = null, single
     let params = {
         TableName: 'Betsy_' + table,
         FilterExpression: filterExpression,
-        ExpressionAttributeValues: expressionAttributeValues,
-        ConsistentRead: true
+        ExpressionAttributeValues: expressionAttributeValues
     }
     if (attributes) {
         const projectionExpression = attributes.map(a => reserved_keywords.includes(a) ? '#' + a : a)

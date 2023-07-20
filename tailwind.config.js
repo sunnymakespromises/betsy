@@ -13,7 +13,7 @@ module.exports =  withAnimations({
                 fast: '0.15s'
             },
             transitionDuration: {
-                main: '100ms'
+                main: '150ms'
             },
             fontFamily: {
                 main: ['Inter', ...defaultTheme.fontFamily.sans],
@@ -66,7 +66,7 @@ module.exports =  withAnimations({
                 thin: '1px'
             },
             backdropBlur: {
-                main: '48px'
+                main: '8px'
             },
             backdropBrightness: {
                 lighter: '1.25',
@@ -118,7 +118,7 @@ module.exports =  withAnimations({
                         shadow: '#5b5b5c',
                         divider: {
                             main: '#e4e4e7',
-                            highlight: '#e1e1e1',
+                            highlight: '#e4e4e7',
                             primary: '#0066eb'
                         },
                         reverse: {
@@ -127,7 +127,7 @@ module.exports =  withAnimations({
                         },
                         text: {
                             main: '#221d27',
-                            highlight: '#221d27',
+                            highlight: '#38343a',
                             primary: '#f3f1f6',
                             reverse: '#f3f1f6'
                         },
@@ -162,7 +162,7 @@ module.exports =  withAnimations({
                             shadow: '#000000',
                             divider: {
                                 main: '#27272a',
-                                highlight: '#0c0711',
+                                highlight: '#1c1c1e',
                                 primary: '#e61a35'
                             },
                             reverse: {
