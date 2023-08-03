@@ -1,8 +1,8 @@
-import React, { memo, forwardRef, useEffect, useMemo, useState } from 'react'
+import React, { memo, useEffect, useMemo, useState } from 'react'
 import Page from '../components/page'
 import { Helmet } from 'react-helmet'
 import { Link, useSearchParams } from 'react-router-dom'
-import { CalendarWeekFill, PeopleFill, Stack, StopwatchFill } from 'react-bootstrap-icons'
+import { BarChartLineFill, CalendarWeekFill, PeopleFill, Stack, StopwatchFill } from 'react-bootstrap-icons'
 import _ from 'lodash'
 import { useDataContext } from '../contexts/data'
 import { useDatabase } from '../hooks/useDatabase'
@@ -11,9 +11,8 @@ import { useSearch } from '../hooks/useSearch'
 import Conditional from '../components/conditional'
 import Text from '../components/text'
 import Map from '../components/map'
-import Panel, { MultiPanel } from '../components/panel'
+import { MultiPanel } from '../components/panel'
 import Bets from '../components/bets'
-import { Droppable } from '../components/drag'
 import SearchBar from '../components/searchBar'
 import { Event as EventItem } from '../components/events'
 import Image from '../components/image'
@@ -99,7 +98,7 @@ const Item = memo(function Item({ category, item, data, parentId }) {
             }
         },
         events: {
-            element: (props) => <Event event = {item} {...props}/>,
+            element: (props) => <Event {...props}/>,
             hasSearch: true,
             searchConfig: {
                 id: 'events',
@@ -136,13 +135,13 @@ const Item = memo(function Item({ category, item, data, parentId }) {
                 {option.hasSearch && <SearchBar input = {input} classes = 'w-full md:w-1/2' hasResults = {hasResults} filters = {filters} hasActiveFilter = {hasActiveFilter} setFilter = {setFilter} onInputChange = {onInputChange} isExpanded = {false} canExpand = {false} parentId = {DOMId}/>}
             </div>
             <div id = {DOMId + '-data'} className = 'w-full h-min flex flex-col md:flex-row gap-base md:gap-lg'>
-                <Element results = {results} parentId = {DOMId}/>
+                <Element results = {results} item = {item} parentId = {DOMId}/>
             </div>
         </div>
     )
 }, (b, a) => _.isEqual(b.item, a.item) && _.isEqual(b.data, a.data))
 
-const Competition = memo(function Competition({ results, parentId }) {
+const Competition = memo(function Competition({ results, item, parentId }) {
     const CompetitorItem = memo(function Competitor({ item: competitor, parentId }) { 
         const [isFavorite, Favorite] = useFavorite('competitors', competitor)
         let DOMId = parentId
@@ -206,17 +205,23 @@ const Competition = memo(function Competition({ results, parentId }) {
                 </Conditional></>
         }
     ]
+
     return (
         <MultiPanel config = {panelsConfig} parentId = {DOMId}/>
     )
-}, (b, a) => _.isEqual(b.results, a.results))
+}, (b, a) => _.isEqual(b.results, a.results) && _.isEqual(b.item, a.item))
 
-const Competitor = memo(function Competitors({ results, parentId }) {
+const Competitor = memo(function Competitors({ results, item, parentId }) {
     let DOMId = parentId
-    return (
-        <>
-            <Panel title = 'Events' icon = {CalendarWeekFill} classes = 'w-full md:w-[32rem]' parentId = {DOMId + '-events'}>
-                <Conditional value = {results?.events?.length > 0}>
+    let panelsConfig = [
+        {
+            key: 'events',
+            title: 'Events',
+            icon: CalendarWeekFill,
+            panelClasses: 'w-full md:w-[32rem]',
+            parentId: DOMId + '-events',
+            children: 
+                <><Conditional value = {results?.events?.length > 0}>
                     <Map items = {results?.events} callback = {(event, index) => {
                         let eventId = DOMId + '-event' + index; return (
                         <EventItem key = {index} item = {event} bets = {event.bets} parentId = {eventId}/>
@@ -226,84 +231,59 @@ const Competitor = memo(function Competitors({ results, parentId }) {
                     <Text id = {DOMId + '-events-not-found'} preset = 'body' classes = 'text-text-highlight/killed'>
                         No events found.
                     </Text>
-                </Conditional>
-            </Panel>
-        </>
-    )
-}, (b, a) => _.isEqual(b.results, a.results))
+                </Conditional></>
+        },
+        {
+            key: 'form',
+            title: 'Form',
+            icon: BarChartLineFill,
+            panelClasses: 'w-full md:grow md:!w-auto',
+            parentId: DOMId + '-form',
+            children: 
+                <></>
+        }
+    ]
 
-const Event = memo(function Event({ event, results, parentId }) {
-    const History = memo(forwardRef(function History({ parentId, isOver, dropped }, dropRef) {
-        let title = useMemo(() => {
-            if (dropped) {
-                let { bet, outcome } = dropped
-                let string = ''
-                if (bet.key.includes('totals')) {
-                    string = outcome.name + ' ' + outcome.point
-                }
-                else if (bet.key.includes('spreads')) {
-                    if (outcome.competitor) {
-                        string = outcome.competitor.name + ' ' + (outcome.point > 0 ? '+' : '') + outcome.point
-                    }
-                }
-                else if (dropped.bet.key.includes('h2h')) {
-                    string = (outcome.competitor ? outcome.competitor.name + ' ' + bet.name : outcome.name)
-                }
-                else {
-                    if (outcome.competitor) {
-                        string = outcome.competitor.name
-                    }
-                    else {
-                        string = outcome.name
-                    }
-                }
-                return string
-            }
-            return ''
-        }, [dropped])
-
-        useEffect(() => {
-            if (dropped) {
-                console.log(dropped)
-            }
-        }, [dropped])
-
-        let DOMId = parentId + '-history'
-        return (
-            <div id = {DOMId} className = {'transition-colors duration-main grow max-h-full flex flex-col justify-center items-center p-lg rounded-base ' + (isOver ? 'bg-primary-main' : 'bg-base-main/muted')} ref = {dropRef}>
-                {dropped ? (
-                <Text preset = 'title' classes = {(isOver ? 'text-text-primary' : 'text-text-highlight')}>
-                    {title}
-                </Text>
-                ) : (
-                <Text preset = 'body' classes = {(isOver ? 'text-text-primary/muted' : 'text-text-highlight/muted')}>
-                    Drag outcome here to view history
-                </Text>
-                )}
-                
-            </div>
-        )
-    }), (b, a) => _.isEqual(b, a))
-
-    let DOMId = parentId
     return (
-        <>
-            <Panel title = 'Bets' icon = {Stack} classes = 'w-full md:w-[32rem]' parentId = {DOMId + '-bets'}>
-                <Conditional value = {results?.bets?.length > 0}>
+        <MultiPanel config = {panelsConfig} parentId = {DOMId}/>
+    )
+}, (b, a) => _.isEqual(b.results, a.results) && _.isEqual(b.item, a.item))
+
+const Event = memo(function Event({ item: event, results, parentId }) {
+    let DOMId = parentId
+    let panelsConfig = [
+        {
+            key: 'bets',
+            title: 'Bets',
+            icon: Stack,
+            panelClasses: 'w-full md:w-[32rem]',
+            parentId: DOMId + '-events',
+            children: 
+                <><Conditional value = {results?.bets?.length > 0}>
                     <Bets event = {event} bets = {results?.bets} parentId = {DOMId}/>
                 </Conditional>
                 <Conditional value = {!event.bets || (event.bets?.length < 1)}>
                     <Text id = {DOMId + '-bets-not-found'} preset = 'body' classes = 'text-text-highlight/killed'>
                         No bets found.
                     </Text>
-                </Conditional>
-                <Droppable id = {'event-outcome-history'}>
-                    <History parentId = {DOMId}/>
-                </Droppable>
-            </Panel>
-        </>
+                </Conditional></>
+        },
+        {
+            key: 'history',
+            title: 'History',
+            icon: BarChartLineFill,
+            panelClasses: 'w-full md:grow md:!w-auto',
+            parentId: DOMId + '-history',
+            children: 
+                <></>
+        }
+    ]
+
+    return (
+        <MultiPanel config = {panelsConfig} parentId = {DOMId}/>
+
     )
-}, (b, a) => _.isEqual(b.bets, a.bets) && _.isEqual(b.results, a.results))
+}, (b, a) => _.isEqual(b.event, a.event) && _.isEqual(b.results, a.results))
 
 const Title = memo(function Title({ category, item, parentId }) {
     let [isFavorite, Favorite] = useFavorite(category, item)
