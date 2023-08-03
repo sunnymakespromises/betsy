@@ -26,7 +26,7 @@ const Slips = memo(function Slips() {
     let DOMId = 'slips'
     if (active !== undefined) {
         return (
-            <Panel title = 'Slips' icon = {FileTextFill} classes = {'absolute bottom-0 right-0 mr-base md:mb-lg md:mr-lg w-[16rem] md:w-[32rem] overflow-auto no-scrollbar shadow-lg !animate-duration-150 ' + (isDragging ? 'animate-slideInRight' : 'animate-slideOutRight')} parentId = {DOMId}>
+            <Panel title = 'Slips' icon = {FileTextFill} classes = {'absolute bottom-0 right-0 w-full md:w-[32rem] overflow-auto no-scrollbar shadow-lg z-[100] !animate-duration-150 ' + (isDragging ? 'animate-slideInRight' : 'animate-slideOutRight')} parentId = {DOMId}>
                 <div id = {DOMId + '-trays'} className = 'w-full h-full flex flex-col gap-base'>
                     <Map items = {trays} callback = {(tray, index) => {
                         let trayId = DOMId + '-tray' + index; return (
@@ -61,12 +61,12 @@ const Tray = memo(forwardRef(function Tray({ data, tray, parentId, dropped, onDr
     return (
         <div id = {DOMId} className = {'group/tray transition-colors duration-main w-full flex flex-col gap-base p-base rounded-base ' + (isOver ? 'bg-primary-main' : 'bg-base-main/muted')} ref = {dropRef}>
             <Text id = {DOMId + '-' + tray.timestamp} preset = 'body' classes = {(isOver ? 'text-text-primary/killed' : 'text-text-main/killed')}>
-                {toDate(tray.timestamp)}
+                {tray.name}
             </Text>
             <div id = {DOMId + '-picks'} className = {'w-full grid ' + grid + ' gap-base'}>
                 <Map items = {tray.picks} callback = {(pick, index) => {
                     let pickId = DOMId + '-pick' + index; return (
-                    <Pick key = {index} data = {data} pick = {pick} parentId = {pickId}/>
+                    <Pick key = {index} data = {data} pick = {pick} isOver = {isOver} parentId = {pickId}/>
                 )}}/>
             </div>
         </div>
@@ -76,8 +76,10 @@ const Tray = memo(forwardRef(function Tray({ data, tray, parentId, dropped, onDr
 const NewTray = memo(forwardRef(function NewTray({ parentId, dropped, onDrop, isOver }, dropRef) {
     useEffect(() => {
         if (dropped) {
+            let time = now()
             onDrop({
-                timestamp: now(),
+                name: toDate(time),
+                timestamp: time,
                 picks: [dropped.id]
             })
         }
@@ -91,7 +93,7 @@ const NewTray = memo(forwardRef(function NewTray({ parentId, dropped, onDrop, is
     )
 }), (b, a) => b.isOver === a.isOver && _.isEqual(b.dropped, a.dropped))
 
-const Pick = memo(function Outcome({ pick, data, parentId }) {
+const Pick = memo(function Outcome({ pick, data, isOver, parentId }) {
     pick = useMemo(() => {
         if (pick && pick.split('-').length === 4) {
             let [eventId, betKey, valueTimestamp, outcomeName] = pick.split('-')
@@ -100,6 +102,7 @@ const Pick = memo(function Outcome({ pick, data, parentId }) {
             let value = bet.values.find(value => value.timestamp === Number(valueTimestamp))
             let outcome = value.outcomes.find(outcome => (outcome.competitor ? outcome.competitor.name === outcomeName : outcome.name === outcomeName))
             return {
+                event: event,
                 bet: bet,
                 outcome: outcome
             }
@@ -107,6 +110,32 @@ const Pick = memo(function Outcome({ pick, data, parentId }) {
         return null
     })
     let { bet, outcome } = pick ? pick : { bet: null, outcome: null }
+    let DOMId = parentId
+    // let eventName = useMemo(() => {
+    //     if (event) {
+    //         if (event.is_outright) {
+    //             return (
+    //                 <Text id = {DOMId + '-name'} preset = 'body' classes = {'w-full text-center whitespace-nowrap ' + (isOver ? 'text-text-primary/muted' : 'text-text-main/muted')}>
+    //                     {event.name}
+    //                 </Text>
+    //             )
+    //         }
+    //         return (
+    //             <div id = {DOMId + '-event'} className = 'group/info w-full flex justify-center items-center'>
+    //                 <Text id = {DOMId + '-event-competitor0-name'} preset = 'subtitle' classes = {'max-w-full !text-xs text-center whitespace-nowrap overflow-hidden text-ellipsis ' + (isOver ? 'text-text-primary/muted' : 'text-text-main/muted')}>
+    //                     {event.competitors[0].name}
+    //                 </Text>
+    //                 <Text id = {DOMId + '-event-competitors-separator'} preset = 'subtitle' classes = {'!text-xs text-center w-min flex ' + (isOver ? 'text-text-primary/muted' : 'text-text-main/muted')}>
+    //                     &nbsp;{event.name.includes('@') ? '@' : 'v'}&nbsp;
+    //                 </Text>
+    //                 <Text id = {DOMId + '-event-competitor1-name'} preset = 'subtitle' classes = {'max-w-full !text-xs text-center whitespace-nowrap overflow-hidden text-ellipsis ' + (isOver ? 'text-text-primary/muted' : 'text-text-main/muted')}>
+    //                     {event.competitors[1].name}
+    //                 </Text>
+    //             </div>
+    //         )
+    //     }
+    //     return <></>
+    // })
     let name = useMemo(() => {
         if (pick) {
             let string = ''
@@ -129,27 +158,29 @@ const Pick = memo(function Outcome({ pick, data, parentId }) {
                     string = outcome.name
                 }
             }
-            return string
+            return (
+                <Text id = {DOMId + '-name'} preset = 'subtitle' classes = {'w-full text-center whitespace-nowrap overflow-hidden text-ellipsis ' + (isOver ? 'text-text-primary/muted' : 'text-text-main/muted')}>
+                    {string}
+                </Text>
+            )
         }
-        return ''
+        return <></>
     }, [pick])
 
-    let DOMId = parentId
     return (
-        <div id = {DOMId} className = 'relative transition-colors duration-main w-full flex flex-col justify-center items-center gap-sm p-sm bg-base-main rounded-base'>
-            <Text id = {DOMId + '-name'} preset = 'subtitle' classes = 'w-full text-text-main/muted text-center whitespace-nowrap overflow-hidden text-ellipsis'>
-                {name}
-            </Text>
-            <Value value = {outcome.odds} parentId = {DOMId}/>
+        <div id = {DOMId} className = {'relative transition-colors duration-main w-full flex flex-col justify-center items-center gap-sm p-sm rounded-base ' + (isOver ? 'bg-primary-highlight' : 'bg-base-main')}>
+            {/* {eventName} */}
+            {name}
+            <Value value = {outcome.odds} isOver = {isOver} parentId = {DOMId}/>
         </div>
     )
-}, (b, a) => b.pick === a.pick && _.isEqual(b.dat, a.data))
+}, (b, a) => b.pick === a.pick && b.isOver === a.isOver && _.isEqual(b.dat, a.data))
 
-const Value = memo(function Value({ value, parentId }) {
+const Value = memo(function Value({ value, isOver, parentId }) {
     const [cookies,,] = useCookies(['odds_format'])
     let DOMId = parentId + '-value'
     return (
-        <Text id = {DOMId} preset = 'body' classes = '!font-bold !text-lg text-text-main'>
+        <Text id = {DOMId} preset = 'body' classes = {'!font-bold !text-lg ' + (isOver ? 'text-text-primary' : 'text-text-main')}>
             {calculateOdds(cookies['odds_format'], value ? value : 100)}
         </Text>
     )
