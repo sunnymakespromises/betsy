@@ -15,13 +15,13 @@ async function getCurrentUser(refresh_token, source) {
     }
     const authUser = await authenticateUser(refresh_token, source)
     if (authUser) {
-        let betsyUser = await queryTable('Users', 'auth_id = ' + authUser.id, null, true)
+        let betsyUser = await queryTable('users', 'auth_id = ' + authUser.id, null, true)
         if (betsyUser) {
             response.status = true
             response.user = betsyUser
-            response.user.subscriptions = betsyUser.subscriptions.length > 0 ? await queryTable('Users', 'id in ' + JSON.stringify(betsyUser.subscriptions), ['id', 'display_name', 'picture']) : []
+            response.user.subscriptions = betsyUser.subscriptions.length > 0 ? await queryTable('users', 'id in ' + JSON.stringify(betsyUser.subscriptions), ['id', 'display_name', 'picture']) : []
             for (const category of Object.keys(betsyUser.favorites).filter(category => betsyUser.favorites[category].length > 0)) {
-                response.user.favorites[category] = await getItems(_.startCase(category), betsyUser.favorites[category], ['id', 'name', 'picture'])
+                response.user.favorites[category] = await getItems(category, betsyUser.favorites[category], ['id', 'name', 'picture'])
             } 
         }
         else {
@@ -48,7 +48,7 @@ async function getCurrentUser(refresh_token, source) {
                 is_locked: false,
                 is_dev: false
             }
-            await insertItem('Users', item)
+            await insertItem('users', item)
             response.status = true
             response.newUser = true
             response.user = item

@@ -4,7 +4,7 @@ import reserved_keywords from './aws_reserved_keywords'
 
 export default async function getTable(table, attributes = null) {
     const params = {
-        TableName: 'Betsy_' + table
+        TableName: 'betsy_' + table
     }
     if (attributes) {
         const expressionAttributeNames = {}

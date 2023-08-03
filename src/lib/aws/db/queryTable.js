@@ -66,7 +66,7 @@ export default async function queryTable(table, query, attributes = null, single
         }
     }
     let params = {
-        TableName: 'Betsy_' + table,
+        TableName: 'betsy_' + table,
         FilterExpression: filterExpression,
         ExpressionAttributeValues: expressionAttributeValues
     }

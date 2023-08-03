@@ -3,7 +3,7 @@ import { PutCommand } from '@aws-sdk/lib-dynamodb'
 
 export default async function insertItem(table, object) {
     const params = {
-        TableName: 'Betsy_' + table,
+        TableName: 'betsy_' + table,
         Item: object
     }
     try {

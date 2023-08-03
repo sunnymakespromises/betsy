@@ -60,22 +60,22 @@ function useAuthorize() {
 
     const login = useGoogleLogin({
         onSuccess: async (res) => {
-            const { status, message, refreshToken } = await getRefreshToken(res.code, 'google')
-            if (status) {
+            const { status: refreshStatus, message: refreshMessage, refreshToken } = await getRefreshToken(res.code, 'google')
+            if (refreshStatus) {
                 setCookie('oauth_refresh_token', refreshToken)
-                const { status, message, user } = await getCurrentUser(refreshToken, 'google')
-                setUser(user)
-                if (status) {
+                const { status: currentUserStatus, message: currentUserMessage, user: currentUser } = await getCurrentUser(refreshToken, 'google')
+                setUser(currentUser)
+                if (currentUserStatus) {
                     setCookie('oauth_source', 'google')
                     navigate('/')
                 }
                 else {
-                    console.log(message)
+                    console.log(currentUserMessage)
                     removeCookie('oauth_source')
                 }
             }
             else {
-                console.log(message)
+                console.log(refreshMessage)
                 removeCookie('oauth_source')
                 removeCookie('oauth_refresh_token')
             }

@@ -6,7 +6,7 @@ export default async function deleteItem(table, key) {
     if (key.constructor.name === 'Object') {
         const item = await queryTable(table, key, null, true)
         const params = {
-            TableName: 'Betsy_' + table,
+            TableName: 'betsy_' + table,
             Key: { id: item.id }
         }
         try {
@@ -17,7 +17,7 @@ export default async function deleteItem(table, key) {
     }
     else {
         const params = {
-            TableName: 'Betsy_' + table,
+            TableName: 'betsy_' + table,
             Key: { id: key }
         }
         try {

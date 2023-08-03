@@ -7,7 +7,7 @@ export default async function getItems(table, keys, attributes = null) {
     if (keys.length === 1) {
         return [await getItem(table, keys[0], attributes)]
     }
-    let tableName = 'Betsy_' + table
+    let tableName = 'betsy_' + table
     let params = {
         RequestItems: {
             [tableName]: {

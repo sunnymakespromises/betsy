@@ -1,6 +1,6 @@
 import React, { memo, useMemo } from 'react'
 import { Link } from 'react-router-dom'
-import { AlarmRounded, CircleRounded, ListAltRounded } from '@mui/icons-material'
+import { FileTextFill, StopwatchFill } from 'react-bootstrap-icons'
 import _ from 'lodash'
 import { useSearch } from '../hooks/useSearch'
 import Text from './text'
@@ -18,13 +18,13 @@ const Events = memo(function Events({ search = true, searchKey, events, parentId
         filters: {
             live: {
                 title: 'Live Events',
-                icon: (props) => <AlarmRounded {...props}/>,
+                icon: (props) => <StopwatchFill {...props}/>,
                 fn: (a) => a.filter(r => r.start_time < now()).sort((a, b) => a.start_time - b.start_time),
                 turnsOff: ['popular', 'alphabetical']
             },
             has_bets: {
                 title: 'Has Bets',
-                icon: (props) => <ListAltRounded {...props}/>,
+                icon: (props) => <FileTextFill {...props}/>,
                 fn: (a) => a.filter(r => r.bets && r.bets.length > 0).sort((a, b) => a.start_time - b.start_time)
             }
         },
@@ -43,14 +43,9 @@ const Events = memo(function Events({ search = true, searchKey, events, parentId
                     <SearchBar inputPreset = 'events' input = {input} hasResults = {hasResults} filters = {filters} hasActiveFilter = {hasActiveFilter} setFilter = {setFilter} onInputChange = {onInputChange} isExpanded = {false} autoFocus = {false} canExpand = {false} parentId = {DOMId}/>
                     <div className = 'border-t-thin border-divider-main'/>
                 </Conditional>
-                <Map array = {results} callback = {(event, index) => {
+                <Map items = {results} callback = {(event, index) => {
                     let eventId = DOMId + '-event' + index; return (
-                    <React.Fragment key = {index}>
-                        <Event item = {event} parentId = {eventId}/>
-                        <Conditional value = {index !== results.length - 1}>
-                            <div className = 'border-t-thin border-divider-main'/>
-                        </Conditional>
-                    </React.Fragment>
+                    <Event item = {event} bets = {event.bets} parentId = {eventId}/>
                 )}}/>
             </div>
         )
@@ -58,86 +53,97 @@ const Events = memo(function Events({ search = true, searchKey, events, parentId
 }, (b, a) => b.search === a.search && b.searchKey === a.searchKey && _.isEqual(b.events, a.events))
 
 
-export const Event = memo(function Event({ item: event, parentId }) {
+export const Event = memo(function Event({ item: event, bets, parentId }) {
     let DOMId = parentId
     return (
-        <div id = {DOMId} className = {'group/event relative w-full h-min flex flex-col gap-small p-main'}>
-            <div id = {DOMId + '-info'} className = 'w-full flex flex-col'>
-                <Subtitle event = {event} parentId = {DOMId}/>
-                <Name event = {event} parentId = {DOMId}/>
-            </div>
-            <Bets event = {event} parentId = {DOMId}/>
+        <div id = {DOMId} className = {'group/event relative transition-colors duration-main w-full flex flex-col items-center gap-sm p-base bg-base-main/muted rounded-base'}>
+            <Title event = {event} parentId = {DOMId}/>
+            <Bets event = {event} bets = {bets} parentId = {DOMId}/>
         </div>
     )
-}, (b, a) => _.isEqual(b.item, a.item))
+}, (b, a) => _.isEqual(b.bets, a.bets) &&  _.isEqual(b.item, a.item))
 
-const Subtitle = memo(function Subtitle({ event, parentId }) {
-    let DOMId = parentId + '-subtitle'
-    return (
-        <div id = {DOMId} className = 'flex flex-row items-center'>
-            <Link to = {'/info?category=competitions&id=' + event.competition.id} id = {DOMId + '-competition'} className = 'flex flex-row items-center gap-micro'>
-                <Conditional value = {event.competition.picture}>
-                    <Image id = {DOMId + '-competition-image'} external path = {event.competition.picture} classes = 'h-3 aspect-square'/>
+const Title = memo(function Title({ event, parentId }) {
+    const isLive = useMemo(() => event.start_time < now(), [event])
+    let DOMId = parentId + '-title'
+    if (event.is_outright) {
+        return (
+            <Link to = {'/info?category=events&id=' + event.id} className = 'flex flex-col items-center gap-2xs'>
+                <Conditional value = {isLive}>
+                    <div id = {DOMId + '-live'} className = 'absolute top-0 left-0 mt-xs ml-xs bg-primary-main rounded-base p-xs shadow-lg'>
+                        <Text id = {DOMId + '-live-text'} preset = 'subtitle' classes = 'text-text-primary'>
+                            LIVE
+                        </Text>
+                    </div>
                 </Conditional>
-                <Text id = {DOMId + '-competition-name'} preset = 'events-subtitle' classes = 'transition-colors duration-main !text-primary-main hover:!text-primary-highlight'>
-                    {event.competition.name}
+                <Link id = {DOMId + '-competition'} to = {'/info?category=competitions&id=' + event.competition.id}>
+                    <Text id = {DOMId + '-competition-text'} preset = 'subtitle' classes = 'text-primary-main hover:text-primary-highlight whitespace-nowrap'>
+                        {event.competition.name}
+                    </Text>
+                </Link>
+                <Text id = {DOMId + '-name'} preset = 'body' classes = '!text-lg text-primary-main hover:text-primary-highlight whitespace-nowrap'>
+                    {event.name}
+                </Text>
+                <Text id = {DOMId + '-info-date'} preset = 'subtitle' classes = 'text-text-highlight/muted whitespace-nowrap'>
+                    &nbsp;{toDate(event.start_time)}
                 </Text>
             </Link>
-            <Text id = {DOMId + '-date'} preset = 'events-subtitle'>
-                &nbsp;{'• ' + toDate(event.start_time)}
-            </Text>
-        </div>
-    )
-}, (b, a) => _.isEqual(b.event, a.event))
-
-const Name = memo(function Name({ event, parentId }) {
-    const isLive = useMemo(() => event.start_time < now(), [event])
-    let DOMId = parentId
-    let name = useMemo(() => {
-        if (event.is_outright) {
-            return (
-                <Link to = {'/info?category=events&id=' + event.id} className = 'group/name flex flex-row items-center'>
-                    <Text id = {DOMId + '-name'} preset = 'events-name'>
-                        {event.name}
-                    </Text>
+        )
+    }
+    else {
+        return (
+            <div id = {DOMId} className = 'w-full flex items-center gap-xs'>
+                <Conditional value = {isLive}>
+                    <div id = {DOMId + '-live'} className = 'absolute top-0 left-0 mt-xs ml-xs bg-primary-main rounded-base p-xs shadow-lg'>
+                        <Text id = {DOMId + '-live-text'} preset = 'subtitle' classes = 'text-text-primary'>
+                            LIVE
+                        </Text>
+                    </div>
+                </Conditional>
+                <Link id = {DOMId + '-competitor0-image'} to = {'/info?category=competitors&id=' + event.competitors[0].id} className = 'transition-colors duration-main h-14 aspect-square flex justify-center items-center bg-primary-main rounded-full'>
+                    <Conditional value = {!event.competitors[0].picture}>
+                        <Text id = {DOMId + '-competitor0-image-text'} preset = 'body' classes = 'text-text-primary/muted'>
+                            {event.competitors[0].name.substr(0, 1)}
+                        </Text>
+                    </Conditional>
+                    <Conditional value = {event.competitors[0].picture}>
+                        <Image id = {DOMId + '-competitor0-image-image'} external path = {event.competitors[0].picture} classes = 'w-inscribed aspect-square'/>
+                    </Conditional>
                 </Link>
-            )
-        }
-        else {
-            return (
-                <Link to = {'/info?category=events&id=' + event.id} className = 'group/name flex flex-row items-center'>
-                    <div id = {DOMId + '-competitor0'}  className = 'flex flex-row items-center gap-tiny overflow-hidden'>
-                        <Conditional value = {event.competitors[0].picture}>
-                            <Image id = {DOMId + '-competitor0-image'} external path = {event.competitors[0].picture} classes = 'h-4 aspect-square'/>
-                        </Conditional>
-                        <Text id = {DOMId + '-competitor0-name'} preset = 'events-name'>
+                <div id = {DOMId + '-info'} className = 'grow flex flex-col items-center gap-2xs overflow-hidden'>
+                    <Link id = {DOMId + '-info-competition'} to = {'/info?category=competitions&id=' + event.competition.id}>
+                        <Text id = {DOMId + '-info-competition-text'} preset = 'subtitle' classes = 'text-primary-main hover:text-primary-highlight whitespace-nowrap'>
+                            {event.competition.name}
+                        </Text>
+                    </Link>
+                    <Link id = {DOMId + '-info-name'} to = {'/info?category=events&id=' + event.id} className = 'group/info w-full flex justify-center items-center'>
+                        <Text id = {DOMId + '-info-competitor0-name'} preset = 'body' classes = '!text-lg text-primary-main group-hover/info:text-primary-highlight whitespace-nowrap overflow-hidden text-ellipsis'>
                             {event.competitors[0].name}
                         </Text>
-                    </div>
-                    <Text id = {DOMId + '-competitors-separator'} preset = 'events-name' classes = '!overflow-visible w-min flex'>
-                        &nbsp;{event.name.includes('@') ? '@' : 'v'}&nbsp;
-                    </Text>
-                    <div id = {DOMId + '-competitor1'} className = 'flex flex-row items-center gap-tiny overflow-hidden'>
-                        <Conditional value = {event.competitors[1].picture}>
-                            <Image id = {DOMId + '-competitor1-image'} external path = {event.competitors[1].picture} classes = 'h-4 aspect-square'/>
-                        </Conditional>
-                        <Text id = {DOMId + '-competitor1-name'} preset = 'events-name'>
+                        <Text id = {DOMId + '-info-competitors-separator'} preset = 'body' classes = '!text-lg text-primary-main group-hover/info:text-primary-highlight w-min flex'>
+                            &nbsp;{event.name.includes('@') ? '@' : 'v'}&nbsp;
+                        </Text>
+                        <Text id = {DOMId + '-info-competitor1-name-name'} preset = 'body' classes = '!text-lg text-primary-main group-hover/info:text-primary-highlight whitespace-nowrap overflow-hidden text-ellipsis'>
                             {event.competitors[1].name}
                         </Text>
-                    </div>
+                    </Link>
+                    <Text id = {DOMId + '-info-date-text'} preset = 'subtitle' classes = 'text-text-highlight/muted whitespace-nowrap'>
+                        {toDate(event.start_time)}
+                    </Text>
+                </div>
+                <Link id = {DOMId + '-competitor1-image'} to = {'/info?category=competitors&id=' + event.competitors[1].id} className = 'transition-colors duration-main h-14 aspect-square flex justify-center items-center bg-primary-main rounded-full'>
+                    <Conditional value = {!event.competitors[1].picture}>
+                        <Text id = {DOMId + '-competitor1-image-text'} preset = 'body' classes = 'text-text-primary/muted'>
+                            {event.competitors[1].name.substr(0, 1)}
+                        </Text>
+                    </Conditional>
+                    <Conditional value = {event.competitors[1].picture}>
+                        <Image id = {DOMId + '-competitor1-image-image'} external path = {event.competitors[1].picture} classes = 'w-inscribed aspect-square'/>
+                    </Conditional>
                 </Link>
-            )
-        }
-    },[event])
-
-    return (
-        <div id = {DOMId + '-title'} className = 'w-min max-w-full flex flex-row items-center gap-tiny overflow-hidden'>
-            <Conditional value = {isLive}>
-                <CircleRounded id = {DOMId + '-live-icon'} className = '!h-3 !w-3 text-live-main'/>
-            </Conditional>
-            {name}
-        </div>
-    )
+            </div>
+        )
+    }
 }, (b, a) => _.isEqual(b.event, a.event))
 
 export default Events

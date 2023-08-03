@@ -9,7 +9,7 @@ const Slips = memo(function Slips() {
     return (
         <Page>
             <div id = {DOMId} className = 'w-full h-full flex flex-col'>
-                <Helmet><title>Slips | Betsy</title></Helmet>
+                <Helmet><title>Slips • Betsy</title></Helmet>
             </div>
         </Page>
     )

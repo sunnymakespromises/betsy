@@ -9,13 +9,16 @@ import { memo, useMemo } from 'react'
  * @param {element} children the elements to be rendered inside of the <p> tag as children. you don't have to actually pass it like children = x, just put <Text><x/></Text>.
  * @returns a <p> tag.
  */
-const Text = memo(function Text({ preset = 'main-body', styles, classes, children, ...extras }) {
+const Text = memo(function Text({ preset = 'body', styles, classes, children, ...extras }) {
     let options = {
+        body: 'transition-colors duration-main select-none font-main font-medium text-base',
+        title: 'transition-colors duration-main select-none font-main font-bold text-xl',
+        subtitle: 'transition-colors duration-main select-none font-main font-medium text-sm',
         main: {
-            body: 'select-none font-main font-light text-lg md:text-xl text-reverse-0',
-            title: 'whitespace-nowrap select-none font-main font-bold text-lg md:text-lg text-text-main',
-            button: 'whitespace-nowrap select-none font-main font-regular text-lg md:text-2xl text-reverse-100 group-hover:text-base-0',
-            money: 'select-none font-main font-light text-lg md:text-xl text-text-main'
+            body: 'select-none font-main',
+            title: 'whitespace-nowrap select-none font-main font-bold text-base md:text-base text-text-main',
+            button: 'whitespace-nowrap select-none font-main font-regular text-base md:text-xl text-reverse-100 group-hover:text-base-0',
+            money: 'select-none font-main font-light text-base md:text-lg text-text-main'
         },
         home: {
             panel: 'whitespace-nowrap select-none font-main font-bold text-xl md:text-xl text-text-main',
@@ -75,7 +78,8 @@ const Text = memo(function Text({ preset = 'main-body', styles, classes, childre
                 category: 'whitespace-nowrap select-none font-main font-medium text-base md:text-base text-primary-main',
             },
             result: {
-                title: 'transition-colors duration-main overflow-hidden text-ellipsis whitespace-nowrap select-none font-main font-medium text-sm md:text-sm text-text-main'
+                title: 'transition-colors duration-main overflow-hidden text-ellipsis whitespace-nowrap select-none font-main font-medium text-sm md:text-sm text-text-main',
+                subtitle: 'transition-colors duration-main overflow-hidden text-ellipsis whitespace-nowrap select-none font-main font-medium text-tiny md:text-tiny text-text-main/muted'
             }
         },
         dev: {

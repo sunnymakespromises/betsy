@@ -15,34 +15,34 @@ async function getData(category = null, currentUser = null) {
         let categories = category ? [category] : ['sports', 'competitions', 'events', 'competitors', 'users']
         const params = {
             sports: {
-                table: 'Sports',
+                table: 'sports',
                 attributes: ['id', 'name', 'picture'],
                 sort: null
             },
             competitions: {
-                table: 'Competitions',
+                table: 'competitions',
                 attributes: ['id', 'name', 'key', 'picture', 'sport', 'country', 'competitors', 'slip_count'],
                 sort: (a) => a.sort((a, b) => (a.slip_count - b.slip_count))
             },
             events: {
-                table: 'Events',
+                table: 'events',
                 attributes: ['id', 'name', 'competition', 'competitors', 'sport', 'is_outright', 'start_time', 'slip_count', 'bets', 'is_completed'],
                 sort: (a) => a.sort((a, b) => (a.start_time - b.start_time))
             },
             competitors: {
-                table: 'Competitors',
+                table: 'competitors',
                 attributes: ['id', 'name', 'picture', 'competitions', 'sport', 'slip_count'],
                 sort: (a) => a.sort((a, b) => (a.slip_count - b.slip_count))
             },
             users: {
-                table: 'Users',
+                table: 'users',
                 attributes: ['id', 'picture', 'display_name', 'slips'],
                 sort: null
             }
         }
         if (currentUser.is_dev) {
             params.logs = {
-                table: 'Logs',
+                table: 'logs',
                 attributes: null,
                 sort: (a) => a.sort((a, b) => (b.timestamp - a.timestamp)).filter(a => a.timestamp > (now() - (60*60*24*7)))
             }

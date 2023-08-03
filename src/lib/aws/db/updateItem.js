@@ -23,7 +23,7 @@ export default async function updateItem(table, key, object) {
         letterIndex++
     }
     const params = {
-        TableName: 'Betsy_' + table,
+        TableName: 'betsy_' + table,
         Key: key.constructor.name === 'Object' ? key : { id: key },
         UpdateExpression: updateExpression,
         ExpressionAttributeValues: expressionAttributeValues,

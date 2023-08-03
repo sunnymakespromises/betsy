@@ -22,10 +22,13 @@ function useThemes() {
     }, [setting])
 
     function getCurrentTheme() {
-        if (setting !== 'system') {
-            return setting
+        if (setting) {
+            if (setting !== 'system') {
+                return setting
+            }
+            return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
         }
-        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+        return 'light'
     }
 
     return theme

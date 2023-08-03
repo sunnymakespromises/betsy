@@ -14,39 +14,37 @@ import { forwardRef, memo, useMemo } from 'react'
 const Input = memo(forwardRef(function Input({ value, status, type = 'text', preset = 'main', styles, classes, onChange, ...extras }, ref) {
     let options = {
         main: {
-            classes: 'font-main w-min text-base-0 text-3xl bg-black bg-opacity-30 focus:outline-none px-3 py-2 rounded-xl',
+            classes: 'transition-all duration-main px-base py-sm font-main font-medium w-full text-base text-text-main bg-base-main/muted hover:bg-base-main focus:bg-base-main rounded-base placeholder:text-text-main/killed focus:outline-none z-10',
             true: '',
             false: '',
             null: ''
         },
         profile: {
-            display_name: {
-                classes: 'transition-all duration-main select-none w-full font-main font-medium text-base md:text-base text-primary-main text-center placeholder:text-primary-main/killed bg-transparent focus:outline-none',
-                true: '',
-                false: '',
-                null: ''
-            }
+            classes: 'transition-all duration-main p-sm select-none font-main font-medium text-base rounded-base focus:outline-none',
+            true: '',
+            false: '',
+            null: ''
         },
         info: {
-            classes: 'px-main py-smaller font-main font-medium w-full text-sm md:text-sm text-text-highlight placeholder:text-text-highlight/killed focus:outline-none bg-base-main z-10',
+            classes: 'transition-all duration-main px-base py-sm font-main font-medium w-full text-base text-text-main bg-base-highlight/muted hover:bg-base-highlight focus:bg-base-highlight rounded-base placeholder:text-text-highlight/killed focus:outline-none z-10',
             true: '',
             false: '',
             null: ''
         },
         search: {
-            classes: 'px-main py-smaller font-main font-medium w-full text-sm md:text-sm text-text-main placeholder:text-text-highlight/killed focus:outline-none bg-base-main z-10',
+            classes: 'transition-colors duration-main px-main py-smaller font-main font-medium w-full text-sm md:text-sm text-text-main placeholder:text-text-highlight/killed focus:outline-none bg-base-main z-10',
             true: '',
             false: '',
             null: ''
         },
         dev: {
-            classes: 'py-small p-main font-main font-medium w-full text-sm md:text-sm text-text-main placeholder:text-text-highlight/killed focus:outline-none bg-base-main z-10',
+            classes: 'transition-colors duration-main py-small p-main font-main font-medium w-full text-sm md:text-sm text-text-main placeholder:text-text-highlight/killed focus:outline-none bg-base-main z-10',
             true: '',
             false: '',
             null: ''
         },
         events: {
-            classes: 'px-main py-smaller font-main font-medium w-full text-sm md:text-sm text-text-main placeholder:text-text-highlight/killed focus:outline-none bg-base-main !border-0 !shadow-none z-10',
+            classes: 'transition-colors duration-main px-main py-smaller font-main font-medium w-full text-sm md:text-sm text-text-main placeholder:text-text-highlight/killed focus:outline-none bg-base-main !border-0 !shadow-none z-10',
             true: '',
             false: '',
             null: ''
@@ -63,7 +61,7 @@ const Input = memo(forwardRef(function Input({ value, status, type = 'text', pre
     }, [preset])
 
     return (
-        <input className = {option.classes + (status === false ? ' ' + option.false : '') + (status === true ? ' ' + option.true : '') + (status === null ? ' ' + option.null : '') + (classes ? ' ' + classes : '')} style = {styles} value = {value ? value : ''} type = {type} onChange = {onChange} ref = {ref} {...extras}/>
+        <input className = {option.classes + (status === false ? ' ' + option.false : '') + (status === true ? ' ' + option.true : '') + (status === null && option.null !== '' ? ' ' + option.null : '') + (classes ? ' ' + classes : '')} style = {styles} value = {value ? value : ''} type = {type} onChange = {onChange} ref = {ref} {...extras}/>
     )
 }), (b, a) => b.value === a.value && b.classes === a.classes && b.type === a.type && b.preset === a.preset && _.isEqual(b.status, a.status) && _.isEqual(b.styles, a.styles))
 

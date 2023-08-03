@@ -1,67 +1,84 @@
 import { Routes as RoutesWrapper, Route } from 'react-router-dom'
+import { BoxArrowRight, ClipboardDataFill, CloudFill, FileTextFill, GearFill, HouseFill, KeyFill, PersonCircle, PostcardFill } from 'react-bootstrap-icons'
 import Home from './home'
 import Settings from './settings'
 import Login from './login'
 import Logout from './logout'
 import User from './user'
-import Dev from './dev'
 import Info from './info'
 import Slips from './slips'
-import { ExitToApp, DevicesRounded, DashboardRounded, VpnKeyRounded, SettingsRounded, ContactsRounded, ListAltRounded, FaceRounded } from '@mui/icons-material'
+import Edit from './edit'
+import Database from './database'
 
 const routes = [
     {
         path: '/',
-        icon: (props) => <DashboardRounded {...props}/>,
+        title: 'Home',
+        icon: (props) => <HouseFill {...props}/>,
         element: <Home/>,
         show: true,
         is_dev: false
     },
     {
         path: '/login',
-        icon: (props) => <VpnKeyRounded {...props}/>,
+        title: 'Login',
+        icon: (props) => <KeyFill {...props}/>,
         element: <Login/>,
         show: false,
-        is_dev: false
+        is_dev: false,
     },
     {
         path: '/info',
-        icon: (props) => <ContactsRounded {...props}/>,
+        title: 'Info',
+        icon: (props) => <PostcardFill {...props}/>,
         element: <Info/>,
         show: false,
         is_dev: false
     },
     {
         path: '/slips',
-        icon: (props) => <ListAltRounded {...props}/>,
+        title: 'Slips',
+        icon: (props) => <FileTextFill {...props}/>,
         element: <Slips/>,
         show: true,
         is_dev: false
     },
     {
-        path: '/dev',
-        icon: (props) => <DevicesRounded {...props}/>,
-        element: <Dev/>,
+        path: '/database',
+        title: 'Database',
+        icon: (props) => <ClipboardDataFill {...props}/>,
+        element: <Database/>,
+        show: true,
+        is_dev: true
+    },
+    {
+        path: '/edit',
+        title: 'Edit',
+        icon: (props) => <CloudFill {...props}/>,
+        element: <Edit/>,
         show: true,
         is_dev: true
     },
     {
         path: '/user',
-        icon: (props) => <FaceRounded {...props}/>,
+        title: 'User',
+        icon: (props) => <PersonCircle {...props}/>,
         element: <User/>,
         show: true,
         is_dev: false
     },
     {
         path: '/settings',
-        icon: (props) => <SettingsRounded {...props}/>,
+        title: 'Settings',
+        icon: (props) => <GearFill {...props}/>,
         element: <Settings/>,
         show: true,
         is_dev: false
     },
     {
         path: '/logout',
-        icon: (props) => <ExitToApp {...props}/>,
+        title: 'Logout',
+        icon: (props) => <BoxArrowRight {...props}/>,
         element: <Logout/>,
         show: false,
         is_dev: false

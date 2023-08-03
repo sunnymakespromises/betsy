@@ -6,22 +6,7 @@ async function getItem(category, id) {
         item: null,
         message: ''
     }
-    let table
-    switch (category) {
-        case 'competitions':
-            table = 'Competitions'
-            break
-        case 'competitors':
-            table = 'Competitors'
-            break
-        case 'events':
-            table = 'Events'
-            break
-        default:
-            break
-    }
-
-    let item = await getItemFromTable(table, id, null)
+    let item = await getItemFromTable(category, id, null)
     if (item) {
         response.status = true
         response.item = item

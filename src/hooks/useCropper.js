@@ -1,4 +1,5 @@
 import { useMemo, useRef, useState } from 'react'
+import cropImage from '../lib/util/cropImage'
 
 function useCropper(picture) {
     const [crop, setCrop] = useState({ x: 0, y: 0 })
@@ -28,42 +29,9 @@ function useCropper(picture) {
         return (img.width / img.height >= 1) ? 'vertical-cover' : 'horizontal-cover'
     }
     
-
-    async function onCrop() {
-        const image = await createImage(pictureRef.current)
-        const canvas = document.createElement('canvas')
-        const ctx = canvas.getContext('2d')
-
-        canvas.width = 254
-        canvas.height = 254
-
-        ctx.drawImage(
-            image,
-            croppedAreaRef.current.x,
-            croppedAreaRef.current.y,
-            croppedAreaRef.current.width,
-            croppedAreaRef.current.height,
-            0,
-            0,
-            canvas.width,
-            canvas.height
-        )
-
-        return await new Promise((resolve) => {
-            canvas.toBlob((blob) => {
-                resolve(blob)
-            }, 'image/png')
-        })
+    async function onCrop(size) {
+        return cropImage(size, pictureRef.current)
     }
-
-    const createImage = (url) =>
-        new Promise((resolve, reject) => {
-            const image = new Image()
-            image.addEventListener('load', () => resolve(image))
-            image.addEventListener('error', error => reject(error))
-            image.setAttribute('crossOrigin', 'anonymous')
-            image.src = url
-        })
 
     return [params, onCrop]
 }

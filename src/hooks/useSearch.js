@@ -9,7 +9,7 @@ function useSearch(config) {
     queryId.current = config.id + '_query'
     const filtersId = useRef()
     filtersId.current = config.id + '_filters'
-    const [cookies, _setCookie, _removeCookie] = useCookies([queryId?.current, filtersId?.current])
+    const [cookies, _setCookie, _removeCookie] = useCookies([queryId.current, filtersId.current])
     const queryParam = useMemo(() => cookies[queryId?.current], [cookies, config])
     const filtersParam = useMemo(() => cookies[filtersId?.current], [cookies, config])
     const filters = useMemo(() => {
@@ -35,7 +35,6 @@ function useSearch(config) {
         let value = input !== '' ? input : null
         setCookie(queryId.current, value)
     }, [input])
-
 
     useEffect(() => {
         setResults(getResults())

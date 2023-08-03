@@ -14,7 +14,7 @@ async function addToFavorites(user, category, target) {
             updatedFavorites[category] = [...(user.favorites[category]).map(favorite => favorite.id)]
         }
         updatedFavorites[category].push(target.id)
-        await updateItem('Users', user.id, { favorites: updatedFavorites })
+        await updateItem('users', user.id, { favorites: updatedFavorites })
         response.changes = {favorites: {...user.favorites, [category]: [...user.favorites[category], { id: target.id, name: target.name, picture: target.picture }]}}
         response.status = true
     }
@@ -38,7 +38,7 @@ async function removeFromFavorites(user, category, target) {
             updatedFavorites[category] = [...(user.favorites[category]).map(favorite => favorite.id)]
         }
         updatedFavorites[category] = updatedFavorites[category].filter(f => f !== target.id)
-        await updateItem('Users', user.id, { favorites: updatedFavorites })
+        await updateItem('users', user.id, { favorites: updatedFavorites })
         response.changes = { favorites: {...user.favorites, [category]: user.favorites[category].filter(f => f.id !== target.id)} }
         response.status = true
     }
@@ -62,7 +62,7 @@ async function rearrangeFavorites(user, category, source, target) {
     let sourceIndex = updatedFavorites[category].indexOf(source.id)
     let targetIndex = updatedFavorites[category].indexOf(target.id)
     updatedFavorites[category] = arraymove(updatedFavorites[category], sourceIndex, targetIndex)
-    await updateItem('Users', user.id, { favorites: updatedFavorites })
+    await updateItem('users', user.id, { favorites: updatedFavorites })
     response.changes = {favorites: {...user.favorites, [category]: arraymove(user.favorites[category], sourceIndex, targetIndex)}}
     response.status = true
 

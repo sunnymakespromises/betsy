@@ -9,12 +9,12 @@ async function subscribe(user, targetId) {
     }
     if (user) {
         if (user.id !== targetId) {
-            const targetUser = await getItem('Users', targetId)
+            const targetUser = await getItem('users', targetId)
             if (targetUser) {
                 // i get user subs in the expanded form (id, display_name, picture), but i need to store them in db as just ids, and then return it to the client as expanded
                 if (!user.subscriptions.some(subscription => subscription.id === targetUser.id)) {
                     let updatedSubscriptions = [...(user.subscriptions?.map(subscription => subscription.id)), targetUser.id]
-                    await updateItem('Users', user.id, { subscriptions: updatedSubscriptions })
+                    await updateItem('users', user.id, { subscriptions: updatedSubscriptions })
                     response.changes = { subscriptions: [...user.subscriptions, { id: targetUser.id, display_name: targetUser.display_name, picture: targetUser.picture }] }
                     response.status = true
                 }
@@ -44,13 +44,13 @@ async function unsubscribe(user, targetId) {
         message: ''
     }
     if (user.id !== targetId) {
-        const targetUser = await getItem('Users', targetId)
+        const targetUser = await getItem('users', targetId)
         if (targetUser) {
             // i get user subs in the expanded form (id, display_name, picture), but i need to store them in db as just ids, and then return it to the client as expanded
-            if (user.subscriptions.some(subscription => subscription === targetUser.id)) {
-                let updatedSubscriptions = user.subscriptions.filter(subscription => subscription !== targetUser.id)?.map(subscription => subscription.id)
-                await updateItem('Users', user.id, { subscriptions: updatedSubscriptions })
-                response.changes = { subscriptions: user.subscriptions.filter(subscription => subscription !== targetUser.id) }
+            if (user.subscriptions.some(subscription => subscription.id === targetUser.id)) {
+                let updatedSubscriptions = user.subscriptions.filter(subscription => subscription.id !== targetUser.id)?.map(subscription => subscription.id)
+                await updateItem('users', user.id, { subscriptions: updatedSubscriptions })
+                response.changes = { subscriptions: user.subscriptions.filter(subscription => subscription.id !== targetUser.id) }
                 response.status = true
             }
             else {

@@ -12,21 +12,21 @@ export default function Login() {
     let DOMId = 'login'
     return (
         <Page DOMId = {DOMId}>
-            <div id = {DOMId} className = 'w-full h-full flex flex-col bg-base-main rounded-main p-main'>
-                <Helmet><title>Login | Betsy</title></Helmet>
+            <div id = {DOMId} className = 'transition-colors duration-main w-full h-full flex flex-col bg-base-main rounded-main p-main'>
+                <Helmet><title>Login • Betsy</title></Helmet>
                 <div id = {DOMId + '-bar'} className = 'w-min bg-gradient-to-r from-primary-highlight to-accent-highlight bg-clip-text py-micro'>
                     <Text id = {DOMId + '-title'} preset = 'login-title' classes = '!text-transparent'>
                         Betsy
                     </Text>
                 </div>
                 <div id = {DOMId + '-blurbs'} className = 'flex flex-col'>
-                    <Map array = {blurbs} callback = {(blurb, index) => { 
+                    <Map items = {blurbs} callback = {(blurb, index) => { 
                         let blurbId = DOMId + '-blurb' + index; return (
                         <Blurb key = {index} subtitle = {blurb.subtitle} body = {blurb.body} parentId = {blurbId}/>
                     )}}/>
                 </div>
                 <div id = {DOMId + 'form'} className = 'w-full h-min flex flex-col items-center gap-small'>
-                <Map array = {options} callback = {(option, index) => { 
+                <Map items = {options} callback = {(option, index) => { 
                     let optionId = DOMId + '-option' + index; return (
                     <Option key = {index} source = {option.source} image = {option.image} login = {login} parentId = {optionId}/>
                 )}}/>
@@ -60,7 +60,7 @@ const Blurb = memo(function Blurb({ subtitle, body, parentId }) {
 const Option = memo(function Option({ source, image, login, parentId }) {
     let DOMId = parentId
     return (
-        <div id = {DOMId} className = 'w-full h-min flex justify-center items-center gap-small p-small bg-base-main hover:bg-base-highlight rounded-main border-thin border-divider-main shadow-sm md:shadow cursor-pointer' onClick = {() => login(source)}>
+        <div id = {DOMId} className = 'transition-colors duration-main w-full h-min flex justify-center items-center gap-small p-small bg-base-main hover:bg-base-highlight rounded-main border-thin border-divider-main shadow-sm md:shadow cursor-pointer' onClick = {() => login(source)}>
             <Text id = {DOMId + '-sign-in-text'} preset = 'login-option'>
                 Sign in with
             </Text>

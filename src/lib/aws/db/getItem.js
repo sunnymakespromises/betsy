@@ -9,7 +9,7 @@ export default async function getItem(table, key, attributes = null) {
     }
     else {
         let params = {
-            TableName: 'Betsy_' + table,
+            TableName: 'betsy_' + table,
             Key: { id: key }
         }
         if (attributes) {

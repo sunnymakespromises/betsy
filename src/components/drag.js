@@ -1,5 +1,6 @@
-import React, { useState } from 'react'
+import React, { useLayoutEffect, useState } from 'react'
 import { DragOverlay, useDndMonitor, useDraggable, useDroppable } from '@dnd-kit/core'
+import { createPortal } from 'react-dom'
 
 export function Drag({ overlay, children, parentId }) {
     const [active, setActive] = useState(null)
@@ -7,22 +8,32 @@ export function Drag({ overlay, children, parentId }) {
         onDragStart: (item) => setActive(item),
         onDragEnd: () => setActive(null)
     })
+    let [containerElement, setContainerElement] = useState()
+    useLayoutEffect(() => {
+        if (!containerElement && document.getElementById('body')) {
+             setContainerElement(document.getElementById('body'))
+        }
+     }, [])
+
     let Overlay = overlay
     let DOMId = parentId
     return (
         <>
             {children}
-            <DragOverlay dropAnimation = {null}>
-            {active ? (
-                <Overlay active = {active.active.data.current} parentId = {DOMId + '-drag-overlay'}/> 
-            ): null}
-            </DragOverlay>
+            {containerElement && createPortal(
+                <DragOverlay dropAnimation = {null}>
+                {active ? (
+                    <Overlay active = {active.active.data.current} parentId = {DOMId + '-drag-overlay'}/> 
+                ): null}
+                </DragOverlay>
+            , containerElement)}
+            
         </>
     )
 }
 
 export function Droppable({ id, children }) {
-    const [active, setActive] = useState()
+    const [dropped, setDropped] = useState()
     const {
         setNodeRef,
         isOver
@@ -31,10 +42,10 @@ export function Droppable({ id, children }) {
     })
 
     useDndMonitor({
-        onDragEnd: (item) => isOver ? setActive(item.active.data.current) : null
+        onDragEnd: (item) => isOver ? setDropped(item.active.data.current) : null
     })
 
-    return React.cloneElement(children, { ref: setNodeRef, isOver: isOver, active: active })
+    return React.cloneElement(children, { ref: setNodeRef, isOver: isOver, dropped: dropped })
 }
 
 export function Draggable({ id, data, children }) {

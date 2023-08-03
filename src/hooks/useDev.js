@@ -1,23 +1,24 @@
 import { useDataContext } from '../contexts/data'
-import { uploadPicture as _uploadPicture } from '../lib/dev/uploadPicture'
+import { updateItem as _updateItem } from '../lib/dev/updateItem'
 import getTable from '../lib/aws/db/getTable'
 
 
 function useDev() {
     const { updateData } = useDataContext()
-    async function uploadPicture(object, value, single) {
+    async function updateItem(object, category, value, single) {
         if (single) {
-            const { status } = await _uploadPicture(object, value)
-            if (status) {
+            const response = await _updateItem(object, category, value)
+            if (response.status) {
                 await updateData(object.category)
+                return response
             }
         }
         else {
             for (let i = 0; i < object.length; i++) {
-                await _uploadPicture(object[i], value[i])
+                await _updateItem(object[i], category, value[i])
             }
-            for (const category of [...new Set(object.map(obj => obj.category))]) {
-                await updateData(category)
+            for (const objectCategory of [...new Set(object.map(obj => obj.category))]) {
+                await updateData(objectCategory)
             }
         }
     }
@@ -26,7 +27,7 @@ function useDev() {
         return await getTable('Logs')
     }
 
-    return { uploadPicture, getLogs }
+    return { updateItem, getLogs }
 }
 
 export { useDev }

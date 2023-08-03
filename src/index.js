@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter, useLocation } from 'react-router-dom'
 import { CookiesProvider } from 'react-cookie'
@@ -12,13 +12,10 @@ import { useThemes } from './hooks/useThemes'
 import { useBreakpoints } from './hooks/useBreakpoints'
 import { useAuthorize } from './hooks/useAuthorize'
 import { useData } from './hooks/useData'
-import Navigation from './components/navigation'
-import Conditional from './components/conditional'
-import RootSearch from './components/rootSearch'
 import Slips from './components/slips'
 import { Routes } from './routes/routes'
 import './index.css'
-import 'simplebar-react/dist/simplebar.min.css'
+import Header from './components/header'
 
 const rootElement = ReactDOM.createRoot(document.getElementById('root'))
 rootElement.render(
@@ -58,37 +55,36 @@ function Root() {
         touchSensor,
         keyboardSensor,
     )
+    const hasUser = useMemo(() => currentUser !== undefined && currentUser !== null, [currentUser])
 
     return (
         <WindowProvider value = {windowContext}>
             <UserProvider value = {userContext}>
                 <DataProvider value = {dataContext}>
-                    <div id = 'lol' className = {theme + ' relative w-full h-full flex flex-col-reverse md:flex-row bg-base-main'}>
-                    {(location.pathname === '/login' || data) &&
-                        <Conditional value = {currentUser !== undefined}>
-                            {currentUser && <RootSearch currentUser = {currentUser} data = {data}/>}
-                            <Navigation currentUser = {currentUser} location = {location}/>
-                            <DndContext sensors = {sensors} autoScroll = {false} collisionDetection = {pointerWithin} measuring = {{droppable: {strategy: MeasuringStrategy.Always, frequency: 300}}}>
-                                <div id = 'body' className = 'relative w-full h-full flex flex-col overflow-hidden'>
-                                    <TransitionGroup component = {null}>
-                                        <CSSTransition 
-                                            key = {location.pathname}
-                                            classNames = {{
-                                                enter: 'z-0',
-                                                enterDone: '',
-                                                exit: 'z-10',
-                                                exitActive: 'z-10'
-                                            }}
-                                            timeout = {300}
-                                            mountOnEnter
-                                        >
-                                            <Routes location = {location}/>
-                                        </CSSTransition>
-                                    </TransitionGroup>
-                                    {currentUser && <Slips slips = {currentUser.slips}/>}
-                                </div>
-                            </DndContext>
-                        </Conditional>}
+                    <div id = 'body' className = {'theme-' + theme + ' transition-colors duration-main relative w-full h-full flex flex-col-reverse md:flex-row bg-base-main'}>
+                        {(location.pathname === '/login' || data) && <>
+                        {hasUser && data && <Header currentUser = {currentUser} data = {data} location = {location}/>}
+                        <DndContext sensors = {sensors} autoScroll = {false} collisionDetection = {pointerWithin} measuring = {{droppable: {strategy: MeasuringStrategy.Always, frequency: 300}}}>
+                            <div id = 'content' className = 'relative flex flex-col w-full h-full animate-fadeInDown'>
+                                <TransitionGroup component = {null}>
+                                    <CSSTransition 
+                                        key = {location.pathname}
+                                        classNames = {{
+                                            enter: 'animate-slideInDown z-10',
+                                            enterDone: 'animate-slideInDown',
+                                            exit: 'animate-backOutUp z-0',
+                                            exitActive: 'z-0'
+                                        }}
+                                        timeout = {300}
+                                        mountOnEnter
+                                    >
+                                        <Routes location = {location}/>
+                                    </CSSTransition>
+                                </TransitionGroup>
+                                {currentUser && <Slips slips = {currentUser.slips}/>}
+                            </div>
+                        </DndContext>
+                        </>}
                     </div>
                 </DataProvider>
             </UserProvider>

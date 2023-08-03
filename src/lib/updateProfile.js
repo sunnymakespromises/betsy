@@ -13,7 +13,7 @@ async function updateProfile(user, key, value) {
             response.message = validate((value === ''), 'Display name cannot be empty.', response.message)
             response.message = validate((value.length < 1 || value.length > 16), 'Display name must be between 1 and 16 characters.', response.message)
             if (response.message === '') {
-                await updateItem('Users', user.id, {display_name: value})
+                await updateItem('users', user.id, {display_name: value})
                 response.status = true
             }
             break
@@ -24,7 +24,7 @@ async function updateProfile(user, key, value) {
                 await removeFile(process.env.REACT_APP_AWS_PROFILE_PICTURES_BUCKET, user.picture.replace('https://' + process.env.REACT_APP_AWS_PROFILE_PICTURES_BUCKET + '.s3.amazonaws.com/', ''))
             }
             if (await insertFile(process.env.REACT_APP_AWS_PROFILE_PICTURES_BUCKET, file)) {
-                await updateItem('Users', user.id, {picture: 'https://' + process.env.REACT_APP_AWS_PROFILE_PICTURES_BUCKET + '.s3.amazonaws.com/' + fileName})
+                await updateItem('users', user.id, {picture: 'https://' + process.env.REACT_APP_AWS_PROFILE_PICTURES_BUCKET + '.s3.amazonaws.com/' + fileName})
                 response.status = true
             }
             else {

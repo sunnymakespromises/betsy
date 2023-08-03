@@ -10,11 +10,13 @@ function useData(currentUser) {
     let previousCurrentUser = usePrevious(currentUser)
     
     useEffect(() => {
-        if ((currentUser && !data )) {
-            updateData()
-        }
-        else if (!_.isEqual(previousCurrentUser?.favorites, currentUser?.favorites)) {
-            updateData('recommendations')
+        if (currentUser) {
+            if (!data) {
+                updateData()
+            }
+            else if (!_.isEqual(previousCurrentUser?.favorites, currentUser?.favorites)) {
+                updateData('recommendations')
+            }
         }
     }, [currentUser])
 

@@ -32,14 +32,12 @@ function useStore(category, shape, defaults, options) {
                 setCookie(storeName, [...storeRef.current, value])
             }
         }
-        else {
-            if (storeRef.current[category]) {
-                if (value.constructor.name === 'Array') {
-                    setCookie(storeName, {...storeRef.current, [category]: [...storeRef.current[category], ...value]})
-                }
-                else {
-                    setCookie(storeName, {...storeRef.current, [category]: [...storeRef.current[category], value]})
-                }
+        else if (storeRef.current[category]) {
+            if (value.constructor.name === 'Array') {
+                setCookie(storeName, {...storeRef.current, [category]: [...storeRef.current[category], ...value]})
+            }
+            else {
+                setCookie(storeName, {...storeRef.current, [category]: [...storeRef.current[category], value]})
             }
         }
     }
@@ -55,15 +53,36 @@ function useStore(category, shape, defaults, options) {
                 emptyStore()
             }
         }
-        else {
-            if (storeRef.current[category]) {
-                let newStore = {...storeRef.current, [category]: storeRef.current[category].filter(item => !(_.isEqual(item, value)))}
-                if (Object.keys(newStore).some(category => newStore[category].length > 0)) {
-                    setCookie(storeName, {...storeRef.current, [category]: storeRef.current[category].filter(item => !(_.isEqual(JSON.stringify(item), JSON.stringify(value))))})
-                }
-                else {
-                    emptyStore()
-                }
+        else if (storeRef.current[category]) {
+            let newStore = {...storeRef.current, [category]: storeRef.current[category].filter(item => !(_.isEqual(item, value)))}
+            if (Object.keys(newStore).some(category => newStore[category].length > 0)) {
+                setCookie(storeName, {...storeRef.current, [category]: storeRef.current[category].filter(item => !(_.isEqual(JSON.stringify(item), JSON.stringify(value))))})
+            }
+            else {
+                emptyStore()
+            }
+        }
+    }
+
+    function editItem(category, value, newValue) {
+        if (shape === 'array') {
+            newValue = value
+            value = category
+            let item = storeRef.current.find(item => _.isEqual(JSON.stringify(item), JSON.stringify(value)))
+            console.log(storeRef.current)
+            if (item) {
+                let newStore = storeRef.current
+                newStore[storeRef.current.indexOf(item)] = newValue
+                console.log(item, newStore)
+                setCookie(storeName, newStore)
+            }
+        }
+        else if (storeRef.current[category]) {
+            let item = storeRef.current[category].find(item => _.isEqual(JSON.stringify(item), JSON.stringify(value)))
+            if (item) {
+                let newStore = storeRef.current[category]
+                newStore[storeRef.current.indexOf(item)] = newValue
+                setCookie(storeName, {...storeRef.current, [category]: newStore})
             }
         }
     }
@@ -76,7 +95,7 @@ function useStore(category, shape, defaults, options) {
         return defaults ? defaults : shape === 'array' ? [] : {}
     }
 
-    return [ store, addToStore, removeFromStore, emptyStore ]
+    return [ store, addToStore, removeFromStore, editItem, emptyStore ]
 }
 
 export { useStore }

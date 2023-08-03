@@ -1,9 +1,13 @@
-import React from 'react'
-import { DndContext, KeyboardSensor, MouseSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core'
+import React, { useEffect, useState } from 'react'
+import { DndContext, KeyboardSensor, MouseSensor, TouchSensor, closestCenter, useSensor, useSensors } from '@dnd-kit/core'
 import { SortableContext, useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
+import Map from './map'
+import arraymove from '../lib/util/arraymove'
 
-function Sort({ items, onPlace, children }) {
+function Sort({ items, onPlace, onDrag, item, itemProps, parentId, ...extras }) {
+    let [isDragging, setIsDragging] = useState(false)
+    let [tempItems, setTempItems] = useState(items)
     const mouseSensor = useSensor(MouseSensor, {
         activationConstraint: {
             distance: 10,
@@ -21,26 +25,59 @@ function Sort({ items, onPlace, children }) {
         touchSensor,
         keyboardSensor,
     )
+    useEffect(() => {
+        setTempItems(items)
+    }, [items])
 
+    let Child = item
+    let DOMId = parentId
     return (
-        <DndContext onDragEnd = {onDragEnd} sensors = {sensors}>
-            <SortableContext items = {items}>
-                {children}
+        <DndContext onDragEnd = {onDragEnd} onDragOver = {onDragOver} onDragStart = {onDragStart} sensors = {sensors} collisionDetection = {closestCenter} {...extras}>
+            <SortableContext items = {isDragging ? items : tempItems}>
+                <Map items = {isDragging ? items : tempItems} callback = {(item, index) => {
+                    let itemId = DOMId + '-item' + index; return (
+                    <Sortable key = {index} id = {item.id} somethingIsDragging = {isDragging}>
+                        <Child item = {item} {...itemProps} parentId = {itemId}/>
+                    </Sortable>
+                )}}/>
             </SortableContext>
         </DndContext>
     )
 
     function onDragEnd(event) {
+        setIsDragging(false)
         const {active: activeElement, over: overElement} = event
         if (activeElement && overElement && activeElement.id !== overElement.id) {
             let active = items.find(item => item.id === activeElement.id)
             let over = items.find(item => item.id === overElement.id)
-            onPlace(active, over)
+            if (onPlace) {
+                onPlace(active, over)
+            }
         }
+    }
+    
+    function onDragOver(event) {
+        const {active: activeElement, over: overElement} = event
+        if (activeElement && overElement) {
+            if (activeElement.id !== overElement.id) {
+                let newItems = tempItems
+                let sourceIndex = newItems.map(item => item.id).indexOf(activeElement.id)
+                let targetIndex = items.map(item => item.id).indexOf(overElement.id)
+                newItems = arraymove(tempItems, sourceIndex, targetIndex)
+                setTempItems(newItems)
+            }
+            else {
+                setTempItems(items)
+            }
+        }
+    }
+
+    function onDragStart() {
+        setIsDragging(true)
     }
 }
 
-export function Sortable({ id, children }) {
+export function Sortable({ id, somethingIsDragging, children }) {
     const {
         attributes,
         listeners,
@@ -64,7 +101,7 @@ export function Sortable({ id, children }) {
         })
     }
 
-    return React.cloneElement(children, {ref: setNodeRef, style: style, ...attributes, ...listeners})
+    return React.cloneElement(children, {ref: setNodeRef, ...((somethingIsDragging || somethingIsDragging === null) ? {style: style} : {}), ...(somethingIsDragging !== null ? {somethingIsDragging: somethingIsDragging} : {}), isDragging: isDragging, ...attributes, ...listeners})
 }
 
 export default Sort

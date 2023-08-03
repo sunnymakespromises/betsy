@@ -11,16 +11,16 @@ async function getUserBy(key, value) {
     }
     let user
     if (key === 'id') {
-        user = await getItem('Users', value, ['id', 'balances', 'display_name', 'favorites', 'is_locked', 'join_date', 'picture', 'slips'])
+        user = await getItem('users', value, ['id', 'balances', 'display_name', 'favorites', 'is_locked', 'join_date', 'picture', 'slips'])
     }
     else {
-        user = await queryTable('Users', [key] + ' = ' + value, ['id', 'balances', 'display_name', 'favorites', 'is_locked', 'join_date', 'picture', 'slips'], true)
+        user = await queryTable('users', [key] + ' = ' + value, ['id', 'balances', 'display_name', 'favorites', 'is_locked', 'join_date', 'picture', 'slips'], true)
     }
     if (user) {
         response.status = true
         response.user = user
         for (const category of Object.keys(user.favorites).filter(category => user.favorites[category].length > 0)) {
-            response.user.favorites[category] = await getItems(_.startCase(category), user.favorites[category], ['id', 'name', 'picture'])
+            response.user.favorites[category] = await getItems(category, user.favorites[category], ['id', 'name', 'picture'])
         } 
     }
     else {

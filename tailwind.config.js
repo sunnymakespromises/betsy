@@ -1,194 +1,183 @@
 /** @type {import('tailwindcss').Config} */
+const { createThemes } = require('tw-colors')
 const defaultTheme = require('tailwindcss/defaultTheme')
 const { withAnimations } = require('animated-tailwindcss')
 
 module.exports =  withAnimations({
-    darkMode: 'class',
     content: [
         "./src/**/*.{js,jsx,ts,tsx}",
     ],
     theme: {
         extend: {
-            animationDuration: {
-                fast: '0.15s'
+            width: {
+                inscribed: ((2 / Math.PI) * 100) + '%'
             },
             transitionDuration: {
-                main: '150ms'
+                fast: '75ms',
+                main: '150ms',
+                slow: '700ms',
             },
             fontFamily: {
                 main: ['Inter', ...defaultTheme.fontFamily.sans],
             },
-            colors: {
-                live: {
-                    main: '#fa2e49',
-                    highlight: '#FF5162'
-                }
-            },
             fontSize: {
-                tiny: ['0.625rem', {
+                '2xs': ['0.25rem', {
+                    lineHeight: '0.25rem'
+                }],
+                xs: ['0.5rem', {
+                    lineHeight: '0.5rem'
+                }],
+                sm: ['0.65rem', {
+                    lineHeight: '0.65rem'
+                }],
+                base: ['0.875rem', {
                     lineHeight: '0.875rem'
                 }],
-                micro: ['0.5rem', {
-                    lineHeight: '0.75rem'
+                lg: ['1rem', {
+                    lineHeight: '1rem'
+                }],
+                xl: ['1.25rem', {
+                    lineHeight: '1.25rem'
+                }],
+                '2xl': ['1.5rem', {
+                    lineHeight: '1.5rem'
+                }],
+                '3xl': ['2rem', {
+                    lineHeight: '2rem'
+                }],
+                '4xl': ['3rem', {
+                    lineHeight: '3rem'
+                }],
+                '5xl': ['4rem', {
+                    lineHeight: '4rem'
+                }],
+                '6xl': ['6rem', {
+                    lineHeight: '6rem'
+                }],
+                '7xl': ['8rem', {
+                    lineHeight: '8rem'
+                }],
+                '8xl': ['10rem', {
+                    lineHeight: '10rem'
+                }],
+                '9xl': ['12rem', {
+                    lineHeight: '12rem'
                 }]
             },
             padding: {
-                large: '1.5rem',
-                main: '0.75rem',
-                smaller: '0.5rem',
-                small: '0.3rem',
-                tiny: '0.2rem',
-                micro: '0.1rem'
+                '2xs': '0.2rem',
+                xs: '0.3rem',
+                sm: '0.5rem',
+                base: '0.75rem',
+                lg: '1.5rem',
+                xl: '2rem',
+                '2xl': '3rem',
             },
             margin: {
-                large: '1.5rem',
-                main: '0.75rem',
-                smaller: '0.5rem',
-                small: '0.3rem',
-                tiny: '0.2rem',
-                micro: '0.1rem'
+                '2xs': '0.2rem',
+                xs: '0.3rem',
+                sm: '0.5rem',
+                base: '0.75rem',
+                lg: '1.5rem',
+                xl: '2rem',
+                '2xl': '3rem',
             },
             gap: {
-                large: '1.5rem',
-                main: '0.75rem',
-                smaller: '0.5rem',
-                small: '0.3rem',
-                tiny: '0.2rem',
-                micro: '0.1rem'
+                '2xs': '0.2rem',
+                xs: '0.3rem',
+                sm: '0.5rem',
+                base: '0.75rem',
+                lg: '1.5rem',
+                xl: '2rem',
+                '2xl': '3rem',
             },
             borderRadius: {
-                main: '0.75rem',
-                small: '0.5rem'
+                '2xs': '0.2rem',
+                xs: '0.3rem',
+                sm: '0.5rem',
+                base: '0.75rem',
+                lg: '1.5rem',
+                xl: '2rem',
+                '2xl': '3rem',
             },
             borderWidth: {
-                main: '2px',
-                thick: '4px',
-                thin: '1px'
+                sm: '1px',
+                base: '2px',
+                lg: '4px'
             },
             backdropBlur: {
-                main: '8px'
+                sm: '4px',
+                base: '8px',
+                lg: '16px'
             },
-            backdropBrightness: {
-                lighter: '1.25',
-                darker: '0.8'
-            },
-            boxShadow: {
-                'inner-right': [
-                    'inset -0.5rem 0 0.5rem -0.5rem'
-                ],
-                inner: [
-                    'inset 0 10px 15px -3px rgb(0 0 0 / 0.1)', 'inset 0 4px 6px -4px rgb(0 0 0 / 0.1)'
-                ],
-                main: [
-                    '0 10px 15px -3px rgb(0 0 0 / 0.1)', '0 4px 6px -4px rgb(0 0 0 / 0.1)'
-                ],
-                small: [
-                    '0 5px 7px -1px rgb(0 0 0 / 0.05)', '0 2px 3px -2px rgb(0 0 0 / 0.05)'
-                ]
+            blur: {
+                xs: '2px',
+                sm: '4px',
+                base: '8px',
+                lg: '16px',
+                xl: '32px',
+                '2xl': '48px',
+                '3xl': '64px',
+                '4xl': '128px',
+                '5xl': '256px'
             },
             opacity: {
-                'more-visible': '60%',
-                main: '30%',
-                faint: '10%'
-            },
-            scale: {
-                main: '1.1',
-                smaller: '1.05',
-                small: '1.03'
-            },
-            textDecorationThickness: {
-                thick: '2px',
+                muted: 0.6,
+                killed: 0.2
             }
         },
     },
     plugins: [
         require("tailwind-gradient-mask-image"),
-        require('tailwindcss-themer')({
-            defaultTheme: {
-                extend: {
-                    opacity: {
-                        muted: '60%',
-                        killed: '20%'
-                    },
-                    colors: {
-                        base: {
-                            main: '#FFFFFF',
-                            highlight: '#f4f4f5',
-                        },
-                        shadow: '#5b5b5c',
-                        divider: {
-                            main: '#e4e4e7',
-                            highlight: '#e4e4e7',
-                            primary: '#0066eb'
-                        },
-                        reverse: {
-                            main: '#09090b',
-                            highlight: '#38343a'
-                        },
-                        text: {
-                            main: '#221d27',
-                            highlight: '#38343a',
-                            primary: '#f3f1f6',
-                            reverse: '#f3f1f6'
-                        },
-                        primary: {
-                            main: '#027cff',
-                            highlight: '#5E93FD'
-                        },
-                        accent: {
-                            main: '#fa2e49',
-                            highlight: '#FF5162'
-                        },
-                        positive: '',
-                        negative: ''
-                    }
+        createThemes({
+            light: {
+                base: {
+                    main: '#EFEFF0',
+                    highlight: '#FFFFFF',
+                },
+                divider: {
+                    main: '#E4E4E7',
+                    highlight: '#E4E4E7',
+                    primary: '#FF80AB'
+                },
+                text: {
+                    main: '#221D27',
+                    highlight: '#38343A',
+                    primary: '#F3F1F6'
+                },
+                primary: {
+                    main: '#FF4081',
+                    highlight: '#FF80AB'
+                },
+                accent: {
+                    main: '#FF4081',
+                    highlight: '#FF80AB'
                 }
             },
-            themes: [
-                {
-                    name: 'dark',
-                    extend: {
-                        opacity: {
-                            muted: '40%',
-                            killed: '20%'
-                        },
-                        colors: {
-                            base: {
-                                main: '#09090b',
-                                highlight: '#27272a'
-                                // main: '#000000',
-                                // highlight: '#1c1c1e'
-                            },
-                            shadow: '#000000',
-                            divider: {
-                                main: '#27272a',
-                                highlight: '#1c1c1e',
-                                primary: '#e61a35'
-                            },
-                            reverse: {
-                                main: '#FFFFFF',
-                                highlight: '#ffffff'
-                            },
-                            text: {
-                                main: '#FFFFFF',
-                                highlight: '#FFFFFF',
-                                primary: '#ebeaeb',
-                                reverse: '#221d27'
-                            },
-                            primary: {
-                                main: '#027cff',
-                                highlight: '#5E93FD'
-                            },
-                            accent: {
-                                main: '#027cff',
-                                highlight: '#5E93FD'
-                            },
-                            positive: '',
-                            negative: ''
-                        }
-                    }
+            dark: {
+                base: {
+                    main: '#09090B',
+                    highlight: '#27272A'
+                },
+                divider: {
+                    main: '#27272A',
+                    highlight: '#1C1C1E',
+                    primary: '#B388FF'
+                },
+                text: {
+                    main: '#FFFFFF',
+                    highlight: '#FFFFFF',
+                    primary: '#EBEAEB'
+                },
+                primary: {
+                    main: '#7C4DFF',
+                    highlight: '#B388FF'
+                },
+                accent: {
+                    main: '#7C4DFF',
+                    highlight: '#B388FF'
                 }
-            ]
+            }
         })
     ],
 })
