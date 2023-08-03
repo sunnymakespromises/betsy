@@ -1,4 +1,3 @@
-import _ from 'lodash'
 import getItem from './aws/db/getItem'
 import queryTable from './aws/db/queryTable'
 import getItems from './aws/db/getItems'

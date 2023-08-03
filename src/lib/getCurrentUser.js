@@ -3,7 +3,6 @@ import getItems from './aws/db/getItems'
 import insertItem from './aws/db/insertItem'
 import queryTable from './aws/db/queryTable'
 import now from './util/now'
-import _ from 'lodash'
 const short = require('short-uuid')
 
 async function getCurrentUser(refresh_token, source) {
