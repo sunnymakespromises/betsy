@@ -138,7 +138,7 @@ module.exports =  withAnimations({
                 divider: {
                     main: '#E4E4E7',
                     highlight: '#E4E4E7',
-                    primary: '#FF80AB'
+                    primary: '#B388FF'
                 },
                 text: {
                     main: '#221D27',
@@ -146,12 +146,12 @@ module.exports =  withAnimations({
                     primary: '#F3F1F6'
                 },
                 primary: {
-                    main: '#FF4081',
-                    highlight: '#FF80AB'
+                    main: '#7C4DFF',
+                    highlight: '#B388FF'
                 },
                 accent: {
-                    main: '#FF4081',
-                    highlight: '#FF80AB'
+                    main: '#7C4DFF',
+                    highlight: '#B388FF'
                 }
             },
             dark: {
