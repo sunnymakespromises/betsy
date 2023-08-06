@@ -12,21 +12,33 @@ import Panel from './panel'
 import now from '../lib/util/now'
 import toDate from '../lib/util/toDate'
 import calculateOdds from '../lib/util/calculateOdds'
+import removeItemAtIndex from '../lib/util/removeItemAtIndex'
 
 const Slips = memo(function Slips() {
     const { data } = useDataContext()
     const [active, setActive] = useState()
-    const isDragging = useMemo(() => active, [active])
+    const [isVisible, setIsVisible] = useState(false)
     let [ trays, addSlip, , editSlip, ] = useStore('user_slips', 'array')
     useDndMonitor({
         onDragStart: (item) => setActive(item.active.data.current),
         onDragEnd: () => setActive(null)
     })
 
+    useEffect(() => {
+        if (active) {
+            setIsVisible(true)
+        }
+        else {
+            setTimeout(() => {
+                setIsVisible(false)
+            }, 1000)
+        }
+    }, [active])
+
     let DOMId = 'slips'
     if (active !== undefined) {
         return (
-            <Panel title = 'Slips' icon = {FileTextFill} classes = {'absolute bottom-0 right-0 w-full md:w-[32rem] overflow-auto no-scrollbar shadow-lg z-[100] !animate-duration-150 ' + (isDragging ? 'animate-slideInRight' : 'animate-slideOutRight')} parentId = {DOMId}>
+            <Panel title = 'Slips' icon = {FileTextFill} classes = {'absolute bottom-0 right-0 w-full md:w-[32rem] overflow-auto no-scrollbar shadow-lg z-[100] !animate-duration-150 ' + (isVisible ? 'animate-slideInRight' : 'animate-slideOutRight')} parentId = {DOMId}>
                 <div id = {DOMId + '-trays'} className = 'w-full h-full flex flex-col gap-base'>
                     <Map items = {trays} callback = {(tray, index) => {
                         let trayId = DOMId + '-tray' + index; return (
@@ -46,8 +58,8 @@ const Slips = memo(function Slips() {
 const Tray = memo(forwardRef(function Tray({ data, tray, parentId, dropped, onDrop, isOver }, dropRef) {
     useEffect(() => {
         if (dropped) {
-            let droppedId = dropped.id.split('-').splice(2, 1).join('-')
-            if (!tray.picks.some(pick => pick.split('-').splice(2, 1).join('-') === droppedId)) {
+            let droppedId = removeItemAtIndex(dropped.id.split('-'), 2).join('-')
+            if (!tray.picks.some(pick => removeItemAtIndex(pick.split('-'), 2).join('-') === droppedId)) {
                 onDrop(tray, {
                     ...tray,
                     picks: [...tray.picks, dropped.id]
@@ -109,68 +121,65 @@ const Pick = memo(function Outcome({ pick, data, isOver, parentId }) {
         }
         return null
     })
-    let { bet, outcome } = pick ? pick : { bet: null, outcome: null }
+    let { bet, outcome, event } = pick ? pick : { bet: null, outcome: null }
     let DOMId = parentId
-    // let eventName = useMemo(() => {
-    //     if (event) {
-    //         if (event.is_outright) {
-    //             return (
-    //                 <Text id = {DOMId + '-name'} preset = 'body' classes = {'w-full text-center whitespace-nowrap ' + (isOver ? 'text-text-primary/muted' : 'text-text-main/muted')}>
-    //                     {event.name}
-    //                 </Text>
-    //             )
-    //         }
-    //         return (
-    //             <div id = {DOMId + '-event'} className = 'group/info w-full flex justify-center items-center'>
-    //                 <Text id = {DOMId + '-event-competitor0-name'} preset = 'subtitle' classes = {'max-w-full !text-xs text-center whitespace-nowrap overflow-hidden text-ellipsis ' + (isOver ? 'text-text-primary/muted' : 'text-text-main/muted')}>
-    //                     {event.competitors[0].name}
-    //                 </Text>
-    //                 <Text id = {DOMId + '-event-competitors-separator'} preset = 'subtitle' classes = {'!text-xs text-center w-min flex ' + (isOver ? 'text-text-primary/muted' : 'text-text-main/muted')}>
-    //                     &nbsp;{event.name.includes('@') ? '@' : 'v'}&nbsp;
-    //                 </Text>
-    //                 <Text id = {DOMId + '-event-competitor1-name'} preset = 'subtitle' classes = {'max-w-full !text-xs text-center whitespace-nowrap overflow-hidden text-ellipsis ' + (isOver ? 'text-text-primary/muted' : 'text-text-main/muted')}>
-    //                     {event.competitors[1].name}
-    //                 </Text>
-    //             </div>
-    //         )
-    //     }
-    //     return <></>
-    // })
-    let name = useMemo(() => {
-        if (pick) {
-            let string = ''
-            if (bet.key.includes('totals')) {
-                string = outcome.name + ' ' + outcome.point
-            }
-            else if (bet.key.includes('spreads')) {
-                if (outcome.competitor) {
-                    string = outcome.competitor.name + ' ' + (outcome.point > 0 ? '+' : '') + outcome.point
-                }
-            }
-            else if (bet.key.includes('h2h')) {
-                string = (outcome.competitor ? outcome.competitor.name + ' ' + bet.name : outcome.name)
-            }
-            else {
-                if (outcome.competitor) {
-                    string = outcome.competitor.name
-                }
-                else {
-                    string = outcome.name
-                }
+
+    let eventName = useMemo(() => {
+        if (event) {
+            if (event.is_outright) {
+                return (
+                    <Text id = {DOMId + '-name'} preset = 'body' classes = {'w-full text-center whitespace-nowrap ' + (isOver ? 'text-text-primary/muted' : 'text-text-main/muted')}>
+                        {event.name}
+                    </Text>
+                )
             }
             return (
-                <Text id = {DOMId + '-name'} preset = 'subtitle' classes = {'w-full text-center whitespace-nowrap overflow-hidden text-ellipsis ' + (isOver ? 'text-text-primary/muted' : 'text-text-main/muted')}>
-                    {string}
-                </Text>
+                <div id = {DOMId + '-event'} className = 'group/info w-full flex justify-center items-center'>
+                    <Text id = {DOMId + '-event-competitor0-name'} preset = 'subtitle' classes = {'max-w-full !text-xs text-center whitespace-nowrap overflow-hidden text-ellipsis ' + (isOver ? 'text-text-primary/muted' : 'text-text-main/muted')}>
+                        {event.competitors[0].name}
+                    </Text>
+                    <Text id = {DOMId + '-event-competitors-separator'} preset = 'subtitle' classes = {'!text-xs text-center w-min flex ' + (isOver ? 'text-text-primary/muted' : 'text-text-main/muted')}>
+                        &nbsp;{event.name.includes('@') ? '@' : 'v'}&nbsp;
+                    </Text>
+                    <Text id = {DOMId + '-event-competitor1-name'} preset = 'subtitle' classes = {'max-w-full !text-xs text-center whitespace-nowrap overflow-hidden text-ellipsis ' + (isOver ? 'text-text-primary/muted' : 'text-text-main/muted')}>
+                        {event.competitors[1].name}
+                    </Text>
+                </div>
             )
         }
         return <></>
-    }, [pick])
+    })
+    
+    let name = useMemo(() => {
+        let string = ''
+        if (bet.key.includes('totals')) {
+            string = outcome.name + ' ' + outcome.point
+        }
+        else if (bet.key.includes('spreads')) {
+            if (outcome.competitor) {
+                string = outcome.competitor.name + ' ' + (outcome.point > 0 ? '+' : '') + outcome.point
+            }
+        }
+        else {
+            if (outcome.competitor) {
+                string = outcome.competitor.name
+            }
+            else {
+                string = outcome.name
+            }
+        }
+        return string
+    }, [bet, outcome])
 
     return (
-        <div id = {DOMId} className = {'relative transition-colors duration-main w-full flex flex-col justify-center items-center gap-sm p-sm rounded-base ' + (isOver ? 'bg-primary-highlight' : 'bg-base-main')}>
-            {/* {eventName} */}
-            {name}
+        <div id = {DOMId} className = {'relative transition-colors duration-main w-full flex flex-col justify-center items-center gap-xs p-sm rounded-base ' + (isOver ? 'bg-primary-highlight' : 'bg-base-main')}>
+            {eventName}
+            <Text id = {DOMId + '-title-text'} preset = 'subtitle' classes = {isOver ? 'text-text-primary' : 'text-primary-main'}>
+                {bet.name}
+            </Text>
+            <Text id = {DOMId + '-name'} preset = 'subtitle' classes = {'w-full text-center whitespace-nowrap overflow-hidden text-ellipsis ' + (isOver ? 'text-text-primary/muted' : 'text-text-main/muted')}>
+                {name}
+            </Text>
             <Value value = {outcome.odds} isOver = {isOver} parentId = {DOMId}/>
         </div>
     )
