@@ -44,7 +44,7 @@ export const MultiPanel = memo(function MultiPanel({ config, parentId }) {
                         <div id = {DOMId + '-bar'} className = 'flex items-center gap-base'>
                             <Map items = {config} callback = {(panel, index) => { return (
                                 <div key = {index} id = {panel.parentId + '-title'} onClick = {() => setCurrentPanel(panel)}>
-                                    <Icon icon = {panel.icon} classes = {'!w-6 !h-6' + (currentPanel.key !== panel.key ? ' !text-text-highlight/killed hover:!text-primary-main cursor-pointer' : '')} parentId = {panel.parentId}/>
+                                    <Icon icon = {panel.icon} classes = {'!h-6 ' + (currentPanel.key !== panel.key ? '!text-text-highlight/killed hover:!text-primary-main cursor-pointer' : 'border-b-base border-primary-main')} parentId = {panel.parentId}/>
                                 </div>
                             )}}/>
                         </div>
