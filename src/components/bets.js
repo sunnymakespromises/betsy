@@ -31,15 +31,15 @@ const Bet = memo(function Bet({ event, bet, outcomes, parentId }) {
     let grid = outcomes?.length >= 3 ? 'grid-cols-3' : outcomes.length === 2 ? 'grid-cols-2' : 'grid-cols-1'
     let DOMId = parentId
     return (
-        <div id = {DOMId} className = 'w-full flex flex-col items-center gap-sm'>
-            <div id = {DOMId + '-title'} className = 'w-full flex justify-center items-center gap-base'>
-                <div className = 'w-full transition-colors duration-main border-t-sm border-divider-main/muted'/>
+        <div id = {DOMId} className = 'w-full flex flex-col items-center bg-base-highlight rounded-base'>
+            <div id = {DOMId + '-title'} className = 'w-full flex items-center gap-base p-sm bg-base-main/muted rounded-t-base border-sm border-b-0 border-divider-highlight'>
+                {/* <div className = 'w-full transition-colors duration-main border-t-sm border-divider-main/muted'/> */}
                 <Text id = {DOMId + '-title-text'} preset = 'body' classes = 'text-text-main/muted'>
                     {bet.name}
                 </Text>
-                <div className = 'w-full transition-colors duration-main border-t-sm border-divider-main/muted'/>
+                {/* <div className = 'w-full transition-colors duration-main border-t-sm border-divider-main/muted'/> */}
             </div>
-            <div id = {DOMId + '-outcomes'} className = {'w-full grid ' + grid + ' gap-base'}>
+            <div id = {DOMId + '-outcomes'} className = {'w-full grid ' + grid + ' gap-base p-base rounded-b-base border-sm border-t-0 border-divider-highlight'}>
                 <Map items = {outcomes} callback = {(outcome, index) => {
                     let data = {id: event.id + '-' + bet.key + '-' + bet.values[0].timestamp + '-' + (outcome.competitor ? outcome.competitor.name : outcome.name), event: _.omit(event, 'bets'), bet: _.pick(bet, ['key', 'name']), outcome: outcome}
                     let outcomeId = DOMId + '-outcome' + index; return (
@@ -116,7 +116,7 @@ const Outcome = forwardRef(function Outcome({ bet, outcome, isDragging, classes,
 
     let DOMId = parentId
     return (
-        <div ref = {dragRef} {...dragProps} id = {DOMId} className = {'group/outcome relative transition-colors duration-main w-full flex flex-col justify-center items-center gap-xs p-sm rounded-base ' + (isDragging ? 'bg-primary-main' : 'bg-base-main hover:bg-primary-main') + (classes ? ' ' + classes : '')}>
+        <div ref = {dragRef} {...dragProps} id = {DOMId} className = {'group/outcome relative transition-colors duration-main w-full flex flex-col justify-center items-center gap-xs p-sm rounded-base ' + (isDragging ? 'bg-primary-main' : 'bg-base-main/muted hover:bg-primary-main') + (classes ? ' ' + classes : '')}>
             <Text id = {DOMId + '-name'} preset = 'subtitle' classes = {'w-full text-center whitespace-nowrap overflow-hidden text-ellipsis ' + (isDragging ? 'text-text-primary/muted' : 'text-text-main/muted group-hover/outcome:text-text-primary/muted')}>
                 {name}
             </Text>
