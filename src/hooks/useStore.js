@@ -69,11 +69,9 @@ function useStore(category, shape, defaults, options) {
             newValue = value
             value = category
             let item = storeRef.current.find(item => _.isEqual(JSON.stringify(item), JSON.stringify(value)))
-            console.log(storeRef.current)
             if (item) {
                 let newStore = storeRef.current
                 newStore[storeRef.current.indexOf(item)] = newValue
-                console.log(item, newStore)
                 setCookie(storeName, newStore)
             }
         }
