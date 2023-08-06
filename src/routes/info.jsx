@@ -147,7 +147,7 @@ const Competition = memo(function Competition({ results, item, parentId }) {
         let DOMId = parentId
         return (
             <Link id = {DOMId} to = {'/info?category=competitors&id=' + competitor.id} className = 'group/item transition-all duration-main relative w-full aspect-square flex justify-center items-center p-base bg-base-main/muted rounded-base cursor-pointer'>
-                <div id = {DOMId + '-image'} className = 'transition-colors duration-main w-full aspect-square flex justify-center items-center bg-base-main rounded-full border-base border-primary-main group-hover/item:border-primary-highlight'>
+                <div id = {DOMId + '-image'} className = 'transition-colors duration-main w-full aspect-square flex justify-center items-center bg-white rounded-full border-base border-primary-main group-hover/item:border-primary-highlight'>
                     <Conditional value = {competitor.picture}>
                         <Image id = {DOMId + '-image-image'} external path = {competitor.picture} classes = 'w-inscribed aspect-square'/>
                     </Conditional>
