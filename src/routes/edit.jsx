@@ -45,7 +45,7 @@ const Edit = memo(function Edit() {
 
 const Upload = memo(function Upload({ data, parentId }) {
     const { updateItem } = useDev()
-    const [ store, addToStore, removeFromStore, emptyStore ] = useStore('dev_selections', 'array', null, { duplicates: false })
+    const [ store, addToStore, removeFromStore, , emptyStore ] = useStore('dev_selections', 'array', null, { duplicates: false })
     const storeRef = useRef()
     storeRef.current = store
     let items = useMemo(() => store.map(item => {
@@ -165,6 +165,7 @@ const Upload = memo(function Upload({ data, parentId }) {
     }
 
     function onRemoveAll() {
+        console.log(store)
         emptyStore()
     }
 }, (b, a) => _.isEqual(b.data, a.data))
@@ -225,7 +226,7 @@ const Picture = memo(function Picture({ item, params, picture, input, onInputCha
 
     let DOMId = parentId + '-picture'
     return (
-        <div id = {DOMId} className = 'transition-colors duration-main w-full aspect-square flex justify-center items-center bg-base-highlight rounded-full border-base border-primary-main hover:border-primary-highlight overflow-hidden z-10 cursor-pointer'>
+        <div id = {DOMId} className = 'transition-colors duration-main w-full aspect-square flex justify-center items-center bg-white rounded-full border-base border-primary-main hover:border-primary-highlight overflow-hidden z-10 cursor-pointer'>
             <input id = {DOMId + '-input'} className = 'hidden' type = 'file' onChange = {(e) => onUpload(e)} ref = {pictureInput} accept = '.jpg, .jpeg, .png, .gif, .webp'/>
             <ImageComponent external id = {DOMId + '-image'} path = {isCropping ? '' : input ? input : picture} classes = {'relative w-inscribed aspect-square flex justify-center items-center'} mode = 'cover' onClick = {() => onPictureClick()}>
                 <Conditional value = {isCropping}>
