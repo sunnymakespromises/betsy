@@ -68,7 +68,7 @@ const Title = memo(function Title({ event, parentId }) {
     let DOMId = parentId + '-title'
     if (event.is_outright) {
         return (
-            <Link to = {'/info?category=events&id=' + event.id} className = 'flex flex-col items-center gap-2xs'>
+            <div id = {DOMId} className = 'flex flex-col items-center gap-2xs'>
                 <Conditional value = {isLive}>
                     <div id = {DOMId + '-live'} className = 'absolute top-0 left-0 mt-xs ml-xs bg-primary-main rounded-base p-xs shadow-lg'>
                         <Text id = {DOMId + '-live-text'} preset = 'subtitle' classes = 'text-text-primary'>
@@ -81,13 +81,13 @@ const Title = memo(function Title({ event, parentId }) {
                         {event.competition.name}
                     </Text>
                 </Link>
-                <Text id = {DOMId + '-name'} preset = 'body' classes = '!text-lg text-primary-main hover:text-primary-highlight whitespace-nowrap'>
+                <Link id = {DOMId + '-name'} to = {'/info?category=events&id=' + event.id} preset = 'body' classes = '!text-lg text-primary-main hover:text-primary-highlight whitespace-nowrap'>
                     {event.name}
-                </Text>
+                </Link>
                 <Text id = {DOMId + '-info-date'} preset = 'subtitle' classes = 'text-text-highlight/muted whitespace-nowrap'>
                     &nbsp;{toDate(event.start_time)}
                 </Text>
-            </Link>
+            </div>
         )
     }
     else {
