@@ -65,14 +65,14 @@ function Root() {
                         {(location.pathname === '/login' || data) && <>
                         {hasUser && data && <Header currentUser = {currentUser} data = {data} location = {location}/>}
                         <DndContext sensors = {sensors} autoScroll = {false} collisionDetection = {pointerWithin} measuring = {{droppable: {strategy: MeasuringStrategy.Always, frequency: 300}}}>
-                            <div id = 'content' className = 'relative flex flex-col w-full h-full animate-fadeInDown'>
+                            <div id = 'content' className = 'relative flex flex-col w-full h-full animate-fadeInUp'>
                                 <TransitionGroup component = {null}>
                                     <CSSTransition 
                                         key = {location.pathname}
                                         classNames = {{
-                                            enter: 'animate-slideInDown z-10',
-                                            enterDone: 'animate-slideInDown',
-                                            exit: 'animate-backOutUp z-0',
+                                            enter: 'animate-slideInRight z-10',
+                                            enterDone: 'animate-slideInRight',
+                                            exit: 'animate-fadeOutLeft z-0',
                                             exitActive: 'z-0'
                                         }}
                                         timeout = {300}
