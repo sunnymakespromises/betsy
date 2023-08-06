@@ -113,7 +113,7 @@ const Favorite = forwardRef(function Favorite({ item: favorite, canEdit, isDragg
     let DOMId = parentId
     return (
         <Link id = {DOMId} to = {'/info?category=' + favorite.category + '&id=' + favorite.id} className = {'group/favorite relative h-min flex items-center gap-sm p-sm rounded-base cursor-pointer ' + (isDragging ? 'bg-primary-main shadow-lg z-10' : 'bg-base-main/muted' + (!somethingIsDragging ? ' hover:bg-primary-main' : ''))} title = {favorite.name} {...sortProps} ref = {sortRef}>
-            <div id = {DOMId + '-image'} className = {'relative w-10 h-10 aspect-square flex justify-center items-center rounded-full bg-primary-main'}>
+            <div id = {DOMId + '-image'} className = {'relative w-10 h-10 aspect-square flex justify-center items-center rounded-full bg-white'}>
                 <Conditional value = {favorite.picture}>
                     <Image id = {DOMId + '-image-image'} external path = {favorite.picture} classes = 'w-inscribed aspect-square'/>
                 </Conditional>

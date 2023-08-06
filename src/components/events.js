@@ -56,7 +56,7 @@ const Events = memo(function Events({ search = true, searchKey, events, parentId
 export const Event = memo(function Event({ item: event, bets, parentId }) {
     let DOMId = parentId
     return (
-        <div id = {DOMId} className = {'group/event relative transition-colors duration-main w-full flex flex-col items-center gap-sm p-base bg-base-main/muted rounded-base'}>
+        <div id = {DOMId} className = {'group/event relative transition-colors duration-main w-full flex flex-col items-center gap-sm'}>
             <Title event = {event} parentId = {DOMId}/>
             <Bets event = {event} bets = {bets} parentId = {DOMId}/>
         </div>
@@ -100,7 +100,7 @@ const Title = memo(function Title({ event, parentId }) {
                         </Text>
                     </div>
                 </Conditional>
-                <Link id = {DOMId + '-competitor0-image'} to = {'/info?category=competitors&id=' + event.competitors[0].id} className = 'transition-colors duration-main h-14 aspect-square flex justify-center items-center bg-primary-main rounded-full'>
+                <Link id = {DOMId + '-competitor0-image'} to = {'/info?category=competitors&id=' + event.competitors[0].id} className = 'transition-colors duration-main h-10 md:h-14 aspect-square flex justify-center items-center bg-white rounded-full border-sm border-primary-main hover:border-primary-highlight'>
                     <Conditional value = {!event.competitors[0].picture}>
                         <Text id = {DOMId + '-competitor0-image-text'} preset = 'body' classes = 'text-text-primary/muted'>
                             {event.competitors[0].name.substr(0, 1)}
@@ -131,7 +131,7 @@ const Title = memo(function Title({ event, parentId }) {
                         {toDate(event.start_time)}
                     </Text>
                 </div>
-                <Link id = {DOMId + '-competitor1-image'} to = {'/info?category=competitors&id=' + event.competitors[1].id} className = 'transition-colors duration-main h-14 aspect-square flex justify-center items-center bg-primary-main rounded-full'>
+                <Link id = {DOMId + '-competitor1-image'} to = {'/info?category=competitors&id=' + event.competitors[1].id} className = 'transition-colors duration-main h-10 md:h-14 aspect-square flex justify-center items-center bg-white rounded-full border-sm border-primary-main hover:border-primary-highlight'>
                     <Conditional value = {!event.competitors[1].picture}>
                         <Text id = {DOMId + '-competitor1-image-text'} preset = 'body' classes = 'text-text-primary/muted'>
                             {event.competitors[1].name.substr(0, 1)}
