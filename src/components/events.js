@@ -70,8 +70,8 @@ const Title = memo(function Title({ event, parentId }) {
         return (
             <div id = {DOMId} className = 'flex flex-col items-center gap-2xs'>
                 <Conditional value = {isLive}>
-                    <div id = {DOMId + '-live'} className = 'absolute top-0 left-0 mt-xs ml-xs bg-primary-main rounded-base p-xs shadow-lg'>
-                        <Text id = {DOMId + '-live-text'} preset = 'subtitle' classes = 'text-text-primary'>
+                    <div id = {DOMId + '-live'} className = 'absolute top-0 left-0 bg-primary-main rounded-base p-xs shadow-lg'>
+                        <Text id = {DOMId + '-live-text'} preset = 'subtitle' classes = '!text-xs md:!text-sm text-text-primary'>
                             LIVE
                         </Text>
                     </div>
@@ -94,8 +94,8 @@ const Title = memo(function Title({ event, parentId }) {
         return (
             <div id = {DOMId} className = 'w-full flex items-center gap-xs'>
                 <Conditional value = {isLive}>
-                    <div id = {DOMId + '-live'} className = 'absolute top-0 left-0 mt-xs ml-xs bg-primary-main rounded-base p-xs shadow-lg'>
-                        <Text id = {DOMId + '-live-text'} preset = 'subtitle' classes = 'text-text-primary'>
+                    <div id = {DOMId + '-live'} className = 'absolute top-0 left-0 bg-primary-main rounded-base p-xs shadow-lg'>
+                        <Text id = {DOMId + '-live-text'} preset = 'subtitle' classes = '!text-xs md:!text-sm text-text-primary'>
                             LIVE
                         </Text>
                     </div>
