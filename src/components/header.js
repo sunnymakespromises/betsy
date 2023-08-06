@@ -1,16 +1,17 @@
-import { memo, useMemo } from 'react'
+import { memo, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import _ from 'lodash'
 import { routes } from '../routes/routes'
 import Map from './map'
 import Text from './text'
-import { CalendarWeekFill, HeartFill, PeopleFill, SortAlphaDown, Stack, Stars, StopwatchFill, TrophyFill } from 'react-bootstrap-icons'
+import { CalendarWeekFill, HeartFill, PeopleFill, Search, SortAlphaDown, Stack, Stars, StopwatchFill, TrophyFill } from 'react-bootstrap-icons'
 import now from '../lib/util/now'
 import SearchWithResults from './searchWithResults'
 // import Image from './image'
 // import { useFavorite } from '../hooks/useFavorite'
 
 const Header = memo(function Header({ currentUser, data, location }) {
+    let [searchIsExpanded, setSearchIsExpanded] = useState(false)
     const searchConfig = useMemo(() => { return currentUser.favorites && {
         id: 'search',
         filters: {
@@ -80,14 +81,15 @@ const Header = memo(function Header({ currentUser, data, location }) {
     if (currentUser) {
         return (
             <header id = {DOMId} className = {'w-full h-min md:w-[24rem] md:h-full p-base md:p-lg z-20 animate-fadeInLeft'}>
-                <div id = {DOMId + '-container'} className = 'transition-colors duration-main w-full h-min flex flex-col p-base gap-base bg-base-highlight rounded-base'>
-                    <SearchWithResults searchConfig = {searchConfig} closeOnClick container = 'content' parentId = {DOMId}/>
+                <div id = {DOMId + '-container'} className = 'transition-colors duration-main w-full h-min flex flex-col-reverse md:flex-col p-base gap-base bg-base-highlight rounded-base'>
+                    <SearchWithResults searchConfig = {searchConfig} classes = {(searchIsExpanded ? '' : 'hidden md:flex')} closeOnClick container = 'content' parentId = {DOMId}/>
                     <div id = {DOMId + '-pages'} className = 'w-full h-full flex md:flex-col justify-between md:justify-start gap-base'>
                         <Map items = {routes.filter(route => route.show && (route.is_dev ? currentUser.is_dev : true))} callback = {(page, index) => {
                             let isCurrent = '/' + location.pathname.split('/')[1] === page.path.split('?')[0]
-                            let iconId = DOMId + '-item' + index; return (
-                            <Page key = {index} path = {page.path} title = {page.title} icon = {page.icon} isCurrent = {isCurrent} parentId = {iconId} />
+                            let iconId = DOMId + '-page' + index; return (
+                            <LinkPage key = {index} path = {page.path} title = {page.title} icon = {page.icon} isCurrent = {isCurrent} parentId = {iconId} />
                         )}}/>
+                        <ButtonPage title = 'Search' icon = {Search} isCurrent = {searchIsExpanded} classes = 'md:!hidden' onClick = {() => setSearchIsExpanded(!searchIsExpanded)} parentId = {DOMId + '-search'}/>
                     </div>
                 </div>
             </header>
@@ -95,11 +97,11 @@ const Header = memo(function Header({ currentUser, data, location }) {
     }
 }, (b, a) => b.location.pathname === a.location.pathname && b.location.search === a.location.search && _.isEqual(b.currentUser, a.currentUser) && _.isEqual(b.data, a.data))
 
-const Page = memo(function Page({ path, title, icon, isCurrent, parentId }) {
+const LinkPage = memo(function LinkPage({ path, title, icon, isCurrent, parentId }) {
     const Icon = icon
     let DOMId = parentId
     return (
-        <Link id = {DOMId} to = {path} className = {'group/icon h-7 md:h-auto flex items-center gap-xs cursor-pointer'}>
+        <Link id = {DOMId} to = {path} className = {'group/icon h-6 md:h-auto flex items-center gap-xs cursor-pointer'}>
             <Icon id = {DOMId + '-icon'} title = {title} className = {'transition-colors duration-main h-full w-full md:w-min aspect-square ' + (isCurrent ? 'text-primary-main' : 'text-text-highlight/muted group-hover/icon:text-primary-main')}/>
             <Text preset = 'body' classes = {'hidden md:flex transition-colors duration-main ' + (isCurrent ? 'text-primary-main' : 'text-text-highlight/muted group-hover/icon:text-primary-main')}>
                 {title}
@@ -107,6 +109,19 @@ const Page = memo(function Page({ path, title, icon, isCurrent, parentId }) {
         </Link>
     )
 }, (b, a) => b.path === a.path && b.title === a.title && b.isCurrent === a.isCurrent)
+
+const ButtonPage = memo(function ButtonPage({ title, icon, isCurrent, classes, onClick, parentId }) {
+    const Icon = icon
+    let DOMId = parentId
+    return (
+        <div id = {DOMId} className = {'group/icon h-6 md:h-auto flex items-center gap-xs cursor-pointer' + (classes ? ' ' + classes : '')} onClick = {onClick}>
+            <Icon id = {DOMId + '-icon'} title = {title} className = {'transition-colors duration-main h-full w-full md:w-min aspect-square ' + (isCurrent ? 'text-primary-main' : 'text-text-highlight/muted group-hover/icon:text-primary-main')}/>
+            <Text preset = 'body' classes = {'hidden md:flex transition-colors duration-main ' + (isCurrent ? 'text-primary-main' : 'text-text-highlight/muted group-hover/icon:text-primary-main')}>
+                {title}
+            </Text>
+        </div>
+    )
+}, (b, a) => b.title === a.title && b.isCurrent === a.isCurrent && b.classes === a.classes)
 
 // const Result = memo(function Result({ category, item, parentId }) {
 //     let [isFavorite, Favorite] = useFavorite(category, item)

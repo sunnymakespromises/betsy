@@ -61,7 +61,7 @@ function Root() {
         <WindowProvider value = {windowContext}>
             <UserProvider value = {userContext}>
                 <DataProvider value = {dataContext}>
-                    <div id = 'body' className = {'theme-' + theme + ' transition-colors duration-main relative w-full h-full flex flex-col-reverse md:flex-row bg-base-main'}>
+                    <div id = 'body' className = {'theme-' + theme + ' transition-colors duration-main relative w-full h-full flex flex-col md:flex-row bg-base-main'}>
                         {(location.pathname === '/login' || data) && <>
                         {hasUser && data && <Header currentUser = {currentUser} data = {data} location = {location}/>}
                         <DndContext sensors = {sensors} autoScroll = {false} collisionDetection = {pointerWithin} measuring = {{droppable: {strategy: MeasuringStrategy.Always, frequency: 300}}}>
