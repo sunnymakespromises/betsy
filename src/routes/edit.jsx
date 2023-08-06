@@ -234,7 +234,7 @@ const Picture = memo(function Picture({ item, params, picture, input, onInputCha
                     <Error message = {status.message} parentId = {DOMId}/>
                 </Conditional>
                 <Conditional value = {!isCropping && !item.picture}>
-                    <Text id = {DOMId + '-text'} preset = 'body' classes = 'text-text-highlight/killed p-base text-center'>
+                    <Text id = {DOMId + '-text'} preset = 'body' classes = 'text-black/muted p-base text-center'>
                         {item.name}
                     </Text>
                 </Conditional>

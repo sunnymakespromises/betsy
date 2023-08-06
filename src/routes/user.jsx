@@ -113,12 +113,12 @@ const Favorite = forwardRef(function Favorite({ item: favorite, canEdit, isDragg
     let DOMId = parentId
     return (
         <Link id = {DOMId} to = {'/info?category=' + favorite.category + '&id=' + favorite.id} className = {'group/favorite relative h-min flex items-center gap-sm p-sm rounded-base cursor-pointer ' + (isDragging ? 'bg-primary-main shadow-lg z-10' : 'bg-base-main/muted' + (!somethingIsDragging ? ' hover:bg-primary-main' : ''))} title = {favorite.name} {...sortProps} ref = {sortRef}>
-            <div id = {DOMId + '-image'} className = {'relative w-10 h-10 aspect-square flex justify-center items-center rounded-full bg-white'}>
+            <div id = {DOMId + '-image'} className = {'relative w-10 h-10 aspect-square flex justify-center items-center rounded-full bg-white border-sm border-primary-main'}>
                 <Conditional value = {favorite.picture}>
                     <Image id = {DOMId + '-image-image'} external path = {favorite.picture} classes = 'w-inscribed aspect-square'/>
                 </Conditional>
                 <Conditional value = {!favorite.picture}>
-                    <Text id = {DOMId + '-image-text'} preset = 'body' classes = {(isDragging ? 'text-text-primary' : (!somethingIsDragging ? 'group-hover/favorite:text-text-primary' : ''))}>
+                    <Text id = {DOMId + '-image-text'} preset = 'body' classes = {(isDragging ? 'text-black/muted' : (!somethingIsDragging ? 'group-hover/favorite:text-black/muted' : ''))}>
                         {favorite.name.substr(0, 1)}
                     </Text>
                 </Conditional>

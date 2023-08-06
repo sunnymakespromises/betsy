@@ -152,7 +152,7 @@ const Competition = memo(function Competition({ results, item, parentId }) {
                         <Image id = {DOMId + '-image-image'} external path = {competitor.picture} classes = 'w-inscribed aspect-square'/>
                     </Conditional>
                     <Conditional value = {!competitor.picture}>
-                        <Text id = {DOMId + '-image-text'} preset = 'body' classes = 'text-text-main/muted text-center p-base'>
+                        <Text id = {DOMId + '-image-text'} preset = 'body' classes = 'text-black/muted text-center p-base'>
                             {competitor.name}
                         </Text>
                     </Conditional>
@@ -294,7 +294,7 @@ const Title = memo(function Title({ category, item, parentId }) {
             <div id = {DOMId} className = 'w-full h-min flex items-center gap-xs'>
                 <div id = {DOMId + '-image'} className = 'transition-colors duration-main h-8 aspect-square flex justify-center items-center bg-white rounded-full border-sm border-primary-main'>
                     <Conditional value = {!item.picture}>
-                        <Text id = {DOMId + '-image-text'} preset = 'body' classes = 'text-text-main/muted'>
+                        <Text id = {DOMId + '-image-text'} preset = 'body' classes = 'text-black/muted'>
                             {item.name.substr(0, 1)}
                         </Text>
                     </Conditional>
@@ -345,7 +345,7 @@ const Title = memo(function Title({ category, item, parentId }) {
             <div id = {DOMId} className = 'w-full h-min flex items-center gap-xs'>
                 <div id = {DOMId + '-image'} className = 'transition-colors duration-main h-8 aspect-square flex justify-center items-center bg-white rounded-full border-sm border-primary-main'>
                     <Conditional value = {!item.picture}>
-                        <Text id = {DOMId + '-image-text'} preset = 'body' classes = 'text-text-main/muted'>
+                        <Text id = {DOMId + '-image-text'} preset = 'body' classes = 'text-black/muted'>
                             {item.name.substr(0, 1)}
                         </Text>
                     </Conditional>
@@ -395,7 +395,7 @@ const Title = memo(function Title({ category, item, parentId }) {
                 <div id = {DOMId} className = 'w-full h-min flex items-center gap-sm'>
                     <Link id = {DOMId + '-competitor0-image'} to = {'/info?category=competitors&id=' + item.competitors[0].id} className = 'transition-colors duration-main h-8 aspect-square flex justify-center items-center bg-white rounded-full border-sm border-primary-main hover:border-primary-highlight'>
                         <Conditional value = {!item.competitors[0].picture}>
-                            <Text id = {DOMId + '-competitor0-image-text'} preset = 'body' classes = 'text-text-main/muted'>
+                            <Text id = {DOMId + '-competitor0-image-text'} preset = 'body' classes = 'text-black/muted'>
                                 {item.competitors[0].name.substr(0, 1)}
                             </Text>
                         </Conditional>
@@ -430,7 +430,7 @@ const Title = memo(function Title({ category, item, parentId }) {
                     </div>
                     <Link id = {DOMId + '-competitor1-image'} to = {'/info?category=competitors&id=' + item.competitors[1].id} className = 'transition-colors duration-main h-8 aspect-square flex justify-center items-center bg-white rounded-full border-sm border-primary-main hover:border-primary-highlight'>
                         <Conditional value = {!item.competitors[1].picture}>
-                            <Text id = {DOMId + '-competitor1-image-text'} preset = 'body' classes = 'text-text-main/muted'>
+                            <Text id = {DOMId + '-competitor1-image-text'} preset = 'body' classes = 'text-black/muted'>
                                 {item.competitors[1].name.substr(0, 1)}
                             </Text>
                         </Conditional>

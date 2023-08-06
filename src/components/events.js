@@ -102,7 +102,7 @@ const Title = memo(function Title({ event, parentId }) {
                 </Conditional>
                 <Link id = {DOMId + '-competitor0-image'} to = {'/info?category=competitors&id=' + event.competitors[0].id} className = 'transition-colors duration-main h-10 md:h-14 aspect-square flex justify-center items-center bg-white rounded-full border-sm border-primary-main hover:border-primary-highlight'>
                     <Conditional value = {!event.competitors[0].picture}>
-                        <Text id = {DOMId + '-competitor0-image-text'} preset = 'body' classes = 'text-text-primary/muted'>
+                        <Text id = {DOMId + '-competitor0-image-text'} preset = 'body' classes = 'text-black/muted'>
                             {event.competitors[0].name.substr(0, 1)}
                         </Text>
                     </Conditional>
@@ -133,7 +133,7 @@ const Title = memo(function Title({ event, parentId }) {
                 </div>
                 <Link id = {DOMId + '-competitor1-image'} to = {'/info?category=competitors&id=' + event.competitors[1].id} className = 'transition-colors duration-main h-10 md:h-14 aspect-square flex justify-center items-center bg-white rounded-full border-sm border-primary-main hover:border-primary-highlight'>
                     <Conditional value = {!event.competitors[1].picture}>
-                        <Text id = {DOMId + '-competitor1-image-text'} preset = 'body' classes = 'text-text-primary/muted'>
+                        <Text id = {DOMId + '-competitor1-image-text'} preset = 'body' classes = 'text-black/muted'>
                             {event.competitors[1].name.substr(0, 1)}
                         </Text>
                     </Conditional>
