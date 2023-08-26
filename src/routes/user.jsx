@@ -2,8 +2,7 @@ import React, { forwardRef, memo, useEffect, useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
 import { HeartFill, XCircleFill } from 'react-bootstrap-icons'
-import { verticalListSortingStrategy } from '@dnd-kit/sortable'
-import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
+import { rectSortingStrategy } from '@dnd-kit/sortable'
 import _ from 'lodash'
 import { useUserContext } from '../contexts/user'
 import { useDatabase } from '../hooks/useDatabase'
@@ -91,9 +90,9 @@ const FavoritesGroup = memo(function FavoritesGroup({ favorites, canEdit, parent
 
     let DOMId = parentId
     return (
-        <div id = {DOMId + '-items'} className = 'w-full h-min flex flex-col gap-sm'>
+        <div id = {DOMId + '-items'} className = 'w-full h-min grid grid-cols-6 justify-center items-center gap-xs'>
             {canEdit && 
-            <Sort items = {favorites} item = {Favorite} itemProps = {{canEdit: canEdit}} onPlace = {onPlace} strategy = {verticalListSortingStrategy} modifiers = {[restrictToVerticalAxis]} parentId = {DOMId}/>}
+            <Sort items = {favorites} item = {Favorite} itemProps = {{canEdit: canEdit}} onPlace = {onPlace} strategy = {[rectSortingStrategy]} parentId = {DOMId}/>}
             {!canEdit && 
             <Map items = {favorites} callback = {(favorite, index) => {
                 let favoriteId = DOMId + '-favorite' + index; return (
@@ -112,22 +111,20 @@ const Favorite = forwardRef(function Favorite({ item: favorite, canEdit, isDragg
 
     let DOMId = parentId
     return (
-        <Link id = {DOMId} to = {'/info?category=' + favorite.category + '&id=' + favorite.id} className = {'group/favorite relative h-min flex items-center gap-sm p-sm rounded-base cursor-pointer ' + (isDragging ? 'bg-primary-main shadow-lg z-10' : 'bg-base-main/muted' + (!somethingIsDragging ? ' hover:bg-primary-main' : ''))} title = {favorite.name} {...sortProps} ref = {sortRef}>
-            <div id = {DOMId + '-image'} className = {'relative w-10 h-10 aspect-square flex justify-center items-center rounded-full bg-white border-sm border-primary-main'}>
+        <Link id = {DOMId} to = {'/info?category=' + favorite.category + '&id=' + favorite.id} className = {'group/favorite relative w-full aspect-square flex justify-center items-center' + (isDragging ? ' z-10' : '')} title = {favorite.name} {...sortProps} ref = {sortRef}>
+            <div id = {DOMId + '-image'} className = {'}transition-colors duration-main w-full aspect-square flex justify-center items-center bg-white rounded-full border-base ' + (isDragging ? 'border-primary-highlight' : 'border-primary-main group-hover/favorite:border-primary-highlight') + ' cursor-pointer'}>
                 <Conditional value = {favorite.picture}>
-                    <Image id = {DOMId + '-image-image'} external path = {favorite.picture} classes = 'w-inscribed aspect-square'/>
+                    <Image id = {DOMId + '-image-image'} external path = {favorite.picture} classes = 'relative w-inscribed aspect-square'>
+                    </Image>
                 </Conditional>
                 <Conditional value = {!favorite.picture}>
-                    <Text id = {DOMId + '-image-text'} preset = 'body' classes = {(isDragging ? 'text-black/muted' : (!somethingIsDragging ? 'group-hover/favorite:text-black/muted' : ''))}>
+                    <Text id = {DOMId + '-image-text'} preset = 'body' classes = 'text-black/muted text-center p-base'>
                         {favorite.name.substr(0, 1)}
                     </Text>
                 </Conditional>
             </div>
-            <Text preset = 'body' id = {DOMId + '-name'} classes = {'transition-none grow whitespace-nowrap' + (isDragging ? ' text-text-primary' : ' text-text-main/muted' + (!somethingIsDragging ? ' group-hover/favorite:text-text-primary' : ''))}>
-                {favorite.name}
-            </Text>
-            <Conditional value = {canEdit && !isDragging}>
-                <XCircleFill id = {DOMId + '-cancel-icon'} className = {'h-6 w-6 p-xs cursor-pointer text-primary-main' + (!somethingIsDragging ? ' group-hover/favorite:text-text-primary' : '')} onClick = {(e) => onRemove(e, favorite)}/>
+            <Conditional value = {canEdit}>
+                <XCircleFill id = {DOMId + '-cancel-icon'} className = {'absolute transition-all duration-main top-0 right-0 w-4 h-4 cursor-pointer scale-1 md:scale-0 text-primary-main hover:text-primary-highlight bg-white rounded-full ' + (!isDragging && !somethingIsDragging ? ' group-hover/favorite:!scale-100' : '')} onClick = {(e) => onRemove(e, favorite)}/>
             </Conditional>
         </Link>
     )

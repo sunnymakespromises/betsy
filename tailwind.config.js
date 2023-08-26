@@ -10,7 +10,11 @@ module.exports =  withAnimations({
     theme: {
         extend: {
             width: {
-                inscribed: ((2 / Math.PI) * 100) + '%'
+                inscribed: ((Math.sqrt(2) / 2) * 100) + '%',
+                corner: (((((Math.sqrt(2) - 1) / 2) * Math.sqrt(2)) / 2) * 100) + '%'
+            },
+            inset: {
+                inscribed:  (((1 - (Math.sqrt(2) / 2)) / 2) * 100) + '%'
             },
             transitionDuration: {
                 fast: '75ms',
@@ -18,35 +22,35 @@ module.exports =  withAnimations({
                 slow: '700ms',
             },
             fontFamily: {
-                main: ['Inter', ...defaultTheme.fontFamily.sans],
+                main: ['SF Pro', ...defaultTheme.fontFamily.sans],
             },
             fontSize: {
-                '2xs': ['0.25rem', {
+                '2xs': ['0.2rem', {
+                    lineHeight: '0.2rem'
+                }],
+                xs: ['0.25rem', {
                     lineHeight: '0.25rem'
                 }],
-                xs: ['0.5rem', {
-                    lineHeight: '0.5rem'
+                sm: ['0.6rem', {
+                    lineHeight: '0.6rem'
                 }],
-                sm: ['0.65rem', {
-                    lineHeight: '0.65rem'
+                base: ['0.75rem', {
+                    lineHeight: '0.75rem'
                 }],
-                base: ['0.875rem', {
+                lg: ['0.875rem', {
                     lineHeight: '0.875rem'
                 }],
-                lg: ['1rem', {
+                xl: ['1rem', {
                     lineHeight: '1rem'
                 }],
-                xl: ['1.25rem', {
+                '2xl': ['1.25rem', {
                     lineHeight: '1.25rem'
                 }],
-                '2xl': ['1.5rem', {
+                '3xl': ['1.5rem', {
                     lineHeight: '1.5rem'
                 }],
-                '3xl': ['2rem', {
+                '4xl': ['2rem', {
                     lineHeight: '2rem'
-                }],
-                '4xl': ['3rem', {
-                    lineHeight: '3rem'
                 }],
                 '5xl': ['4rem', {
                     lineHeight: '4rem'
@@ -138,20 +142,22 @@ module.exports =  withAnimations({
                 divider: {
                     main: '#E4E4E7',
                     highlight: '#E4E4E7',
-                    primary: '#B388FF'
+                    primary: '#448AFF',
+                    accent: '#FF4081'
                 },
                 text: {
                     main: '#221D27',
                     highlight: '#38343A',
-                    primary: '#F3F1F6'
+                    primary: '#F3F1F6',
+                    accent: '#F3F1F6'
                 },
                 primary: {
-                    main: '#7C4DFF',
-                    highlight: '#B388FF'
+                    main: '#FF4081',
+                    highlight: '#FF80AB'
                 },
                 accent: {
-                    main: '#7C4DFF',
-                    highlight: '#B388FF'
+                    main: '#448AFF',
+                    highlight: '#82B1FF'
                 }
             },
             dark: {
@@ -162,20 +168,22 @@ module.exports =  withAnimations({
                 divider: {
                     main: '#27272A',
                     highlight: '#1C1C1E',
-                    primary: '#B388FF'
+                    primary: '#FF4081',
+                    accent: '#448AFF'
                 },
                 text: {
                     main: '#FFFFFF',
                     highlight: '#FFFFFF',
-                    primary: '#EBEAEB'
+                    primary: '#EBEAEB',
+                    accent: '#EBEAEB'
                 },
                 primary: {
-                    main: '#7C4DFF',
-                    highlight: '#B388FF'
+                    main: '#448AFF',
+                    highlight: '#82B1FF'
                 },
                 accent: {
-                    main: '#7C4DFF',
-                    highlight: '#B388FF'
+                    main: '#FF4081',
+                    highlight: '#FF80AB'
                 }
             }
         })

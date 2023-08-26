@@ -65,7 +65,7 @@ const Item = memo(function Item({ category, item, data, parentId }) {
                     has_bets: {
                         title: 'Has Bets',
                         icon: (props) => <Stack {...props}/>,
-                        fn: (a, category) => a.filter(r => category === 'events' ? r.bets && r.bets.length > 0 : true ).sort((a, b) => a.start_time - b.start_time)
+                        fn: (a, category) => a.filter(r => category === 'events' ? r.bets.length > 0 : true ).sort((a, b) => a.start_time - b.start_time)
                     }
                 },
                 space: { events: item.events?.length > 0 ? item.events.map(e => data.events.find(event => event.id === e.id)).sort((a, b) => a.start_time - b.start_time) : [], competitors: item.competitors },
@@ -88,7 +88,7 @@ const Item = memo(function Item({ category, item, data, parentId }) {
                     has_bets: {
                         title: 'Has Bets',
                         icon: (props) => <Stack {...props}/>,
-                        fn: (a, category) => a.filter(r => category === 'events' ? r.bets && r.bets.length > 0 : true ).sort((a, b) => a.start_time - b.start_time)
+                        fn: (a, category) => a.filter(r => category === 'events' ? r.bets.length > 0 : true ).sort((a, b) => a.start_time - b.start_time)
                     }
                 },
                 space: { events: item.events?.length > 0 ? item.events.map(e => data.events.find(event => event.id === e.id)).sort((a, b) => a.start_time - b.start_time) : [] },
@@ -102,7 +102,7 @@ const Item = memo(function Item({ category, item, data, parentId }) {
             hasSearch: true,
             searchConfig: {
                 id: 'events',
-                space: { bets: item.bets?.length > 0 ? item.bets : [] },
+                space: { bets: item.bets },
                 categories: ['bets'],
                 keys: { bets: ['name'] },
                 showAllOnInitial: true
@@ -143,11 +143,10 @@ const Item = memo(function Item({ category, item, data, parentId }) {
 
 const Competition = memo(function Competition({ results, item, parentId }) {
     const CompetitorItem = memo(function Competitor({ item: competitor, parentId }) { 
-        const [isFavorite, Favorite] = useFavorite('competitors', competitor)
         let DOMId = parentId
         return (
-            <Link id = {DOMId} to = {'/info?category=competitors&id=' + competitor.id} className = 'group/item transition-all duration-main relative w-full aspect-square flex justify-center items-center p-base bg-base-main/muted rounded-base cursor-pointer'>
-                <div id = {DOMId + '-image'} className = 'transition-colors duration-main w-full aspect-square flex justify-center items-center bg-white rounded-full border-base border-primary-main group-hover/item:border-primary-highlight'>
+            <Link id = {DOMId} to = {'/info?category=competitors&id=' + competitor.id} className = 'group/item transition-all duration-main relative w-full aspect-square flex justify-center items-center'>
+                <div id = {DOMId + '-image'} className = 'transition-colors duration-main w-full aspect-square flex justify-center items-center bg-white rounded-full border-base border-primary-main group-hover/item:border-primary-highlight cursor-pointer'>
                     <Conditional value = {competitor.picture}>
                         <Image id = {DOMId + '-image-image'} external path = {competitor.picture} classes = 'w-inscribed aspect-square'/>
                     </Conditional>
@@ -157,7 +156,6 @@ const Competition = memo(function Competition({ results, item, parentId }) {
                         </Text>
                     </Conditional>
                 </div>
-                <Favorite isFavorite = {isFavorite} classes = 'absolute top-0 right-0 mt-sm mr-sm w-4 h-4' canEdit parentId = {DOMId}/>
             </Link>
         )
     })
@@ -171,17 +169,24 @@ const Competition = memo(function Competition({ results, item, parentId }) {
             panelClasses: 'w-full md:w-[32rem]',
             parentId: DOMId + '-events',
             children: 
-                <><Conditional value = {results?.events?.length > 0}>
-                    <Map items = {results?.events} callback = {(event, index) => {
-                        let eventId = DOMId + '-event' + index; return (
-                        <EventItem key = {index} item = {event} bets = {event.bets} parentId = {eventId}/>
-                    )}}/>
-                </Conditional>
-                <Conditional value = {results?.events?.length < 1}>
-                    <Text id = {DOMId + '-events-not-found'} preset = 'body' classes = 'text-text-highlight/killed'>
-                        No events found.
-                    </Text>
-                </Conditional></>
+                <div id = {DOMId + '-events'} className = 'flex flex-col gap-lg'>
+                    <Conditional value = {results?.events?.length > 0}>
+                        <Map items = {results?.events} callback = {(event, index) => {
+                            let eventId = DOMId + '-event' + index; return (
+                            <React.Fragment key = {index}>
+                                <EventItem item = {event} bets = {event.bets} parentId = {eventId}/>
+                                <Conditional value = {index !== results?.events?.length - 1}>
+                                    <div className = 'transition-colors duration-main border-t-sm border-divider-highlight'/>
+                                </Conditional>
+                            </React.Fragment>
+                        )}}/>
+                    </Conditional>
+                    <Conditional value = {results?.events?.length < 1}>
+                        <Text id = {DOMId + '-events-not-found'} preset = 'body' classes = 'text-text-highlight/killed'>
+                            No events found.
+                        </Text>
+                    </Conditional>
+                </div>
         },
         {
             key: 'competitors',
@@ -191,7 +196,7 @@ const Competition = memo(function Competition({ results, item, parentId }) {
             parentId: DOMId + '-competitors',
             children: 
                 <><Conditional value = {results?.competitors?.length > 0}>
-                    <div id = {DOMId + '-competitors'} className = 'w-full h-full grid grid-cols-3 md:grid-cols-5 gap-base'>
+                    <div id = {DOMId + '-competitors'} className = 'w-full h-full grid grid-cols-5 md:grid-cols-8 gap-base'>
                         <Map items = {results?.competitors} callback = {(event, index) => {
                             let competitorId = DOMId + '-competitor' + index; return (
                             <CompetitorItem key = {index} item = {event} parentId = {competitorId}/>
@@ -221,17 +226,24 @@ const Competitor = memo(function Competitors({ results, item, parentId }) {
             panelClasses: 'w-full md:w-[32rem]',
             parentId: DOMId + '-events',
             children: 
-                <><Conditional value = {results?.events?.length > 0}>
-                    <Map items = {results?.events} callback = {(event, index) => {
-                        let eventId = DOMId + '-event' + index; return (
-                        <EventItem key = {index} item = {event} bets = {event.bets} parentId = {eventId}/>
-                    )}}/>
-                </Conditional>
-                <Conditional value = {results?.events?.length < 1}>
-                    <Text id = {DOMId + '-events-not-found'} preset = 'body' classes = 'text-text-highlight/killed'>
-                        No events found.
-                    </Text>
-                </Conditional></>
+                <div id = {DOMId + '-events'} className = 'flex flex-col gap-lg'>
+                    <Conditional value = {results?.events?.length > 0}>
+                        <Map items = {results?.events} callback = {(event, index) => {
+                            let eventId = DOMId + '-event' + index; return (
+                            <React.Fragment key = {index}>
+                                <EventItem item = {event} bets = {event.bets} parentId = {eventId}/>
+                                <Conditional value = {index !== results?.events?.length - 1}>
+                                    <div className = 'transition-colors duration-main border-t-sm border-divider-highlight'/>
+                                </Conditional>
+                            </React.Fragment>
+                        )}}/>
+                    </Conditional>
+                    <Conditional value = {results?.events?.length < 1}>
+                        <Text id = {DOMId + '-events-not-found'} preset = 'body' classes = 'text-text-highlight/killed'>
+                            No events found.
+                        </Text>
+                    </Conditional>
+                </div>
         },
         {
             key: 'form',
@@ -262,7 +274,7 @@ const Event = memo(function Event({ item: event, results, parentId }) {
                 <><Conditional value = {results?.bets?.length > 0}>
                     <Bets event = {event} bets = {results?.bets} parentId = {DOMId}/>
                 </Conditional>
-                <Conditional value = {!event.bets || (event.bets?.length < 1)}>
+                <Conditional value = {!event.bets || (event.bets.length < 1)}>
                     <Text id = {DOMId + '-bets-not-found'} preset = 'body' classes = 'text-text-highlight/killed'>
                         No bets found.
                     </Text>
@@ -292,7 +304,7 @@ const Title = memo(function Title({ category, item, parentId }) {
     if (category === 'competitors') {
         return (
             <div id = {DOMId} className = 'w-full h-min flex items-center gap-xs'>
-                <div id = {DOMId + '-image'} className = 'transition-colors duration-main h-8 aspect-square flex justify-center items-center bg-white rounded-full border-sm border-primary-main'>
+                <div id = {DOMId + '-image'} className = 'transition-colors duration-main h-8 aspect-square flex justify-center items-center bg-white rounded-full border-base border-primary-main'>
                     <Conditional value = {!item.picture}>
                         <Text id = {DOMId + '-image-text'} preset = 'body' classes = 'text-black/muted'>
                             {item.name.substr(0, 1)}
@@ -343,7 +355,7 @@ const Title = memo(function Title({ category, item, parentId }) {
     else if (category === 'competitions') {
         return (
             <div id = {DOMId} className = 'w-full h-min flex items-center gap-xs'>
-                <div id = {DOMId + '-image'} className = 'transition-colors duration-main h-8 aspect-square flex justify-center items-center bg-white rounded-full border-sm border-primary-main'>
+                <div id = {DOMId + '-image'} className = 'transition-colors duration-main h-8 aspect-square flex justify-center items-center bg-white rounded-full border-base border-primary-main'>
                     <Conditional value = {!item.picture}>
                         <Text id = {DOMId + '-image-text'} preset = 'body' classes = 'text-black/muted'>
                             {item.name.substr(0, 1)}
@@ -361,7 +373,7 @@ const Title = memo(function Title({ category, item, parentId }) {
                         <Favorite isFavorite = {isFavorite} canEdit classes = 'w-4 h-4' parentId = {DOMId + '-name'}/>
                     </div>
                     <Text id = {DOMId + '-name-subtitle'} preset = 'subtitle' classes = 'text-text-highlight/muted'>
-                        Plays&nbsp;{item.sport.name}&nbsp;in&nbsp;{item.country.name}
+                        Plays&nbsp;{item.sport.name}&nbsp;in&nbsp;{item.country.name}.
                     </Text>
                 </div>
             </div>
@@ -393,7 +405,7 @@ const Title = memo(function Title({ category, item, parentId }) {
         else {
             return (
                 <div id = {DOMId} className = 'w-full h-min flex items-center gap-sm'>
-                    <Link id = {DOMId + '-competitor0-image'} to = {'/info?category=competitors&id=' + item.competitors[0].id} className = 'transition-colors duration-main h-8 aspect-square flex justify-center items-center bg-white rounded-full border-sm border-primary-main hover:border-primary-highlight'>
+                    <Link id = {DOMId + '-competitor0-image'} to = {'/info?category=competitors&id=' + item.competitors[0].id} className = 'transition-colors duration-main h-8 aspect-square flex justify-center items-center bg-white rounded-full border-base border-primary-main hover:border-primary-highlight'>
                         <Conditional value = {!item.competitors[0].picture}>
                             <Text id = {DOMId + '-competitor0-image-text'} preset = 'body' classes = 'text-black/muted'>
                                 {item.competitors[0].name.substr(0, 1)}
@@ -428,7 +440,7 @@ const Title = memo(function Title({ category, item, parentId }) {
                             &nbsp;{toDate(item.start_time)}
                         </Text>
                     </div>
-                    <Link id = {DOMId + '-competitor1-image'} to = {'/info?category=competitors&id=' + item.competitors[1].id} className = 'transition-colors duration-main h-8 aspect-square flex justify-center items-center bg-white rounded-full border-sm border-primary-main hover:border-primary-highlight'>
+                    <Link id = {DOMId + '-competitor1-image'} to = {'/info?category=competitors&id=' + item.competitors[1].id} className = 'transition-colors duration-main h-8 aspect-square flex justify-center items-center bg-white rounded-full border-base border-primary-main hover:border-primary-highlight'>
                         <Conditional value = {!item.competitors[1].picture}>
                             <Text id = {DOMId + '-competitor1-image-text'} preset = 'body' classes = 'text-black/muted'>
                                 {item.competitors[1].name.substr(0, 1)}

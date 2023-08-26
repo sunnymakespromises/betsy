@@ -20,9 +20,9 @@ function useFavorite(category, item) {
     const Favorite = memo(function Favorite({ isFavorite, classes, iconClasses, canEdit = false, parentId }) {
         let DOMId = parentId + '-favorite'
         return (
-            <div id = {DOMId} className = {(classes ? ' ' + classes : '')}>
+            <div id = {DOMId} className = {'group/favorite-icon' + (classes ? ' ' + classes : '')}  onClick = {(e) => onClick(e)}>
                 <Conditional value = {canEdit || (!canEdit && isFavorite)}>
-                    <HeartFill id = {DOMId + '-icon'} className = {'!transition-colors duration-main !w-full !h-full ' + (isFavorite ? 'text-primary-main' : 'text-primary-main/killed') + (canEdit ? ' hover:text-primary-main cursor-pointer' : '') + (iconClasses ? ' ' + iconClasses : '')} onClick = {(e) => onClick(e)}/>
+                    <HeartFill id = {DOMId + '-icon'} className = {'!transition-colors duration-main !w-full !h-full ' + (isFavorite ? 'text-primary-main' + (canEdit ? ' group-hover/favorite-icon:text-primary-highlight' : '') : 'text-primary-main/killed') + (canEdit ? ' group-hover/favorite-icon:text-primary-main cursor-pointer' : '') + (iconClasses ? ' ' + iconClasses : '')}/>
                 </Conditional>
             </div>
         )

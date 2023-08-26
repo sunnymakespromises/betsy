@@ -25,7 +25,7 @@ const Events = memo(function Events({ search = true, searchKey, events, parentId
             has_bets: {
                 title: 'Has Bets',
                 icon: (props) => <FileTextFill {...props}/>,
-                fn: (a) => a.filter(r => r.bets && r.bets.length > 0).sort((a, b) => a.start_time - b.start_time)
+                fn: (a) => a.filter(r => r.bets.length > 0).sort((a, b) => a.start_time - b.start_time)
             }
         },
         space: events,
@@ -70,8 +70,8 @@ const Title = memo(function Title({ event, parentId }) {
         return (
             <div id = {DOMId} className = 'flex flex-col items-center gap-2xs'>
                 <Conditional value = {isLive}>
-                    <div id = {DOMId + '-live'} className = 'absolute top-0 left-0 bg-primary-main rounded-base p-xs shadow-lg'>
-                        <Text id = {DOMId + '-live-text'} preset = 'subtitle' classes = '!text-xs md:!text-sm text-text-primary'>
+                    <div id = {DOMId + '-live'} className = 'absolute top-0 left-0 bg-accent-main rounded-base p-xs shadow-lg'>
+                        <Text id = {DOMId + '-live-text'} preset = 'subtitle' classes = 'text-text-accent'>
                             LIVE
                         </Text>
                     </div>
@@ -81,8 +81,10 @@ const Title = memo(function Title({ event, parentId }) {
                         {event.competition.name}
                     </Text>
                 </Link>
-                <Link id = {DOMId + '-name'} to = {'/info?category=events&id=' + event.id} preset = 'body' classes = '!text-lg text-primary-main hover:text-primary-highlight whitespace-nowrap'>
-                    {event.name}
+                <Link id = {DOMId + '-name'} to = {'/info?category=events&id=' + event.id}>
+                    <Text id = {DOMId + '-name-text'} preset = 'body' classes = '!text-lg text-primary-main hover:text-primary-highlight whitespace-nowrap'>
+                        {event.name}
+                    </Text>
                 </Link>
                 <Text id = {DOMId + '-info-date'} preset = 'subtitle' classes = 'text-text-highlight/muted whitespace-nowrap'>
                     &nbsp;{toDate(event.start_time)}
@@ -92,15 +94,15 @@ const Title = memo(function Title({ event, parentId }) {
     }
     else {
         return (
-            <div id = {DOMId} className = 'w-full flex items-center gap-xs'>
+            <div id = {DOMId} className = 'w-min flex justify-center items-center gap-sm'>
                 <Conditional value = {isLive}>
-                    <div id = {DOMId + '-live'} className = 'absolute top-0 left-0 bg-primary-main rounded-base p-xs shadow-lg'>
-                        <Text id = {DOMId + '-live-text'} preset = 'subtitle' classes = '!text-xs md:!text-sm text-text-primary'>
+                    <div id = {DOMId + '-live'} className = 'absolute top-0 left-0 bg-accent-main rounded-base p-xs shadow-lg'>
+                        <Text id = {DOMId + '-live-text'} preset = 'subtitle' classes = 'text-text-accent'>
                             LIVE
                         </Text>
                     </div>
                 </Conditional>
-                <Link id = {DOMId + '-competitor0-image'} to = {'/info?category=competitors&id=' + event.competitors[0].id} className = 'transition-colors duration-main h-10 md:h-14 aspect-square flex justify-center items-center bg-white rounded-full border-sm border-primary-main hover:border-primary-highlight'>
+                <Link id = {DOMId + '-competitor0-image'} to = {'/info?category=competitors&id=' + event.competitors[0].id} className = 'transition-colors duration-main h-10 md:h-10 aspect-square flex justify-center items-center bg-white rounded-full border-base border-primary-main hover:border-primary-highlight'>
                     <Conditional value = {!event.competitors[0].picture}>
                         <Text id = {DOMId + '-competitor0-image-text'} preset = 'body' classes = 'text-black/muted'>
                             {event.competitors[0].name.substr(0, 1)}
@@ -131,7 +133,7 @@ const Title = memo(function Title({ event, parentId }) {
                         {toDate(event.start_time)}
                     </Text>
                 </div>
-                <Link id = {DOMId + '-competitor1-image'} to = {'/info?category=competitors&id=' + event.competitors[1].id} className = 'transition-colors duration-main h-10 md:h-14 aspect-square flex justify-center items-center bg-white rounded-full border-sm border-primary-main hover:border-primary-highlight'>
+                <Link id = {DOMId + '-competitor1-image'} to = {'/info?category=competitors&id=' + event.competitors[1].id} className = 'transition-colors duration-main h-10 md:h-10 aspect-square flex justify-center items-center bg-white rounded-full border-base border-primary-main hover:border-primary-highlight'>
                     <Conditional value = {!event.competitors[1].picture}>
                         <Text id = {DOMId + '-competitor1-image-text'} preset = 'body' classes = 'text-black/muted'>
                             {event.competitors[1].name.substr(0, 1)}

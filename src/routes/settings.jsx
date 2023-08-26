@@ -68,13 +68,13 @@ const AccountPanel = memo(function AccountPanel({ parentId }) {
     let DOMId = parentId + '-account'
     return currentUser && (
         <div id = {DOMId} className = 'flex flex-col gap-base'>
-            <div id = {DOMId + '-info'} className = 'flex gap-base'>
+            <div id = {DOMId + '-info'} className = 'flex gap-sm'>
                 <Picture params = {pictureParams} picture = {currentUser.picture} input = {input.picture} onInputChange = {onInputChange} isThisInputEmpty = {isThisInputEmpty} status = {statuses.picture} parentId = {DOMId}/>
                 <div id = {DOMId + '-items'} className = 'grow flex flex-col gap-sm'>
                     <Map items = {accountInfo} callback = {(info, index) => {
                         let infoId = DOMId + '-info' + index; return (
                         <React.Fragment key = {index}>
-                            <Info category = {info.key} value = {currentUser[info.key]} input = {input[info.key]} onInputChange = {onInputChange} status = {statuses[info.key]} isThisInputEmpty = {isThisInputEmpty} parentId = {infoId}/>
+                            <Info category = {info.key} value = {currentUser[info.key]} icon = {info.icon} input = {input[info.key]} onInputChange = {onInputChange} status = {statuses[info.key]} isThisInputEmpty = {isThisInputEmpty} parentId = {infoId}/>
                             <Conditional value = {index !== accountInfo.length - 1}>
                                 <div className = 'transition-colors duration-main border-t-sm border-divider-highlight'/>
                             </Conditional>
@@ -140,7 +140,7 @@ const Setting = memo(function Setting({ title, icon, settingKey, options, defaul
             <div id = {DOMId + '-items'} className = 'w-min flex gap-xs'>
                 <Map items = {options} callback = {(option, index) => {
                     let optionId = DOMId + '-option' + index; return (
-                    <Text key = {index} id = {optionId + '-title'} preset = 'subtitle' classes = {'transition-colors duration-main w-full p-sm rounded-full cursor-pointer ' + (input === option.value ? 'bg-primary-main hover:bg-primary-highlight text-text-primary' : 'bg-base-main/muted hover:bg-base-main text-text-main/killed hover:text-text-main/muted')} onClick = {() => onInputChange(option.value)}>
+                    <Text key = {index} id = {optionId + '-title'} preset = 'body' classes = {'transition-colors duration-main w-full p-sm rounded-full cursor-pointer ' + (input === option.value ? 'bg-primary-main hover:bg-primary-highlight text-text-primary' : 'bg-base-main/muted hover:bg-base-main text-text-main/killed hover:text-text-main/muted')} onClick = {() => onInputChange(option.value)}>
                         {option.title}
                     </Text>
                 )}}/>
@@ -149,14 +149,18 @@ const Setting = memo(function Setting({ title, icon, settingKey, options, defaul
     )
 }, (b, a) => b.title === a.title && b.settingKey === a.settingKey && b.defaultValue === a.defaultValue && _.isEqual(b.options, a.options))
 
-const Info = memo(function Info({ category, value, classes, input, onInputChange, status, isThisInputEmpty, parentId }) {
+const Info = memo(function Info({ category, value, icon, classes, input, onInputChange, status, isThisInputEmpty, parentId }) {
     const thisInputIsEmpty = useMemo(() => isThisInputEmpty(category), [input])
+    const Icon = icon
 
     let DOMId = parentId + '-' + category
     return (
-        <div id = {DOMId} className = {'w-full flex flex-col' + (status.message ? ' gap-xs' : '') + (classes ? ' ' + classes : '')}>
-            <Input id = {DOMId + '-input'} preset = 'profile' classes = {'w-full ' + (thisInputIsEmpty ? 'bg-base-main/muted hover:bg-base-main focus:bg-base-main text-text-main/killed placeholder:text-text-main/killed' : 'bg-primary-main text-text-primary')} status = {status.status} value = {input} onChange = {(e) => onChange(e)} placeholder = {value} autoComplete = 'off'/>
-            <Error message = {status.message} parentId = {DOMId}/>
+        <div id = {DOMId} className = 'flex items-center gap-xs'>
+            <Icon id = {DOMId + '-icon'} className = 'h-4 w-4 text-primary-main'/>
+            <div id = {DOMId + '-input'} className = {'w-full flex flex-col' + (status.message ? ' gap-xs' : '') + (classes ? ' ' + classes : '')}>
+                <Input id = {DOMId + '-input-input'} preset = 'profile' classes = {'w-full ' + (thisInputIsEmpty ? 'bg-base-main/muted hover:bg-base-main focus:bg-base-main text-text-main/killed placeholder:text-text-main/killed' : 'bg-primary-main text-text-primary')} status = {status.status} value = {input} onChange = {(e) => onChange(e)} placeholder = {value} autoComplete = 'off'/>
+                <Error message = {status.message} parentId = {DOMId}/>
+            </div>
         </div>
     )
 
@@ -180,7 +184,7 @@ const Picture = memo(function Picture({ params, picture, input, onInputChange, i
     return (
         <div id = {DOMId} className = 'w-min h-min flex justify-center'>
             <input id = {DOMId + '-input'} className = 'hidden' type = 'file' onChange = {(e) => onUpload(e)} ref = {pictureInput} accept = '.jpg, .jpeg, .png, .gif, .webp'/>
-            <Image external id = {DOMId + '-image'} path = {isCropping ? '' : input ? input : picture} classes = {'relative h-20 aspect-square rounded-full border-base border-primary-main overflow-hidden z-10 cursor-pointer' + (thisInputIsEmpty ? '' : ' border-thin border-primary-main')} mode = 'cover' onClick = {() => onPictureClick()}>
+            <Image external id = {DOMId + '-image'} path = {isCropping ? '' : input ? input : picture} classes = {'relative h-16 aspect-square rounded-full border-base border-primary-main overflow-hidden z-10 cursor-pointer' + (thisInputIsEmpty ? '' : ' border-thin border-primary-main')} mode = 'cover' onClick = {() => onPictureClick()}>
                 <Conditional value = {isCropping}>
                     <Cropper {...params}/>
                     <Error message = {status.message} parentId = {DOMId}/>

@@ -189,14 +189,14 @@ const Change = memo(function Change({ change, parentId }) {
             for (let i = 0; i < change.messages.length; i++) {
                 let message = change.messages[i]
                 newSentence.push(
-                    <Text key = {'message' + i} preset = 'subtitle' classes = 'text-text-primary/muted'>
+                    <Text key = {'message' + i} preset = 'body' classes = 'text-text-primary/muted'>
                         {i !== 0 ? '\xA0' : ''}{message}{i === 0 || i < change.objects.length ? '\xA0' : ''} {/* \xA0 is &nbsp; */}
                     </Text>
                 )
                 if (change.objects[i] && change.categories[i]) {
                     newSentence.push(
                         <Link key = {'object' + i} to = {'/info?category=' + change.categories[i] + '&id=' + change.objects[i].id}>
-                            <Text preset = 'subtitle' classes = 'text-text-primary'>
+                            <Text preset = 'body' classes = 'text-text-primary'>
                                 {change.objects[i].name}
                             </Text>
                         </Link>

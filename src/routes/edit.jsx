@@ -1,6 +1,6 @@
 import React, { memo, useEffect, useMemo, useRef, useState  } from 'react'
 import { Helmet } from 'react-helmet'
-import { ArrowClockwise, CloudArrowUpFill, FileEarmarkZipFill, PeopleFill, TrashFill, TrophyFill, X } from 'react-bootstrap-icons'
+import { ArrowClockwise, CloudArrowUpFill, FileEarmarkZipFill, PeopleFill, TrashFill, TrophyFill, XCircleFill } from 'react-bootstrap-icons'
 import Cropper from 'react-easy-crop'
 import _ from 'lodash'
 import { useDataContext } from '../contexts/data'
@@ -91,7 +91,7 @@ const Upload = memo(function Upload({ data, parentId }) {
                     {store.length + '/' + MAX_STORE_SIZE}
                 </Text>
             </div>
-            <div id = {DOMId + '-items'} className = 'relative w-full grow h-min grid grid-cols-3 md:grid-cols-4 lg:grid-cols-8 auto-rows-min gap-base z-0'>
+            <div id = {DOMId + '-items'} className = 'relative w-full grow h-min grid grid-cols-5 md:grid-cols-6 lg:grid-cols-12 auto-rows-min gap-base z-0'>
                 <Map items = {items} callback={(item, index) => { 
                     let itemId = DOMId + '-item' + index; return (
                     <Item key = {index} item = {item} onItemRemove = {onItemRemove} parentId = {itemId}/>
@@ -165,7 +165,6 @@ const Upload = memo(function Upload({ data, parentId }) {
     }
 
     function onRemoveAll() {
-        console.log(store)
         emptyStore()
     }
 }, (b, a) => _.isEqual(b.data, a.data))
@@ -184,7 +183,7 @@ const Item = memo(function Item({ item, onItemRemove, parentId }) {
 
     let DOMId = parentId
     return (
-        <div id = {DOMId} className = 'group/item relative transition-all duration-main w-full h-min flex flex-col gap-sm p-base bg-base-main/muted rounded-base'>
+        <div id = {DOMId} className = 'group/item relative transition-all duration-main w-full h-min flex flex-col gap-sm'>
             <Picture item = {item} params = {pictureParams} picture = {item.picture} input = {input.picture} onInputChange = {onInputChange} status = {statuses.picture} parentId = {DOMId}/>
             {/* <div id = {DOMId + '-info'} className = 'flex flex-col gap-xs'>
                 <Map items = {itemInfo} callback = {(info, index) => {
@@ -192,7 +191,7 @@ const Item = memo(function Item({ item, onItemRemove, parentId }) {
                     <Info key = {index} category = {info.key} value = {item[info.key]} input = {input[info.key]} onInputChange = {onInputChange} status = {statuses[info.key]} isThisInputEmpty = {isThisInputEmpty} parentId = {infoId}/>
                 )}}/>
             </div> */}
-            <X id = {DOMId + '-close-icon'} className = 'absolute top-0 right-0 mt-sm mr-sm transition-colors duration-main w-4 h-4 bg-primary-main hover:bg-primary-highlight rounded-full text-text-primary cursor-pointer z-10' onClick = {() => onItemRemove(item)}/>
+            <XCircleFill id = {DOMId + '-close-icon'} className = 'transition-colors duration-main absolute top-0 right-0 w-5 h-5 bg-white rounded-full text-primary-main hover:text-primary-highlight cursor-pointer z-10' onClick = {() => onItemRemove(item)}/>
             <Save item = {item} input = {input} onCrop = {onCrop} statuses = {statuses} setStatuses = {setStatuses} inputIsEmpty = {inputIsEmpty} clearAllInput = {clearAllInput} parentId = {DOMId}/>
         </div>
     )
@@ -234,7 +233,7 @@ const Picture = memo(function Picture({ item, params, picture, input, onInputCha
                     <Error message = {status.message} parentId = {DOMId}/>
                 </Conditional>
                 <Conditional value = {!isCropping && !item.picture}>
-                    <Text id = {DOMId + '-text'} preset = 'body' classes = 'text-black/muted p-base text-center'>
+                    <Text id = {DOMId + '-text'} preset = 'subtitle' classes = 'text-black/muted p-base text-center'>
                         {item.name}
                     </Text>
                 </Conditional>

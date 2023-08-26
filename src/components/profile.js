@@ -38,13 +38,13 @@ const Subtitle = memo(function Subtitle({ balances, date, parentId }) {
         <div id = {DOMId} className = 'w-full flex flex-col gap-xs'>
             <div id = {DOMId = '-balance'} className = 'flex items-center gap-xs'>
                 <CashStack id = {DOMId + '-balance-icon'} className = 'w-4 h-4 text-primary-main'/>
-                <Text id = {DOMId + '-balance-value'} preset = 'subtitle' classes = 'text-text-highlight whitespace-nowrap'>
+                <Text id = {DOMId + '-balance-value'} preset = 'body' classes = 'text-text-highlight whitespace-nowrap'>
                     {getAmount(balances[balances.length - 1].value)}
                 </Text>
             </div>
             <div id = {DOMId + '-date'} className = 'flex items-center gap-xs'>
                 <Balloon id = {DOMId + '-date-icon'} className = 'w-4 h-4 text-primary-main'/>
-                <Text id = {DOMId + '-date-value'} preset = 'subtitle' classes = 'text-text-highlight whitespace-nowrap'>
+                <Text id = {DOMId + '-date-value'} preset = 'body' classes = 'text-text-highlight whitespace-nowrap'>
                     {toDate(date, true)}
                 </Text>
             </div>

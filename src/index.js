@@ -12,7 +12,7 @@ import { useThemes } from './hooks/useThemes'
 import { useBreakpoints } from './hooks/useBreakpoints'
 import { useAuthorize } from './hooks/useAuthorize'
 import { useData } from './hooks/useData'
-import Slips from './components/slips'
+import SlipsPanel from './components/slips'
 import { Routes } from './routes/routes'
 import './index.css'
 import Header from './components/header'
@@ -61,7 +61,7 @@ function Root() {
         <WindowProvider value = {windowContext}>
             <UserProvider value = {userContext}>
                 <DataProvider value = {dataContext}>
-                    <div id = 'body' className = {'theme-' + theme + ' transition-colors duration-main relative w-full h-full flex flex-col md:flex-row bg-base-main'}>
+                    <div id = 'body' className = {'theme-' + theme + ' transition-colors duration-main relative w-full h-full flex flex-col md:flex-row bg-base-main overflow-auto'}>
                         {(location.pathname === '/login' || data) && <>
                         {hasUser && data && <Header currentUser = {currentUser} data = {data} location = {location}/>}
                         <DndContext sensors = {sensors} autoScroll = {false} collisionDetection = {pointerWithin} measuring = {{droppable: {strategy: MeasuringStrategy.Always, frequency: 300}}}>
@@ -81,7 +81,7 @@ function Root() {
                                         <Routes location = {location}/>
                                     </CSSTransition>
                                 </TransitionGroup>
-                                {currentUser && <Slips slips = {currentUser.slips}/>}
+                                {currentUser && <SlipsPanel/>}
                             </div>
                         </DndContext>
                         </>}

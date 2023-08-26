@@ -12,7 +12,7 @@ import { memo, useMemo } from 'react'
 const Text = memo(function Text({ preset = 'body', styles, classes, children, ...extras }) {
     let options = {
         body: 'transition-colors duration-main select-none font-main font-medium text-base',
-        title: 'transition-colors duration-main select-none font-main font-bold text-xl',
+        title: 'transition-colors duration-main select-none font-main font-medium text-xl',
         subtitle: 'transition-colors duration-main select-none font-main font-medium text-sm',
         main: {
             body: 'select-none font-main',

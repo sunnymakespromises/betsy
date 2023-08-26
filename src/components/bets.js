@@ -11,7 +11,7 @@ const Bets = memo(function Bets({ event, bets, classes, parentId }) {
     let DOMId = parentId + '-bets'
     return (
         <div id = {DOMId} className = {'w-full flex flex-col gap-base' + (classes ? ' ' + classes : '')}>
-            {bets ? (
+            {bets.length > 0 ? (
                 <Drag overlay = {OutcomeOverlay} parentId = {DOMId}>
                     <Map items = {bets.filter(bet => bet.values[0].outcomes)} callback = {(bet, index) => {
                         let betId = DOMId + '-bet' + index; return (
@@ -19,7 +19,7 @@ const Bets = memo(function Bets({ event, bets, classes, parentId }) {
                     )}}/>
                 </Drag>
             ) : (
-                <Text id = {DOMId + '-bets-not-found'} preset = 'body' classes = 'w-full bg-base-main rounded-base p-base text-text-highlight/killed'>
+                <Text id = {DOMId + '-bets-not-found'} preset = 'body' classes = 'w-full bg-base-main/muted rounded-base p-base text-text-highlight/killed text-center'>
                     No bets found.
                 </Text>
             )}
@@ -33,7 +33,7 @@ const Bet = memo(function Bet({ event, bet, outcomes, parentId }) {
     return (
         <div id = {DOMId} className = {'w-full grid ' + grid + ' gap-base'}>
             <Map items = {outcomes} callback = {(outcome, index) => {
-                let data = {id: event.id + '-' + bet.key + '-' + bet.values[0].timestamp + '-' + (outcome.competitor ? outcome.competitor.name : outcome.name), event: _.omit(event, 'bets'), bet: _.pick(bet, ['key', 'name']), outcome: outcome}
+                let data = {id: event.id + '-' + bet.key + '-' + (outcome.competitor ? outcome.competitor.name : outcome.name) + '-' + bet.values[0].timestamp, event: _.omit(event, 'bets'), bet: _.pick(bet, ['key', 'name']), outcome: outcome}
                 let outcomeId = DOMId + '-outcome' + index; return (
                 <Draggable key = {index} id = {event.id + '-' + bet.key + '-' + index} data = {data}>
                     <Outcome bet = {bet} outcome = {outcome} parentId = {outcomeId}/>
@@ -44,7 +44,8 @@ const Bet = memo(function Bet({ event, bet, outcomes, parentId }) {
 }, (b, a) => _.isEqual(b.event, a.event) && _.isEqual(b.bet, a.bet) && _.isEqual(b.outcomes, a.outcomes))
 
 const OutcomeOverlay = function OutcomeOverlay({ active, parentId }) {
-    let { bet, outcome } = active
+    let DOMId = parentId
+    let { event, bet, outcome } = active
     let name = useMemo(() => {
         let string = ''
         if (bet.key.includes('totals')) {
@@ -66,13 +67,39 @@ const OutcomeOverlay = function OutcomeOverlay({ active, parentId }) {
         return string
     }, [bet, outcome])
 
-    let DOMId = parentId
+    let eventName = useMemo(() => {
+        if (event) {
+            if (event.is_outright) {
+                return (
+                    <Text id = {DOMId + '-event-name'} preset = 'subtitle' classes = {'w-full text-center whitespace-nowrap text-text-main/killed'}>
+                        {event.name}
+                    </Text>
+                )
+            }
+            return (
+                <div id = {DOMId + '-event'} className = 'group/info w-full flex justify-center items-center'>
+                    <Text id = {DOMId + '-event-competitor0-name'} preset = 'subtitle' classes = {'max-w-full text-center whitespace-nowrap overflow-hidden text-ellipsis text-text-main/killed'}>
+                        {event.competitors[0].name}
+                    </Text>
+                    <Text id = {DOMId + '-event-competitors-separator'} preset = 'subtitle' classes = {'text-center w-min flex text-text-main/killed'}>
+                        &nbsp;{event.name.includes('@') ? '@' : 'v'}&nbsp;
+                    </Text>
+                    <Text id = {DOMId + '-event-competitor1-name'} preset = 'subtitle' classes = {'max-w-full text-center whitespace-nowrap overflow-hidden text-ellipsis text-text-main/killed'}>
+                        {event.competitors[1].name}
+                    </Text>
+                </div>
+            )
+        }
+        return <></>
+    })
+
     return (
-        <div id = {DOMId} className = 'relative transition-colors duration-main w-full flex flex-col justify-center items-center gap-xs p-sm bg-primary-main rounded-base shadow-lg'>
-            <Text id = {DOMId + '-title-text'} preset = 'subtitle' classes = 'text-text-primary'>
+        <div id = {DOMId} className = 'relative transition-colors duration-main w-full flex flex-col justify-center items-center gap-xs p-sm bg-base-main rounded-base shadow-lg'>
+            {eventName}
+            <Text id = {DOMId + '-bet-name'} preset = 'subtitle' classes = 'text-text-main/killed'>
                 {bet.name}
             </Text>
-            <Text id = {DOMId + '-name'} preset = 'subtitle' classes = 'w-full text-text-primary/muted text-center whitespace-nowrap overflow-hidden text-ellipsis'>
+            <Text id = {DOMId + '-name'} preset = 'body' classes = 'w-full text-primary-main text-center whitespace-nowrap overflow-hidden text-ellipsis'>
                 {name}
             </Text>
             <Value value = {outcome.odds} isDragging = {true} parentId = {DOMId}/>
@@ -104,11 +131,11 @@ const Outcome = forwardRef(function Outcome({ bet, outcome, isDragging, classes,
 
     let DOMId = parentId
     return (
-        <div ref = {dragRef} {...dragProps} id = {DOMId} className = {'group/outcome relative transition-colors duration-main w-full flex flex-col justify-center items-center gap-xs p-sm rounded-base ' + (isDragging ? 'bg-primary-main' : 'bg-base-main/muted hover:bg-primary-main') + (classes ? ' ' + classes : '')}>
-            <Text id = {DOMId + '-title-text'} preset = 'subtitle' classes = {isDragging ? 'text-text-primary' : 'text-primary-main group-hover/outcome:text-text-primary'}>
+        <div ref = {dragRef} {...dragProps} id = {DOMId} className = {'group/outcome relative transition-colors duration-main w-full flex flex-col justify-center items-center gap-xs p-sm rounded-base ' + (isDragging ? 'bg-base-main' : 'bg-base-main/muted hover:bg-base-main') + (classes ? ' ' + classes : '')}>
+            <Text id = {DOMId + '-bet-name'} preset = 'subtitle' classes = {isDragging ? 'text-text-main/killed' : 'text-text-main/killed group-hover/outcome:text-text-main/killed'}>
                 {bet.name}
             </Text>
-            <Text id = {DOMId + '-name'} preset = 'subtitle' classes = {'w-full text-center whitespace-nowrap overflow-hidden text-ellipsis ' + (isDragging ? 'text-text-primary/muted' : 'text-text-main/muted group-hover/outcome:text-text-primary/muted')}>
+            <Text id = {DOMId + '-name'} preset = 'body' classes = {'w-full text-center whitespace-nowrap overflow-hidden text-ellipsis ' + (isDragging ? 'text-primary-main' : 'text-primary-main group-hover/outcome:text-primary-main')}>
                 {name}
             </Text>
             <Value value = {outcome.odds} isDragging = {isDragging} parentId = {DOMId}/>
@@ -120,7 +147,7 @@ const Value = memo(function Value({ value, isDragging, parentId }) {
     const [cookies,,] = useCookies(['odds_format'])
     let DOMId = parentId + '-value'
     return (
-        <Text id = {DOMId} preset = 'body' classes = {'!font-bold !text-lg ' + (isDragging ? 'text-text-primary' : 'text-text-main group-hover/outcome:text-text-primary')}>
+        <Text id = {DOMId} preset = 'title' classes = {'!font-bold ' + (isDragging ? 'text-primary-main' : 'text-primary-main group-hover/outcome:text-primary-main')}>
             {calculateOdds(cookies['odds_format'], value ? value : 100)}
         </Text>
     )

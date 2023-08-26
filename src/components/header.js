@@ -24,7 +24,7 @@ const Header = memo(function Header({ currentUser, data, location }) {
             has_bets: {
                 title: 'Has Bets',
                 icon: (props) => <Stack {...props}/>,
-                fn: (a) => a.filter(r => r.category === 'events' && r.item.bets && r.item.bets.length > 0).sort((a, b) => a.start_time - b.start_time),
+                fn: (a) => a.filter(r => r.category === 'events' && r.item.bets.length > 0).sort((a, b) => a.start_time - b.start_time),
                 turnsOff: ['popular', 'alphabetical', 'competitions', 'competitors']
             },
             alphabetical: {
@@ -82,8 +82,8 @@ const Header = memo(function Header({ currentUser, data, location }) {
         return (
             <header id = {DOMId} className = {'w-full h-min md:w-[24rem] md:h-full p-base md:p-lg z-20 animate-fadeInLeft'}>
                 <div id = {DOMId + '-container'} className = 'transition-colors duration-main w-full h-min flex flex-col-reverse md:flex-col p-base gap-base bg-base-highlight rounded-base'>
-                    <SearchWithResults searchConfig = {searchConfig} classes = {(searchIsExpanded ? '' : 'hidden md:flex')} closeOnClick container = 'content' parentId = {DOMId}/>
-                    <div id = {DOMId + '-pages'} className = 'w-full h-full flex md:flex-col justify-between md:justify-start gap-base'>
+                    <SearchWithResults searchConfig = {searchConfig} classes = {(searchIsExpanded ? '' : 'hidden md:flex')} closeOnClick showFavorites container = 'content' parentId = {DOMId}/>
+                    <div id = {DOMId + '-pages'} className = 'w-full h-full flex md:flex-col gap-base'>
                         <Map items = {routes.filter(route => route.show && (route.is_dev ? currentUser.is_dev : true))} callback = {(page, index) => {
                             let isCurrent = '/' + location.pathname.split('/')[1] === page.path.split('?')[0]
                             let iconId = DOMId + '-page' + index; return (
@@ -101,9 +101,9 @@ const LinkPage = memo(function LinkPage({ path, title, icon, isCurrent, parentId
     const Icon = icon
     let DOMId = parentId
     return (
-        <Link id = {DOMId} to = {path} className = {'group/icon h-6 md:h-auto flex items-center gap-xs cursor-pointer'}>
-            <Icon id = {DOMId + '-icon'} title = {title} className = {'transition-colors duration-main h-full w-full md:w-min aspect-square ' + (isCurrent ? 'text-primary-main' : 'text-text-highlight/muted group-hover/icon:text-primary-main')}/>
-            <Text preset = 'body' classes = {'hidden md:flex transition-colors duration-main ' + (isCurrent ? 'text-primary-main' : 'text-text-highlight/muted group-hover/icon:text-primary-main')}>
+        <Link id = {DOMId} to = {path} className = {'group/icon w-6 md:w-auto h-6 md:h-auto flex items-center gap-xs cursor-pointer'}>
+            <Icon id = {DOMId + '-icon'} title = {title} className = {'transition-colors duration-main h-full w-full md:w-min aspect-square ' + (isCurrent ? 'text-primary-main' : 'text-text-highlight/killed group-hover/icon:text-primary-main')}/>
+            <Text preset = 'body' classes = {'hidden md:flex transition-colors duration-main ' + (isCurrent ? 'text-primary-main' : 'text-text-highlight group-hover/icon:text-primary-main')}>
                 {title}
             </Text>
         </Link>
@@ -114,9 +114,9 @@ const ButtonPage = memo(function ButtonPage({ title, icon, isCurrent, classes, o
     const Icon = icon
     let DOMId = parentId
     return (
-        <div id = {DOMId} className = {'group/icon h-6 md:h-auto flex items-center gap-xs cursor-pointer' + (classes ? ' ' + classes : '')} onClick = {onClick}>
-            <Icon id = {DOMId + '-icon'} title = {title} className = {'transition-colors duration-main h-full w-full md:w-min aspect-square ' + (isCurrent ? 'text-primary-main' : 'text-text-highlight/muted group-hover/icon:text-primary-main')}/>
-            <Text preset = 'body' classes = {'hidden md:flex transition-colors duration-main ' + (isCurrent ? 'text-primary-main' : 'text-text-highlight/muted group-hover/icon:text-primary-main')}>
+        <div id = {DOMId} className = {'group/icon w-6 md:w-auto h-6 md:h-auto flex items-center gap-xs cursor-pointer' + (classes ? ' ' + classes : '')} onClick = {onClick}>
+            <Icon id = {DOMId + '-icon'} title = {title} className = {'transition-colors duration-main h-full w-full md:w-min aspect-square ' + (isCurrent ? 'text-primary-main' : 'text-text-highlight/killed group-hover/icon:text-primary-main')}/>
+            <Text preset = 'body' classes = {'hidden md:flex transition-colors duration-main ' + (isCurrent ? 'text-primary-main' : 'text-text-highlight group-hover/icon:text-primary-main')}>
                 {title}
             </Text>
         </div>
