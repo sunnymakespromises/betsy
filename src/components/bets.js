@@ -94,7 +94,7 @@ const OutcomeOverlay = function OutcomeOverlay({ active, parentId }) {
     })
 
     return (
-        <div id = {DOMId} className = 'relative transition-colors duration-main w-full flex flex-col justify-center items-center gap-xs p-sm bg-base-main rounded-base shadow-lg'>
+        <div id = {DOMId} className = 'relative transition-colors duration-main w-full flex flex-col justify-center items-center gap-xs p-sm bg-base-main rounded-base'>
             {eventName}
             <Text id = {DOMId + '-bet-name'} preset = 'subtitle' classes = 'text-text-main/killed'>
                 {bet.name}
