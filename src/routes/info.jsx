@@ -55,7 +55,7 @@ const Item = memo(function Item({ category, item, data, parentId }) {
             element: (props) => <Competition {...props}/>,
             hasSearch: true,
             searchConfig: {
-                id: 'competitions',
+                id: 'info',
                 filters: {
                     live: {
                         title: 'Live Events',
@@ -78,7 +78,7 @@ const Item = memo(function Item({ category, item, data, parentId }) {
             element: (props) => <Competitor {...props}/>,
             hasSearch: true,
             searchConfig: {
-                id: 'competitors',
+                id: 'info',
                 filters: {
                     live: {
                         title: 'Live Events',
@@ -101,7 +101,7 @@ const Item = memo(function Item({ category, item, data, parentId }) {
             element: (props) => <Event {...props}/>,
             hasSearch: true,
             searchConfig: {
-                id: 'events',
+                id: 'info',
                 space: { bets: item.bets },
                 categories: ['bets'],
                 keys: { bets: ['name'] },
