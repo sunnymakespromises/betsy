@@ -103,7 +103,7 @@ const LinkPage = memo(function LinkPage({ path, title, icon, isCurrent, parentId
     return (
         <Link id = {DOMId} to = {path} className = {'group/icon w-6 md:w-auto h-6 md:h-auto flex items-center gap-xs cursor-pointer'}>
             <Icon id = {DOMId + '-icon'} title = {title} className = {'transition-colors duration-main h-full w-full md:w-min aspect-square ' + (isCurrent ? 'text-primary-main' : 'text-text-highlight/killed group-hover/icon:text-primary-main')}/>
-            <Text preset = 'body' classes = {'hidden md:flex transition-colors duration-main ' + (isCurrent ? 'text-primary-main' : 'text-text-highlight group-hover/icon:text-primary-main')}>
+            <Text preset = 'body' classes = {'hidden md:flex transition-colors duration-main ' + (isCurrent ? 'text-primary-main' : 'text-text-highlight/killed group-hover/icon:text-primary-main')}>
                 {title}
             </Text>
         </Link>
@@ -122,69 +122,5 @@ const ButtonPage = memo(function ButtonPage({ title, icon, isCurrent, classes, o
         </div>
     )
 }, (b, a) => b.title === a.title && b.isCurrent === a.isCurrent && b.classes === a.classes)
-
-// const Result = memo(function Result({ category, item, parentId }) {
-//     let [isFavorite, Favorite] = useFavorite(category, item)
-//     let title = useMemo(() => {
-//         let DOMId = parentId + '-title'
-//         if (category === 'competitors' || category === 'competitions') {
-//             return (
-//                 <>
-//                     <Conditional value = {item.picture}>
-//                         <Image id = {DOMId + '-image'} external path = {item.picture} classes = 'h-4 w-4'/>
-//                     </Conditional>
-//                     <Text id = {DOMId + '-name'} preset = 'search-result-title' classes = 'group-hover/result:text-primary-main'>
-//                         {item.name}
-//                     </Text>
-//                 </>
-//             )
-//         }
-//         else if (category === 'events') {
-//             if (item.is_outright) {
-//                 return (
-//                     <Text id = {DOMId + '-name'} preset = 'search-result-title' classes = 'group-hover/result:text-primary-main'>
-//                         {item.name}
-//                     </Text>
-//                 )
-//             }
-//             else {
-//                 return (
-//                     <>
-//                         <div id = {DOMId + '-competitor0'} className = 'flex flex-row items-center gap-tiny overflow-hidden'>
-//                             <Conditional value = {item.competitors[0].picture}>
-//                                 <Image id = {DOMId + '-competitor0-image'} external path = {item.competitors[0].picture} classes = 'h-4 w-4'/>
-//                             </Conditional>
-//                             <Text id = {DOMId + '-competitor0-name'} preset = 'search-result-title' classes = 'group-hover/result:text-primary-main'>
-//                                 {item.competitors[0].name}
-//                             </Text>
-//                         </div>
-//                         <Text id = {DOMId + '-competitors-separator'} preset = 'search-result-title'>
-//                             {item.name.includes('@') ? '@' : 'v'}
-//                         </Text>
-//                         <div id = {DOMId + '-competitor1'} className = 'flex flex-row items-center gap-tiny overflow-hidden'>
-//                             <Conditional value = {item.competitors[1].picture}>
-//                                 <Image id = {DOMId + '-competitor1-image'} external path = {item.competitors[1].picture} classes = 'h-4 w-4'/>
-//                             </Conditional>
-//                             <Text id = {DOMId + '-competitor1-name'} preset = 'search-result-title' classes = 'group-hover/result:text-primary-main'>
-//                                 {item.competitors[1].name}
-//                             </Text>
-//                         </div>
-//                     </>
-//                 )
-//             }
-//         }
-//         return <></>
-//     }, [item, category])
-
-//     let DOMId = parentId
-//     return (
-//         <Link id = {DOMId} to = {category !== 'users' ? '/info?category=' + category + '&id=' + item.id : '/users?id=' + item.id} className = 'group/result relative flex items-center px-main py-small gap-sm cursor-pointer'>
-//             {title}
-//             <Conditional value = {category !== 'events' && category !== 'users'}>
-//                 <Favorite isFavorite = {isFavorite} category = {category} canEdit = {false} item = {item} classes = '!h-4 !w-4' parentId = {DOMId}/>
-//             </Conditional>
-//         </Link>
-//     )
-// }, (b, a) => b.category === a.category && _.isEqual(b.item, a.item))
 
 export default Header
