@@ -94,7 +94,7 @@ const PickOverlay = function PickOverlay({ active, parentId }) {
     })
 
     return (
-        <div id = {DOMId} className = 'relative transition-colors duration-main w-full flex flex-col justify-center items-center gap-xs p-sm bg-base-main rounded-base'>
+        <div id = {DOMId} className = 'relative transition-colors duration-main w-full flex flex-col justify-center items-center gap-xs p-sm bg-base-main rounded-base border-base border-base-highlight'>
             {eventName}
             <Text id = {DOMId + '-bet-name'} preset = 'subtitle' classes = 'text-text-main/killed'>
                 {bet.name}
