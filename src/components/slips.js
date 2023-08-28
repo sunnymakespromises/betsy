@@ -1,6 +1,5 @@
 import React, { forwardRef, memo, useEffect, useMemo, useState } from 'react'
 import { FileTextFill, PlusCircleFill } from 'react-bootstrap-icons'
-import { useCookies } from 'react-cookie'
 import { useDndMonitor } from '@dnd-kit/core'
 import _ from 'lodash'
 import { useDataContext } from '../contexts/data'
@@ -11,10 +10,10 @@ import Text from './text'
 import Panel from './panel'
 import now from '../lib/util/now'
 import toDate from '../lib/util/toDate'
-import calculateOdds from '../lib/util/calculateOdds'
 import { default as short } from 'short-uuid'
 import { usePrevious } from '../hooks/usePrevious'
 import Conditional from './conditional'
+import { Pick } from './bets'
 
 const SlipsPanel = memo(function SlipsPanel() {
     const [active, setActive] = useState()
@@ -96,10 +95,10 @@ export const Slip = memo(forwardRef(function Slip({ slip, data, dropped, onDrop,
             if (pick && pick.split('-').length === 4) {
                 let [eventId, betKey, outcomeName, valueTimestamp] = pick.split('-')
                 let event = data.events.find(event => event.id === eventId)
-                if (event) {
-                    let bet = event.bets.find(bet => bet.key === betKey)
-                    let value = bet.values.find(value => value.timestamp === Number(valueTimestamp))
-                    let outcome = value.outcomes.find(outcome => (outcome.competitor ? outcome.competitor.name === outcomeName : outcome.name === outcomeName))
+                let bet = event?.bets?.find(bet => bet.key === betKey)
+                let value = bet?.values?.find(value => value.timestamp === Number(valueTimestamp))
+                let outcome = value?.outcomes?.find(outcome => (outcome.competitor ? outcome.competitor.name === outcomeName : outcome.name === outcomeName))
+                if (event && bet && value && outcome) {
                     expandedSlip.picks[i] = {
                         event: event,
                         bet: bet,
@@ -134,7 +133,7 @@ export const Slip = memo(forwardRef(function Slip({ slip, data, dropped, onDrop,
                 <div id = {DOMId + '-picks'} className = {'w-full grid ' + grid + ' gap-base'}>
                     <Map items = {expandedSlip.picks} callback = {(pick, index) => {
                         let pickId = DOMId + '-pick' + index; return (
-                        <Pick key = {index} pick = {pick} editable = {editable} isOver = {isOver} parentId = {pickId}/>
+                        <Pick key = {index} event = {pick.event} bet = {pick.bet} outcome = {pick.outcome} draggable = {false} editable = {editable} isOver = {isOver} parentId = {pickId}/>
                     )}}/>
                 </div>
             </div>
@@ -164,81 +163,5 @@ const NewSlip = memo(forwardRef(function NewSlip({ parentId, dropped, onDrop, is
         </div>
     )
 }), (b, a) => b.isOver === a.isOver && _.isEqual(b.dropped, a.dropped))
-
-const Pick = memo(function Outcome({ pick, isOver, editable, parentId }) {
-    let { bet, outcome, event } = pick
-    let DOMId = parentId
-
-    let eventName = useMemo(() => {
-        if (pick) {
-            if (event.is_outright) {
-                return (
-                    <Text id = {DOMId + '-event-name'} preset = 'subtitle' classes = {'w-full text-center whitespace-nowrap ' + (isOver ? 'text-text-primary/killed' : 'text-text-main/killed')}>
-                        {event.name}
-                    </Text>
-                )
-            }
-            return (
-                <div id = {DOMId + '-event'} className = 'group/info w-full flex justify-center items-center'>
-                    <Text id = {DOMId + '-event-competitor0-name'} preset = 'subtitle' classes = {'max-w-full text-center whitespace-nowrap overflow-hidden text-ellipsis ' + (isOver ? 'text-text-primary/killed' : 'text-text-main/killed')}>
-                        {event.competitors[0].name}
-                    </Text>
-                    <Text id = {DOMId + '-event-competitors-separator'} preset = 'subtitle' classes = {'text-center w-min flex ' + (isOver ? 'text-text-primary/killed' : 'text-text-main/killed')}>
-                        &nbsp;{event.name.includes('@') ? '@' : 'v'}&nbsp;
-                    </Text>
-                    <Text id = {DOMId + '-event-competitor1-name'} preset = 'subtitle' classes = {'max-w-full text-center whitespace-nowrap overflow-hidden text-ellipsis ' + (isOver ? 'text-text-primary/killed' : 'text-text-main/killed')}>
-                        {event.competitors[1].name}
-                    </Text>
-                </div>
-            )
-        }
-        return <></>
-    })
-    
-    let name = useMemo(() => {
-        if (pick) {
-            let string = ''
-            if (bet.key.includes('totals')) {
-                string = outcome.name + ' ' + outcome.point
-            }
-            else if (bet.key.includes('spreads')) {
-                if (outcome.competitor) {
-                    string = outcome.competitor.name + ' ' + (outcome.point > 0 ? '+' : '') + outcome.point
-                }
-            }
-            else {
-                string = (outcome.competitor ? outcome.competitor.name : outcome.name)
-            }
-            return string
-        }
-        return null
-    }, [bet, outcome])
-
-    if (pick) {
-        return (
-            <div id = {DOMId} className = {'relative transition-colors duration-main w-full flex flex-col justify-center items-center gap-xs p-sm rounded-base ' + (isOver ? 'bg-primary-main' : 'bg-base-main/muted')}>
-                {eventName}
-                <Text id = {DOMId + '-title-text'} preset = 'subtitle' classes = {isOver ? 'text-text-primary/killed' : 'text-text-main/killed'}>
-                    {bet.name}
-                </Text>
-                <Text id = {DOMId + '-name'} preset = 'body' classes = {'w-full text-center whitespace-nowrap overflow-hidden text-ellipsis ' + (isOver ? 'text-text-primary' : 'text-primary-main')}>
-                    {name}
-                </Text>
-                <Value value = {outcome.odds} isOver = {isOver} parentId = {DOMId}/>
-            </div>
-        )
-    }
-    return null
-}, (b, a) => b.pick === a.pick && b.isOver === a.isOver && b.editable === a.editable && _.isEqual(b.dat, a.data))
-
-const Value = memo(function Value({ value, isOver, parentId }) {
-    const [cookies,,] = useCookies(['odds_format'])
-    let DOMId = parentId + '-value'
-    return (
-        <Text id = {DOMId} preset = 'title' classes = {'!font-bold ' + (isOver ? 'text-text-primary' : 'text-primary-main')}>
-            {calculateOdds(cookies['odds_format'], value ? value : 100)}
-        </Text>
-    )
-})
 
 export default SlipsPanel
