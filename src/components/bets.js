@@ -107,7 +107,7 @@ const PickOverlay = function PickOverlay({ active, parentId }) {
     )
 }
 
-export const Pick = forwardRef(function Pick({ event, bet, outcome, draggable, isDragging, isOver, classes, parentId, ...dragProps }, dragRef) {
+export const Pick = forwardRef(function Pick({ event, bet, outcome, editable, draggable, isDragging, isOver, classes, parentId, ...dragProps }, dragRef) {
     let DOMId = parentId
     let name = useMemo(() => {
         let string = ''
