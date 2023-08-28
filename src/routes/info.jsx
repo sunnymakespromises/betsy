@@ -68,7 +68,7 @@ const Item = memo(function Item({ category, item, data, parentId }) {
                         fn: (a, category) => a.filter(r => category === 'events' ? r.bets.length > 0 : true ).sort((a, b) => a.start_time - b.start_time)
                     }
                 },
-                space: { events: item.events?.length > 0 ? item.events.map(e => data.events.find(event => event.id === e.id)).sort((a, b) => a.start_time - b.start_time) : [], competitors: item.competitors },
+                space: { events: item.events?.length > 0 ? item.events.map(e => data.events.find(event => event.id === e.id)).filter(event => !event.is_completed).sort((a, b) => a.start_time - b.start_time) : [], competitors: item.competitors },
                 categories: ['events', 'competitors'],
                 keys: { events: ['name', 'competitors.name'], competitors: ['name'] },
                 showAllOnInitial: true
@@ -91,7 +91,7 @@ const Item = memo(function Item({ category, item, data, parentId }) {
                         fn: (a, category) => a.filter(r => category === 'events' ? r.bets.length > 0 : true ).sort((a, b) => a.start_time - b.start_time)
                     }
                 },
-                space: { events: item.events?.length > 0 ? item.events.map(e => data.events.find(event => event.id === e.id)).sort((a, b) => a.start_time - b.start_time) : [] },
+                space: { events: item.events?.length > 0 ? item.events.map(e => data.events.find(event => event.id === e.id)).filter(event => !event.is_completed).sort((a, b) => a.start_time - b.start_time) : [] },
                 categories: ['events'],
                 keys: { events: ['name', 'competition.name', 'competitors.name', 'sport.name'] },
                 showAllOnInitial: true
