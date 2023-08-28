@@ -87,7 +87,7 @@ export const Slips = memo(function Slips({ editable = false, parentId }) {
     }
 }, (b, a) => b.editable === a.editable)
 
-export const Slip = memo(forwardRef(function Slip({ slip, data, dropped, onDrop, onRemove, isOver, editable, parentId }, dropRef) {
+const Slip = memo(forwardRef(function Slip({ slip, data, dropped, onDrop, onRemove, isOver, editable, parentId }, dropRef) {
     let expandedSlip = useMemo(() => {
         let expandedSlip = JSON.parse(JSON.stringify(slip))
         for (let i = 0; i < expandedSlip.picks?.length; i++) {
@@ -98,7 +98,7 @@ export const Slip = memo(forwardRef(function Slip({ slip, data, dropped, onDrop,
                 let bet = event?.bets?.find(bet => bet.key === betKey)
                 let value = bet?.values?.find(value => value.timestamp === Number(valueTimestamp))
                 let outcome = value?.outcomes?.find(outcome => (outcome.competitor ? outcome.competitor.name === outcomeName : outcome.name === outcomeName))
-                if (event && bet && value && outcome) {
+                if (event && bet && value && outcome && !event.is_completed) {
                     expandedSlip.picks[i] = {
                         event: event,
                         bet: bet,
