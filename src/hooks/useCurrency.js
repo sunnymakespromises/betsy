@@ -1,14 +1,18 @@
 import { useCookies } from 'react-cookie'
-import calculateCurrency from '../lib/util/calculateCurrency'
+import getFormattedMoneyAmount, { getCurrencySymbol } from '../lib/util/getFormattedMoneyAmount'
 
 function useCurrency() {
     const [cookies,,] = useCookies(['currency'])
 
-    function getAmount(amount, shortened) {
-        return calculateCurrency(cookies['currency'], amount ? amount : '0.00', shortened)
+    function getAmount(from, to, amount, shortened) {
+        return getFormattedMoneyAmount(from ? from : cookies['currency'], to ? to : cookies['currency'], amount ? amount : '0.00', shortened)
+    }
+
+    function getSymbol() {
+        return getCurrencySymbol(cookies['currency'])
     }
     
-    return { getAmount }
+    return { getAmount, getSymbol }
 }
 
 export { useCurrency }

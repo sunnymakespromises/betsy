@@ -12,7 +12,6 @@ import { useThemes } from './hooks/useThemes'
 import { useBreakpoints } from './hooks/useBreakpoints'
 import { useAuthorize } from './hooks/useAuthorize'
 import { useData } from './hooks/useData'
-import SlipsPanel from './components/slips'
 import { Routes } from './routes/routes'
 import './index.css'
 import Header from './components/header'
@@ -81,7 +80,6 @@ function Root() {
                                         <Routes location = {location}/>
                                     </CSSTransition>
                                 </TransitionGroup>
-                                {currentUser && <SlipsPanel/>}
                             </div>
                         </DndContext>
                         </>}

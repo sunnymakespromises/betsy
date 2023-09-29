@@ -1,7 +1,7 @@
 import React, { forwardRef, memo, useEffect, useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
-import { HeartFill, XCircleFill } from 'react-bootstrap-icons'
+import { Check, FileTextFill, HeartFill, StopwatchFill, X, XCircleFill } from 'react-bootstrap-icons'
 import { rectSortingStrategy } from '@dnd-kit/sortable'
 import _ from 'lodash'
 import { useUserContext } from '../contexts/user'
@@ -13,8 +13,11 @@ import Image from '../components/image'
 import Text from '../components/text'
 import Map from '../components/map'
 import Sort from '../components/sort'
-import Panel from '../components/panel'
+import { MultiPanel } from '../components/panel'
 import { getUserBy } from '../lib/getUserBy'
+import Slips from '../components/slips'
+import { useSearch } from '../hooks/useSearch'
+import SearchBar from '../components/searchBar'
 
 const User = memo(function User() {
     const { currentUser } = useUserContext()
@@ -22,6 +25,60 @@ const User = memo(function User() {
     const [searchParams,] = useSearchParams()
     const userId = useMemo(() => searchParams.get('id') ? searchParams.get('id') : null, [searchParams])
     const isCurrentUser = useMemo(() => userId ? currentUser.id === userId : true, [currentUser, userId])
+    const searchConfig = useMemo(() => { return {
+        id: 'user_slips',
+        filters: {
+            live: {
+                title: 'Live Bets',
+                icon: (props) => <StopwatchFill {...props}/>,
+                fn: (a) => a.filter(r => r.did_hit === null),
+                turnsOff: ['hits', 'misses']
+            },
+            hits: {
+                title: 'Hits',
+                icon: (props) => <Check {...props}/>,
+                fn: (a) => a.filter(r => r.did_hit === true),
+                turnsOff: ['live', 'misses']
+            },
+            misses: {
+                title: 'Misses',
+                icon: (props) => <X {...props}/>,
+                fn: (a) => a.filter(r => r.did_hit === false),
+                turnsOff: ['hits', 'live']
+            }
+        },
+        space: user?.slips,
+        shape: 'array',
+        keys: ['picks'],
+        showAllOnInitial: true
+    }}, [user])
+    const search = useSearch(searchConfig)
+
+    let DOMId = 'user'
+    let panelsConfig = useMemo(() => [
+        {
+            category: 'panel',
+            key: 'favorites',
+            icon: HeartFill,
+            panelClasses: 'w-full md:w-[20rem] h-min',
+            parentId: DOMId + '-favorites',
+            children: 
+                <FavoritesPanel favorites = {user?.favorites} canEdit = {isCurrentUser} parentId = {DOMId}/>
+        },
+        {
+            category: 'panel',
+            key: 'slips',
+            icon: FileTextFill,
+            panelClasses: 'w-full h-min',
+            parentId: DOMId + '-slips',
+            children: 
+                user && 
+                <div id = {DOMId + '-slips-panel-container'} className = 'flex flex-col gap-base'>
+                    <SearchBar {...search} classes = 'w-full' isExpanded = {false} canExpand = {false} parentId = {DOMId}/>
+                    <Slips slips = {search.results?.sort((a, b) => b.timestamp - a.timestamp)} isTailable = {!_.isEqual(currentUser, user)} parentId = {DOMId}/>
+                </div>
+        }
+    ], [user, isCurrentUser, currentUser, search])
 
     useEffect(() => {
         async function updateUser() {
@@ -39,17 +96,13 @@ const User = memo(function User() {
         updateUser()
     }, [currentUser, userId])
 
-    let DOMId = 'user'
     return (
         <Page canScroll DOMId = {DOMId}>
-            {user && <div id = {DOMId} className = 'w-full h-full flex flex-col md:flex-row'>
+            {user && <div id = {DOMId} className = 'w-full flex flex-col md:flex-row gap-base md:gap-lg'>
                 <Helmet><title>User • Betsy</title></Helmet>
-                <div id = {DOMId + '-group-1-container'} className = 'w-full h-min md:w-min md:h-full flex flex-col gap-base md:gap-lg'>
-                    <Profile user = {user} isCurrentUser = {isCurrentUser} parentId = {DOMId} canEdit = {false}/>
-                    <FavoritesPanel favorites = {user?.favorites} canEdit = {isCurrentUser} parentId = {DOMId}/>
-                </div>
-                <div id = {DOMId + '-group-2-container'} className = 'grow h-full'>
-
+                <Profile user = {user} isCurrentUser = {isCurrentUser} parentId = {DOMId} canEdit = {false}/>
+                <div id = {DOMId + '-info'} className = 'w-full flex flex-col gap-base md:gap-lg'>
+                    <MultiPanel config = {panelsConfig} parentId = {DOMId}/>
                 </div>
             </div>}
         </Page>
@@ -67,21 +120,24 @@ const FavoritesPanel = memo(function FavoritesPanel({ favorites, canEdit, parent
 
     let DOMId = parentId + '-favorites'
     return (
-        <Panel title = 'Favorites' icon = {(props) => <HeartFill {...props}/>} parentId = {DOMId}>
-            <div id = {DOMId} className = 'relative w-full h-min flex flex-col gap-lg'>
-                <Conditional value = {Object.keys(processedFavorites).length > 0}>
-                    <Map items = {Object.keys(processedFavorites)} callback = {(category, index) => {
-                        let categoryId = DOMId + '-category' + index; return (
-                        <FavoritesGroup key = {index} favorites = {processedFavorites[category]} canEdit = {canEdit} parentId = {categoryId}/>
-                    )}}/>
-                </Conditional>
-                <Conditional value = {Object.keys(processedFavorites).length < 1}>
-                    <Text id ={DOMId + '-notFound'} preset = 'body' classes = 'w-full h-full flex justify-center items-center !text-lg text-text-highlight/killed'>
-                        No favorites found.
-                    </Text>
-                </Conditional>
-            </div>
-        </Panel>
+        <div id = {DOMId} className = 'relative w-full h-min flex flex-col gap-base'>
+            <Conditional value = {Object.keys(processedFavorites).length > 0}>
+                <Map items = {Object.keys(processedFavorites)} callback = {(category, index) => {
+                    let categoryId = DOMId + '-category' + index; return (
+                    <React.Fragment key = {index}>
+                        <FavoritesGroup favorites = {processedFavorites[category]} canEdit = {canEdit} parentId = {categoryId}/>
+                        <Conditional value = {index !== Object.keys(processedFavorites).length - 1}>
+                            <div className = 'transition-colors duration-main border-t-sm border-divider-highlight'/>
+                        </Conditional>
+                    </React.Fragment>
+                )}}/>
+            </Conditional>
+            <Conditional value = {Object.keys(processedFavorites).length < 1}>
+                <Text id ={DOMId + '-notFound'} preset = 'body' classes = '!text-lg text-text-highlight/killed'>
+                    No favorites found.
+                </Text>
+            </Conditional>
+        </div>
     )
 }, (b, a) => b.canEdit === a.canEdit && _.isEqual(b.favorites, a.favorites))
 
@@ -124,7 +180,7 @@ const Favorite = forwardRef(function Favorite({ item: favorite, canEdit, isDragg
                 </Conditional>
             </div>
             <Conditional value = {canEdit}>
-                <XCircleFill id = {DOMId + '-cancel-icon'} className = {'absolute transition-all duration-main top-0 right-0 w-4 h-4 cursor-pointer scale-1 md:scale-0 text-primary-main hover:text-primary-highlight bg-white rounded-full ' + (!isDragging && !somethingIsDragging ? ' group-hover/favorite:!scale-100' : '')} onClick = {(e) => onRemove(e, favorite)}/>
+                <XCircleFill id = {DOMId + '-cancel-icon'} className = {'absolute transition-all duration-main -top-2xs -right-2xs w-4 h-4 cursor-pointer scale-1 md:scale-0 text-primary-main hover:text-primary-highlight bg-white rounded-full ' + (!isDragging && !somethingIsDragging ? ' group-hover/favorite:!scale-100' : '')} onClick = {(e) => onRemove(e, favorite)}/>
             </Conditional>
         </Link>
     )

@@ -21,6 +21,9 @@ async function getUserBy(key, value) {
         for (const category of Object.keys(user.favorites).filter(category => user.favorites[category].length > 0)) {
             response.user.favorites[category] = await getItems(category, user.favorites[category], ['id', 'name', 'picture'])
         } 
+        if (user.slips.length > 0) {
+            response.user.slips = await getItems('slips', user.slips, null)
+        }
     }
     else {
         response.message = 'no user found with that ' + key + '.'

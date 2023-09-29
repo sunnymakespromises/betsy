@@ -1,24 +1,20 @@
-export default function calculateOdds(format, value) {
-    format = format ? format : 'american'
-    switch (format) {
-        case 'american':
-            return (value > 0 ? '+' : '') + value.toString()
-        case 'decimal':
-            return (value > 0 ? ((value / 100) + 1) : ((value - 100) / value)).toFixed(2).toString()
-        case 'fractional':
-            let fraction = reduce(Math.abs(value), 100)
-            return (value > 0 ? (fraction[0] + '/' + fraction[1]) : (fraction[1] + '/' + fraction[0]))
-        default:
-            return null
-    }
+import getFormattedOdds from './getFormattedOdds'
 
-    function reduce(numerator, denominator) {
-        var a = numerator;
-        var b = denominator;
-        var c;
-        while (b) {
-            c = a % b; a = b; b = c;
-        }
-        return [numerator / a, denominator / a];
+export default function calculateOdds(format, picks) {
+    picks = picks.filter(pick => pick.did_hit !== 'voided')
+    let oddsArray = picks.map(pick => {
+        let odds = pick.outcome.odds
+        return (odds > 0 ? ((odds / 100) + 1) : ((odds - 100) / odds))
+    })
+    let totalDecimalOdds = 1
+    for (const odd of oddsArray) {
+        totalDecimalOdds = (totalDecimalOdds * odd)
+    }
+    let totalAmericanOdds = totalDecimalOdds === 1 ? 100 : Number((totalDecimalOdds > 2 ? ((totalDecimalOdds - 1) * 100) : (-100 / (totalDecimalOdds - 1))).toFixed(0))
+    let formattedOdds = getFormattedOdds(format, totalAmericanOdds)
+    return { 
+        string: formattedOdds,
+        american: totalAmericanOdds,
+        decimal: totalDecimalOdds
     }
 }

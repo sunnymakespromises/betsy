@@ -1,5 +1,6 @@
 import _ from 'lodash'
-import { forwardRef, memo, useMemo } from 'react'
+import { forwardRef, memo, useEffect, useMemo, useRef, useState } from 'react'
+import Conditional from './conditional'
 /**
  * An <input> that contains the given value and preset, and updates the value according to onChange when the user types in it.
  * @param {string} value the text value of the input.
@@ -11,7 +12,16 @@ import { forwardRef, memo, useMemo } from 'react'
  * @param {function} onChange the function to be triggered whenever the user types into the input.
  * @returns an <input> tag.
  */
-const Input = memo(forwardRef(function Input({ value, status, type = 'text', preset = 'main', styles, classes, onChange, ...extras }, ref) {
+const Input = memo(forwardRef(function Input({ value, status, type = 'text', preset = 'main', fitContent = false, styles, classes, placeholder, onChange, ...extras }, ref) {
+    const [width, setWidth] = useState(0)
+    const span = useRef()
+
+    useEffect(() => {
+        if (fitContent) {
+            setWidth(span.current.offsetWidth)
+        }
+    }, [value])
+
     let options = {
         main: {
             classes: 'transition-all duration-main px-base py-sm font-main font-medium w-full text-base text-text-main bg-base-main/muted hover:bg-base-main focus:bg-base-main rounded-base placeholder:text-text-main/killed focus:outline-none z-10',
@@ -21,6 +31,12 @@ const Input = memo(forwardRef(function Input({ value, status, type = 'text', pre
         },
         profile: {
             classes: 'transition-all duration-main p-sm select-none font-main font-medium text-base rounded-base focus:outline-none',
+            true: '',
+            false: '',
+            null: ''
+        },
+        slip_wager: {
+            classes: 'transition-all duration-main select-none font-main font-bold text-xl text-text-main/killed text-right bg-transparent placeholder:text-text-main/killed focus:outline-none',
             true: '',
             false: '',
             null: ''
@@ -61,8 +77,13 @@ const Input = memo(forwardRef(function Input({ value, status, type = 'text', pre
     }, [preset])
 
     return (
-        <input className = {option.classes + (status === false ? ' ' + option.false : '') + (status === true ? ' ' + option.true : '') + (status === null && option.null !== '' ? ' ' + option.null : '') + (classes ? ' ' + classes : '')} style = {styles} value = {value ? value : ''} type = {type} onChange = {onChange} ref = {ref} {...extras}/>
+        <>
+            <Conditional value = {fitContent}>
+                <span className = {option.classes + ' absolute opacity-0 whitespace-pre -z-1000 pointer-events-none'} ref = {span}>{value !== '' ? value : placeholder}</span>
+            </Conditional>
+            <input className = {option.classes + (status === false ? ' ' + option.false : '') + (status === true ? ' ' + option.true : '') + (status === null && option.null !== '' ? ' ' + option.null : '') + (classes ? ' ' + classes : '')} style = {{...styles, ...(fitContent ? {width: width} : {})}} value = {value ? value : ''} type = {type} onChange = {onChange} ref = {ref} placeholder = {placeholder} {...extras}/>
+        </>
     )
-}), (b, a) => b.value === a.value && b.classes === a.classes && b.type === a.type && b.preset === a.preset && _.isEqual(b.status, a.status) && _.isEqual(b.styles, a.styles))
+}), (b, a) => b.placeholder === a.placeholder && b.fitContent === a.fitContent && b.value === a.value && b.classes === a.classes && b.type === a.type && b.preset === a.preset && _.isEqual(b.status, a.status) && _.isEqual(b.styles, a.styles))
 
 export default Input

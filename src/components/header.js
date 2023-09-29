@@ -18,13 +18,13 @@ const Header = memo(function Header({ currentUser, data, location }) {
             upcoming: {
                 title: 'Upcoming Events',
                 icon: (props) => <StopwatchFill {...props}/>,
-                fn: (a) => a.filter(r => r.category === 'events' && r.item.start_time < (now() + (60*60*24*7))).sort((a, b) => a.start_time - b.start_time),
+                fn: (a) => a.filter(r => r.category === 'events' && !r.item.is_completed && r.item.start_time < (now() + (60*60*24*7))).sort((a, b) => a.start_time - b.start_time),
                 turnsOff: ['popular', 'alphabetical', 'competitions', 'competitors']
             },
             has_bets: {
                 title: 'Has Bets',
                 icon: (props) => <Stack {...props}/>,
-                fn: (a) => a.filter(r => r.category === 'events' && r.item.bets.length > 0).sort((a, b) => a.start_time - b.start_time),
+                fn: (a) => a.filter(r => r.category === 'events' && !r.item.is_completed && r.item.bets.length > 0).sort((a, b) => a.start_time - b.start_time),
                 turnsOff: ['popular', 'alphabetical', 'competitions', 'competitors']
             },
             alphabetical: {
@@ -70,7 +70,7 @@ const Header = memo(function Header({ currentUser, data, location }) {
                 turnsOff: ['competitions', 'competitors']
             }
         },
-        space: { competitors: data.competitors, competitions: data.competitions, events: data.events, users: data.users},
+        space: { competitors: data.competitors, competitions: data.competitions, events: data.events.filter(event => !event.is_completed), users: data.users},
         minimumLength: 3,
         shape: 'array',
         categories: ['competitors', 'competitions', 'events', 'users'],

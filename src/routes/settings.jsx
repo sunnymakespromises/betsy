@@ -17,21 +17,22 @@ import Input from '../components/input'
 import Conditional from '../components/conditional'
 import Image from '../components/image'
 import { MultiPanel } from '../components/panel'
+import Error from '../components/error'
 
 const Settings = memo(function Settings() {
     let DOMId = 'settings'
     let panelsConfig = [
         {
+            category: 'panel',
             key: 'settings',
-            title: 'Settings',
             icon: GearFill,
             panelClasses: null,
             parentId: DOMId + '-settings',
             children: <SettingsPanel parentId = {DOMId}/>
         },
         {
+            category: 'panel',
             key: 'account',
-            title: 'Account',
             icon: PersonFill,
             panelClasses: null,
             parentId: DOMId + '-account',
@@ -102,7 +103,7 @@ const SettingsPanel = memo(function SettingsPanel({ parentId }) {
             icon: (props) => <GeoAltFill {...props}/>,
             key: 'odds_format',
             defaultValue: 'american',
-            options: [{title: 'American', value: 'american'}, {title: 'Decimal', value: 'decimal'}, {title: 'Fractional', value: 'fractional'}]
+            options: [{title: 'American', value: 'american'}, {title: 'Decimal', value: 'decimal'}]
         },
         {
             title: 'Currency',
@@ -230,8 +231,8 @@ const Save = memo(function Save({ currentUser, input, onCrop, statuses, setStatu
 
     let DOMId = parentId + '-save'
     return (
-        <div id = {DOMId} className = {'transition-all duration-main h-min py-2xs overflow-hidden cursor-pointer ' + (!inputIsEmpty ? 'max-w-full px-2xs' : 'max-w-0 px-0') + ' !animate-duration-300' + (atLeastOneChangeFailed ? ' animate-headShake' : '')} onClick = {() => onAction()}>
-            <CheckLg id = {DOMId + '-icon'} className = {'text-2xl text-primary-main'}/>
+        <div id = {DOMId} className = {'group/save transition-all duration-main h-min py-2xs overflow-hidden cursor-pointer ' + (!inputIsEmpty ? 'max-w-full px-2xs' : 'max-w-0 px-0') + ' !animate-duration-300' + (atLeastOneChangeFailed ? ' animate-headShake' : '')} onClick = {() => onAction()}>
+            <CheckLg id = {DOMId + '-icon'} className = {'text-2xl text-primary-main group-hover/save:text-primary-highlight'}/>
         </div>
     )
 
@@ -253,17 +254,6 @@ const Save = memo(function Save({ currentUser, input, onCrop, statuses, setStatu
         }
     }
 }, (b, a) => b.inputIsEmpty === a.inputIsEmpty && _.isEqual(b.currentUser, a.currentUser) && _.isEqual(b.input, a.input) && _.isEqual(b.statuses, a.statuses))
-
-const Error = memo(function Error({ message, parentId }) {
-    let DOMId = parentId + '-error'
-    return (
-        <div id = {DOMId} className = {'w-full overflow-hidden transition-all duration-main ' + (message ? 'max-h-full' : 'max-h-0')}>
-            <Text id = {DOMId + '-text'} preset = 'subtitle' classes = 'text-text-highlight/muted'>
-                {message}
-            </Text>
-        </div>
-    )
-})
 
 const Logout = memo(function Logout({ parentId }) {
     let DOMId = parentId + '-logout'

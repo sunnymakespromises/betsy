@@ -1,64 +1,32 @@
-import React, { forwardRef, memo, useEffect, useMemo, useState } from 'react'
-import { FileTextFill, PlusCircleFill } from 'react-bootstrap-icons'
-import { useDndMonitor } from '@dnd-kit/core'
+import React, { memo, useMemo, useState } from 'react'
+import { CaretRightFill, CheckLg, Plus } from 'react-bootstrap-icons'
 import _ from 'lodash'
 import { useDataContext } from '../contexts/data'
 import { useStore } from '../hooks/useStore'
-import { Droppable } from './drag'
+import { useCurrency } from '../hooks/useCurrency'
+import { useOdds } from '../hooks/useOdds'
+import { useStatuses } from '../hooks/useStatuses'
+import { useInput } from '../hooks/useInput'
 import Map from './map'
 import Text from './text'
-import Panel from './panel'
-import now from '../lib/util/now'
-import toDate from '../lib/util/toDate'
-import { default as short } from 'short-uuid'
-import { usePrevious } from '../hooks/usePrevious'
 import Conditional from './conditional'
-import { Pick } from './bets'
+import Pick, { Select } from './pick'
+import Input from './input'
+import Error from './error'
+import toDate from '../lib/util/toDate'
+import { useDatabase } from '../hooks/useDatabase'
+import expandPick, { compressPick } from '../lib/util/expandPick'
 
-const SlipsPanel = memo(function SlipsPanel() {
-    const [active, setActive] = useState()
-    const [isVisible, setIsVisible] = useState(false)
-
-    useDndMonitor({
-        onDragStart: (item) => setActive(item.active.data.current),
-        onDragEnd: () => setActive(null)
-    })
-
-    useEffect(() => {
-        if (active) {
-            setIsVisible(true)
-        }
-        else {
-            setTimeout(() => {
-                setIsVisible(false)
-            }, 500)
-        }
-    }, [active])
-
-    let DOMId = 'slips'
-    if (active !== undefined) {
-        return (
-            <Panel title = 'Slips' icon = {FileTextFill} classes = {'absolute bottom-0 right-0 w-full md:w-[32rem] h-min max-h-full overflow-auto no-scrollbar shadow-lg z-[100] !animate-duration-150 ' + (isVisible ? 'animate-slideInRight' : 'animate-slideOutRight')} parentId = {DOMId}>
-                <Slips parentId = {DOMId}/>
-            </Panel>
-        )
-    }
-
-})
-
-export const Slips = memo(function Slips({ editable = false, parentId }) {
+const Slips = memo(function Slips({ slips, isEditable = false, isTailable = false, showPotentialEarnings = true, parentId }) {
     const { data } = useDataContext()
-    let [ slips, addSlip, , editSlip, ] = useStore('user_slips', 'array')
 
     let DOMId = parentId + '-slips'
     return (
-        <div id = {DOMId + '-slips'} className = 'w-full h-full flex flex-col gap-base'>
+        <div id = {DOMId + '-slips'} className = 'w-full h-full flex flex-col gap-lg'>
             <Conditional value = {slips?.length > 0}>
                 <Map items = {slips} callback = {(slip, index) => {
                     let slipId = DOMId + '-slip' + index; return (
-                    <Droppable key = {index} id = {'root-' + index}>
-                        <Slip slip = {slip} data = {data} onDrop = {addToSlip} onRemove = {removeFromSlip} editable = {editable} parentId = {slipId}/>
-                    </Droppable>
+                    <Slip key = {index} slip = {slip} data = {data} isEditable = {isEditable} isTailable = {isTailable} showPotentialEarnings = {showPotentialEarnings} parentId = {slipId}/>
                 )}}/>
             </Conditional>
             <Conditional value = {slips?.length < 1}>
@@ -66,102 +34,160 @@ export const Slips = memo(function Slips({ editable = false, parentId }) {
                     No slips found.
                 </Text>
             </Conditional>
-            <Conditional value = {!editable}>
-                <Droppable id = 'root-new'>
-                    <NewSlip onDrop = {addSlip} parentId = {DOMId}/>
-                </Droppable>
-            </Conditional>
         </div>
     )
+}, (b, a) => b.isTailable === a.isTailable && b.isEditable === a.isEditable && b.showPotentialEarnings === a.showPotentialEarnings && _.isEqual(b.slips, a.slips))
 
-    function removeFromSlip(selected, removed) {
-        let newSlip = JSON.parse(JSON.stringify(selected))
-        newSlip.picks = newSlip.picks.filter(pick => pick !== removed)
-        editSlip(selected, newSlip)
-    }
-
-    function addToSlip(selected, added) {
-        let newSlip = JSON.parse(JSON.stringify(selected))
-        newSlip.picks.push(added)
-        editSlip(selected, newSlip)
-    }
-}, (b, a) => b.editable === a.editable)
-
-const Slip = memo(forwardRef(function Slip({ slip, data, dropped, onDrop, onRemove, isOver, editable, parentId }, dropRef) {
+const Slip = memo(function Slip({ slip, data, isEditable, isTailable, showPotentialEarnings, parentId }) {
+    const { statuses: status, setStatus } = useStatuses()
+    const { input: wager, onInputChange: onWagerChange, inputIsEmpty: wagerIsEmpty, clearInput: clearWager } = useInput()
     let expandedSlip = useMemo(() => {
-        let expandedSlip = JSON.parse(JSON.stringify(slip))
-        for (let i = 0; i < expandedSlip.picks?.length; i++) {
-            let pick = expandedSlip.picks[i]
-            if (pick && pick.split('-').length === 4) {
-                let [eventId, betKey, outcomeName, valueTimestamp] = pick.split('-')
-                let event = data.events.find(event => event.id === eventId)
-                let bet = event?.bets?.find(bet => bet.key === betKey)
-                let value = bet?.values?.find(value => value.timestamp === Number(valueTimestamp))
-                let outcome = value?.outcomes?.find(outcome => (outcome.competitor ? outcome.competitor.name === outcomeName : outcome.name === outcomeName))
-                if (event && bet && value && outcome && !event.is_completed) {
-                    expandedSlip.picks[i] = {
-                        event: event,
-                        bet: bet,
-                        outcome: outcome
-                    }
-                }
-                else {
-                    onRemove(slip, pick)
-                }
-            }
-        }
-        return expandedSlip
+        let newSlip = JSON.parse(JSON.stringify(slip))
+        return {...newSlip, picks: newSlip.picks.map(pick => {
+            return expandPick(data.events, pick)
+        }).filter(pick => pick !== null)}
     }, [slip])
-
-    useEffect(() => {
-        if (!editable && dropped) {
-            let [ eventId, betKey, ,  ] = dropped.id.split('-')
-            if (!expandedSlip.picks.some(pick => pick.event.id === eventId && pick.bet.key === betKey)) {
-                onDrop(slip, dropped.id)
-            }
-        }
-    }, [dropped])
+    const { getOddsFromPicks } = useOdds()
+    const { getAmount, getSymbol } = useCurrency()
+    let currencySymbol = useMemo(() => getSymbol(), [])
+    let totalOdds = useMemo(() => getOddsFromPicks(expandedSlip.picks), [slip])
+    let potentialEarningsDisplay = useMemo(() => getAmount(isEditable ? null : 'dollars', null, isEditable ? (Number(wager) ? totalOdds.decimal * Number(wager) : 0) : (Number(expandedSlip.wager) ? totalOdds.decimal * Number(expandedSlip.wager) : 0), false).string, [totalOdds, expandedSlip, wager])
+    let wagerDisplay = useMemo(() => getAmount(isEditable ? null : 'dollars', null, isEditable ? (Number(wager) ? Number(wager) : 0) : (Number(expandedSlip.wager) ? Number(expandedSlip.wager) : 0), false).string, [expandedSlip, wager])
+    let potentialEarningsInDollars = useMemo(() => getAmount(null, 'dollars', Number(wager) ? totalOdds.decimal *  Number(wager) : 0, false).value, [totalOdds, wager])
+    let wagerInDollars = useMemo(() => getAmount(null, 'dollars', Number(wager) ? Number(wager) : 0, false).value, [totalOdds, wager])
+    let [, , removeSlipFromStore, editSlip, ] = useStore('user_slips', 'array')
+    let [isSelecting, setIsSelecting] = useState(false)
 
     let grid = expandedSlip.picks.length >= 3 ? 'grid-cols-3' : expandedSlip.picks.length === 2 ? 'grid-cols-2' : 'grid-cols-1'
-    let DOMId = parentId + '-slip'
+    let DOMId = parentId
     if (expandedSlip.picks.length > 0) {
         return (
-            <div id = {DOMId} className = {'group/slip transition-colors duration-main w-full flex flex-col items-center gap-base ' + (isOver ? '' : '')} ref = {dropRef}>
-                <Text id = {DOMId + '-' + expandedSlip.timestamp} preset = 'title' classes = {(isOver ? 'text-primary-main' : 'text-primary-main')}>
-                    {expandedSlip.name}
-                </Text>
-                <div id = {DOMId + '-picks'} className = {'w-full grid ' + grid + ' gap-base'}>
-                    <Map items = {expandedSlip.picks} callback = {(pick, index) => {
-                        let pickId = DOMId + '-pick' + index; return (
-                        <Pick key = {index} event = {pick.event} bet = {pick.bet} outcome = {pick.outcome} draggable = {false} editable = {editable} isOver = {isOver} parentId = {pickId}/>
-                    )}}/>
+            <>
+                <div id = {DOMId} className = {'group/slip relative transition-colors duration-main w-full flex flex-col items-center gap-sm'}>
+                    <div id = {DOMId + '-bar'} className = 'w-full flex justify-between items-center'>
+                        <div id = {DOMId + '-bar-right'} className = 'flex items-center gap-sm'>
+                            <Conditional value = {isTailable && slip.did_hit === null}>
+                                <div id = {DOMId + '-add'} className = 'transition-colors duration-main flex items-center py-2xs px-sm bg-primary-main hover:bg-primary-highlight rounded-base cursor-pointer' onClick = {() => setIsSelecting(true)}>
+                                    <Plus id = {DOMId + '-add-icon'} className = 'text-xl text-text-primary'/>
+                                    <Text id = {DOMId + '-add-text'} preset = 'body' classes = 'text-text-primary'>
+                                        Tail
+                                    </Text>
+                                </div>
+                            </Conditional>
+                            <Text id = {DOMId + '-date'} preset = 'body' classes = {'text-text-main/10'}>
+                                {toDate(expandedSlip.timestamp)}
+                            </Text>
+                        </div>
+                        <Text id = {DOMId + '-total-odds'} preset = 'title' classes = {'!font-bold ' + (expandedSlip.did_hit !== null ? (expandedSlip.did_hit === true ? 'text-positive-main' : expandedSlip.did_hit === false ? 'text-negative-main' : 'text-text-main/killed') : 'text-primary-main')}>
+                            {totalOdds.string}
+                        </Text>
+                    </div>
+                    <div id = {DOMId + '-picks'} className = {'w-full grid ' + grid + ' gap-base'}>
+                        <Map items = {expandedSlip.picks} callback = {(expandedPick, index) => {
+                            let pickId = DOMId + '-pick' + index; return (
+                            <Pick key = {index} expandedPick = {expandedPick} isEditable = {isEditable} isDetailed onRemove = {removePick} parentId = {pickId}/>
+                        )}}/>
+                    </div>
+                    <div id = {DOMId + '-bet'} className = 'w-full h-min'>
+                        <Conditional value = {showPotentialEarnings}>
+                            <div id = {DOMId + '-bet-checkout'} className = {'transition-all duration-main flex items-center'}>
+                                <Conditional value = {isEditable}>
+                                    <Text id = {DOMId + '-currency-symbol'} preset = 'title' classes = {'!font-bold text-text-main/killed'}>
+                                        {currencySymbol}
+                                    </Text>
+                                    <Input id = {DOMId + '-wager-input'} preset = 'slip_wager' fitContent value = {wager} status = {status} onChange = {(e) => onChange(e)} placeholder = {'0.00'} autoComplete = 'off'/>
+                                    <Text id = {DOMId + '-currency-symbol'} preset = 'title' classes = {'!font-bold text-text-main/killed'}>
+                                        &nbsp;
+                                    </Text>
+                                </Conditional>
+                                <Conditional value = {!isEditable}>
+                                    <Text id = {DOMId + '-bet-potential-earnings'} preset = 'title' classes = {'!font-bold text-text-main/killed'}>
+                                        {wagerDisplay}&nbsp;
+                                    </Text>
+                                </Conditional>
+                                <CaretRightFill className = 'font-bold text-base text-text-main/killed'/>
+                                <Text id = {DOMId + '-bet-potential-earnings'} preset = 'title' classes = {'!font-bold ' + (expandedSlip.did_hit !== null ? (expandedSlip.did_hit === true ? 'text-positive-main' : expandedSlip.did_hit === false ? 'text-negative-main' : expandedSlip.did_hit === 'voided' ? 'text-text-main/killed' : 'text-primary-main') : ' text-primary-main')}>
+                                    &nbsp;{potentialEarningsDisplay}&nbsp;
+                                </Text>
+                                <Conditional value = {isEditable}>
+                                    <Save slip = {slip} wager = {wagerInDollars} odds = {totalOdds.american} potentialEarnings = {potentialEarningsInDollars} status = {status} setStatus = {setStatus} wagerIsEmpty = {wagerIsEmpty} removeSlip = {removeSlip} parentId = {DOMId + '-bet'}/>
+                                </Conditional>
+                                {status.status === false && <Error message = {status.message} classes = 'text-right' parentId = {DOMId + '-bet'}/>}
+                            </div>
+                        </Conditional>
+                    </div>
                 </div>
-            </div>
+                <Conditional value = {isSelecting}>
+                    <Select expandedPicks = {expandedSlip.picks.map(pick => { return {
+                        ...pick, 
+                        outcome: {
+                            ...pick.outcome,
+                            odds: pick.bet.values[pick.bet.values.length - 1].outcomes.find(outcome => pick.outcome.competitor ? pick.outcome.competitor.name === outcome.competitor?.name : pick.outcome.name === outcome.name).odds
+                        },
+                        timestamp: pick.bet.values[pick.bet.values.length - 1].timestamp
+                    }})} setIsSelecting = {setIsSelecting} parentId = {DOMId}/>
+                </Conditional>
+            </>
         )
     }
     return null
-}), (b, a) => b.isOver === a.isOver && b.editable === a.editable && _.isEqual(b.slip, a.slip) && _.isEqual(b.data, a.data) && _.isEqual(b.dropped, a.dropped))
-
-const NewSlip = memo(forwardRef(function NewSlip({ parentId, dropped, onDrop, isOver }, dropRef) {
-    const previousDropped = usePrevious(dropped)
-    useEffect(() => {
-        if (dropped && !_.isEqual(dropped, previousDropped)) { // fixes an issue where once something is dropped into new slip, everytime it re-renders it adds another copy
-            let time = now()
-            onDrop({
-                id: short.generate(),
-                name: toDate(time),
-                timestamp: time,
-                picks: [dropped.id]
-            })
+    
+    function onChange(event) {
+        let numberOfDecimals = 0
+        let value = event.target.value.replace(/[^\d.]/g, '').replace(/\./g, function (match) {
+            numberOfDecimals++
+            return (numberOfDecimals === 2) ? '' : match
+        })
+        if (value.split('.').length === 2) {
+            let [whole, fraction] = value.split('.')
+            if (fraction.length > 2) {
+                value = whole + '.' + fraction.substring(0, 2)
+            }
         }
-    }, [dropped])
+        onWagerChange('wager', value, 'text')
+    }
 
-    let DOMId = parentId + '-new'
-    return (
-        <div id = {DOMId} className = {'group/slip transition-colors duration-main w-full h-full flex flex-col justify-center items-center p-base rounded-base ' + (isOver ? 'bg-primary-main' : 'bg-base-main/muted')} ref = {dropRef}>
-            <PlusCircleFill className = {'transition-colors duration-main w-6 h-6 ' + (isOver ? 'text-text-primary' : 'text-primary-main')}/>
+    function removeSlip() {
+        if (isEditable) {
+            clearWager()
+            removeSlipFromStore(slip)
+        }
+    }
+
+    function removePick(expandedPick) {
+        let compressedPick = compressPick(expandedPick)
+        if (isEditable) {
+            let newSlip = JSON.parse(JSON.stringify(slip))
+            newSlip.picks = newSlip.picks.filter(pick => pick !== compressedPick)
+            if (newSlip.picks.length > 0) {
+                editSlip(slip, newSlip)
+            }
+            else {
+                removeSlipFromStore(slip)
+            }
+        }
+    }
+}, (b, a) => b.isTailable === a.isTailable && b.showPotentialEarnings === a.showPotentialEarnings && b.isEditable === a.isEditable && _.isEqual(b.slip, a.slip) && _.isEqual(b.data, a.data))
+
+const Save = memo(function Save({ slip, wager, odds, potentialEarnings, status, setStatus, wagerIsEmpty, removeSlip, parentId }) {
+    const { placeBet } = useDatabase()
+
+    let DOMId = parentId + '-save'
+    return !wagerIsEmpty && (
+        <div id = {DOMId} className = {'group/save transition-all duration-main h-min overflow-hidden cursor-pointer ' + (wagerIsEmpty ? 'max-w-0' : 'max-w-full') + ' !animate-duration-300' +  + (status.status === false ? ' animate-headShake ' : '')} onClick = {() => onAction()}>
+            <CheckLg id = {DOMId + '-icon'} className = {'transition-colors duration-main text-2xl text-primary-main group-hover/save:text-primary-highlight'}/>
         </div>
     )
-}), (b, a) => b.isOver === a.isOver && _.isEqual(b.dropped, a.dropped))
 
-export default SlipsPanel
+    async function onAction() {
+        if (!wagerIsEmpty) {
+            const { status, message } = await placeBet(slip, wager, odds, potentialEarnings)
+            setStatus(status, message, 2000)
+            if (status) {
+                removeSlip(slip)
+            }
+        }
+    }
+}, (b, a) => b.wagerIsEmpty === a.wagerIsEmpty && b.status === a.status && _.isEqual(b.wager, a.wager) && _.isEqual(b.slip, a.slip) && _.isEqual(b.odds, a.odds) && _.isEqual(b.potentialEarnings, a.potentialEarnings))
+
+export default Slips

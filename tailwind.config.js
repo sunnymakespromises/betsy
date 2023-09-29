@@ -14,7 +14,14 @@ module.exports =  withAnimations({
                 corner: (((((Math.sqrt(2) - 1) / 2) * Math.sqrt(2)) / 2) * 100) + '%'
             },
             inset: {
-                inscribed:  (((1 - (Math.sqrt(2) / 2)) / 2) * 100) + '%'
+                inscribed:  (((1 - (Math.sqrt(2) / 2)) / 2) * 100) + '%',
+                '2xs': '0.2rem',
+                xs: '0.3rem',
+                sm: '0.5rem',
+                base: '0.75rem',
+                lg: '1.5rem',
+                xl: '2rem',
+                '2xl': '3rem',
             },
             transitionDuration: {
                 fast: '75ms',
@@ -142,22 +149,34 @@ module.exports =  withAnimations({
                 divider: {
                     main: '#E4E4E7',
                     highlight: '#E4E4E7',
-                    primary: '#448AFF',
-                    accent: '#FF4081'
+                    primary: '#3C81F8',
+                    accent: '#F83878',
+                    positive: '#15E1AE',
+                    negative: '#F83878'
                 },
                 text: {
                     main: '#221D27',
                     highlight: '#38343A',
                     primary: '#F3F1F6',
-                    accent: '#F3F1F6'
+                    accent: '#F3F1F6',
+                    positive: '#38343A',
+                    negative: '#38343A'
                 },
                 primary: {
+                    main: '#448AFF',
+                    highlight: '#82B1FF'
+                },
+                accent: {
                     main: '#FF4081',
                     highlight: '#FF80AB'
                 },
-                accent: {
-                    main: '#448AFF',
-                    highlight: '#82B1FF'
+                positive: {
+                    main: '#1DE9B6',
+                    highlight: '#64FFDA',
+                },
+                negative: {
+                    main: '#FF4081',
+                    highlight: '#FF80AB'
                 }
             },
             dark: {
@@ -168,20 +187,32 @@ module.exports =  withAnimations({
                 divider: {
                     main: '#27272A',
                     highlight: '#1C1C1E',
-                    primary: '#FF4081',
-                    accent: '#448AFF'
+                    primary: '#3C81F8',
+                    accent: '#F83878',
+                    positive: '#15E1AE',
+                    negative: '#F83878'
                 },
                 text: {
                     main: '#FFFFFF',
                     highlight: '#FFFFFF',
                     primary: '#EBEAEB',
-                    accent: '#EBEAEB'
+                    accent: '#EBEAEB',
+                    positive: '#EBEAEB',
+                    negative: '#EBEAEB'
                 },
                 primary: {
                     main: '#448AFF',
                     highlight: '#82B1FF'
                 },
                 accent: {
+                    main: '#FF4081',
+                    highlight: '#FF80AB'
+                },
+                positive: {
+                    main: '#1DE9B6',
+                    highlight: '#64FFDA',
+                },
+                negative: {
                     main: '#FF4081',
                     highlight: '#FF80AB'
                 }

@@ -14,7 +14,7 @@ const Profile = memo(function Profile({ user, isCurrentUser, classes, parentId }
     let DOMId = parentId + '-profile'
     if (user) {
         return (
-            <div id = {DOMId} className = {'relative transition-colors duration-main flex w-full min-w-[20rem] bg-base-highlight rounded-base p-base gap-sm ' + (classes ? ' ' + classes : '') + (user.is_locked ? ' grayscale' : '')}>
+            <div id = {DOMId} className = {'relative transition-colors duration-main flex w-full md:w-[20rem] h-min bg-base-highlight rounded-base p-base gap-sm ' + (classes ? ' ' + classes : '') + (user.is_locked ? ' grayscale' : '')}>
                 <Picture picture = {user.picture} parentId = {DOMId}/>
                 <div id = {DOMId + '-info'} className = {'w-full h-min flex flex-col gap-xs'}>
                     <div id = {DOMId + '-name'} className = 'flex items-center gap-xs'>
@@ -32,6 +32,7 @@ const Profile = memo(function Profile({ user, isCurrentUser, classes, parentId }
 
 const Subtitle = memo(function Subtitle({ balances, date, parentId }) {
     const { getAmount } = useCurrency()
+    let balance = useMemo(() => getAmount('dollars', null, balances[balances.length - 1].value, false).string, [balances])
 
     let DOMId = parentId + '-subtitle'
     return (
@@ -39,7 +40,7 @@ const Subtitle = memo(function Subtitle({ balances, date, parentId }) {
             <div id = {DOMId = '-balance'} className = 'flex items-center gap-xs'>
                 <CashStack id = {DOMId + '-balance-icon'} className = 'w-4 h-4 text-primary-main'/>
                 <Text id = {DOMId + '-balance-value'} preset = 'body' classes = 'text-text-highlight whitespace-nowrap'>
-                    {getAmount(balances[balances.length - 1].value)}
+                    {balance}
                 </Text>
             </div>
             <div id = {DOMId + '-date'} className = 'flex items-center gap-xs'>

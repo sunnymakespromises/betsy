@@ -1,6 +1,6 @@
 import React, { memo, useEffect, useMemo, useRef, useState  } from 'react'
 import { Helmet } from 'react-helmet'
-import { ArrowClockwise, CloudArrowUpFill, FileEarmarkZipFill, PeopleFill, TrashFill, TrophyFill, XCircleFill } from 'react-bootstrap-icons'
+import { ArrowClockwise, FileEarmarkZipFill, PeopleFill, TrashFill, TrophyFill, XCircleFill } from 'react-bootstrap-icons'
 import Cropper from 'react-easy-crop'
 import _ from 'lodash'
 import { useDataContext } from '../contexts/data'
@@ -80,7 +80,7 @@ const Upload = memo(function Upload({ data, parentId }) {
 
     let DOMId = parentId + '-upload'
     return (
-        <Panel title = 'Upload' icon = {CloudArrowUpFill} classes = 'min-h-full' parentId = {DOMId}>
+        <Panel classes = 'min-h-full' parentId = {DOMId}>
             <div id = {DOMId + '-actions'} className = 'flex justify-end items-center gap-sm'>
                 <input id = {DOMId + '-folder-input'} style = {{ display: 'none' }} type = 'file' onChange = {(e) => onUploadFolder(e)} ref = {folderInput} accept = '.zip'/>
                 <SearchWithResults searchConfig = {searchConfig} classes = 'grow' closeOnClick = {true} onResultClick = {onResultClick} container = {DOMId + '-items'} parentId = {DOMId}/>

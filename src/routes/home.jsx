@@ -9,7 +9,7 @@ import Text from '../components/text'
 import Conditional from '../components/conditional'
 import Map from '../components/map'
 import now from '../lib/util/now'
-import { Event } from '../components/events'
+import Event from '../components/event'
 import { MultiPanel } from '../components/panel'
 
 const Home = memo(function Home() {
@@ -52,8 +52,8 @@ const Events = memo(function Events({ data, parentId }) {
     const search = useSearch(searchConfig)
     let panelsConfig = useMemo(() => { return [
         {
+            category: 'panel',
             key: 'favorite_events',
-            title: 'Favorites',
             icon: HeartFill,
             panelClasses: 'w-full md:w-[32rem]',
             parentId: DOMId + '-events',
@@ -62,12 +62,7 @@ const Events = memo(function Events({ data, parentId }) {
                     <Conditional value = {search.results?.events?.length > 0}>
                         <Map items = {search.results?.events} callback = {(event, index) => {
                             let eventId = DOMId + '-event' + index; return (
-                            <React.Fragment key = {index}>
-                                <Event item = {event} bets = {event.bets} parentId = {eventId}/>
-                                <Conditional value = {index !== search.results?.events?.length - 1}>
-                                    <div className = 'transition-colors duration-main border-t-sm border-divider-highlight'/>
-                                </Conditional>
-                            </React.Fragment>
+                            <Event key = {index} item = {event} bets = {event.bets} parentId = {eventId}/>
                         )}}/>
                     </Conditional>
                     <Conditional value = {search.results?.events?.length < 1}>

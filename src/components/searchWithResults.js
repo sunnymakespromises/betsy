@@ -14,6 +14,8 @@ import { Link } from 'react-router-dom'
 import { createPortal } from 'react-dom'
 import Image from './image'
 import toDate from '../lib/util/toDate'
+import { CircleFill } from 'react-bootstrap-icons'
+import now from '../lib/util/now'
 
 const SearchWithResults = memo(forwardRef(function Search({ searchConfig, onResultClick, closeOnClick = false, preset = 'main', autoFocus = false, showFavorites = false, classes, container, parentId }, ref) {
     const search = useSearch(searchConfig)
@@ -160,9 +162,14 @@ const Result = memo(function Result({ category, item, onClick, isLink, showFavor
         else if (category === 'events') {
             if (item.is_outright) {
                 return (
-                    <Text id = {DOMId + '-name'} preset = 'body' classes = 'text-text-highlight'>
-                        {item.name}
-                    </Text>
+                    <div id = {DOMId + '-info'} className = 'flex items-center gap-2xs'>
+                        <Text id = {DOMId + '-name'} preset = 'body' classes = 'text-text-highlight'>
+                            {item.name}
+                        </Text>
+                        <Conditional value = {now() > item.start_time}>
+                            <CircleFill className = 'w-1 h-1 text-accent-main'/>
+                        </Conditional>
+                    </div>
                 )
             }
             else {
@@ -179,21 +186,26 @@ const Result = memo(function Result({ category, item, onClick, isLink, showFavor
                             </Conditional>
                         </div>
                         <div id = {DOMId + '-info'} className = 'flex flex-col gap-2xs overflow-hidden'>
-                            <Text id = {DOMId + '-info-competition'} preset = 'subtitle' classes = 'text-text-highlight/muted whitespace-nowrap'>
-                                {item.competition.name}
-                            </Text>
+                            <div id = {DOMId + '-info-top-bar'} className = 'flex items-center gap-2xs'>
+                                <Text id = {DOMId + '-info-competition'} preset = 'subtitle' classes = 'text-text-highlight/muted whitespace-nowrap'>
+                                    {item.competition.name}
+                                </Text>
+                                <Conditional value = {now() > item.start_time}>
+                                    <CircleFill className = 'w-1 h-1 text-accent-main'/>
+                                </Conditional>
+                            </div>
                             <div id = {DOMId + '-info-name'} className = 'group/info w-full flex items-center'>
-                                <Text id = {DOMId + '-info-competitor0-name'} preset = 'body' classes = '!text-lg text-text-highlight whitespace-nowrap overflow-hidden text-ellipsis'>
+                                <Text id = {DOMId + '-info-competitor0-name'} preset = 'body' classes = 'text-text-highlight whitespace-nowrap overflow-hidden text-ellipsis'>
                                     {item.competitors[0].name}
                                 </Text>
-                                <Text id = {DOMId + '-info-competitors-separator'} preset = 'body' classes = '!text-lg text-text-highlight w-min flex'>
+                                <Text id = {DOMId + '-info-competitors-separator'} preset = 'body' classes = 'text-text-highlight w-min flex'>
                                     &nbsp;{item.name.includes('@') ? '@' : 'v'}&nbsp;
                                 </Text>
-                                <Text id = {DOMId + '-info-competitor1-name-name'} preset = 'body' classes = '!text-lg text-text-highlight whitespace-nowrap overflow-hidden text-ellipsis'>
+                                <Text id = {DOMId + '-info-competitor1-name-name'} preset = 'body' classes = 'text-text-highlight whitespace-nowrap overflow-hidden text-ellipsis'>
                                     {item.competitors[1].name}
                                 </Text>
                             </div>
-                            <Text id = {DOMId + '-info-date-text'} preset = 'subtitle' classes = 'text-text-highlight/muted whitespace-nowrap'>
+                            <Text id = {DOMId + '-info-date'} preset = 'subtitle' classes = 'text-text-highlight/muted whitespace-nowrap'>
                                 {toDate(item.start_time)}
                             </Text>
                         </div>

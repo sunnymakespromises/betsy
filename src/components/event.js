@@ -1,59 +1,14 @@
 import React, { memo, useMemo } from 'react'
 import { Link } from 'react-router-dom'
-import { FileTextFill, StopwatchFill } from 'react-bootstrap-icons'
 import _ from 'lodash'
-import { useSearch } from '../hooks/useSearch'
 import Text from './text'
 import Conditional from './conditional'
 import Bets from './bets'
-import SearchBar from './searchBar'
 import now from '../lib/util/now'
 import toDate from '../lib/util/toDate'
 import Image from './image'
-import Map from './map'
 
-const Events = memo(function Events({ search = true, searchKey, events, parentId }) {
-    const searchConfig = {
-        id: searchKey,
-        filters: {
-            live: {
-                title: 'Live Events',
-                icon: (props) => <StopwatchFill {...props}/>,
-                fn: (a) => a.filter(r => r.start_time < now()).sort((a, b) => a.start_time - b.start_time),
-                turnsOff: ['popular', 'alphabetical']
-            },
-            has_bets: {
-                title: 'Has Bets',
-                icon: (props) => <FileTextFill {...props}/>,
-                fn: (a) => a.filter(r => r.bets.length > 0).sort((a, b) => a.start_time - b.start_time)
-            }
-        },
-        space: events,
-        keys: ['name', 'competition.name', 'competitors.name', 'sport.name'],
-        shape: 'array',
-        showAllOnInitial: true
-    }
-    const { input, results, hasResults, filters, hasActiveFilter, setFilter, onInputChange } = useSearch(searchConfig)
-
-    let DOMId = parentId + '-events'
-    if (events) {
-        return (
-            <div id = {DOMId} className = 'h-full flex flex-col'>
-                <Conditional value = {search}>
-                    <SearchBar inputPreset = 'events' input = {input} hasResults = {hasResults} filters = {filters} hasActiveFilter = {hasActiveFilter} setFilter = {setFilter} onInputChange = {onInputChange} isExpanded = {false} autoFocus = {false} canExpand = {false} parentId = {DOMId}/>
-                    <div className = 'border-t-thin border-divider-main'/>
-                </Conditional>
-                <Map items = {results} callback = {(event, index) => {
-                    let eventId = DOMId + '-event' + index; return (
-                    <Event item = {event} bets = {event.bets} parentId = {eventId}/>
-                )}}/>
-            </div>
-        )
-    }
-}, (b, a) => b.search === a.search && b.searchKey === a.searchKey && _.isEqual(b.events, a.events))
-
-
-export const Event = memo(function Event({ item: event, bets, parentId }) {
+const Event = memo(function Event({ item: event, bets, parentId }) {
     let DOMId = parentId
     return (
         <div id = {DOMId} className = {'group/event relative transition-colors duration-main w-full flex flex-col items-center gap-sm'}>
@@ -102,7 +57,7 @@ const Title = memo(function Title({ event, parentId }) {
                         </Text>
                     </div>
                 </Conditional>
-                <Link id = {DOMId + '-competitor0-image'} to = {'/info?category=competitors&id=' + event.competitors[0].id} className = 'transition-colors duration-main h-10 md:h-10 aspect-square flex justify-center items-center bg-white rounded-full border-base border-primary-main hover:border-primary-highlight'>
+                <Link id = {DOMId + '-competitor0-image'} to = {'/info?category=competitors&id=' + event.competitors[0].id} className = 'transition-colors duration-main h-8 md:h-8 aspect-square flex justify-center items-center bg-white rounded-full border-base border-primary-main hover:border-primary-highlight'>
                     <Conditional value = {!event.competitors[0].picture}>
                         <Text id = {DOMId + '-competitor0-image-text'} preset = 'body' classes = 'text-black/muted'>
                             {event.competitors[0].name.substr(0, 1)}
@@ -129,11 +84,11 @@ const Title = memo(function Title({ event, parentId }) {
                             {event.competitors[1].name}
                         </Text>
                     </Link>
-                    <Text id = {DOMId + '-info-date-text'} preset = 'subtitle' classes = 'text-text-highlight/muted whitespace-nowrap'>
+                    <Text id = {DOMId + '-info-date-text'} preset = 'subtitle' classes = 'text-text-highlight/killed whitespace-nowrap'>
                         {toDate(event.start_time)}
                     </Text>
                 </div>
-                <Link id = {DOMId + '-competitor1-image'} to = {'/info?category=competitors&id=' + event.competitors[1].id} className = 'transition-colors duration-main h-10 md:h-10 aspect-square flex justify-center items-center bg-white rounded-full border-base border-primary-main hover:border-primary-highlight'>
+                <Link id = {DOMId + '-competitor1-image'} to = {'/info?category=competitors&id=' + event.competitors[1].id} className = 'transition-colors duration-main h-8 md:h-8 aspect-square flex justify-center items-center bg-white rounded-full border-base border-primary-main hover:border-primary-highlight'>
                     <Conditional value = {!event.competitors[1].picture}>
                         <Text id = {DOMId + '-competitor1-image-text'} preset = 'body' classes = 'text-black/muted'>
                             {event.competitors[1].name.substr(0, 1)}
@@ -148,4 +103,4 @@ const Title = memo(function Title({ event, parentId }) {
     }
 }, (b, a) => _.isEqual(b.event, a.event))
 
-export default Events
+export default Event

@@ -21,7 +21,10 @@ async function getCurrentUser(refresh_token, source) {
             response.user.subscriptions = betsyUser.subscriptions.length > 0 ? await queryTable('users', 'id in ' + JSON.stringify(betsyUser.subscriptions), ['id', 'display_name', 'picture']) : []
             for (const category of Object.keys(betsyUser.favorites).filter(category => betsyUser.favorites[category].length > 0)) {
                 response.user.favorites[category] = await getItems(category, betsyUser.favorites[category], ['id', 'name', 'picture'])
-            } 
+            }
+            if (betsyUser.slips.length > 0) {
+                response.user.slips = await getItems('slips', betsyUser.slips, null)
+            }
         }
         else {
             const id = short.generate()

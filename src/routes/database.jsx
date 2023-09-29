@@ -1,7 +1,7 @@
 import React, { memo, useMemo, useState  } from 'react'
 import { Link } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
-import { ArrowClockwise, Dash, Pc, Plus, X } from 'react-bootstrap-icons'
+import { ArrowClockwise, Dash, Plus, X } from 'react-bootstrap-icons'
 import _ from 'lodash'
 import { useDataContext } from '../contexts/data'
 import { useUserContext } from '../contexts/user'
@@ -146,7 +146,7 @@ const Logs = memo(function Logs({ logs, parentId }) {
 
     let DOMId = parentId + '-logs'
     return (
-        <Panel title = 'Logs' icon = {Pc} parentId = {DOMId}>
+        <Panel parentId = {DOMId}>
             <SearchBar {...search} parentId = {DOMId}/>
             <div id = {DOMId + '-items'} className = 'flex flex-col gap-base'>
                 <Map items = {search.results && Object.keys(search.results).filter(log => search.results[log].length > 0)} callback = {(log, index) => {

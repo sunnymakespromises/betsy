@@ -43,11 +43,24 @@ function useAuthorize() {
         route()
     }, [user])
 
+    /*  no params: refresh the current user's data
+        one param: will deconstruct the object and update all of those specific attributes
+        two params: updates the user's param1 attribute to param2 */
     async function updateUser(category = null, value = null) {
-        if (category && value) {
-            let newUser = {...userRef.current}
-            newUser[category] = value
-            setUser(newUser)
+        if (category) {
+            if (value) {
+                let newUser = {...userRef.current}
+                newUser[category] = value
+                setUser(newUser)
+            }
+            else {
+                let changes = category
+                let newUser = {...userRef.current}
+                for (const change of Object.keys(changes)) {
+                    newUser[change] = changes[change]
+                }
+                setUser(newUser)
+            }
         }
         else {
             const { status, message, user } = await getCurrentUser(cookies['oauth_refresh_token'], cookies['oauth_source'])

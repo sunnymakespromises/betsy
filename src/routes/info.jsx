@@ -2,7 +2,7 @@ import React, { memo, useEffect, useMemo, useState } from 'react'
 import Page from '../components/page'
 import { Helmet } from 'react-helmet'
 import { Link, useSearchParams } from 'react-router-dom'
-import { BarChartLineFill, CalendarWeekFill, PeopleFill, Stack, StopwatchFill } from 'react-bootstrap-icons'
+import { BarChartLineFill, CalendarWeekFill, GraphUp, PeopleFill, Stack, StopwatchFill } from 'react-bootstrap-icons'
 import _ from 'lodash'
 import { useDataContext } from '../contexts/data'
 import { useDatabase } from '../hooks/useDatabase'
@@ -14,7 +14,7 @@ import Map from '../components/map'
 import { MultiPanel } from '../components/panel'
 import Bets from '../components/bets'
 import SearchBar from '../components/searchBar'
-import { Event as EventItem } from '../components/events'
+import { default as EventItem } from '../components/event'
 import Image from '../components/image'
 import now from '../lib/util/now'
 import toDate from '../lib/util/toDate'
@@ -29,12 +29,12 @@ const Info = memo(function Info() {
     let [item, setItem] = useState()
 
     useEffect(() => {
-        async function updateUser() {
+        async function updateItem() {
             let { item } = await getItem(category, id)
             setItem(item)
         }
 
-        updateUser()
+        updateItem()
     }, [category, id])
 
     let DOMId = 'info'
@@ -91,7 +91,7 @@ const Item = memo(function Item({ category, item, data, parentId }) {
                         fn: (a, category) => a.filter(r => category === 'events' ? r.bets.length > 0 : true ).sort((a, b) => a.start_time - b.start_time)
                     }
                 },
-                space: { events: item.events?.length > 0 ? item.events.map(e => data.events.find(event => event.id === e.id)).filter(event => !event.is_completed).sort((a, b) => a.start_time - b.start_time) : [] },
+                space: { events: item.events?.length > 0 ? item.events.map(e => data.events.find(event => event.id === e.id)).filter(event => !(event.is_completed)).sort((a, b) => a.start_time - b.start_time) : [] },
                 categories: ['events'],
                 keys: { events: ['name', 'competition.name', 'competitors.name', 'sport.name'] },
                 showAllOnInitial: true
@@ -112,7 +112,7 @@ const Item = memo(function Item({ category, item, data, parentId }) {
     let option = useMemo(() => {
         return options[category]
     }, [options, category])
-    const { input, results, hasResults, filters, hasActiveFilter, setFilter, onInputChange } = useSearch(option.searchConfig)
+    const search = useSearch(option.searchConfig)
     let Element = option.element
 
     let DOMId = useMemo(() => {
@@ -132,10 +132,10 @@ const Item = memo(function Item({ category, item, data, parentId }) {
         <div id = {DOMId} className = 'w-full flex flex-col gap-base md:gap-lg'>
             <div id = {DOMId + '-bar'} className = 'flex flex-col md:flex-row justify-between items-center gap-sm p-base bg-base-highlight rounded-base'>
                 <Title category = {category} item = {item} parentId = {DOMId}/>
-                {option.hasSearch && <SearchBar input = {input} classes = 'w-full md:w-1/2' hasResults = {hasResults} filters = {filters} hasActiveFilter = {hasActiveFilter} setFilter = {setFilter} onInputChange = {onInputChange} isExpanded = {false} canExpand = {false} parentId = {DOMId}/>}
+                {option.hasSearch && <SearchBar {...search} classes = 'w-full md:w-1/2' isExpanded = {false} canExpand = {false} parentId = {DOMId}/>}
             </div>
             <div id = {DOMId + '-data'} className = 'w-full h-min flex flex-col md:flex-row gap-base md:gap-lg'>
-                <Element results = {results} item = {item} parentId = {DOMId}/>
+                <Element results = {search.results} item = {item} parentId = {DOMId}/>
             </div>
         </div>
     )
@@ -163,8 +163,8 @@ const Competition = memo(function Competition({ results, item, parentId }) {
 
     let panelsConfig = [
         {
+            category: 'panel',
             key: 'events',
-            title: 'Events',
             icon: CalendarWeekFill,
             panelClasses: 'w-full md:w-[32rem]',
             parentId: DOMId + '-events',
@@ -173,12 +173,7 @@ const Competition = memo(function Competition({ results, item, parentId }) {
                     <Conditional value = {results?.events?.length > 0}>
                         <Map items = {results?.events} callback = {(event, index) => {
                             let eventId = DOMId + '-event' + index; return (
-                            <React.Fragment key = {index}>
-                                <EventItem item = {event} bets = {event.bets} parentId = {eventId}/>
-                                <Conditional value = {index !== results?.events?.length - 1}>
-                                    <div className = 'transition-colors duration-main border-t-sm border-divider-highlight'/>
-                                </Conditional>
-                            </React.Fragment>
+                            <EventItem key = {index} item = {event} bets = {event.bets} parentId = {eventId}/>
                         )}}/>
                     </Conditional>
                     <Conditional value = {results?.events?.length < 1}>
@@ -189,8 +184,8 @@ const Competition = memo(function Competition({ results, item, parentId }) {
                 </div>
         },
         {
+            category: 'panel',
             key: 'competitors',
-            title: 'Competitors',
             icon: PeopleFill,
             panelClasses: 'w-full md:grow md:!w-auto',
             parentId: DOMId + '-competitors',
@@ -220,8 +215,8 @@ const Competitor = memo(function Competitors({ results, item, parentId }) {
     let DOMId = parentId
     let panelsConfig = [
         {
+            category: 'panel',
             key: 'events',
-            title: 'Events',
             icon: CalendarWeekFill,
             panelClasses: 'w-full md:w-[32rem]',
             parentId: DOMId + '-events',
@@ -230,12 +225,7 @@ const Competitor = memo(function Competitors({ results, item, parentId }) {
                     <Conditional value = {results?.events?.length > 0}>
                         <Map items = {results?.events} callback = {(event, index) => {
                             let eventId = DOMId + '-event' + index; return (
-                            <React.Fragment key = {index}>
-                                <EventItem item = {event} bets = {event.bets} parentId = {eventId}/>
-                                <Conditional value = {index !== results?.events?.length - 1}>
-                                    <div className = 'transition-colors duration-main border-t-sm border-divider-highlight'/>
-                                </Conditional>
-                            </React.Fragment>
+                            <EventItem key = {index} item = {event} bets = {event.bets} parentId = {eventId}/>
                         )}}/>
                     </Conditional>
                     <Conditional value = {results?.events?.length < 1}>
@@ -246,13 +236,15 @@ const Competitor = memo(function Competitors({ results, item, parentId }) {
                 </div>
         },
         {
+            category: 'panel',
             key: 'form',
-            title: 'Form',
             icon: BarChartLineFill,
             panelClasses: 'w-full md:grow md:!w-auto',
             parentId: DOMId + '-form',
             children: 
-                <></>
+                <div>
+                    
+                </div>
         }
     ]
 
@@ -265,8 +257,8 @@ const Event = memo(function Event({ item: event, results, parentId }) {
     let DOMId = parentId
     let panelsConfig = [
         {
+            category: 'panel',
             key: 'bets',
-            title: 'Bets',
             icon: Stack,
             panelClasses: 'w-full md:w-[32rem]',
             parentId: DOMId + '-events',
@@ -281,19 +273,36 @@ const Event = memo(function Event({ item: event, results, parentId }) {
                 </Conditional></>
         },
         {
-            key: 'history',
-            title: 'History',
-            icon: BarChartLineFill,
-            panelClasses: 'w-full md:grow md:!w-auto',
-            parentId: DOMId + '-history',
-            children: 
-                <></>
+            category: 'div',
+            divId: DOMId + '-right',
+            divClasses: 'grow flex flex-col items-center gap-base md:gap-lg',
+            children: [
+                {
+                    category: 'panel',
+                    key: 'odds',
+                    title: 'Odds',
+                    icon: GraphUp,
+                    panelClasses: 'w-full',
+                    parentId: DOMId + '-odds',
+                    children: 
+                        <></>
+                },
+                {
+                    category: 'panel',
+                    key: 'history',
+                    title: 'History',
+                    icon: BarChartLineFill,
+                    panelClasses: 'w-full',
+                    parentId: DOMId + '-history',
+                    children: 
+                        <></>
+                }
+            ]
         }
     ]
 
     return (
         <MultiPanel config = {panelsConfig} parentId = {DOMId}/>
-
     )
 }, (b, a) => _.isEqual(b.event, a.event) && _.isEqual(b.results, a.results))
 
