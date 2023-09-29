@@ -30,11 +30,11 @@ const SelectSlips = memo(function Select({ expandedPicksToAdd, events, setIsSele
         createPortal(
             <div id = {DOMId} className = 'absolute top-0 left-0 w-full h-full flex flex-col items-center justify-center bg-black/80 z-30'>
                 <div id = {DOMId + '-container'} className = 'relative flex flex-col items-center gap-base p-lg bg-base-highlight rounded-base' ref = {cancelRef}>
-                    <div id = {DOMId + '-new-slip'} className = 'group/new-slip flex items-center self-end cursor-pointer' onClick = {() => createNewCompressedSlip(expandedPicksToAdd)}>
-                        <Text id = {DOMId + '-new-slip-text'} preset = 'body' classes = 'text-primary-main group-hover/new-slip:text-primary-highlight'>
+                    <div id = {DOMId + '-add'} className = 'transition-colors duration-main flex items-center self-end py-2xs px-sm bg-primary-main hover:bg-primary-highlight rounded-base cursor-pointer' onClick = {() => createNewCompressedSlip(expandedPicksToAdd)}>
+                        <Plus id = {DOMId + '-add-icon'} className = 'text-xl text-text-primary'/>
+                        <Text id = {DOMId + '-add-text'} preset = 'body' classes = 'text-text-primary'>
                             New Slip
                         </Text>
-                        <Plus id = {DOMId + '-new-slip-icon'} className = 'text-xl text-primary-main group-hover/new-slip:text-primary-highlight'/>
                     </div>
                     <Map items = {compressedSlips} callback = {(compressedSlip, index) => {
                         let slipId = DOMId + '-slip' + index; return (
