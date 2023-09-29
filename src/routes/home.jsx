@@ -62,7 +62,7 @@ const Events = memo(function Events({ data, parentId }) {
                     <Conditional value = {search.results?.events?.length > 0}>
                         <Map items = {search.results?.events} callback = {(event, index) => {
                             let eventId = DOMId + '-event' + index; return (
-                            <Event key = {index} item = {event} bets = {event.bets} parentId = {eventId}/>
+                            <Event key = {index} event = {event} events = {data.events} parentId = {eventId}/>
                         )}}/>
                     </Conditional>
                     <Conditional value = {search.results?.events?.length < 1}>

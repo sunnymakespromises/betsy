@@ -1,21 +1,15 @@
-import React, { memo, useLayoutEffect, useMemo, useRef, useState } from 'react'
-import Text from './text'
+import React, { memo, useMemo, useState } from 'react'
+import { Link } from 'react-router-dom'
+import _ from 'lodash'
+import { useCancelDetector } from '../hooks/useCancelDetector'
 import { useOdds } from '../hooks/useOdds'
 import Conditional from './conditional'
-import { Check, Circle, Plus, PlusCircleFill } from 'react-bootstrap-icons'
-import _ from 'lodash'
-import { Link } from 'react-router-dom'
-import { useCancelDetector } from '../hooks/useCancelDetector'
-import { createPortal } from 'react-dom'
+import Text from './text'
 import Map from './map'
-import { useStore } from '../hooks/useStore'
-import toDate from '../lib/util/toDate'
-import expandPick, { compressPick } from '../lib/util/expandPick'
-import now from '../lib/util/now'
-import { default as short } from 'short-uuid'
-import { useDataContext } from '../contexts/data'
+import SelectSlips from './selectSlips'
+import { compressPick } from '../lib/util/manipulateBets'
 
-const Pick = memo(function Pick({ expandedPick, isEditable, isDetailed, onRemove, classes, parentId }) {
+const Pick = memo(function Pick({ expandedPick, events, isEditable, isDetailed, onRemove, classes, parentId }) {
     let [isExpanded, setIsExpanded] = useState(false)
     let [isSelecting, setIsSelecting] = useState(false)
     const clickRef = useCancelDetector(() => setIsExpanded(false))
@@ -95,7 +89,7 @@ const Pick = memo(function Pick({ expandedPick, isEditable, isDetailed, onRemove
             title: 'Remove From Slip',
             condition: isEditable,
             onClick: () => {
-                onRemove(expandedPick)
+                onRemove(compressPick(expandedPick))
                 setIsExpanded(false)
             }
         }
@@ -127,124 +121,12 @@ const Pick = memo(function Pick({ expandedPick, isEditable, isDetailed, onRemove
                 </Conditional>
             </div>
             <Conditional value = {isSelecting}>
-                <Select expandedPicks = {[expandedPick]} setIsSelecting = {setIsSelecting} parentId = {DOMId}/>
+                <SelectSlips expandedPicksToAdd = {[expandedPick]} events = {events} setIsSelecting = {setIsSelecting} parentId = {DOMId}/>
             </Conditional>
         </>
 
     )
-}, (b, a) => b.isEditable === a.isEditable && b.isDetailed === a.isDetailed && b.classes === a.classes && _.isEqual(b.expandedPick, a.expandedPick))
-
-export const Select = memo(function Select({ expandedPicks, setIsSelecting, parentId }) {
-    let { data } = useDataContext()
-    let [slips, addSlip, , editSlip, ] = useStore('user_slips', 'array')
-    let [containerElement, setContainerElement] = useState()
-    useLayoutEffect(() => {
-        if (!containerElement && document.getElementById('body')) {
-             setContainerElement(document.getElementById('body'))
-        }
-    }, [])
-    let cancelRef = useCancelDetector(() => setIsSelecting(false))
-    let [selectedSlips, setSelectedSlips] = useState([])
-    let selectedSlipsRef = useRef()
-    selectedSlipsRef.current = selectedSlips
-
-    let DOMId = parentId + '-select-slip'
-    return containerElement && (
-        createPortal(
-            <div id = {DOMId} className = 'absolute top-0 left-0 w-full h-full flex flex-col items-center justify-center bg-black/80 z-30'>
-                <div id = {DOMId + '-container'} className = 'relative flex flex-col items-center gap-base p-lg bg-base-highlight rounded-base' ref = {cancelRef}>
-                    <div id = {DOMId + '-new-slip'} className = 'group/new-slip flex items-center self-end cursor-pointer' onClick = {() => createNewSlip(expandedPicks)}>
-                        <Text id = {DOMId + '-new-slip-text'} preset = 'body' classes = 'text-primary-main group-hover/new-slip:text-primary-highlight'>
-                            New Slip
-                        </Text>
-                        <Plus id = {DOMId + '-new-slip-icon'} className = 'text-xl text-primary-main group-hover/new-slip:text-primary-highlight'/>
-                    </div>
-                    <Map items = {slips} callback = {(slip, index) => {
-                        let slipId = DOMId + '-slip' + index; return (
-                        <SelectSlip key = {index} expandedPicks = {expandedPicks} slip = {slip} data = {data} isSelected = {selectedSlips.includes(index)} onSelect = {() => onSelectSlip(index)} parentId = {slipId}/>
-                    )}}/>
-                    <Conditional value = {slips.length === 0}>
-                        <Text id = {DOMId + '-new-slip'} preset = 'body' classes = 'text-text-highlight/killed'>
-                            No slips found.
-                        </Text>
-                    </Conditional>
-                    <Check id = {DOMId + '-save'} className = {'transition-colors duration-main self-end text-2xl cursor-pointer ' + (selectedSlips.length > 0 ? 'text-primary-main hover:text-primary-highlight' : 'text-text-highlight/killed')} onClick = {() => selectedSlips.length > 0 ? addToSlips(expandedPicks) : null}/>
-                </div>
-            </div>
-        , containerElement)
-    )
-
-    function onSelectSlip(index) {
-        if (selectedSlipsRef.current.includes(index)) {
-            setSelectedSlips(selectedSlipsRef.current.filter(slip => slip !== index))
-        }
-        else {
-            let newSelectedSlips = JSON.parse(JSON.stringify(selectedSlipsRef.current))
-            newSelectedSlips.push(index)
-            setSelectedSlips(newSelectedSlips)
-        }
-    }
-
-    function createNewSlip(expandedPicks) {
-        let compressedPicks = expandedPicks.map(pick => compressPick(pick))
-        let time = now()
-        addSlip({
-            id: short.generate(),
-            name: toDate(time),
-            timestamp: time,
-            picks: [...compressedPicks]
-        })
-    }
-
-    function addToSlips(expandedPicks) {
-        for (const index of selectedSlipsRef.current) {
-            let compressedSlip = slips[index]
-            if (!compressedSlip.picks.some(compressedPick => expandedPicks.some(expandedPick => compressedPick.split('-')[0] === expandedPick.event.id) && expandedPicks.some(expandedPick => compressedPick.split('-')[1] === expandedPick.bet.key))) {
-                let newSlip = JSON.parse(JSON.stringify(compressedSlip))
-                newSlip.picks = [...newSlip.picks, ...expandedPicks.map(pick => compressPick(pick))]
-                editSlip(compressedSlip, newSlip)
-                onSelectSlip(index)
-            }
-        }
-    }
-}, (b, a) => _.isEqual(b.expandedPicks, a.expandedPicks))
-
-const SelectSlip = memo(function SelectSlip({ slip, expandedPicks, data, isSelected, onSelect, parentId }) {
-    let expandedSlip = useMemo(() => {
-        let newSlip = JSON.parse(JSON.stringify(slip))
-        return {...newSlip, picks: newSlip.picks.map(pick => {
-            return expandPick(data.events, pick)
-        }).filter(p => p !== null)}
-    }, [slip])
-    let canAddPicksToSlip = useMemo(() => {
-        return !expandedSlip.picks.some(expandedPick => expandedPicks.some(expandedPick2 => expandedPick.event.id === expandedPick2.event.id) && expandedPicks.some(expandedPick2 => expandedPick.bet.key === expandedPick2.bet.key))
-    }, [slip, expandedPicks])
-    let DOMId = parentId
-    return (
-        <div id = {DOMId} className = 'flex items-center gap-base'>
-            <div id = {DOMId + '-info'} className = 'w-full flex flex-col gap-sm'>
-                <Text id = {DOMId + '-info-date'} preset = 'body' classes = 'text-text-highlight/killed'>
-                    {toDate(expandedSlip.timestamp)}
-                </Text>
-                <div id = {DOMId + '-info-picks'} className = 'flex flex-col gap-sm'>
-                    <Map items = {expandedSlip.picks} callback = {(pick, index) => {
-                        let pickId = DOMId + '-info-pick' + index
-                        return (
-                            <Text key = {index} id = {pickId} preset = 'body' classes = 'text-primary-main'>
-                                {pick.outcome.competitor ? pick.outcome.competitor.name : pick.outcome.name}&nbsp;{pick.bet.name}
-                            </Text>
-                        )}}/>
-                </div>
-            </div>
-            <Conditional value = {!isSelected}>
-                <Circle id = {DOMId + '-select'} className = {'transition-all duration-main text-xl ' + (canAddPicksToSlip ? 'text-primary-main/muted hover:text-primary-main cursor-pointer' : 'text-text-highlight/10')} onClick = {() => canAddPicksToSlip ? onSelect() : null}/>
-            </Conditional>
-            <Conditional value = {isSelected}>
-                <PlusCircleFill id = {DOMId + '-select'} className = 'transition-all duration-main text-xl text-primary-main cursor-pointer' onClick = {() => onSelect()}/>
-            </Conditional>
-        </div>
-    )
-}, (b, a) => b.isSelected === a.isSelected && _.isEqual(b.expandedPicks, a.expandedPicks) && _.isEqual(b.data, a.data) && _.isEqual(b.slip, a.slip))
+}, (b, a) => b.isEditable === a.isEditable && b.isDetailed === a.isDetailed && b.classes === a.classes && _.isEqual(b.expandedPick, a.expandedPick) && _.isEqual(b.events, a.events))
 
 const Option = memo(function Option({ title, onClick, parentId }) {
     let DOMId = parentId

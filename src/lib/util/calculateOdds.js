@@ -1,8 +1,8 @@
 import getFormattedOdds from './getFormattedOdds'
 
-export default function calculateOdds(format, picks) {
-    picks = picks.filter(pick => pick.did_hit !== 'voided')
-    let oddsArray = picks.map(pick => {
+export default function calculateOdds(format, expandedPicks) {
+    expandedPicks = expandedPicks.filter(pick => pick.did_hit !== 'voided')
+    let oddsArray = expandedPicks.map(pick => {
         let odds = pick.outcome.odds
         return (odds > 0 ? ((odds / 100) + 1) : ((odds - 100) / odds))
     })

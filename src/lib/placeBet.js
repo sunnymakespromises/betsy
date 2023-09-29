@@ -1,11 +1,9 @@
 import updateItem from './aws/db/updateItem'
 import insertItem from './aws/db/insertItem'
-import getTable from './aws/db/getTable'
 import now from './util/now'
 import incrementItem from './aws/db/incrementItem'
-import expandPick from './util/expandPick'
 
-async function placeBet(user, slip, wager, odds, potential_earnings) {
+async function placeBet(user, expandedSlip, wager, odds, potential_earnings) {
     const response = {
         status: false,
         message: '',
@@ -13,16 +11,14 @@ async function placeBet(user, slip, wager, odds, potential_earnings) {
     }
 
     if (user) {
-        if (slip) {
+        if (expandedSlip) {
             wager = Number(wager)
             if (wager) {
                 if (wager > 0.09) {
                     if (wager <= user.balances[user.balances.length - 1].value) {
-                        let events = await getTable('events', null)
                         let allPicksAreValid = true
                         let involves = { events: [], competitions: [], sports: [], competitors: []}
-                        for (let pick of slip.picks) {
-                            let expandedPick = expandPick(events, pick)
+                        for (let expandedPick of expandedSlip.picks) {
                             if (expandedPick && !expandedPick.event.is_completed) {
                                 involves.events.push(expandedPick.event.id)
                                 involves.competitions.push(expandedPick.event.competition.id)
@@ -36,26 +32,26 @@ async function placeBet(user, slip, wager, odds, potential_earnings) {
                             }
                         }
                         if (allPicksAreValid) {
-                            let newSlip = {
-                                id: slip.id,
+                            let newExpandedSlip = {
+                                id: expandedSlip.id,
                                 owner: user.id,
-                                timestamp: slip.timestamp,
-                                picks: slip.picks,
+                                timestamp: expandedSlip.timestamp,
+                                picks: expandedSlip.picks,
                                 wager: wager,
                                 odds: odds,
                                 potential_earnings: potential_earnings,
                                 did_hit: null
                             }
                             let newBalance = { timestamp: now(), value: Number((user.balances[user.balances.length - 1].value - wager).toFixed(2)) }
-                            await insertItem('slips', newSlip)
-                            await updateItem('users', user.id, { slips: [...user.slips.map(slip => slip.id), newSlip.id], balances: [...user.balances, newBalance ], ...(newBalance.value <= 0 ? { is_locked: true } : {})})
+                            await insertItem('slips', newExpandedSlip)
+                            await updateItem('users', user.id, { slips: [...user.slips.map(slip => slip.id), newExpandedSlip.id], balances: [...user.balances, newBalance ], ...(newBalance.value <= 0 ? { is_locked: true } : {})})
                             for (const category of Object.keys(involves)) {
                                 involves[category] = [...new Set(involves[category])]
                                 for (const item of involves[category]) {
                                     await incrementItem(category, item, 'slip_count')
                                 }
                             }
-                            response.changes = { slips: [...user.slips, newSlip], balances: [...user.balances, newBalance ], ...(newBalance.value <= 0 ? { is_locked: true } : {}) }
+                            response.changes = { slips: [...user.slips, newExpandedSlip], balances: [...user.balances, newBalance ], ...(newBalance.value <= 0 ? { is_locked: true } : {}) }
                             response.status = true
                         }
                         else {

@@ -8,15 +8,15 @@ import now from '../lib/util/now'
 import toDate from '../lib/util/toDate'
 import Image from './image'
 
-const Event = memo(function Event({ item: event, bets, parentId }) {
+const Event = memo(function Event({ event, events, parentId }) {
     let DOMId = parentId
     return (
         <div id = {DOMId} className = {'group/event relative transition-colors duration-main w-full flex flex-col items-center gap-sm'}>
             <Title event = {event} parentId = {DOMId}/>
-            <Bets event = {event} bets = {bets} parentId = {DOMId}/>
+            <Bets event = {event} bets = {event.bets} events = {events} parentId = {DOMId}/>
         </div>
     )
-}, (b, a) => _.isEqual(b.bets, a.bets) &&  _.isEqual(b.item, a.item))
+}, (b, a) => _.isEqual(b.events, a.events) &&  _.isEqual(b.event, a.event))
 
 const Title = memo(function Title({ event, parentId }) {
     const isLive = useMemo(() => event.start_time < now(), [event])

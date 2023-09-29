@@ -6,14 +6,14 @@ import { useStore } from '../hooks/useStore'
 import Panel from '../components/panel'
 
 const Slips = memo(function Slips() {
-    let [ slips, , , , ] = useStore('user_slips', 'array')
+    let [ compressedSlips, , , , ] = useStore('user_slips', 'array')
     let DOMId = 'slips'
     return (
         <Page canScroll parentId = {DOMId}>
             <Helmet><title>Slips • Betsy</title></Helmet>
             <div id = {DOMId} className = 'w-full h-full flex flex-col gap-base md:gap-lg'>
                 <Panel parentId = {DOMId}>
-                    <SlipsDisplay slips = {slips} isEditable parentId = {DOMId} />
+                    <SlipsDisplay compressedSlips = {compressedSlips} isEditable parentId = {DOMId} />
                 </Panel>
             </div>
         </Page>

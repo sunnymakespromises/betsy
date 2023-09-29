@@ -7,55 +7,52 @@ import { useCurrency } from '../hooks/useCurrency'
 import { useOdds } from '../hooks/useOdds'
 import { useStatuses } from '../hooks/useStatuses'
 import { useInput } from '../hooks/useInput'
+import { useDatabase } from '../hooks/useDatabase'
 import Map from './map'
 import Text from './text'
 import Conditional from './conditional'
-import Pick, { Select } from './pick'
+import Pick from './pick'
 import Input from './input'
+import SelectSlips from './selectSlips'
 import Error from './error'
 import toDate from '../lib/util/toDate'
-import { useDatabase } from '../hooks/useDatabase'
-import expandPick, { compressPick } from '../lib/util/expandPick'
+import { compressSlip, expandSlip, getMostRecentVersionOfPick } from '../lib/util/manipulateBets'
 
-const Slips = memo(function Slips({ slips, isEditable = false, isTailable = false, showPotentialEarnings = true, parentId }) {
+const Slips = memo(function Slips({ compressedSlips, isEditable = false, isTailable = false, showPotentialEarnings = true, parentId }) {
     const { data } = useDataContext()
 
     let DOMId = parentId + '-slips'
     return (
         <div id = {DOMId + '-slips'} className = 'w-full h-full flex flex-col gap-lg'>
-            <Conditional value = {slips?.length > 0}>
-                <Map items = {slips} callback = {(slip, index) => {
-                    let slipId = DOMId + '-slip' + index; return (
-                    <Slip key = {index} slip = {slip} data = {data} isEditable = {isEditable} isTailable = {isTailable} showPotentialEarnings = {showPotentialEarnings} parentId = {slipId}/>
+            <Conditional value = {compressedSlips?.length > 0}>
+                <Map items = {compressedSlips} callback = {(compressedSlip, index) => {
+                    let compressedSlipId = DOMId + '-slip' + index; return (
+                    <Slip key = {index} compressedSlip = {compressedSlip} events = {data.events} isEditable = {isEditable} isTailable = {isTailable} showPotentialEarnings = {showPotentialEarnings} parentId = {compressedSlipId}/>
                 )}}/>
             </Conditional>
-            <Conditional value = {slips?.length < 1}>
+            <Conditional value = {compressedSlips?.length < 1}>
                 <Text id = {DOMId + '-slips-not-found'} preset = 'body' classes = 'text-text-highlight/killed'>
                     No slips found.
                 </Text>
             </Conditional>
         </div>
     )
-}, (b, a) => b.isTailable === a.isTailable && b.isEditable === a.isEditable && b.showPotentialEarnings === a.showPotentialEarnings && _.isEqual(b.slips, a.slips))
+}, (b, a) => b.isTailable === a.isTailable && b.isEditable === a.isEditable && b.showPotentialEarnings === a.showPotentialEarnings && _.isEqual(b.compressedSlips, a.compressedSlips))
 
-const Slip = memo(function Slip({ slip, data, isEditable, isTailable, showPotentialEarnings, parentId }) {
+const Slip = memo(function Slip({ compressedSlip, events, isEditable, isTailable, showPotentialEarnings, parentId }) {
     const { statuses: status, setStatus } = useStatuses()
     const { input: wager, onInputChange: onWagerChange, inputIsEmpty: wagerIsEmpty, clearInput: clearWager } = useInput()
-    let expandedSlip = useMemo(() => {
-        let newSlip = JSON.parse(JSON.stringify(slip))
-        return {...newSlip, picks: newSlip.picks.map(pick => {
-            return expandPick(data.events, pick)
-        }).filter(pick => pick !== null)}
-    }, [slip])
+    let expandedSlip = useMemo(() => expandSlip(events, compressedSlip), [compressedSlip])
+    console.log(events, compressedSlip, expandedSlip)
     const { getOddsFromPicks } = useOdds()
     const { getAmount, getSymbol } = useCurrency()
     let currencySymbol = useMemo(() => getSymbol(), [])
-    let totalOdds = useMemo(() => getOddsFromPicks(expandedSlip.picks), [slip])
+    let totalOdds = useMemo(() => getOddsFromPicks(expandedSlip.picks), [compressedSlip])
     let potentialEarningsDisplay = useMemo(() => getAmount(isEditable ? null : 'dollars', null, isEditable ? (Number(wager) ? totalOdds.decimal * Number(wager) : 0) : (Number(expandedSlip.wager) ? totalOdds.decimal * Number(expandedSlip.wager) : 0), false).string, [totalOdds, expandedSlip, wager])
     let wagerDisplay = useMemo(() => getAmount(isEditable ? null : 'dollars', null, isEditable ? (Number(wager) ? Number(wager) : 0) : (Number(expandedSlip.wager) ? Number(expandedSlip.wager) : 0), false).string, [expandedSlip, wager])
     let potentialEarningsInDollars = useMemo(() => getAmount(null, 'dollars', Number(wager) ? totalOdds.decimal *  Number(wager) : 0, false).value, [totalOdds, wager])
     let wagerInDollars = useMemo(() => getAmount(null, 'dollars', Number(wager) ? Number(wager) : 0, false).value, [totalOdds, wager])
-    let [, , removeSlipFromStore, editSlip, ] = useStore('user_slips', 'array')
+    let [, , removeCompressedSlipFromStore, editCompressedSlip, ] = useStore('user_slips', 'array')
     let [isSelecting, setIsSelecting] = useState(false)
 
     let grid = expandedSlip.picks.length >= 3 ? 'grid-cols-3' : expandedSlip.picks.length === 2 ? 'grid-cols-2' : 'grid-cols-1'
@@ -66,7 +63,7 @@ const Slip = memo(function Slip({ slip, data, isEditable, isTailable, showPotent
                 <div id = {DOMId} className = {'group/slip relative transition-colors duration-main w-full flex flex-col items-center gap-sm'}>
                     <div id = {DOMId + '-bar'} className = 'w-full flex justify-between items-center'>
                         <div id = {DOMId + '-bar-right'} className = 'flex items-center gap-sm'>
-                            <Conditional value = {isTailable && slip.did_hit === null}>
+                            <Conditional value = {isTailable && expandedSlip.did_hit === null}>
                                 <div id = {DOMId + '-add'} className = 'transition-colors duration-main flex items-center py-2xs px-sm bg-primary-main hover:bg-primary-highlight rounded-base cursor-pointer' onClick = {() => setIsSelecting(true)}>
                                     <Plus id = {DOMId + '-add-icon'} className = 'text-xl text-text-primary'/>
                                     <Text id = {DOMId + '-add-text'} preset = 'body' classes = 'text-text-primary'>
@@ -84,8 +81,8 @@ const Slip = memo(function Slip({ slip, data, isEditable, isTailable, showPotent
                     </div>
                     <div id = {DOMId + '-picks'} className = {'w-full grid ' + grid + ' gap-base'}>
                         <Map items = {expandedSlip.picks} callback = {(expandedPick, index) => {
-                            let pickId = DOMId + '-pick' + index; return (
-                            <Pick key = {index} expandedPick = {expandedPick} isEditable = {isEditable} isDetailed onRemove = {removePick} parentId = {pickId}/>
+                            let expandedPickId = DOMId + '-pick' + index; return (
+                            <Pick key = {index} expandedPick = {expandedPick} events = {events} isEditable = {isEditable} isDetailed onRemove = {removeCompressedPick} parentId = {expandedPickId}/>
                         )}}/>
                     </div>
                     <div id = {DOMId + '-bet'} className = 'w-full h-min'>
@@ -110,7 +107,7 @@ const Slip = memo(function Slip({ slip, data, isEditable, isTailable, showPotent
                                     &nbsp;{potentialEarningsDisplay}&nbsp;
                                 </Text>
                                 <Conditional value = {isEditable}>
-                                    <Save slip = {slip} wager = {wagerInDollars} odds = {totalOdds.american} potentialEarnings = {potentialEarningsInDollars} status = {status} setStatus = {setStatus} wagerIsEmpty = {wagerIsEmpty} removeSlip = {removeSlip} parentId = {DOMId + '-bet'}/>
+                                    <Save expandedSlip = {expandedSlip} wager = {wagerInDollars} odds = {totalOdds.american} potentialEarnings = {potentialEarningsInDollars} status = {status} setStatus = {setStatus} wagerIsEmpty = {wagerIsEmpty} removeCompressedSlip = {removeCompressedSlip} parentId = {DOMId + '-bet'}/>
                                 </Conditional>
                                 {status.status === false && <Error message = {status.message} classes = 'text-right' parentId = {DOMId + '-bet'}/>}
                             </div>
@@ -118,14 +115,7 @@ const Slip = memo(function Slip({ slip, data, isEditable, isTailable, showPotent
                     </div>
                 </div>
                 <Conditional value = {isSelecting}>
-                    <Select expandedPicks = {expandedSlip.picks.map(pick => { return {
-                        ...pick, 
-                        outcome: {
-                            ...pick.outcome,
-                            odds: pick.bet.values[pick.bet.values.length - 1].outcomes.find(outcome => pick.outcome.competitor ? pick.outcome.competitor.name === outcome.competitor?.name : pick.outcome.name === outcome.name).odds
-                        },
-                        timestamp: pick.bet.values[pick.bet.values.length - 1].timestamp
-                    }})} setIsSelecting = {setIsSelecting} parentId = {DOMId}/>
+                    <SelectSlips expandedPicksToAdd = {expandedSlip.picks.map(expandedPick => getMostRecentVersionOfPick(expandedPick))} events = {events} setIsSelecting = {setIsSelecting} parentId = {DOMId}/>
                 </Conditional>
             </>
         )
@@ -147,29 +137,28 @@ const Slip = memo(function Slip({ slip, data, isEditable, isTailable, showPotent
         onWagerChange('wager', value, 'text')
     }
 
-    function removeSlip() {
+    function removeCompressedSlip() {
         if (isEditable) {
             clearWager()
-            removeSlipFromStore(slip)
+            removeCompressedSlipFromStore(compressedSlip)
         }
     }
 
-    function removePick(expandedPick) {
-        let compressedPick = compressPick(expandedPick)
+    function removeCompressedPick(compressedPick) {
         if (isEditable) {
-            let newSlip = JSON.parse(JSON.stringify(slip))
-            newSlip.picks = newSlip.picks.filter(pick => pick !== compressedPick)
-            if (newSlip.picks.length > 0) {
-                editSlip(slip, newSlip)
+            let newCompressedSlip = JSON.parse(JSON.stringify(compressedSlip))
+            newCompressedSlip.picks = newCompressedSlip.picks.filter(compressedPick2 => compressedPick !== compressedPick2)
+            if (newCompressedSlip.picks.length > 0) {
+                editCompressedSlip(compressedSlip, newCompressedSlip)
             }
             else {
-                removeSlipFromStore(slip)
+                removeCompressedSlipFromStore(compressedSlip)
             }
         }
     }
-}, (b, a) => b.isTailable === a.isTailable && b.showPotentialEarnings === a.showPotentialEarnings && b.isEditable === a.isEditable && _.isEqual(b.slip, a.slip) && _.isEqual(b.data, a.data))
+}, (b, a) => b.isTailable === a.isTailable && b.showPotentialEarnings === a.showPotentialEarnings && b.isEditable === a.isEditable && _.isEqual(b.compressedSlip, a.compressedSlip) && _.isEqual(b.events, a.events))
 
-const Save = memo(function Save({ slip, wager, odds, potentialEarnings, status, setStatus, wagerIsEmpty, removeSlip, parentId }) {
+const Save = memo(function Save({ expandedSlip, wager, odds, potentialEarnings, status, setStatus, wagerIsEmpty, removeCompressedSlip, parentId }) {
     const { placeBet } = useDatabase()
 
     let DOMId = parentId + '-save'
@@ -181,13 +170,13 @@ const Save = memo(function Save({ slip, wager, odds, potentialEarnings, status, 
 
     async function onAction() {
         if (!wagerIsEmpty) {
-            const { status, message } = await placeBet(slip, wager, odds, potentialEarnings)
+            const { status, message } = await placeBet(expandedSlip, wager, odds, potentialEarnings)
             setStatus(status, message, 2000)
             if (status) {
-                removeSlip(slip)
+                removeCompressedSlip(compressSlip(expandedSlip))
             }
         }
     }
-}, (b, a) => b.wagerIsEmpty === a.wagerIsEmpty && b.status === a.status && _.isEqual(b.wager, a.wager) && _.isEqual(b.slip, a.slip) && _.isEqual(b.odds, a.odds) && _.isEqual(b.potentialEarnings, a.potentialEarnings))
+}, (b, a) => b.wagerIsEmpty === a.wagerIsEmpty && b.status === a.status && _.isEqual(b.wager, a.wager) && _.isEqual(b.expandedSlip, a.expandedSlip) && _.isEqual(b.odds, a.odds) && _.isEqual(b.potentialEarnings, a.potentialEarnings))
 
 export default Slips

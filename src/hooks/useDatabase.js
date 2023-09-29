@@ -61,8 +61,8 @@ function useDatabase() {
         }
     }, [currentUser])
 
-    const placeBet = useCallback(async function placeBet(slip, wager, odds, potentialEarnings) {
-        const { status, message, changes } = await _placeBet(currentUser, slip, wager, odds, potentialEarnings)
+    const placeBet = useCallback(async function placeBet(expandedSlip, wager, odds, potentialEarnings) {
+        const { status, message, changes } = await _placeBet(currentUser, expandedSlip, wager, odds, potentialEarnings)
         if (status) {
             await updateCurrentUser(changes)
         }

@@ -9,8 +9,8 @@ function useOdds() {
         return getFormattedOdds(cookies['odds_format'], value ? value : 100)
     }
 
-    function getOddsFromPicks(picks) {
-        return calculateOdds(cookies['odds_format'], picks)
+    function getOddsFromPicks(expandedPicks) {
+        return calculateOdds(cookies['odds_format'], expandedPicks)
     }
     
     return { getOdds, getOddsFromPicks }

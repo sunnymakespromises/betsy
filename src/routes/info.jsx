@@ -98,7 +98,7 @@ const Item = memo(function Item({ category, item, data, parentId }) {
             }
         },
         events: {
-            element: (props) => <Event {...props}/>,
+            element: (props) => <Event {...props} events = {data.events}/>,
             hasSearch: true,
             searchConfig: {
                 id: 'info',
@@ -141,7 +141,7 @@ const Item = memo(function Item({ category, item, data, parentId }) {
     )
 }, (b, a) => _.isEqual(b.item, a.item) && _.isEqual(b.data, a.data))
 
-const Competition = memo(function Competition({ results, item, parentId }) {
+const Competition = memo(function Competition({ results, item, events, parentId }) {
     const CompetitorItem = memo(function Competitor({ item: competitor, parentId }) { 
         let DOMId = parentId
         return (
@@ -173,7 +173,7 @@ const Competition = memo(function Competition({ results, item, parentId }) {
                     <Conditional value = {results?.events?.length > 0}>
                         <Map items = {results?.events} callback = {(event, index) => {
                             let eventId = DOMId + '-event' + index; return (
-                            <EventItem key = {index} item = {event} bets = {event.bets} parentId = {eventId}/>
+                            <EventItem key = {index} event = {event} events = {events} parentId = {eventId}/>
                         )}}/>
                     </Conditional>
                     <Conditional value = {results?.events?.length < 1}>
@@ -209,9 +209,9 @@ const Competition = memo(function Competition({ results, item, parentId }) {
     return (
         <MultiPanel config = {panelsConfig} parentId = {DOMId}/>
     )
-}, (b, a) => _.isEqual(b.results, a.results) && _.isEqual(b.item, a.item))
+}, (b, a) => _.isEqual(b.results, a.results) && _.isEqual(b.item, a.item) && _.isEqual(b.events, a.events))
 
-const Competitor = memo(function Competitors({ results, item, parentId }) {
+const Competitor = memo(function Competitors({ results, item, events, parentId }) {
     let DOMId = parentId
     let panelsConfig = [
         {
@@ -225,7 +225,7 @@ const Competitor = memo(function Competitors({ results, item, parentId }) {
                     <Conditional value = {results?.events?.length > 0}>
                         <Map items = {results?.events} callback = {(event, index) => {
                             let eventId = DOMId + '-event' + index; return (
-                            <EventItem key = {index} item = {event} bets = {event.bets} parentId = {eventId}/>
+                            <EventItem key = {index} event = {event} events = {events} parentId = {eventId}/>
                         )}}/>
                     </Conditional>
                     <Conditional value = {results?.events?.length < 1}>
@@ -251,9 +251,9 @@ const Competitor = memo(function Competitors({ results, item, parentId }) {
     return (
         <MultiPanel config = {panelsConfig} parentId = {DOMId}/>
     )
-}, (b, a) => _.isEqual(b.results, a.results) && _.isEqual(b.item, a.item))
+}, (b, a) => _.isEqual(b.results, a.results) && _.isEqual(b.item, a.item) && _.isEqual(b.events, a.events))
 
-const Event = memo(function Event({ item: event, results, parentId }) {
+const Event = memo(function Event({ item: event, results, events, parentId }) {
     let DOMId = parentId
     let panelsConfig = [
         {
@@ -264,7 +264,7 @@ const Event = memo(function Event({ item: event, results, parentId }) {
             parentId: DOMId + '-events',
             children: 
                 <><Conditional value = {results?.bets?.length > 0}>
-                    <Bets event = {event} bets = {results?.bets} parentId = {DOMId}/>
+                    <Bets event = {event} bets = {results?.bets} events = {events} parentId = {DOMId}/>
                 </Conditional>
                 <Conditional value = {!event.bets || (event.bets.length < 1)}>
                     <Text id = {DOMId + '-bets-not-found'} preset = 'body' classes = 'text-text-highlight/killed'>
@@ -304,7 +304,7 @@ const Event = memo(function Event({ item: event, results, parentId }) {
     return (
         <MultiPanel config = {panelsConfig} parentId = {DOMId}/>
     )
-}, (b, a) => _.isEqual(b.event, a.event) && _.isEqual(b.results, a.results))
+}, (b, a) => _.isEqual(b.event, a.event) && _.isEqual(b.results, a.results) && _.isEqual(b.events, a.events))
 
 const Title = memo(function Title({ category, item, parentId }) {
     let [isFavorite, Favorite] = useFavorite(category, item)

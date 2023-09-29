@@ -75,7 +75,7 @@ const User = memo(function User() {
                 user && 
                 <div id = {DOMId + '-slips-panel-container'} className = 'flex flex-col gap-base'>
                     <SearchBar {...search} classes = 'w-full' isExpanded = {false} canExpand = {false} parentId = {DOMId}/>
-                    <Slips slips = {search.results?.sort((a, b) => b.timestamp - a.timestamp)} isTailable = {!_.isEqual(currentUser, user)} parentId = {DOMId}/>
+                    <Slips compressedSlips = {search.results?.sort((a, b) => b.timestamp - a.timestamp)} isTailable = {!_.isEqual(currentUser, user)} parentId = {DOMId}/>
                 </div>
         }
     ], [user, isCurrentUser, currentUser, search])
