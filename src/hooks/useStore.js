@@ -72,7 +72,6 @@ function useStore(category, shape, defaults, options) {
             if (item) {
                 let newStore = storeRef.current
                 newStore[storeRef.current.indexOf(item)] = newValue
-                console.log(storeName, newStore)
                 setCookie(storeName, newStore)
             }
         }
