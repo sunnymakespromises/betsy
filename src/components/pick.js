@@ -34,13 +34,6 @@ const Pick = memo(function Pick({ expandedPick, events, isEditable, isDetailed, 
             }
         }
         
-        if (isDetailed && expandedPick.outcome.competitor) {
-            return (
-                <Text id = {DOMId + '-name'} preset = 'body' classes = {'w-full text-center whitespace-nowrap overflow-hidden text-ellipsis hover:text-primary-main cursor-pointer ' + (expandedPick.did_hit !== null ? (expandedPick.did_hit === true ? 'text-positive-main' : expandedPick.did_hit === false ? 'text-negative-main' : 'text-text-main/killed') : 'text-primary-main')}>
-                    {string}
-                </Text>
-            )
-        }
         return (
             <Text id = {DOMId + '-name'} preset = 'body' classes = {'w-full text-center whitespace-nowrap overflow-hidden text-ellipsis ' + (expandedPick.did_hit !== null ? (expandedPick.did_hit === true ? 'text-positive-main' : expandedPick.did_hit === false ? 'text-negative-main' : 'text-text-main/killed') : 'text-primary-main')}>
                 {string}
