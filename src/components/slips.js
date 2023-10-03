@@ -43,7 +43,6 @@ const Slip = memo(function Slip({ compressedSlip, events, isEditable, isTailable
     const { statuses: status, setStatus } = useStatuses()
     const { input: wager, onInputChange: onWagerChange, inputIsEmpty: wagerIsEmpty, clearInput: clearWager } = useInput()
     let expandedSlip = useMemo(() => expandSlip(events, compressedSlip), [compressedSlip])
-    console.log(events, compressedSlip, expandedSlip)
     const { getOddsFromPicks } = useOdds()
     const { getAmount, getSymbol } = useCurrency()
     let currencySymbol = useMemo(() => getSymbol(), [])
