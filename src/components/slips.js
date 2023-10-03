@@ -137,22 +137,18 @@ const Slip = memo(function Slip({ compressedSlip, events, isEditable, isTailable
     }
 
     function removeCompressedSlip() {
-        if (isEditable) {
-            clearWager()
-            removeCompressedSlipFromStore(compressedSlip)
-        }
+        clearWager()
+        removeCompressedSlipFromStore(compressedSlip)
     }
 
     function removeCompressedPick(compressedPick) {
-        if (isEditable) {
-            let newCompressedSlip = JSON.parse(JSON.stringify(compressedSlip))
-            newCompressedSlip.picks = newCompressedSlip.picks.filter(compressedPick2 => compressedPick !== compressedPick2)
-            if (newCompressedSlip.picks.length > 0) {
-                editCompressedSlip(compressedSlip, newCompressedSlip)
-            }
-            else {
-                removeCompressedSlipFromStore(compressedSlip)
-            }
+        let newCompressedSlip = JSON.parse(JSON.stringify(compressedSlip))
+        newCompressedSlip.picks = newCompressedSlip.picks.filter(compressedPick2 => compressedPick !== compressedPick2)
+        if (newCompressedSlip.picks.length > 0) {
+            editCompressedSlip(compressedSlip, newCompressedSlip)
+        }
+        else {
+            removeCompressedSlipFromStore(compressedSlip)
         }
     }
 }, (b, a) => b.isTailable === a.isTailable && b.showPotentialEarnings === a.showPotentialEarnings && b.isEditable === a.isEditable && _.isEqual(b.compressedSlip, a.compressedSlip) && _.isEqual(b.events, a.events))
