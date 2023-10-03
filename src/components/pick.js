@@ -69,7 +69,7 @@ const Pick = memo(function Pick({ expandedPick, events, isEditable, isDetailed, 
         return <></>
     })
 
-    const options = [
+    const options = useMemo(() => { return [
         {
             title: 'Add to Slips',
             condition: true,
@@ -82,17 +82,17 @@ const Pick = memo(function Pick({ expandedPick, events, isEditable, isDetailed, 
             title: 'Remove From Slip',
             condition: isEditable,
             onClick: () => {
-                onRemove(compressPick(expandedPick))
-                setIsExpanded(false)
+                    onRemove(compressPick(expandedPick))
+                    setIsExpanded(false)
             }
         }
-    ]
+    ]}, [isEditable, expandedPick])
 
     return (
         <>
             <div id = {DOMId} className = {'group/pick relative transition-colors duration-main w-full flex flex-col justify-center items-center gap-xs p-sm rounded-base bg-base-main/muted' + (expandedPick.did_hit === null ? ' hover:bg-base-main cursor-pointer' : '') + (classes ? ' ' + classes : '')} onClick = {() => expandedPick.did_hit === null ? setIsExpanded(true) : null} ref = {clickRef}>
                 {eventName}
-                <Text id = {DOMId + '-bet-name'} preset = 'subtitle' classes = {'text-text-main/killed'}>
+                <Text id = {DOMId + '-bet-name'} preset = 'subtitle' classes = 'text-text-main/killed'>
                     {expandedPick.bet.name}
                 </Text>
                 {name}
@@ -121,14 +121,14 @@ const Pick = memo(function Pick({ expandedPick, events, isEditable, isDetailed, 
     )
 }, (b, a) => b.isEditable === a.isEditable && b.isDetailed === a.isDetailed && b.classes === a.classes && _.isEqual(b.expandedPick, a.expandedPick) && _.isEqual(b.events, a.events))
 
-const Option = memo(function Option({ title, onClick, parentId }) {
+function Option({ title, onClick, parentId }) {
     let DOMId = parentId
     return (
         <Text id = {DOMId} preset = 'body' classes = 'grow flex items-center justify-center hover:bg-primary-highlight p-xs text-text-primary cursor-pointer' onClick = {() => onClick()}>
             {title}
         </Text>
     )
-}, (b, a) => b.title === a.title)
+}
 
 const Value = memo(function Value({ value, didHit, parentId }) {
     const { getOdds } = useOdds()
