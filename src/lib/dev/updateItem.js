@@ -37,17 +37,13 @@ async function updateItem(item, category, value) {
                         for (let event of competitor.events) {
                             event = await getItem('events', event.id, ['id', 'competitors', 'bets'])
                             let competitors = event.competitors.map(c => { return c.id === competitor.id ? { id: c.id, name: c.name, picture: picture } : c })
-                            let bets  = event.bets?.map(bet => { return {
-                                ...bet,
-                                values: bet.values.map(value => { return {
-                                    ...value,
-                                    outcomes: value.outcomes.map(outcome => { return {
-                                        ...outcome,
-                                        ...( outcome?.competitor ? {competitor: outcome.competitor.id === competitor.id ? { id: outcome.competitor.id, name: outcome.competitor.name, picture: picture } : outcome.competitor } : {})
-                                    }})
-                                }})
-                            }})
-                            await _updateItem('events', event.id, { competitors: competitors, ...(event.bets ? {bets: bets} : {}) })
+                            let bets = updateBets(event.bets, competitor.id, category, picture)
+                            let results = Object.keys(event.results).length > 0 ? {
+                                ...event.results,
+                                scores: event.results.scores.map(score => { return {...score, competitor: (score.competitor && score.competitor.id === competitor.id) ? { id: score.competitor.id, name: score.competitor.name, picture: picture } : score.competitor}}),
+                                bets: updateBets(event.results.bets, competitor.id, category, picture)
+                            } : null
+                            await _updateItem('events', event.id, { competitors: competitors, ...(bets ? {bets: bets} : {}), ...(results ? {results: results} : {}) })
                         }
                     }
                     response.status = true
@@ -80,17 +76,13 @@ async function updateItem(item, category, value) {
                     for (let event of competitor.events) {
                         event = await getItem('events', event.id, ['id', 'competitors', 'bets'])
                         let competitors = event.competitors.map(c => { return c.id === competitor.id ? { id: c.id, name: name, picture: c.picture } : c })
-                        let bets  = event.bets?.map(bet => { return {
-                            ...bet,
-                            values: bet.values.map(value => { return {
-                                ...value,
-                                outcomes: value.outcomes.map(outcome => { return {
-                                    ...outcome,
-                                    ...( outcome?.competitor ? {competitor: outcome.competitor.id === competitor.id ? { id: outcome.competitor.id, name: name, picture: outcome.competitor.picture } : outcome.competitor } : {})
-                                }})
-                            }})
-                        }})
-                        await _updateItem('events', event.id, { competitors: competitors, ...(event.bets ? {bets: bets} : {}) })
+                        let bets = updateBets(event.bets, competitor.id, category, name)
+                        let results = Object.keys(event.results).length > 0 ? {
+                            ...event.results,
+                            scores: event.results.scores.map(score => { return {...score, competitor: (score.competitor && score.competitor.id === competitor.id) ? { id: score.competitor.id, name: name, picture: score.competitor.picture } : score.competitor}}),
+                            bets: updateBets(event.results.bets, competitor.id, category, name)
+                        } : null
+                        await _updateItem('events', event.id, { competitors: competitors, ...(bets ? {bets: bets} : {}), ...(results ? {results: results} : {}) })
                     }
                 }
                 response.status = true
@@ -104,6 +96,22 @@ async function updateItem(item, category, value) {
     }
 
     return response
+}
+
+function updateBets(bets, id, category, newValue) {
+    if (bets) {
+        return bets?.map(bet => { return {
+            ...bet,
+            values: bet.values.map(value => { return {
+                ...value,
+                outcomes: value.outcomes.map(outcome => { return {
+                    ...outcome,
+                    ...( outcome?.competitor ? {competitor: outcome.competitor.id === id ? { ...outcome.competitor, [category]: newValue } : outcome.competitor } : {})
+                }})
+            }})
+        }})
+    }
+    return null
 }
 
 export { updateItem }
