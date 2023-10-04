@@ -18,6 +18,7 @@ import { default as EventItem } from '../components/event'
 import Image from '../components/image'
 import now from '../lib/util/now'
 import toDate from '../lib/util/toDate'
+import RecentForm from '../components/recentForm'
 
 const Info = memo(function Info() {
     const ALLOWED_CATEGORIES = ['competitors', 'competitions', 'events']
@@ -52,7 +53,7 @@ const Info = memo(function Info() {
 const Item = memo(function Item({ category, item, data, parentId }) {
     let options = useMemo(() => {return {
         competitions: {
-            element: (props) => <Competition {...props}/>,
+            element: (props) => <Competition {...props} events = {data.events}/>,
             hasSearch: true,
             searchConfig: {
                 id: 'info',
@@ -75,7 +76,7 @@ const Item = memo(function Item({ category, item, data, parentId }) {
             }
         },
         competitors: {
-            element: (props) => <Competitor {...props}/>,
+            element: (props) => <Competitor {...props} events = {data.events}/>,
             hasSearch: true,
             searchConfig: {
                 id: 'info',
@@ -141,7 +142,7 @@ const Item = memo(function Item({ category, item, data, parentId }) {
     )
 }, (b, a) => _.isEqual(b.item, a.item) && _.isEqual(b.data, a.data))
 
-const Competition = memo(function Competition({ results, item, events, parentId }) {
+const Competition = memo(function Competition({ results, item: competition, events, parentId }) {
     const CompetitorItem = memo(function Competitor({ item: competitor, parentId }) { 
         let DOMId = parentId
         return (
@@ -211,7 +212,7 @@ const Competition = memo(function Competition({ results, item, events, parentId 
     )
 }, (b, a) => _.isEqual(b.results, a.results) && _.isEqual(b.item, a.item) && _.isEqual(b.events, a.events))
 
-const Competitor = memo(function Competitors({ results, item, events, parentId }) {
+const Competitor = memo(function Competitors({ results, item: competitor, events, parentId }) {
     let DOMId = parentId
     let panelsConfig = [
         {
@@ -242,9 +243,7 @@ const Competitor = memo(function Competitors({ results, item, events, parentId }
             panelClasses: 'w-full md:grow md:!w-auto',
             parentId: DOMId + '-form',
             children: 
-                <div>
-                    
-                </div>
+                <RecentForm events = {events} competitor = {competitor} parentId = {DOMId}/>
         }
     ]
 

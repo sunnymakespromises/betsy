@@ -26,7 +26,7 @@ async function getData(category = null, currentUser = null) {
             },
             events: {
                 table: 'events',
-                attributes: ['id', 'name', 'competition', 'competitors', 'sport', 'is_outright', 'start_time', 'slip_count', 'bets', 'is_completed'],
+                attributes: ['id', 'name', 'competition', 'competitors', 'sport', 'is_outright', 'start_time', 'slip_count', 'bets', 'is_completed', 'results'],
                 sort: (a) => a.sort((a, b) => (a.start_time - b.start_time))
             },
             competitors: {
