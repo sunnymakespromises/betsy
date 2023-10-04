@@ -197,8 +197,8 @@ module.exports =  withAnimations({
                     highlight: '#FFFFFF',
                     primary: '#EBEAEB',
                     accent: '#EBEAEB',
-                    positive: '#EBEAEB',
-                    negative: '#EBEAEB'
+                    positive: '#38343A',
+                    negative: '#38343A'
                 },
                 primary: {
                     main: '#448AFF',
