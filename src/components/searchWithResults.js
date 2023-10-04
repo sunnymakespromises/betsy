@@ -248,7 +248,7 @@ const Result = memo(function Result({ category, item, onClick, isLink, showFavor
             <Link id = {DOMId} to = {category === 'users' ? '/user?id=' + item.id : '/info?category=' + category + '&id=' + item.id} className = 'group/result w-full flex items-center gap-xs' onClick = {() => onClick(category, item)}>
                 {title}
                 <Conditional value = {showFavorites && category !== 'events' && category !== 'users'}>
-                    <Favorite isFavorite = {isFavorite} category = {category} canEdit = {false} item = {item} classes = 'h-4 w-4' parentId = {DOMId}/>
+                    <Favorite isFavorite = {isFavorite} category = {category} canEdit = {false} item = {item} classes = 'h-3 w-3' parentId = {DOMId}/>
                 </Conditional>
             </Link>
             
