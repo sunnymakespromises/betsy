@@ -18,6 +18,7 @@ import { CircleFill } from 'react-bootstrap-icons'
 import now from '../lib/util/now'
 
 const SearchWithResults = memo(forwardRef(function Search({ searchConfig, onResultClick, closeOnClick = false, preset = 'main', autoFocus = false, showFavorites = false, classes, container, parentId }, ref) {
+    let DOMId = parentId + '-search'
     const search = useSearch(searchConfig)
     const previousInput = usePrevious(search.input)
     let resultsShape = useMemo(() => search.results && search.results.constructor.name === 'Array' ? 'array' : 'object', [search.results])
@@ -55,7 +56,6 @@ const SearchWithResults = memo(forwardRef(function Search({ searchConfig, onResu
         setIsExpanded(true)
     }
 
-    let DOMId = parentId + '-search'
     return (
         <div ref = {ref} id = {DOMId} className = {'relative flex flex-col rounded-main' + (classes ? ' ' + classes : '')}>
             <SearchBar {...search} onFocus = {onFocus} autoFocus = {autoFocus} preset = {preset} parentId = {DOMId}/>
@@ -74,8 +74,9 @@ const SearchWithResults = memo(forwardRef(function Search({ searchConfig, onResu
 }), (b, a) => b.classes === a.classes && b.container === a.container && b.autoFocus === a.autoFocus && b.showFavorites === a.showFavorites && _.isEqual(JSON.stringify(b.searchConfig), JSON.stringify(a.searchConfig)))
 
 const Results = memo(forwardRef(function Results({ results, hasResults, shape, isExpanded, resultIsLink, showFavorites, onResultClick, parentId }, cancelRef) {
-    let categories = useMemo(() => results && Object.keys(results).filter(category => results[category].length > 0), [results])
     let DOMId = parentId + '-results'
+    let categories = useMemo(() => results && Object.keys(results).filter(category => results[category].length > 0), [results])
+    
     if (shape === 'object') {
         return (
             <div id = {DOMId} className = {'absolute top-0 left-0  transition-[opacity] duration-main w-full h-full p-base md:p-lg bg-base-main/70 rounded-base z-20 ' + (hasResults && isExpanded ? 'opacity-[100]' : 'opacity-[0] pointer-events-none')}>
@@ -114,6 +115,7 @@ const Results = memo(forwardRef(function Results({ results, hasResults, shape, i
 }, (b, a) => b.hasResults === a.hasResults && b.shape === a.shape && b.isExpanded === a.isExpanded && b.resultIsLink === a.resultIsLink && b.showFavorites === a.showFavorites && _.isEqual(b.results, a.results)))
 
 const Result = memo(function Result({ category, item, onClick, isLink, showFavorites, parentId }) {
+    let DOMId = parentId
     let [isFavorite, Favorite] = useFavorite(category, item)
     let title = useMemo(() => {
         let DOMId = parentId + '-title'
@@ -242,7 +244,6 @@ const Result = memo(function Result({ category, item, onClick, isLink, showFavor
         )
     }, [item, category])
 
-    let DOMId = parentId
     if (isLink) {
         return (
             <Link id = {DOMId} to = {category === 'users' ? '/user?id=' + item.id : '/info?category=' + category + '&id=' + item.id} className = 'group/result w-full flex items-center gap-xs' onClick = {() => onClick(category, item)}>

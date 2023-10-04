@@ -10,10 +10,11 @@ import { Link } from 'react-router-dom'
 import { useCancelDetector } from '../hooks/useCancelDetector'
 
 const RecentForm = memo(function RecentForm({ competitor, events, parentId }) {
+    let DOMId = parentId + '-form'
     let results = useMemo(() => competitor.events.map(competitorEvent => { 
         return events.find(event => event.id === competitorEvent.id)
     }).filter(event => event !== null && Object.keys(event.results).length > 0), [competitor, events])
-    let DOMId = parentId + '-form'
+    
     return (
         <div id = {DOMId} className = {'w-full transition-all duration-main'}>
             <Conditional value = {results.length === 0}>

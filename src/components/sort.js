@@ -6,6 +6,7 @@ import Map from './map'
 import arraymove from '../lib/util/arraymove'
 
 function Sort({ items, onPlace, onDrag, item, itemProps, parentId, ...extras }) {
+    let DOMId = parentId
     let [isDragging, setIsDragging] = useState(false)
     let [tempItems, setTempItems] = useState(items)
     const mouseSensor = useSensor(MouseSensor, {
@@ -28,9 +29,8 @@ function Sort({ items, onPlace, onDrag, item, itemProps, parentId, ...extras }) 
     useEffect(() => {
         setTempItems(items)
     }, [items])
-
     let Child = item
-    let DOMId = parentId
+    
     return (
         <DndContext onDragEnd = {onDragEnd} onDragOver = {onDragOver} onDragStart = {onDragStart} sensors = {sensors} collisionDetection = {closestCenter} {...extras}>
             <SortableContext items = {isDragging ? items : tempItems}>

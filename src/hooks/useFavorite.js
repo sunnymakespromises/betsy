@@ -19,6 +19,7 @@ function useFavorite(category, item) {
 
     const Favorite = memo(function Favorite({ isFavorite, classes, iconClasses, canEdit = false, parentId }) {
         let DOMId = parentId + '-favorite'
+        
         return (
             <div id = {DOMId} className = {'group/favorite-icon' + (classes ? ' ' + classes : '')}  onClick = {(e) => onClick(e)}>
                 <Conditional value = {canEdit || (!canEdit && isFavorite)}>

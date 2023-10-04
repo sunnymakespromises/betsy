@@ -18,7 +18,6 @@ import Text from '../components/text'
 import Panel from '../components/panel'
 import { default as ImageComponent } from '../components/image'
 import SearchWithResults from '../components/searchWithResults'
-// import Input from '../components/input'
 import JSZip from 'jszip'
 import cropImage from '../lib/util/cropImage'
 
@@ -26,12 +25,12 @@ const MAX_STORE_SIZE = 44
 const PICTURE_SIZE = [400, 400]
 
 const Edit = memo(function Edit() {
+    let DOMId = 'edit'
     const { currentUser } = useUserContext()
     const { data } = useDataContext()
     const isDev = useMemo(() => currentUser && currentUser.is_dev, [currentUser])
 
     if (isDev) {
-        let DOMId = 'edit'
         return (
             <Page canScroll DOMId = {DOMId}>
                 <div id = {DOMId} className = 'w-full min-h-full h-fit flex flex-col md:flex-row gap-base md:gap-large'>
@@ -44,6 +43,7 @@ const Edit = memo(function Edit() {
 })
 
 const Upload = memo(function Upload({ data, parentId }) {
+    let DOMId = parentId + '-upload'
     const { updateItem } = useDev()
     const [ store, addToStore, removeFromStore, , emptyStore ] = useStore('dev_selections', 'array', null, { duplicates: false })
     const storeRef = useRef()
@@ -78,7 +78,6 @@ const Upload = memo(function Upload({ data, parentId }) {
         keys: { competitions: [{name: 'name', weight: 2}, 'competitions.name', 'sport.name'], competitors: [{name: 'name', weight: 2}, 'competitions.name', 'sport.name'] }
     }}, [data])
 
-    let DOMId = parentId + '-upload'
     return (
         <Panel classes = 'min-h-full' parentId = {DOMId}>
             <div id = {DOMId + '-actions'} className = 'flex justify-end items-center gap-sm'>
@@ -170,6 +169,7 @@ const Upload = memo(function Upload({ data, parentId }) {
 }, (b, a) => _.isEqual(b.data, a.data))
 
 const Item = memo(function Item({ item, onItemRemove, parentId }) {
+    let DOMId = parentId
     // const itemInfo = [
     //     {
     //         title: 'Name',
@@ -181,7 +181,6 @@ const Item = memo(function Item({ item, onItemRemove, parentId }) {
     const { input, inputIsEmpty, onInputChange, clearAllInput } = useInput(['name', 'picture'])
     const [pictureParams, onCrop] = useCropper(input.picture)
 
-    let DOMId = parentId
     return (
         <div id = {DOMId} className = 'group/item relative transition-all duration-main w-full h-min flex flex-col gap-sm'>
             <Picture item = {item} params = {pictureParams} picture = {item.picture} input = {input.picture} onInputChange = {onInputChange} status = {statuses.picture} parentId = {DOMId}/>
@@ -214,6 +213,7 @@ const Item = memo(function Item({ item, onItemRemove, parentId }) {
 // }, (b, a) => b.category === a.category && b.value === a.value && b.classes === a.classes && b.input === a.input && b.isThisInputEmpty === a.isThisInputEmpty && _.isEqual(b.status, a.status))
 
 const Picture = memo(function Picture({ item, params, picture, input, onInputChange, status, parentId }) {
+    let DOMId = parentId + '-picture'
     const pictureInput = useRef(null)
     const [isCropping, setIsCropping] = useState(false)
 
@@ -223,7 +223,6 @@ const Picture = memo(function Picture({ item, params, picture, input, onInputCha
         }
     }, [status])
 
-    let DOMId = parentId + '-picture'
     return (
         <div id = {DOMId} className = 'transition-colors duration-main w-full aspect-square flex justify-center items-center bg-white rounded-full border-base border-primary-main hover:border-primary-highlight overflow-hidden z-10 cursor-pointer'>
             <input id = {DOMId + '-input'} className = 'hidden' type = 'file' onChange = {(e) => onUpload(e)} ref = {pictureInput} accept = '.jpg, .jpeg, .png, .gif, .webp'/>
@@ -257,6 +256,7 @@ const Picture = memo(function Picture({ item, params, picture, input, onInputCha
 }, (b, a) => b.picture === a.picture && b.input === a.input && _.isEqual(b.item, a.item) && _.isEqual(b.status, a.status) && _.isEqual(JSON.stringify(b.params), JSON.stringify(a.params)))
 
 const Save = memo(function Save({ item, input, onCrop, statuses, setStatuses, inputIsEmpty, clearAllInput, parentId }) {
+    let DOMId = parentId + '-save'
     const { updateItem } = useDev()
     const changes = useMemo(() => {
         let newChanges = {}
@@ -276,7 +276,6 @@ const Save = memo(function Save({ item, input, onCrop, statuses, setStatuses, in
         }
     }, [statuses])
 
-    let DOMId = parentId + '-save'
     return (
         <div id = {DOMId} className = {'transition-all duration-main w-full bg-primary-main hover:bg-primary-highlight rounded-base overflow-hidden cursor-pointer ' + (!inputIsEmpty ? 'max-h-full p-xs' : 'max-h-0 p-0') + ' !animate-duration-300' + (atLeastOneChangeFailed ? ' animate-headShake' : '')} onClick = {() => onAction()}>
             <Text id = {DOMId + '-text'} preset = 'subtitle' classes = {'text-text-primary text-center'}>
@@ -306,6 +305,7 @@ const Save = memo(function Save({ item, input, onCrop, statuses, setStatuses, in
 
 const Error = memo(function Error({ message, parentId }) {
     let DOMId = parentId + '-error'
+    
     return (
         <div id = {DOMId} className = {'w-full overflow-hidden transition-all duration-main ' + (message ? 'max-h-full' : 'max-h-0')}>
             <Text id = {DOMId + '-text'} preset = 'subtitle' classes = 'text-text-highlight/muted'>

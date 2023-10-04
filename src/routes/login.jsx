@@ -7,9 +7,9 @@ import Map from '../components/map'
 import { memo } from 'react'
 
 export default function Login() {
+    let DOMId = 'login'
     const { login } = useUserContext()
 
-    let DOMId = 'login'
     return (
         <Page DOMId = {DOMId}>
             <div id = {DOMId} className = 'transition-colors duration-main w-full h-full flex flex-col bg-base-main rounded-main p-main'>
@@ -45,6 +45,7 @@ export default function Login() {
 
 const Blurb = memo(function Blurb({ subtitle, body, parentId }) {
     let DOMId = parentId
+
     return (
         <div id = {DOMId} className = 'w-full flex flex-col'>
             <Text id = {DOMId + '-subtitle'} preset = 'login-subtitle'>
@@ -59,6 +60,7 @@ const Blurb = memo(function Blurb({ subtitle, body, parentId }) {
 
 const Option = memo(function Option({ source, image, login, parentId }) {
     let DOMId = parentId
+    
     return (
         <div id = {DOMId} className = 'transition-colors duration-main w-full h-min flex justify-center items-center gap-small p-small bg-base-main hover:bg-base-highlight rounded-main border-thin border-divider-main shadow-sm md:shadow cursor-pointer' onClick = {() => login(source)}>
             <Text id = {DOMId + '-sign-in-text'} preset = 'login-option'>

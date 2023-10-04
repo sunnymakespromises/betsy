@@ -14,12 +14,12 @@ import toDate from '../lib/util/toDate'
 import Panel from '../components/panel'
 
 const Database = memo(function Database() {
+    let DOMId = 'database'
     const { currentUser } = useUserContext()
     const { data } = useDataContext()
     const isDev = useMemo(() => currentUser && currentUser.is_dev, [currentUser])
 
     if (isDev) {
-        let DOMId = 'database'
         return (
             <Page canScroll DOMId = {DOMId}>
                 <Helmet><title>Developer • Betsy</title></Helmet>
@@ -33,6 +33,7 @@ const Database = memo(function Database() {
 })
 
 const Stats = memo(function Stats({ data, parentId }) {
+    let DOMId = parentId + '-stats' 
     const stats = [
         {
             title: 'Requests Left',
@@ -67,7 +68,7 @@ const Stats = memo(function Stats({ data, parentId }) {
             }
         },
     ]
-    let DOMId = parentId + '-stats' 
+
     return (
         <div id = {DOMId} className = 'w-full md:w-min h-min flex flex-wrap md:flex-col md:flex-nowrap gap-sm md:gap-base rounded-base'>
             <Map items = {stats} callback = {(stat, index) => {
@@ -81,6 +82,7 @@ const Stats = memo(function Stats({ data, parentId }) {
 
 const Stat = memo(function Stat({ title, value, parentId }) {
     let DOMId = parentId
+
     return (
         <div id = {DOMId} className = 'transition-colors duration-main w-min md:w-full flex flex-col items-center gap-sm p-base bg-base-highlight rounded-base'>
             <Text id = {DOMId + '-title'} preset = 'body' classes = 'text-text-highlight whitespace-nowrap'>
@@ -94,6 +96,7 @@ const Stat = memo(function Stat({ title, value, parentId }) {
 })
 
 const Logs = memo(function Logs({ logs, parentId }) {
+    let DOMId = parentId + '-logs'
     const changes = useMemo(() => {
         if (logs) {
             let newChanges = []
@@ -144,7 +147,6 @@ const Logs = memo(function Logs({ logs, parentId }) {
     }}, [logs])
     const search = useSearch(searchConfig)
 
-    let DOMId = parentId + '-logs'
     return (
         <Panel parentId = {DOMId}>
             <SearchBar {...search} parentId = {DOMId}/>
@@ -159,8 +161,9 @@ const Logs = memo(function Logs({ logs, parentId }) {
 }, (b, a) => _.isEqual(b.logs, a.logs))
 
 const Log = memo(function Log({ changes, title, parentId }) {
-    let [isExpanded, setisExpanded] = useState(false)
     let DOMId = parentId
+    let [isExpanded, setisExpanded] = useState(false)
+
     return (
         <div id = {DOMId} className = {'transition-colors duration-main w-full flex flex-col rounded-base ' + (isExpanded ? 'bg-primary-main' : 'bg-base-main/muted hover:bg-primary-main')}>
             <div id = {DOMId + '-bar'} className = {'group/bar w-full cursor-pointer p-base'} onClick = {() => onClick()}>
@@ -183,6 +186,7 @@ const Log = memo(function Log({ changes, title, parentId }) {
 }, (b, a) => b.title === a.title && _.isEqual(b.changes, a.changes))
 
 const Change = memo(function Change({ change, parentId }) {
+    let DOMId = parentId
     let sentence = useMemo(() => {
         let newSentence = []
         if (change) {
@@ -206,7 +210,7 @@ const Change = memo(function Change({ change, parentId }) {
         }
         return newSentence
     }, [change])
-    let DOMId = parentId
+
     if (sentence.length > 0) {
         return (
             <div id = {DOMId} className = 'w-full flex flex-wrap items-center'>

@@ -5,6 +5,7 @@ import Conditional from './conditional'
 import Image from './image'
 
 export default function Competitor({ id, picture, name, classes, textClasses, link = false, image = false, parentId }) {
+    let DOMId = parentId + 'competitor-'
     const ref = useRef()
     const [imageHeight, setImageHeight] = useState(0)
 
@@ -24,7 +25,6 @@ export default function Competitor({ id, picture, name, classes, textClasses, li
         setImageHeight((getComputedStyle(ref?.current).height.replace('px', '')) * 0.8 + 'px')
     }
 
-    let DOMId = parentId + 'competitor-'
     if (link) {
         return (
             <Link id = {DOMId + 'container'} to = {'/competitors?id=' + id} ref = {ref} className = {'group flex flex-row items-center gap-micro overflow-hidden' + (classes ? ' ' + classes : '')}>
@@ -42,6 +42,7 @@ export default function Competitor({ id, picture, name, classes, textClasses, li
 
     function Insides({ parentId }) {
         let DOMId = parentId
+        
         return (
             <React.Fragment key = {parentId}>
                 <Conditional value = {image && picture}>

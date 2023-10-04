@@ -19,9 +19,9 @@ import toDate from '../lib/util/toDate'
 import { compressSlip, expandSlip, getMostRecentVersionOfPick } from '../lib/util/manipulateBets'
 
 const Slips = memo(function Slips({ compressedSlips, isEditable = false, parentId }) {
+    let DOMId = parentId + '-slips'
     const { data } = useDataContext()
 
-    let DOMId = parentId + '-slips'
     return (
         <div id = {DOMId + '-slips'} className = 'w-full h-full flex flex-col gap-lg'>
             <Conditional value = {compressedSlips?.length > 0}>
@@ -40,6 +40,7 @@ const Slips = memo(function Slips({ compressedSlips, isEditable = false, parentI
 }, (b, a) => b.isEditable === a.isEditable && _.isEqual(b.compressedSlips, a.compressedSlips))
 
 const Slip = memo(function Slip({ compressedSlip, events, isEditable, parentId }) {
+    let DOMId = parentId
     const { statuses: status, setStatus } = useStatuses()
     const { input: wager, onInputChange: onWagerChange, inputIsEmpty: wagerIsEmpty, clearInput: clearWager } = useInput()
     let expandedSlip = useMemo(() => expandSlip(events, compressedSlip), [compressedSlip])
@@ -53,9 +54,8 @@ const Slip = memo(function Slip({ compressedSlip, events, isEditable, parentId }
     let wagerInDollars = useMemo(() => getAmount(null, 'dollars', Number(wager) ? Number(wager) : 0, false).value, [totalOdds, wager])
     let [, , removeCompressedSlipFromStore, editCompressedSlip, ] = useStore('user_slips', 'array')
     let [isSelecting, setIsSelecting] = useState(false)
-
     let grid = expandedSlip.picks.length >= 3 ? 'grid-cols-3' : expandedSlip.picks.length === 2 ? 'grid-cols-2' : 'grid-cols-1'
-    let DOMId = parentId
+
     if (expandedSlip.picks.length > 0) {
         return (
             <>
@@ -160,9 +160,9 @@ const Slip = memo(function Slip({ compressedSlip, events, isEditable, parentId }
 }, (b, a) => b.isEditable === a.isEditable && _.isEqual(b.compressedSlip, a.compressedSlip) && _.isEqual(b.events, a.events))
 
 const Save = memo(function Save({ expandedSlip, wager, odds, potentialEarnings, status, setStatus, wagerIsEmpty, removeCompressedSlip, parentId }) {
+    let DOMId = parentId + '-save'
     const { placeBet } = useDatabase()
 
-    let DOMId = parentId + '-save'
     return !wagerIsEmpty && (
         <div id = {DOMId} className = {'group/save transition-all duration-main h-min overflow-hidden cursor-pointer ' + (wagerIsEmpty ? 'max-w-0' : 'max-w-full') + ' !animate-duration-300' +  + (status.status === false ? ' animate-headShake ' : '')} onClick = {() => onAction()}>
             <CheckLg id = {DOMId + '-icon'} className = {'transition-colors duration-main text-2xl text-primary-main group-hover/save:text-primary-highlight'}/>

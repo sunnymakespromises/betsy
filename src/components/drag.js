@@ -3,6 +3,7 @@ import { DragOverlay, useDndMonitor, useDraggable, useDroppable } from '@dnd-kit
 import { createPortal } from 'react-dom'
 
 export function Drag({ overlay, children, parentId }) {
+    let DOMId = parentId
     const [active, setActive] = useState(null)
     useDndMonitor({
         onDragStart: (item) => setActive(item),
@@ -14,9 +15,8 @@ export function Drag({ overlay, children, parentId }) {
              setContainerElement(document.getElementById('body'))
         }
      }, [])
-
     let Overlay = overlay
-    let DOMId = parentId
+
     return (
         <>
             {children}

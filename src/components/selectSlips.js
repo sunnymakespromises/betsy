@@ -13,6 +13,7 @@ import now from '../lib/util/now'
 import { default as short } from 'short-uuid'
 
 const SelectSlips = memo(function Select({ expandedPicksToAdd, events, setIsSelecting, parentId }) {
+    let DOMId = parentId + '-select-slip'
     let [compressedSlips, addCompressedSlip, , editCompressedSlip, ] = useStore('user_slips', 'array')
     let [containerElement, setContainerElement] = useState()
     useLayoutEffect(() => {
@@ -25,7 +26,6 @@ const SelectSlips = memo(function Select({ expandedPicksToAdd, events, setIsSele
     let selectedSlipsRef = useRef()
     selectedSlipsRef.current = selectedSlips
 
-    let DOMId = parentId + '-select-slip'
     return containerElement && (
         createPortal(
             <div id = {DOMId} className = 'absolute top-0 left-0 w-full h-full flex flex-col items-center justify-center bg-black/80 z-30'>
@@ -93,10 +93,11 @@ const SelectSlips = memo(function Select({ expandedPicksToAdd, events, setIsSele
 }, (b, a) => _.isEqual(b.expandedPicks, a.expandedPicks) && _.isEqual(b.events, a.events))
 
 const SelectSlip = memo(function SelectSlip({ expandedSlip, expandedPicksToAdd, isSelected, onSelect, parentId }) {
+    let DOMId = parentId
     let canAddPicksToSlip = useMemo(() => {
         return !expandedSlip.picks.some(expandedPick => expandedPicksToAdd.some(expandedPick2 => expandedPick.event.id === expandedPick2.event.id) && expandedPicksToAdd.some(expandedPick2 => expandedPick.bet.key === expandedPick2.bet.key))
     }, [expandedSlip, expandedPicksToAdd])
-    let DOMId = parentId
+    
     return (
         <div id = {DOMId} className = 'w-min flex items-center gap-base'>
             <div id = {DOMId + '-info'} className = 'w-full flex flex-col gap-xs'>

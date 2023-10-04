@@ -21,6 +21,7 @@ import toDate from '../lib/util/toDate'
 import RecentForm from '../components/recentForm'
 
 const Info = memo(function Info() {
+    let DOMId = 'info'
     const ALLOWED_CATEGORIES = ['competitors', 'competitions', 'events']
     let [searchParams,] = useSearchParams()
     const { data } = useDataContext()
@@ -38,7 +39,6 @@ const Info = memo(function Info() {
         updateItem()
     }, [category, id])
 
-    let DOMId = 'info'
     return (
         <Page canScroll DOMId = {DOMId}>
             <Helmet><title>{(item ? item.name : 'Info') + ' • Betsy'}</title></Helmet>
@@ -51,6 +51,19 @@ const Info = memo(function Info() {
 })
 
 const Item = memo(function Item({ category, item, data, parentId }) {
+    let DOMId = useMemo(() => {
+        let newDOMId = parentId
+        if (category === 'competitions') {
+            newDOMId += '-competition'
+        }
+        else if (category === 'competitors') {
+            newDOMId += '-competitor'
+        }
+        else if (category === 'events') {
+            newDOMId += '-event'
+        }
+        return newDOMId
+    }, [category])
     let options = useMemo(() => {return {
         competitions: {
             element: (props) => <Competition {...props} events = {data.events}/>,
@@ -116,19 +129,6 @@ const Item = memo(function Item({ category, item, data, parentId }) {
     const search = useSearch(option.searchConfig)
     let Element = option.element
 
-    let DOMId = useMemo(() => {
-        let newDOMId = parentId
-        if (category === 'competitions') {
-            newDOMId += '-competition'
-        }
-        else if (category === 'competitors') {
-            newDOMId += '-competitor'
-        }
-        else if (category === 'events') {
-            newDOMId += '-event'
-        }
-        return newDOMId
-    }, [category])
     return (
         <div id = {DOMId} className = 'w-full flex flex-col gap-base md:gap-lg'>
             <div id = {DOMId + '-bar'} className = 'flex flex-col md:flex-row justify-between items-center gap-sm p-base bg-base-highlight rounded-base'>
@@ -145,6 +145,7 @@ const Item = memo(function Item({ category, item, data, parentId }) {
 const Competition = memo(function Competition({ results, item: competition, events, parentId }) {
     const CompetitorItem = memo(function Competitor({ item: competitor, parentId }) { 
         let DOMId = parentId
+
         return (
             <Link id = {DOMId} to = {'/info?category=competitors&id=' + competitor.id} className = 'group/item transition-all duration-main relative w-full aspect-square flex justify-center items-center'>
                 <div id = {DOMId + '-image'} className = 'transition-colors duration-main w-full aspect-square flex justify-center items-center bg-white rounded-full border-base border-primary-main group-hover/item:border-primary-highlight cursor-pointer'>
@@ -306,9 +307,9 @@ const Event = memo(function Event({ item: event, results, events, parentId }) {
 }, (b, a) => _.isEqual(b.event, a.event) && _.isEqual(b.results, a.results) && _.isEqual(b.events, a.events))
 
 const Title = memo(function Title({ category, item, parentId }) {
+    let DOMId = parentId + '-title'
     let [isFavorite, Favorite] = useFavorite(category, item)
 
-    let DOMId = parentId + '-title'
     if (category === 'competitors') {
         return (
             <div id = {DOMId} className = 'w-full h-min flex items-center gap-xs'>
@@ -466,6 +467,7 @@ const Title = memo(function Title({ category, item, parentId }) {
 }, (b, a) => b.category === a.category && _.isEqual(b.item, a.item))
 
 const ErrorScreen = memo(function ErrorScreen({ category, parentId }) {
+    let DOMId = parentId + '-error'
     let message = useMemo(() => {
         switch (category) {
             case 'events':
@@ -478,7 +480,7 @@ const ErrorScreen = memo(function ErrorScreen({ category, parentId }) {
                 return 'This ' + category + ' cannot be found.'
         }
     }, [category])
-    let DOMId = parentId + '-error'
+    
     return (
         <div id = {DOMId} className = 'w-full h-full z-20 p-main'>
             <div id = {DOMId + '-banner'} className = 'w-full h-min bg-primary-main rounded-main p-main !animate-duration-300 animate-slideInDown'>

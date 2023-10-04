@@ -53,6 +53,7 @@ const Settings = memo(function Settings() {
 })
 
 const AccountPanel = memo(function AccountPanel({ parentId }) {
+    let DOMId = parentId + '-account'
     const { currentUser } = useUserContext()
     const accountInfo = [
         {
@@ -65,8 +66,6 @@ const AccountPanel = memo(function AccountPanel({ parentId }) {
     const { input, inputIsEmpty, onInputChange, isThisInputEmpty, clearAllInput } = useInput(['display_name', 'picture'])
     const [pictureParams, onCrop] = useCropper(input.picture)
 
-
-    let DOMId = parentId + '-account'
     return currentUser && (
         <div id = {DOMId} className = 'flex flex-col gap-base'>
             <div id = {DOMId + '-info'} className = 'flex gap-sm'>
@@ -90,6 +89,7 @@ const AccountPanel = memo(function AccountPanel({ parentId }) {
 })
 
 const SettingsPanel = memo(function SettingsPanel({ parentId }) {
+    let DOMId = parentId + '-settings'
     const settings = [
         {
             title: 'Theme',
@@ -114,7 +114,6 @@ const SettingsPanel = memo(function SettingsPanel({ parentId }) {
         }
     ]
 
-    let DOMId = parentId + '-settings'
     return (
         <div id = {DOMId} className = 'flex flex-col gap-sm'>
             <Map items = {settings} callback = {(setting, index) => {
@@ -126,10 +125,10 @@ const SettingsPanel = memo(function SettingsPanel({ parentId }) {
 })
 
 const Setting = memo(function Setting({ title, icon, settingKey, options, defaultValue, parentId }) {
+    let DOMId = parentId
     const Icon = icon
     const [input, onInputChange] = useSetting(settingKey, defaultValue)
     
-    let DOMId = parentId
     return (
         <div id = {DOMId} className = 'w-full flex justify-between items-center gap-base'>
             <div id = {DOMId + '-name'} className = 'w-min flex items-center gap-xs'>
@@ -151,10 +150,10 @@ const Setting = memo(function Setting({ title, icon, settingKey, options, defaul
 }, (b, a) => b.title === a.title && b.settingKey === a.settingKey && b.defaultValue === a.defaultValue && _.isEqual(b.options, a.options))
 
 const Info = memo(function Info({ category, value, icon, classes, input, onInputChange, status, isThisInputEmpty, parentId }) {
+    let DOMId = parentId + '-' + category
     const thisInputIsEmpty = useMemo(() => isThisInputEmpty(category), [input])
     const Icon = icon
 
-    let DOMId = parentId + '-' + category
     return (
         <div id = {DOMId} className = 'flex items-center gap-xs'>
             <Icon id = {DOMId + '-icon'} className = 'h-4 w-4 text-primary-main'/>
@@ -171,6 +170,7 @@ const Info = memo(function Info({ category, value, icon, classes, input, onInput
 }, (b, a) => b.category === a.category && b.value === a.value && b.classes === a.classes && b.input === a.input && b.isThisInputEmpty === a.isThisInputEmpty && _.isEqual(b.status, a.status))
 
 const Picture = memo(function Picture({ params, picture, input, onInputChange, isThisInputEmpty, status, parentId }) {
+    let DOMId = parentId + '-picture'
     const thisInputIsEmpty = useMemo(() => isThisInputEmpty('picture'), [input])
     const pictureInput = useRef(null)
     const [isCropping, setIsCropping] = useState(false)
@@ -181,7 +181,6 @@ const Picture = memo(function Picture({ params, picture, input, onInputChange, i
         }
     }, [status])
 
-    let DOMId = parentId + '-picture'
     return (
         <div id = {DOMId} className = 'w-min h-min flex justify-center'>
             <input id = {DOMId + '-input'} className = 'hidden' type = 'file' onChange = {(e) => onUpload(e)} ref = {pictureInput} accept = '.jpg, .jpeg, .png, .gif, .webp'/>
@@ -210,6 +209,7 @@ const Picture = memo(function Picture({ params, picture, input, onInputChange, i
 }, (b, a) => b.picture === a.picture && b.input === a.input && _.isEqual(b.status, a.status) && _.isEqual(JSON.stringify(b.params), JSON.stringify(a.params)))
 
 const Save = memo(function Save({ currentUser, input, onCrop, statuses, setStatuses, inputIsEmpty, clearAllInput, parentId }) {
+    let DOMId = parentId + '-save'
     const { updateProfile } = useDatabase()
     const changes = useMemo(() => {
         let newChanges = {}
@@ -229,7 +229,6 @@ const Save = memo(function Save({ currentUser, input, onCrop, statuses, setStatu
         }
     }, [statuses])
 
-    let DOMId = parentId + '-save'
     return (
         <div id = {DOMId} className = {'group/save transition-all duration-main h-min py-2xs overflow-hidden cursor-pointer ' + (!inputIsEmpty ? 'max-w-full px-2xs' : 'max-w-0 px-0') + ' !animate-duration-300' + (atLeastOneChangeFailed ? ' animate-headShake' : '')} onClick = {() => onAction()}>
             <CheckLg id = {DOMId + '-icon'} className = {'text-2xl text-primary-main group-hover/save:text-primary-highlight'}/>
@@ -257,6 +256,7 @@ const Save = memo(function Save({ currentUser, input, onCrop, statuses, setStatu
 
 const Logout = memo(function Logout({ parentId }) {
     let DOMId = parentId + '-logout'
+    
     return (
         <Link to = '/logout' id = {DOMId} className = 'transition-colors duration-main w-[50%] p-sm self-center bg-primary-main hover:bg-primary-highlight rounded-base cursor-pointer'>
             <Text id = {DOMId + '-text'} preset = 'body' classes = 'text-text-primary text-center'>

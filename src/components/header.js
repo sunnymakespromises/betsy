@@ -11,6 +11,7 @@ import SearchWithResults from './searchWithResults'
 // import { useFavorite } from '../hooks/useFavorite'
 
 const Header = memo(function Header({ currentUser, data, location }) {
+    let DOMId = 'header'
     let [searchIsExpanded, setSearchIsExpanded] = useState(false)
     const searchConfig = useMemo(() => { return currentUser.favorites && {
         id: 'search',
@@ -77,7 +78,6 @@ const Header = memo(function Header({ currentUser, data, location }) {
         keys: { competitors: [{name: 'name', weight: '2'}, 'competitions.name', 'sport.name'], competitions: [{name: 'name', weight: '2'}, 'sport.name', 'competitors.name'], events: ['name', 'competition.name', 'competitors.name', 'sport.name'], users: ['display_name'] }
     }}, [data, currentUser.favorites])
 
-    let DOMId = 'header'
     if (currentUser) {
         return (
             <header id = {DOMId} className = {'w-full h-min md:w-[24rem] md:h-full p-base md:p-lg z-20 animate-fadeInLeft'}>
@@ -98,8 +98,9 @@ const Header = memo(function Header({ currentUser, data, location }) {
 }, (b, a) => b.location.pathname === a.location.pathname && b.location.search === a.location.search && _.isEqual(b.currentUser, a.currentUser) && _.isEqual(b.data, a.data))
 
 const LinkPage = memo(function LinkPage({ path, title, icon, isCurrent, parentId }) {
-    const Icon = icon
     let DOMId = parentId
+    const Icon = icon
+
     return (
         <Link id = {DOMId} to = {path} className = {'group/icon w-6 md:w-auto h-6 md:h-auto flex items-center gap-xs cursor-pointer'}>
             <Icon id = {DOMId + '-icon'} title = {title} className = {'transition-colors duration-main h-full w-full md:w-min aspect-square ' + (isCurrent ? 'text-primary-main' : 'text-text-highlight/killed group-hover/icon:text-primary-main')}/>
@@ -111,8 +112,9 @@ const LinkPage = memo(function LinkPage({ path, title, icon, isCurrent, parentId
 }, (b, a) => b.path === a.path && b.title === a.title && b.isCurrent === a.isCurrent)
 
 const ButtonPage = memo(function ButtonPage({ title, icon, isCurrent, classes, onClick, parentId }) {
-    const Icon = icon
     let DOMId = parentId
+    const Icon = icon
+    
     return (
         <div id = {DOMId} className = {'group/icon w-6 md:w-auto h-6 md:h-auto flex items-center gap-xs cursor-pointer' + (classes ? ' ' + classes : '')} onClick = {onClick}>
             <Icon id = {DOMId + '-icon'} title = {title} className = {'transition-colors duration-main h-full w-full md:w-min aspect-square ' + (isCurrent ? 'text-primary-main' : 'text-text-highlight/killed group-hover/icon:text-primary-main')}/>

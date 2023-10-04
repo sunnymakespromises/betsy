@@ -20,6 +20,7 @@ import { useSearch } from '../hooks/useSearch'
 import SearchBar from '../components/searchBar'
 
 const User = memo(function User() {
+    let DOMId = 'user'
     const { currentUser } = useUserContext()
     const [user, setUser] = useState()
     const [searchParams,] = useSearchParams()
@@ -53,8 +54,6 @@ const User = memo(function User() {
         showAllOnInitial: true
     }}, [user])
     const search = useSearch(searchConfig)
-
-    let DOMId = 'user'
     let panelsConfig = useMemo(() => [
         {
             category: 'panel',
@@ -110,6 +109,7 @@ const User = memo(function User() {
 })
 
 const FavoritesPanel = memo(function FavoritesPanel({ favorites, canEdit, parentId }) {
+    let DOMId = parentId + '-favorites'
     let processedFavorites = useMemo(() => {
         let newFavorites = Object.fromEntries(Object.keys(favorites).filter(category => favorites[category].length > 0).map(category => [category, favorites[category]]))
         if (Object.keys(newFavorites).length > 0) {
@@ -118,7 +118,6 @@ const FavoritesPanel = memo(function FavoritesPanel({ favorites, canEdit, parent
         return newFavorites
     }, [favorites])
 
-    let DOMId = parentId + '-favorites'
     return (
         <div id = {DOMId} className = 'relative w-full h-min flex flex-col gap-base'>
             <Conditional value = {Object.keys(processedFavorites).length > 0}>
@@ -142,9 +141,9 @@ const FavoritesPanel = memo(function FavoritesPanel({ favorites, canEdit, parent
 }, (b, a) => b.canEdit === a.canEdit && _.isEqual(b.favorites, a.favorites))
 
 const FavoritesGroup = memo(function FavoritesGroup({ favorites, canEdit, parentId }) {
+    let DOMId = parentId
     let { rearrangeFavorites } = useDatabase()
 
-    let DOMId = parentId
     return (
         <div id = {DOMId + '-items'} className = 'w-full h-min grid grid-cols-6 justify-center items-center gap-xs'>
             {canEdit && 
@@ -163,9 +162,9 @@ const FavoritesGroup = memo(function FavoritesGroup({ favorites, canEdit, parent
 }, (b, a) => b.canEdit === a.canEdit && _.isEqual(b.favorites, a.favorites))
 
 const Favorite = forwardRef(function Favorite({ item: favorite, canEdit, isDragging, somethingIsDragging, parentId, ...sortProps }, sortRef) {
+    let DOMId = parentId
     let { removeFromFavorites } = useDatabase()
 
-    let DOMId = parentId
     return (
         <Link id = {DOMId} to = {'/info?category=' + favorite.category + '&id=' + favorite.id} className = {'group/favorite relative w-full aspect-square flex justify-center items-center' + (isDragging ? ' z-10' : '')} title = {favorite.name} {...sortProps} ref = {sortRef}>
             <div id = {DOMId + '-image'} className = {'}transition-colors duration-main w-full aspect-square flex justify-center items-center bg-white rounded-full border-base ' + (isDragging ? 'border-primary-highlight' : 'border-primary-main group-hover/favorite:border-primary-highlight') + ' cursor-pointer'}>

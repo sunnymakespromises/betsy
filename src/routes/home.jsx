@@ -13,9 +13,9 @@ import Event from '../components/event'
 import { MultiPanel } from '../components/panel'
 
 const Home = memo(function Home() {
+    let DOMId = 'home'
     const { data } = useDataContext()
 
-    let DOMId = 'home'
     return (
         <Page canScroll DOMId = {DOMId}>
             <div id = {DOMId} className = 'w-full h-full'>

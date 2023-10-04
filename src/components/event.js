@@ -10,6 +10,7 @@ import Image from './image'
 
 const Event = memo(function Event({ event, events, parentId }) {
     let DOMId = parentId
+    
     return (
         <div id = {DOMId} className = {'group/event relative transition-colors duration-main w-full flex flex-col items-center gap-sm'}>
             <Title event = {event} parentId = {DOMId}/>
@@ -19,8 +20,9 @@ const Event = memo(function Event({ event, events, parentId }) {
 }, (b, a) => _.isEqual(b.events, a.events) &&  _.isEqual(b.event, a.event))
 
 const Title = memo(function Title({ event, parentId }) {
-    const isLive = useMemo(() => event.start_time < now(), [event])
     let DOMId = parentId + '-title'
+    const isLive = useMemo(() => event.start_time < now(), [event])
+
     if (event.is_outright) {
         return (
             <div id = {DOMId} className = 'flex flex-col items-center gap-2xs'>

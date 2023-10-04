@@ -12,6 +12,7 @@ import { IconLock } from '@tabler/icons-react'
 
 const Profile = memo(function Profile({ user, isCurrentUser, classes, parentId }) {
     let DOMId = parentId + '-profile'
+    
     if (user) {
         return (
             <div id = {DOMId} className = {'relative transition-colors duration-main flex w-full md:w-[20rem] h-min bg-base-highlight rounded-base p-base gap-sm ' + (classes ? ' ' + classes : '') + (user.is_locked ? ' grayscale' : '')}>
@@ -31,10 +32,10 @@ const Profile = memo(function Profile({ user, isCurrentUser, classes, parentId }
 }, (b, a) => b.isCurrentUser === a.isCurrentUser && b.classes === a.classes && _.isEqual(b.user, a.user))
 
 const Subtitle = memo(function Subtitle({ balances, date, parentId }) {
+    let DOMId = parentId + '-subtitle'
     const { getAmount } = useCurrency()
     let balance = useMemo(() => getAmount('dollars', null, balances[balances.length - 1].value, false).string, [balances])
 
-    let DOMId = parentId + '-subtitle'
     return (
         <div id = {DOMId} className = 'w-full flex flex-col gap-xs'>
             <div id = {DOMId = '-balance'} className = 'flex items-center gap-xs'>
@@ -55,6 +56,7 @@ const Subtitle = memo(function Subtitle({ balances, date, parentId }) {
 
 const Tag = memo(function Tag({ id, parentId }) {
     let DOMId = parentId
+
     return (
         <Text id = {DOMId + '-id'} preset = 'subtitle' classes = 'p-2xs bg-primary-main text-text-primary rounded-base'>
             {'@' + id}
@@ -64,6 +66,7 @@ const Tag = memo(function Tag({ id, parentId }) {
 
 const Info = memo(function Info({ category, value, classes, parentId }) {
     let DOMId = parentId + '-' + category
+
     return (
         <Text id = {DOMId + '-text'} preset = 'body' classes = {'text-text-highlight' + (classes ? ' ' + classes : '')}>
             {value}
@@ -73,6 +76,7 @@ const Info = memo(function Info({ category, value, classes, parentId }) {
 
 const Picture = memo(function Picture({ picture, parentId }) {
     let DOMId = parentId + '-picture'
+
     return (
         <div id = {DOMId} className = {'relative flex flex-col justify-center items-center h-20 aspect-square'}>
             <Image external id = {DOMId + '-image'} path = {picture} classes = {'relative h-full aspect-square rounded-full border-base border-primary-main overflow-hidden z-10'} mode = 'cover'/>
@@ -81,8 +85,9 @@ const Picture = memo(function Picture({ picture, parentId }) {
 }, (b, a) => b.picture === a.picture)
 
 const Actions = memo(function Actions({ user, isCurrentUser, parentId }) {
-    const { currentUser } = useUserContext()
     let DOMId = parentId + '-actions'
+    const { currentUser } = useUserContext()
+
     return (
         <div id = {DOMId} className = 'flex flex-col w-4 gap-xs z-10'>
             <Copy id = {user.id} parentId = {DOMId}/>
@@ -94,10 +99,10 @@ const Actions = memo(function Actions({ user, isCurrentUser, parentId }) {
 }, (b, a) => b.isCurrentUser === a.isCurrentUser && _.isEqual(b.user, a.user))
 
 const Subscription = memo(function Subscription({ user, subscriptions, parentId }) {
+    let DOMId = parentId + '-subscription'
     const { subscribe, unsubscribe } = useDatabase()
     const currentUserIsSubscribedToUser = useMemo(() => subscriptions && subscriptions.some(subscription => subscription.id === user.id), [subscriptions, user])
 
-    let DOMId = parentId + '-subscription'
     return (
         <HeartFill id = {DOMId + '-icon'} className = {'transition-colors duration-main w-4 h-4 cursor-pointer ' + (currentUserIsSubscribedToUser ? 'text-primary-main' : 'text-text-highlight/killed hover:text-primary-main')} onClick = {() => onClick()}/>
     )
@@ -113,8 +118,9 @@ const Subscription = memo(function Subscription({ user, subscriptions, parentId 
 }, (b, a) => _.isEqual(b.user, a.user) && _.isEqual(b.subscriptions, a.subscriptions))
 
 const Copy = memo(function Copy({ id, parentId }) {
-    const [isClicked, setIsClicked] = useState()
     let DOMId = parentId + '-copy'
+    const [isClicked, setIsClicked] = useState()
+
     if (!isClicked) {
         return  <Front id = {DOMId + '-icon'} className = {'transition-colors duration-main w-4 h-4 text-primary-main hover:text-primary-highlight cursor-pointer'} onClick = {() => onClick()}/>
     }
@@ -133,6 +139,7 @@ const Copy = memo(function Copy({ id, parentId }) {
 
 const Locked = memo(function Locked({ isLocked, parentId }) {
     let DOMId = parentId + '-locked'
+
     return ( isLocked &&
         <div id = {DOMId} className = {'group/locked relative w-3 h-3 flex items-center justify-center'}>
             <IconLock id = {DOMId + '-icon'} className = {'w-full h-full text-text-main'}/>

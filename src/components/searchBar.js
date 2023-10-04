@@ -8,6 +8,7 @@ import Map from '../components/map'
 
 const SearchBar = memo(forwardRef(function SearchBar({ input, filters, hasActiveFilter, setFilter, onInputChange, onFocus, preset = 'main', autoFocus = false, classes, parentId }, ref) {
     let DOMId = parentId + '-searchbar'
+
     return (
         <div ref = {ref} id = {DOMId} className = {'relative h-min z-10' + (classes ? ' ' + classes : '')}>
             <Conditional value = {filters}>
@@ -25,9 +26,10 @@ const SearchBar = memo(forwardRef(function SearchBar({ input, filters, hasActive
 }), (b, a) => b.input === a.input && b.hasActiveFilter === a.hasActiveFilter && b.preset === a.preset && b.autoFocus === a.autoFocus && b.classes === a.classes && b.onFocus === a.onFocus && _.isEqual(b.filters, a.filters) && _.isEqual(JSON.stringify(b.searchConfig), JSON.stringify(a.searchConfig)))
 
 const Filters = memo(function Filters({ filters, hasActiveFilter, setFilter, parentId }) {
+    let DOMId = parentId + '-filters'
     const [isVisible, setIsVisible] = useState(false)
     const clickRef = useCancelDetector(() => setIsVisible(false))
-    let DOMId = parentId + '-filters'
+
     if (filters) {
         return (
             <div ref = {clickRef} id = {DOMId} className = 'absolute top-0 bottom-0 right-0 w-min h-full flex justify-end items-center px-base z-20'>
@@ -46,8 +48,9 @@ const Filters = memo(function Filters({ filters, hasActiveFilter, setFilter, par
 }, (b, a) => b.hasActiveFilter === a.hasActiveFilter && _.isEqual(JSON.stringify(b.filters), JSON.stringify(a.filters)))
 
 const Filter = memo(function Filter({ filterKey, title, icon, isActive, setFilter, parentId }) {
-    const Icon = icon
     let DOMId = parentId
+    const Icon = icon
+    
     return (
         <div id = {DOMId} title = {title} className = 'group/filter flex items-center justify-center h-full aspect-square cursor-pointer' onClick = {() => setFilter(filterKey, !isActive)}>
             <Icon id = {DOMId + '-icon'} className = {'!transition-colors duration-main w-full h-full ' + (isActive ? 'text-primary-main' : 'text-text-highlight/killed group-hover/filter:text-primary-main')}/>

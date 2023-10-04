@@ -6,8 +6,9 @@ import { useStore } from '../hooks/useStore'
 import Panel from '../components/panel'
 
 const Slips = memo(function Slips() {
-    let [ compressedSlips, , , , ] = useStore('user_slips', 'array')
     let DOMId = 'slips'
+    let [ compressedSlips, , , , ] = useStore('user_slips', 'array')
+    
     return (
         <Page canScroll parentId = {DOMId}>
             <Helmet><title>Slips • Betsy</title></Helmet>

@@ -10,11 +10,11 @@ import SelectSlips from './selectSlips'
 import { compressPick } from '../lib/util/manipulateBets'
 
 const Pick = memo(function Pick({ expandedPick, events, isEditable, isDetailed, onRemove, classes, parentId }) {
+    let DOMId = parentId
     let [isExpanded, setIsExpanded] = useState(false)
     let [isSelecting, setIsSelecting] = useState(false)
     const cancelRef = useCancelDetector(() => setIsExpanded(false))
 
-    let DOMId = parentId
     let name = useMemo(() => {
         let string = ''
         if (expandedPick.bet.key.includes('totals')) {
@@ -123,6 +123,7 @@ const Pick = memo(function Pick({ expandedPick, events, isEditable, isDetailed, 
 
 function Option({ title, onClick, parentId }) {
     let DOMId = parentId
+
     return (
         <Text id = {DOMId} preset = 'body' classes = 'grow flex items-center justify-center hover:bg-primary-highlight p-xs text-text-primary cursor-pointer' onClick = {() => onClick()}>
             {title}
@@ -131,9 +132,10 @@ function Option({ title, onClick, parentId }) {
 }
 
 const Value = memo(function Value({ value, didHit, parentId }) {
+    let DOMId = parentId + '-value'
     const { getOdds } = useOdds()
     let odds = useMemo(() => getOdds(value), [value])
-    let DOMId = parentId + '-value'
+    
     return (
         <Text id = {DOMId} preset = 'title' classes = {'!font-bold ' + (didHit !== null ? (didHit === true ? 'text-positive-main' : didHit === false ? 'text-negative-main' : 'text-text-main/killed') : 'text-primary-main')}>
             {odds}
