@@ -2,6 +2,7 @@ import updateItem from './aws/db/updateItem'
 import insertItem from './aws/db/insertItem'
 import now from './util/now'
 import incrementItem from './aws/db/incrementItem'
+import { compressSlip } from './util/manipulateBets'
 
 async function placeBet(user, expandedSlip, wager, odds, potential_earnings) {
     const response = {
@@ -36,7 +37,7 @@ async function placeBet(user, expandedSlip, wager, odds, potential_earnings) {
                                 id: expandedSlip.id,
                                 owner: user.id,
                                 timestamp: expandedSlip.timestamp,
-                                picks: expandedSlip.picks,
+                                picks: compressSlip(expandedSlip).picks,
                                 wager: wager,
                                 odds: odds,
                                 potential_earnings: potential_earnings,

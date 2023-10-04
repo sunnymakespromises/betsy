@@ -104,7 +104,7 @@ const Pick = memo(function Pick({ expandedPick, events, isEditable, isDetailed, 
                             return option.condition && (
                                 <React.Fragment key = {index}>
                                     <Option title = {option.title} onClick = {option.onClick} parentId = {optionId}/>
-                                    <Conditional value = {index !== options.length - 1}>
+                                    <Conditional value = {index !== options.filter(option => option.condition).length - 1}>
                                         <div className = 'transition-colors duration-main border-t-sm border-divider-primary'/>
                                     </Conditional>
                                 </React.Fragment>

@@ -36,7 +36,7 @@ const Input = memo(forwardRef(function Input({ value, status, type = 'text', pre
             null: ''
         },
         slip_wager: {
-            classes: 'transition-all duration-main select-none font-main font-bold text-xl text-text-main/killed text-right bg-transparent placeholder:text-text-main/killed focus:outline-none',
+            classes: 'transition-all duration-main select-none font-main font-bold text-xl text-text-highlight/killed text-right bg-transparent placeholder:text-text-highlight/killed focus:outline-none',
             true: '',
             false: '',
             null: ''
