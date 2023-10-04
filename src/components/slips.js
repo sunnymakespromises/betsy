@@ -106,7 +106,7 @@ const Slip = memo(function Slip({ compressedSlip, events, isEditable, isTailable
                                     &nbsp;{potentialEarningsDisplay}&nbsp;
                                 </Text>
                                 <Conditional value = {isEditable}>
-                                    <Save expandedSlip = {expandedSlip} wager = {wagerInDollars} odds = {totalOdds.american} potentialEarnings = {potentialEarningsInDollars} status = {status} setStatus = {setStatus} wagerIsEmpty = {wagerIsEmpty} removeCompressedSlip = {removeCompressedSlip} parentId = {DOMId + '-bet'}/>
+                                    <Save expandedSlip = {expandedSlip} wager = {wagerInDollars} odds = {totalOdds.decimal} potentialEarnings = {potentialEarningsInDollars} status = {status} setStatus = {setStatus} wagerIsEmpty = {wagerIsEmpty} removeCompressedSlip = {removeCompressedSlip} parentId = {DOMId + '-bet'}/>
                                 </Conditional>
                                 {status.status === false && <Error message = {status.message} classes = 'text-right' parentId = {DOMId + '-bet'}/>}
                             </div>

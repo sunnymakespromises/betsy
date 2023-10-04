@@ -6,7 +6,7 @@ function useOdds() {
     const [cookies,,] = useCookies(['odds_format'])
 
     function getOdds(value) {
-        return getFormattedOdds(cookies['odds_format'], value ? value : 100)
+        return getFormattedOdds(cookies['odds_format'], value ? value : 1)
     }
 
     function getOddsFromPicks(expandedPicks) {

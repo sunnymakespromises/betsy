@@ -12,6 +12,7 @@
         "@dnd-kit/utilities": "^3.2.1",
         "@react-oauth/google": "^0.11.0",
         "@tabler/icons-react": "^2.23.0",
+        "fractional": "^1.0.0",
         "fuse.js": "^6.6.2",
         "jszip": "^3.10.1",
         "jszip-utils": "^0.1.0",

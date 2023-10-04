@@ -1,24 +1,16 @@
-export default function getFormattedOdds(format, value) {
+import { Fraction } from 'fractional'
+
+export default function getFormattedOdds(format, decimalValue) {
     format = format ? format : 'american'
     switch (format) {
         case 'american':
-            return (value > 0 ? '+' : '') + value.toFixed(0)
+            return (decimalValue > 2 ? '+' : '') + (decimalValue === 1 ? 100 : Number((decimalValue > 2 ? ((decimalValue - 1) * 100) : (-100 / (decimalValue - 1))).toFixed(0)))
         case 'decimal':
-            return (value > 0 ? ((value / 100) + 1) : ((value - 100) / value)).toFixed(2)
+            return decimalValue.toFixed(2)
         case 'fractional':
-            let fraction = reduce(Math.abs(value), 100)
-            return (value > 0 ? (fraction[0] + '/' + fraction[1]) : (fraction[1] + '/' + fraction[0]))
+            let fraction = new Fraction(decimalValue)
+            return fraction.toString()
         default:
             return null
-    }
-
-    function reduce(numerator, denominator) {
-        var a = numerator;
-        var b = denominator;
-        var c;
-        while (b) {
-            c = a % b; a = b; b = c;
-        }
-        return [numerator / a, denominator / a];
     }
 }
