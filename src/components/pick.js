@@ -12,7 +12,7 @@ import { compressPick } from '../lib/util/manipulateBets'
 const Pick = memo(function Pick({ expandedPick, events, isEditable, isDetailed, onRemove, classes, parentId }) {
     let [isExpanded, setIsExpanded] = useState(false)
     let [isSelecting, setIsSelecting] = useState(false)
-    const clickRef = useCancelDetector(() => setIsExpanded(false))
+    const cancelRef = useCancelDetector(() => setIsExpanded(false))
 
     let DOMId = parentId
     let name = useMemo(() => {
@@ -90,7 +90,7 @@ const Pick = memo(function Pick({ expandedPick, events, isEditable, isDetailed, 
 
     return (
         <>
-            <div id = {DOMId} className = {'group/pick relative transition-colors duration-main w-full flex flex-col justify-center items-center gap-xs p-sm rounded-base bg-base-main/muted' + (expandedPick.did_hit === null ? ' hover:bg-base-main cursor-pointer' : '') + (classes ? ' ' + classes : '')} onClick = {() => expandedPick.did_hit === null ? setIsExpanded(true) : null} ref = {clickRef}>
+            <div id = {DOMId} className = {'group/pick relative transition-colors duration-main w-full flex flex-col justify-center items-center gap-xs p-sm rounded-base bg-base-main/muted' + (expandedPick.did_hit === null ? ' hover:bg-base-main cursor-pointer' : '') + (classes ? ' ' + classes : '')} onClick = {() => expandedPick.did_hit === null ? setIsExpanded(true) : null} ref = {cancelRef}>
                 {eventName}
                 <Text id = {DOMId + '-bet-name'} preset = 'subtitle' classes = 'text-text-main/killed'>
                     {expandedPick.bet.name}
