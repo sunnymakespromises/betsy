@@ -24,7 +24,7 @@ const RecentForm = memo(function RecentForm({ competitor, events, parentId }) {
             </Conditional>
             <Conditional value = {results.length > 0}>
                 <div id = {DOMId + '-wins'} className = 'flex items-center gap-sm'>
-                    <Map items = {results.length < 5 ? [...results, ...(new Array(5).fill(null))].slice(0, 5) : results.slice(0, 5)} callback = {(event, index) => {
+                    <Map items = {results.length < 5 ? [...results, ...(new Array(5).fill(null))].slice(0, 5) : results?.slice(0, 5)} callback = {(event, index) => {
                         let resultId = DOMId + '-wins-event' + index; return (
                         <Result key = {index} competitor = {competitor} event = {event} parentId = {resultId} />
                     )}}/>
@@ -32,7 +32,7 @@ const RecentForm = memo(function RecentForm({ competitor, events, parentId }) {
             </Conditional>
         </div>
     )
-}, (b, a) => _.isEqual(b.results, a.results) && _.isEqual(b.events, a.events))
+}, (b, a) => _.isEqual(b.competitor, a.competitor) && _.isEqual(b.events, a.events))
 
 const Result = memo(function Result({ competitor, event, parentId }) {
     let DOMId = parentId

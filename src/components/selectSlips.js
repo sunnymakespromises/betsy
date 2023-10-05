@@ -106,12 +106,11 @@ const SelectSlip = memo(function SelectSlip({ expandedSlip, expandedPicksToAdd, 
                 </Text>
                 <div id = {DOMId + '-info-picks'} className = 'flex flex-col gap-sm'>
                     <Map items = {expandedSlip.picks} callback = {(expandedPick, index) => {
-                        let expandedPickId = DOMId + '-info-pick' + index
-                        return (
-                            <Text key = {index} id = {expandedPickId} preset = 'body' classes = 'text-primary-main whitespace-nowrap'>
-                                {expandedPick.outcome.competitor ? expandedPick.outcome.competitor.name : expandedPick.outcome.name}&nbsp;{expandedPick.bet.name}
-                            </Text>
-                        )}}/>
+                        let expandedPickId = DOMId + '-info-pick' + index; return (
+                        <Text key = {index} id = {expandedPickId} preset = 'body' classes = 'text-primary-main whitespace-nowrap'>
+                            {expandedPick.outcome.competitor ? expandedPick.outcome.competitor.name : expandedPick.outcome.name}&nbsp;{expandedPick.bet.name}
+                        </Text>
+                    )}}/>
                 </div>
             </div>
             <Conditional value = {!isSelected}>

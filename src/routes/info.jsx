@@ -304,7 +304,7 @@ const Event = memo(function Event({ item: event, results, events, parentId }) {
     return (
         <MultiPanel config = {panelsConfig} parentId = {DOMId}/>
     )
-}, (b, a) => _.isEqual(b.event, a.event) && _.isEqual(b.results, a.results) && _.isEqual(b.events, a.events))
+}, (b, a) => _.isEqual(b.item, a.item) && _.isEqual(b.results, a.results) && _.isEqual(b.events, a.events))
 
 const Title = memo(function Title({ category, item, parentId }) {
     let DOMId = parentId + '-title'
