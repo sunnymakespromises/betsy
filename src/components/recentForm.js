@@ -4,7 +4,6 @@ import Conditional from './conditional'
 import Text from './text'
 import Map from './map'
 import toDate from '../lib/util/toDate'
-
 import { ArrowDownShort, ArrowUpShort, Check, CircleFill, X } from 'react-bootstrap-icons'
 import { Link } from 'react-router-dom'
 import { useCancelDetector } from '../hooks/useCancelDetector'
@@ -91,7 +90,7 @@ const Result = memo(function Result({ competitor, event, parentId }) {
                         <Map items = {event.results.bets} callback = {(bet, index) => {
                             let betDidHit = bet.key === 'totals' ? event.results.scores.reduce((a, b) => a.score + b.score) > bet.values[0].point : bet.values.find(value => value.competitor?.id === competitor.id).did_hit
                             let betId = DOMId + '-bet' + index; return (
-                            <div id = {betId + '-container'} className = 'flex items-center'>
+                            <div key = {index} id = {betId + '-container'} className = 'flex items-center'>
                                 {bet.key !== 'totals' && <>
                                 <Conditional value = {betDidHit}>
                                     <Check id = {betId + '-check'} className = 'text-lg text-positive-main'/>
