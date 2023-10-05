@@ -482,9 +482,9 @@ const ErrorScreen = memo(function ErrorScreen({ category, parentId }) {
     }, [category])
     
     return (
-        <div id = {DOMId} className = 'w-full h-full z-20 p-main'>
-            <div id = {DOMId + '-banner'} className = 'w-full h-min bg-primary-main rounded-main p-main !animate-duration-300 animate-slideInDown'>
-                <Text id = {DOMId + '-message'} preset = 'info-error'>
+        <div id = {DOMId} className = 'w-full h-full z-20'>
+            <div id = {DOMId + '-banner'} className = 'w-full h-min bg-primary-main rounded-base p-base !animate-duration-300 animate-slideInDown'>
+                <Text id = {DOMId + '-message'} preset = 'body' classes = 'text-text-primary'>
                     {message}
                 </Text>
             </div>
