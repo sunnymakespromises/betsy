@@ -5,7 +5,7 @@ import Text from './text'
 import Map from './map'
 import toDate from '../lib/util/toDate'
 
-import { Check, CircleFill, X } from 'react-bootstrap-icons'
+import { ArrowDownShort, ArrowUpShort, Check, CircleFill, X } from 'react-bootstrap-icons'
 import { Link } from 'react-router-dom'
 import { useCancelDetector } from '../hooks/useCancelDetector'
 
@@ -86,23 +86,34 @@ const Result = memo(function Result({ competitor, event, parentId }) {
                             vs.&nbsp;{otherCompetitor.name}
                         </Text>
                     </Link>
+                    {event.results.bets?.length > 0 &&
                     <div id = {DOMId + '-modal-bets'} className = 'w-full flex flex-col items-start gap-xs'>
                         <Map items = {event.results.bets} callback = {(bet, index) => {
-                            let betDidHit = bet.values.find(value => value.competitor?.id === competitor.id).did_hit
+                            let betDidHit = bet.key === 'totals' ? event.results.scores.reduce((a, b) => a.score + b.score) > bet.values[0].point : bet.values.find(value => value.competitor?.id === competitor.id).did_hit
                             let betId = DOMId + '-bet' + index; return (
                             <div id = {betId + '-container'} className = 'flex items-center'>
+                                {bet.key !== 'totals' && <>
                                 <Conditional value = {betDidHit}>
                                     <Check id = {betId + '-check'} className = 'text-lg text-positive-main'/>
                                 </Conditional>
                                 <Conditional value = {!betDidHit}>
                                     <X id = {betId + '-check'} className = 'text-lg text-negative-main'/>
+                                </Conditional></>}
+
+                                {bet.key === 'totals' && <>
+                                <Conditional value = {betDidHit}>
+                                    <ArrowUpShort id = {betId + '-over'} className = 'text-lg text-text-highlight'/>
                                 </Conditional>
+                                <Conditional value = {!betDidHit}>
+                                    <ArrowDownShort id = {betId + '-under'} className = 'text-lg text-text-highlight'/>
+                                </Conditional></>}
+
                                 <Text id = {betId + '-name'} preset = 'subtitle' classes = 'text-text-highlight/muted'>
-                                    {bet.name}
+                                    {bet.name}{bet.key === 'totals' || bet.key === 'spreads' ? ' ' + bet.values[0].point : ''}
                                 </Text>
                             </div>
                         )}}/>
-                    </div>
+                    </div>}
                 </div>
             )}
         </div>
