@@ -15,10 +15,11 @@ import { MultiPanel } from '../components/panel'
 import Bets from '../components/bets'
 import SearchBar from '../components/searchBar'
 import { default as EventItem } from '../components/event'
+import RecentForm from '../components/recentForm'
+import Results from '../components/results'
 import Image from '../components/image'
 import now from '../lib/util/now'
 import toDate from '../lib/util/toDate'
-import RecentForm from '../components/recentForm'
 
 const Info = memo(function Info() {
     let DOMId = 'info'
@@ -255,6 +256,7 @@ const Competitor = memo(function Competitors({ results, item: competitor, events
 
 const Event = memo(function Event({ item: event, results, events, parentId }) {
     let DOMId = parentId
+    let previousMatchups = events.filter(event2 => event2.competitors.includes(event.competitors[0]) && event2.competitors.includes(event.competitors[1]))
     let panelsConfig = [
         {
             category: 'panel',
@@ -275,7 +277,7 @@ const Event = memo(function Event({ item: event, results, events, parentId }) {
         {
             category: 'div',
             divId: DOMId + '-right',
-            divClasses: 'grow flex flex-col items-center gap-base md:gap-lg',
+            divClasses: 'grow flex flex-col gap-base md:gap-lg',
             children: [
                 {
                     category: 'panel',
@@ -287,7 +289,7 @@ const Event = memo(function Event({ item: event, results, events, parentId }) {
                     children: 
                         <></>
                 },
-                {
+                ...(previousMatchups.length > 0 ? [{
                     category: 'panel',
                     key: 'history',
                     title: 'History',
@@ -295,8 +297,8 @@ const Event = memo(function Event({ item: event, results, events, parentId }) {
                     panelClasses: 'w-full',
                     parentId: DOMId + '-history',
                     children: 
-                        <></>
-                }
+                        <Results events = {previousMatchups} parentId = {DOMId + '-history'}/>
+                }] : [])
             ]
         }
     ]
@@ -311,32 +313,33 @@ const Title = memo(function Title({ category, item, parentId }) {
     let [isFavorite, Favorite] = useFavorite(category, item)
 
     if (category === 'competitors') {
+        let competitor = item
         return (
             <div id = {DOMId} className = 'w-full h-min flex items-center gap-xs'>
                 <div id = {DOMId + '-image'} className = 'transition-colors duration-main h-8 aspect-square flex justify-center items-center bg-white rounded-full border-base border-primary-main'>
-                    <Conditional value = {!item.picture}>
+                    <Conditional value = {!competitor.picture}>
                         <Text id = {DOMId + '-image-text'} preset = 'body' classes = 'text-black/muted'>
-                            {item.name.substr(0, 1)}
+                            {competitor.name.substr(0, 1)}
                         </Text>
                     </Conditional>
-                    <Conditional value = {item.picture}>
-                        <Image id = {DOMId + '-image-image'} external path = {item.picture} classes = 'w-inscribed aspect-square'/>
+                    <Conditional value = {competitor.picture}>
+                        <Image id = {DOMId + '-image-image'} external path = {competitor.picture} classes = 'w-inscribed aspect-square'/>
                     </Conditional>
                 </div>
                 <div id = {DOMId + '-name'} className = 'h-full flex flex-col gap-2xs'>
                     <div id = {DOMId + '-name-name'} className = 'flex items-center gap-xs'>
                         <Text id = {DOMId + '-name-name-text'} preset = 'body' classes = '!text-lg text-text-highlight'>
-                            {item.name}
+                            {competitor.name}
                         </Text>
                         <Favorite isFavorite = {isFavorite} canEdit classes = 'w-4 h-4' parentId = {DOMId + '-name-name'}/>
                     </div>
                     <div id = {DOMId + '-name-subtitle'} className = 'w-full flex flex-row items-center'>
                         <Text id = {DOMId + '-name-subtitle-intro'} preset = 'subtitle' classes = 'text-text-highlight/muted'>
-                            Plays&nbsp;{item.sport.name}&nbsp;in the&nbsp;
+                            Plays&nbsp;{competitor.sport.name}&nbsp;in the&nbsp;
                         </Text>
-                        <Map items = {item.competitions} callback = {(competition, index) => {
-                            let prefix = index === 0 ? '' : index !== item.competitions.length - 1 ? ', the' : item.competitions.length > 1 ? ', and the' : ''
-                            let suffix = (index === item.competitions.length - 1 ? '.' : ' ')
+                        <Map items = {competitor.competitions} callback = {(competition, index) => {
+                            let prefix = index === 0 ? '' : index !== competitor.competitions.length - 1 ? ', the' : competitor.competitions.length > 1 ? ', and the' : ''
+                            let suffix = (index === competitor.competitions.length - 1 ? '.' : ' ')
                             let competitionId = DOMId + '-name-subtitle-competition' + index; return (
                             <React.Fragment key = {index}>
                                 <Conditional value = {prefix !== ''}>
@@ -362,50 +365,52 @@ const Title = memo(function Title({ category, item, parentId }) {
         )
     }
     else if (category === 'competitions') {
+        let competitions = item
         return (
             <div id = {DOMId} className = 'w-full h-min flex items-center gap-xs'>
                 <div id = {DOMId + '-image'} className = 'transition-colors duration-main h-8 aspect-square flex justify-center items-center bg-white rounded-full border-base border-primary-main'>
-                    <Conditional value = {!item.picture}>
+                    <Conditional value = {!competitions.picture}>
                         <Text id = {DOMId + '-image-text'} preset = 'body' classes = 'text-black/muted'>
-                            {item.name.substr(0, 1)}
+                            {competitions.name.substr(0, 1)}
                         </Text>
                     </Conditional>
-                    <Conditional value = {item.picture}>
-                        <Image id = {DOMId + '-image-image'} external path = {item.picture} classes = 'w-inscribed aspect-square'/>
+                    <Conditional value = {competitions.picture}>
+                        <Image id = {DOMId + '-image-image'} external path = {competitions.picture} classes = 'w-inscribed aspect-square'/>
                     </Conditional>
                 </div>
                 <div id = {DOMId + '-name'} className = 'h-full flex flex-col gap-2xs'>
                     <div id = {DOMId + '-name-name'} className = 'flex items-center gap-xs'>
                         <Text id = {DOMId + '-name-name-text'} preset = 'body' classes = '!text-lg text-text-highlight'>
-                            {item.name}
+                            {competitions.name}
                         </Text>
                         <Favorite isFavorite = {isFavorite} canEdit classes = 'w-4 h-4' parentId = {DOMId + '-name'}/>
                     </div>
                     <Text id = {DOMId + '-name-subtitle'} preset = 'subtitle' classes = 'text-text-highlight/muted'>
-                        Plays&nbsp;{item.sport.name}&nbsp;in&nbsp;{item.country.name}.
+                        Plays&nbsp;{competitions.sport.name}&nbsp;in&nbsp;{competitions.country.name}.
                     </Text>
                 </div>
             </div>
         )
     }
     else if (category === 'events') {
+        let event = item
         if (item.is_outright) {
             return (
                 <div id = {DOMId} className = 'w-full h-min flex flex-col gap-2xs'>
                     <Text id = {DOMId + '-name'} preset = 'body' classes = '!text-lg text-text-highlight'>
-                        {item.name}
+                        {event.name}
                     </Text>
                     <div id = {DOMId + '-subtitle'} className = 'w-full flex items-center'>
                         <Text id = {DOMId + '-subtitle-prefix'} preset = 'subtitle' classes = 'text-text-highlight/muted'>
-                            {item.is_completed ? 'Played' : 'To be played'}&nbsp;in the&nbsp;
+                            {event.is_completed ? 'Played' : 'To be played'}&nbsp;in the&nbsp;
                         </Text>
-                        <Link id = {DOMId + '-subtitle-competition'} to = {'/info?category=competitions&id=' + item.competition.id}>
+                        <Link id = {DOMId + '-subtitle-competition'} to = {'/info?category=competitions&id=' + event.competition.id}>
                             <Text id = {DOMId + '-subtitle-competition-name'} preset = 'subtitle' classes = 'text-primary-main hover:text-primary-highlight'>
-                                {item.competition.name}
+                                {event.competition.name}
                             </Text>
                         </Link>
                         <Text id = {DOMId + '-subtitle-date'} preset = 'subtitle' classes = 'text-text-highlight/muted'>
-                            &nbsp;on&nbsp;{toDate(item.start_time)}.
+                            &nbsp;on&nbsp;{toDate(event.start_time)}.
                         </Text>
                     </div>
                 </div>
@@ -414,49 +419,61 @@ const Title = memo(function Title({ category, item, parentId }) {
         else {
             return (
                 <div id = {DOMId} className = 'w-full h-min flex items-center gap-sm'>
-                    <Link id = {DOMId + '-competitor0-image'} to = {'/info?category=competitors&id=' + item.competitors[0].id} className = 'transition-colors duration-main h-8 aspect-square flex justify-center items-center bg-white rounded-full border-base border-primary-main hover:border-primary-highlight'>
-                        <Conditional value = {!item.competitors[0].picture}>
+                    <Link id = {DOMId + '-competitor0-image'} to = {'/info?category=competitors&id=' + event.competitors[0].id} className = 'transition-colors duration-main h-8 aspect-square flex justify-center items-center bg-white rounded-full border-base border-primary-main hover:border-primary-highlight'>
+                        <Conditional value = {!event.competitors[0].picture}>
                             <Text id = {DOMId + '-competitor0-image-text'} preset = 'body' classes = 'text-black/muted'>
-                                {item.competitors[0].name.substr(0, 1)}
+                                {event.competitors[0].name.substr(0, 1)}
                             </Text>
                         </Conditional>
-                        <Conditional value = {item.competitors[0].picture}>
-                            <Image id = {DOMId + '-competitor0-image-image'} external path = {item.competitors[0].picture} classes = 'w-inscribed aspect-square'/>
+                        <Conditional value = {event.competitors[0].picture}>
+                            <Image id = {DOMId + '-competitor0-image-image'} external path = {event.competitors[0].picture} classes = 'w-inscribed aspect-square'/>
                         </Conditional>
                     </Link>
                     <div id = {DOMId + '-name'} className = 'w-full md:w-auto flex flex-col items-center gap-2xs'>
-                        <Link id = {DOMId + '-name-competition'} to = {'/info?category=competitions&id=' + item.competition.id}>
+                        <Link id = {DOMId + '-name-competition'} to = {'/info?category=competitions&id=' + event.competition.id}>
                             <Text id = {DOMId + '-name-competition-text'} preset = 'subtitle' classes = 'text-primary-main hover:text-primary-highlight whitespace-nowrap'>
-                                {item.competition.name}
+                                {event.competition.name}
                             </Text>
                         </Link>
                         <div id = {DOMId + '-name-name'} className = 'flex items-center'>
-                            <Link id = {DOMId + '-competitor0-name'} to = {'/info?category=competitors&id=' + item.competitors[0].id}>
+                            <Link id = {DOMId + '-competitor0-name'} to = {'/info?category=competitors&id=' + event.competitors[0].id}>
                                 <Text id = {DOMId + '-competitor0-name-name'} preset = 'body' classes = '!text-lg text-primary-main hover:text-primary-highlight'>
-                                    {item.competitors[0].name}
+                                    {event.competitors[0].name}
                                 </Text>
                             </Link>
                             <Text id = {DOMId + '-competitors-separator'} preset = 'body' classes = '!text-lg text-text-highlight/muted'>
-                                &nbsp;{item.name.includes('@') ? '@' : 'v'}&nbsp;
+                                &nbsp;{event.name.includes('@') ? '@' : 'v'}&nbsp;
                             </Text>
-                            <Link id = {DOMId + '-competitor1-name'} to = {'/info?category=competitors&id=' + item.competitors[1].id}>
+                            <Link id = {DOMId + '-competitor1-name'} to = {'/info?category=competitors&id=' + event.competitors[1].id}>
                                 <Text id = {DOMId + '-competitor1-name-name'} preset = 'body' classes = '!text-lg text-primary-main hover:text-primary-highlight'>
-                                    {item.competitors[1].name}
+                                    {event.competitors[1].name}
                                 </Text>
                             </Link>
                         </div>
                         <Text id = {DOMId + '-name-date'} preset = 'subtitle' classes = 'text-text-highlight/muted whitespace-nowrap'>
-                            &nbsp;{toDate(item.start_time)}
+                            &nbsp;{toDate(event.start_time)}
                         </Text>
+                        {Object.keys(event.results).length > 0 && 
+                        <div id = {DOMId + '-scores'} className = 'w-full flex justify-center items-center gap-base'>
+                            <Text id = {DOMId + '-competitor0-score'} preset = 'title' classes = '!font-bold !text-3xl text-text-highlight'>
+                                {event.results.scores.find(score2 => score2.competitor.id === event.competitors[0].id).score}
+                            </Text>
+                            <Text id = {DOMId + '-scores-separator'} preset = 'title' classes = '!font-bold !text-3xl text-text-highlight/killed'>
+                                -
+                            </Text>
+                            <Text id = {DOMId + '-competitor1-score'} preset = 'title' classes = '!font-bold !text-3xl text-text-highlight'>
+                                {event.results.scores.find(score2 => score2.competitor.id === event.competitors[1].id).score}
+                            </Text>
+                        </div>}
                     </div>
-                    <Link id = {DOMId + '-competitor1-image'} to = {'/info?category=competitors&id=' + item.competitors[1].id} className = 'transition-colors duration-main h-8 aspect-square flex justify-center items-center bg-white rounded-full border-base border-primary-main hover:border-primary-highlight'>
-                        <Conditional value = {!item.competitors[1].picture}>
+                    <Link id = {DOMId + '-competitor1-image'} to = {'/info?category=competitors&id=' + event.competitors[1].id} className = 'transition-colors duration-main h-8 aspect-square flex justify-center items-center bg-white rounded-full border-base border-primary-main hover:border-primary-highlight'>
+                        <Conditional value = {!event.competitors[1].picture}>
                             <Text id = {DOMId + '-competitor1-image-text'} preset = 'body' classes = 'text-black/muted'>
-                                {item.competitors[1].name.substr(0, 1)}
+                                {event.competitors[1].name.substr(0, 1)}
                             </Text>
                         </Conditional>
-                        <Conditional value = {item.competitors[1].picture}>
-                            <Image id = {DOMId + '-competitor1-image-image'} external path = {item.competitors[1].picture} classes = 'w-inscribed aspect-square'/>
+                        <Conditional value = {event.competitors[1].picture}>
+                            <Image id = {DOMId + '-competitor1-image-image'} external path = {event.competitors[1].picture} classes = 'w-inscribed aspect-square'/>
                         </Conditional>
                     </Link>
                 </div>
