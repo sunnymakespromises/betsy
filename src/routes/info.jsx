@@ -2,7 +2,7 @@ import React, { memo, useEffect, useMemo, useState } from 'react'
 import Page from '../components/page'
 import { Helmet } from 'react-helmet'
 import { Link, useSearchParams } from 'react-router-dom'
-import { BarChartLineFill, CalendarWeekFill, GraphUp, PeopleFill, Stack, StopwatchFill } from 'react-bootstrap-icons'
+import { BarChartLineFill, CalendarWeekFill, PeopleFill, Stack, StopwatchFill } from 'react-bootstrap-icons'
 import _ from 'lodash'
 import { useDataContext } from '../contexts/data'
 import { useDatabase } from '../hooks/useDatabase'
@@ -314,7 +314,7 @@ const Event = memo(function Event({ item: event, results, events, parentId }) {
                     category: 'panel',
                     key: 'odds',
                     title: 'Odds',
-                    icon: GraphUp,
+                    icon: BarChartLineFill,
                     panelClasses: 'w-full' + (graphLines.some(line => line.points.length > 1) ? ' !p-0' : ''),
                     parentId: DOMId + '-odds',
                     children: 
