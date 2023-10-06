@@ -43,10 +43,8 @@ const Settings = memo(function Settings() {
     return (
         <Page DOMId = {DOMId}>
             <Helmet><title>Settings • Betsy</title></Helmet>
-            <div id = {DOMId} className = 'relative w-full h-full flex flex-col gap-base md:gap-lg'>
-                <div id = {DOMId + '-body'} className = 'w-full h-full flex flex-col md:flex-row grow gap-base md:gap-lg'>
-                    <MultiPanel config = {panelsConfig} parentId = {DOMId}/>
-                </div>
+            <div id = {DOMId} className = 'relative w-full h-full flex flex-col md:flex-row gap-base md:gap-lg'>
+                <MultiPanel config = {panelsConfig} parentId = {DOMId}/>
             </div>
         </Page>
     )
