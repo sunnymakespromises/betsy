@@ -73,7 +73,7 @@ const Result = memo(function Result({ competitor, event, parentId }) {
 
     return (
         <div id = {DOMId} className = 'relative w-min h-min' ref = {clickRef}>
-            <CircleFill id = {DOMId + '-icon'} className = {'transition-all duration-main text-3xl ' + (didWin !== null ? 'cursor-pointer ' + (didWin !== 'draw' ? (didWin ? 'text-positive-main hover:text-positive-highlight' : 'text-negative-main hover:text-negative-highlight') : 'text-base-main/muted') : 'text-base-main/killed')} onClick = {() => event !== null ? setIsExpanded(!isExpanded) : null} />
+            <CircleFill id = {DOMId + '-icon'} className = {'transition-all duration-main text-3xl ' + (didWin !== null ? 'cursor-pointer ' + (didWin !== 'draw' ? (didWin ? 'text-positive-main hover:text-positive-highlight' : 'text-negative-main hover:text-negative-highlight') : 'text-base-main') : 'text-base-main/killed')} onClick = {() => event !== null ? setIsExpanded(!isExpanded) : null} />
             {event && (
                 <div id = {DOMId + '-modal'} className = {'transition-all duration-main absolute top-full left-1/2 -translate-x-1/2 w-min flex flex-col items-center gap-xs mt-sm bg-base-highlight rounded-base overflow-hidden shadow-md ' + (isExpanded ? 'max-h-min p-base ' : 'max-h-0 p-0 ')}>
                     <Text id = {DOMId + '-modal-date'} preset = 'subtitle' classes = 'whitespace-nowrap text-text-highlight/killed'>
