@@ -90,28 +90,26 @@ const Pick = memo(function Pick({ expandedPick, events, isEditable, isDetailed, 
 
     return (
         <>
-            <div id = {DOMId} className = {'group/pick relative transition-colors duration-main w-full flex flex-col justify-center items-center gap-xs p-sm rounded-base bg-base-main/muted' + (expandedPick.did_hit === null ? ' hover:bg-base-main cursor-pointer' : '') + (classes ? ' ' + classes : '')} onClick = {() => expandedPick.did_hit === null ? setIsExpanded(true) : null} ref = {cancelRef}>
+            <div id = {DOMId} className = {'group/pick relative transition-colors duration-main w-full flex flex-col justify-center items-center gap-xs p-sm rounded-base border-sm shadow-sm overflow-hidden ' + (isExpanded ? 'border-primary-main' : 'border-divider-highlight') + (expandedPick.did_hit === null ? ' hover:bg-base-main/killed cursor-pointer' : '') + (classes ? ' ' + classes : '')} onClick = {() => expandedPick.did_hit === null ? setIsExpanded(true) : null} ref = {cancelRef}>
                 {eventName}
                 <Text id = {DOMId + '-bet-name'} preset = 'subtitle' classes = 'text-text-main/killed'>
                     {expandedPick.bet.name}
                 </Text>
                 {name}
                 <Value value = {expandedPick.outcome.odds} didHit = {expandedPick.did_hit} parentId = {DOMId}/>
-                <Conditional value = {isExpanded}>
-                    <div id = {DOMId + '-modal'} className = 'absolute top-0 left-0 w-full h-full flex flex-col bg-primary-main rounded-base z-10 overflow-hidden'>
-                        <Map items = {options} callback = {(option, index) => {
-                            let optionId = DOMId + '-option' + index; 
-                            return option.condition && (
-                                <React.Fragment key = {index}>
-                                    <Option title = {option.title} onClick = {option.onClick} parentId = {optionId}/>
-                                    <Conditional value = {index !== options.filter(option => option.condition).length - 1}>
-                                        <div className = 'transition-colors duration-main border-t-sm border-divider-primary'/>
-                                    </Conditional>
-                                </React.Fragment>
-                            )
-                        }}/>
-                    </div>
-                </Conditional>
+                <div id = {DOMId + '-modal'} className = {'transition-all duration-main absolute top-0 left-0 w-full h-full flex flex-col bg-primary-main z-10 overflow-hidden ' + (isExpanded ? 'opacity-100' : 'opacity-0 pointer-events-none' )}>
+                    <Map items = {options} callback = {(option, index) => {
+                        let optionId = DOMId + '-option' + index; 
+                        return option.condition && (
+                            <React.Fragment key = {index}>
+                                <Option title = {option.title} onClick = {option.onClick} parentId = {optionId}/>
+                                <Conditional value = {index !== options.filter(option => option.condition).length - 1}>
+                                    <div className = 'transition-colors duration-main border-t-sm border-divider-primary'/>
+                                </Conditional>
+                            </React.Fragment>
+                        )
+                    }}/>
+                </div>
             </div>
             <Conditional value = {isSelecting}>
                 <SelectSlips expandedPicksToAdd = {[expandedPick]} events = {events} setIsSelecting = {setIsSelecting} parentId = {DOMId}/>
