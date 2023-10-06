@@ -5,6 +5,7 @@ import { CookiesProvider } from 'react-cookie'
 import { GoogleOAuthProvider } from '@react-oauth/google'
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
 import { DndContext, useSensor, useSensors, KeyboardSensor, MouseSensor, TouchSensor, MeasuringStrategy, pointerWithin } from '@dnd-kit/core'
+import { SyncLoader } from 'react-spinners'
 import { WindowProvider } from './contexts/window'
 import { UserProvider } from './contexts/user'
 import { DataProvider } from './contexts/data'
@@ -13,8 +14,8 @@ import { useBreakpoints } from './hooks/useBreakpoints'
 import { useAuthorize } from './hooks/useAuthorize'
 import { useData } from './hooks/useData'
 import { Routes } from './routes/routes'
-import './index.css'
 import Header from './components/header'
+import './index.css'
 
 const rootElement = ReactDOM.createRoot(document.getElementById('root'))
 rootElement.render(
@@ -33,7 +34,7 @@ function Root() {
     const location = useLocation()
     const theme = useThemes()
     const [currentUser, updateCurrentUser, login, logout] = useAuthorize()
-    const { data, updateData } = useData(currentUser)
+    const { data, updateData, isLoading } = useData(currentUser)
     const windowContext = { sm, md, lg, isLandscape }
     const userContext = { currentUser, updateCurrentUser, login, logout }
     const dataContext = { data, updateData }
@@ -61,7 +62,15 @@ function Root() {
             <UserProvider value = {userContext}>
                 <DataProvider value = {dataContext}>
                     <div id = 'body' className = {'theme-' + theme + ' transition-colors duration-main relative w-full h-full flex flex-col md:flex-row bg-base-main overflow-auto'}>
-                        {(location.pathname === '/login' || data) && <>
+                        <SyncLoader
+                            size = {10}
+                            color = {'#B0BEC5'}
+                            loading = {true}
+                            aria-label = 'Loading Spinner'
+                            data-testid = 'loader'
+                            className = {'translate-opacity duration-main absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 ' + (isLoading ? 'opacity-100' : 'opacity-0')}
+                        />
+                        {(!isLoading && (location.pathname === '/login' || data)) && <>
                         {hasUser && data && <Header currentUser = {currentUser} data = {data} location = {location}/>}
                         <DndContext sensors = {sensors} autoScroll = {false} collisionDetection = {pointerWithin} measuring = {{droppable: {strategy: MeasuringStrategy.Always, frequency: 300}}}>
                             <div id = 'content' className = 'relative flex flex-col w-full h-full animate-fadeInUp'>

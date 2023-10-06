@@ -1,23 +1,31 @@
 import { useEffect, useRef, useState } from 'react'
 import { getData } from '../lib/getData'
+import { useLoading } from './useLoading'
 import { usePrevious } from './usePrevious'
 import _ from 'lodash'
 
 function useData(currentUser) {
     const [data, setData] = useState()
+    const [isLoading, execute] = useLoading()
     const dataRef = useRef()
     dataRef.current = data
     let previousCurrentUser = usePrevious(currentUser)
     
     useEffect(() => {
-        if (currentUser) {
-            if (!data) {
-                updateData()
-            }
-            else if (!_.isEqual(previousCurrentUser?.favorites, currentUser?.favorites)) {
-                updateData('recommendations')
-            }
+        async function start() {
+            await execute(async () => {
+                if (currentUser) {
+                    if (!data) {
+                        await updateData()
+                    }
+                    else if (!_.isEqual(previousCurrentUser?.favorites, currentUser?.favorites)) {
+                        await updateData('recommendations')
+                    }
+                }
+            })
         }
+        
+        start()
     }, [currentUser])
 
     async function updateData(category = null) {
@@ -38,7 +46,7 @@ function useData(currentUser) {
         }
     }
     
-    return { data, updateData }
+    return { data, updateData, isLoading }
 }
 
 export { useData }
