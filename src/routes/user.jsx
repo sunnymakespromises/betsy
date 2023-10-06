@@ -1,8 +1,7 @@
-import React, { forwardRef, memo, useEffect, useMemo, useState } from 'react'
+import React, { memo, useEffect, useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
 import { Check, FileTextFill, HeartFill, StopwatchFill, X, XCircleFill } from 'react-bootstrap-icons'
-import { rectSortingStrategy } from '@dnd-kit/sortable'
 import _ from 'lodash'
 import { useUserContext } from '../contexts/user'
 import { useDatabase } from '../hooks/useDatabase'
@@ -12,7 +11,6 @@ import Conditional from '../components/conditional'
 import Image from '../components/image'
 import Text from '../components/text'
 import Map from '../components/map'
-import Sort from '../components/sort'
 import { MultiPanel } from '../components/panel'
 import { getUserBy } from '../lib/getUserBy'
 import Slips from '../components/slips'
@@ -72,7 +70,7 @@ const User = memo(function User() {
             parentId: DOMId + '-slips',
             children: 
                 user && 
-                <div id = {DOMId + '-slips-panel-container'} className = 'flex flex-col gap-base md:gap-lg'>
+                <div id = {DOMId + '-slips-panel-container'} className = {'flex flex-col gap-base ' + (search.results?.length > 0 ? 'md:gap-lg' : '') }>
                     <SearchBar {...search} classes = 'w-full' isExpanded = {false} canExpand = {false} parentId = {DOMId}/>
                     <Slips compressedSlips = {search.results?.sort((a, b) => b.timestamp - a.timestamp)} parentId = {DOMId}/>
                 </div>
@@ -99,7 +97,7 @@ const User = memo(function User() {
         <Page canScroll DOMId = {DOMId}>
             {user && <div id = {DOMId} className = 'w-full flex flex-col md:flex-row gap-base md:gap-lg'>
                 <Helmet><title>User • Betsy</title></Helmet>
-                <Profile user = {user} isCurrentUser = {isCurrentUser} parentId = {DOMId} canEdit = {false}/>
+                <Profile user = {user} isCurrentUser = {isCurrentUser} parentId = {DOMId}/>
                 <div id = {DOMId + '-info'} className = 'w-full flex flex-col gap-base md:gap-lg'>
                     <MultiPanel config = {panelsConfig} parentId = {DOMId}/>
                 </div>
@@ -110,28 +108,19 @@ const User = memo(function User() {
 
 const FavoritesPanel = memo(function FavoritesPanel({ favorites, canEdit, parentId }) {
     let DOMId = parentId + '-favorites'
-    let processedFavorites = useMemo(() => {
-        let newFavorites = Object.fromEntries(Object.keys(favorites).filter(category => favorites[category].length > 0).map(category => [category, favorites[category]]))
-        if (Object.keys(newFavorites).length > 0) {
-            Object.keys(newFavorites).forEach(category => newFavorites[category] = favorites[category].map(favorite => { return { ...favorite, category: category }}))
-        }
-        return newFavorites
-    }, [favorites])
+    let allFavorites = useMemo(() => Object.keys(favorites).map(category => favorites[category].map(favorite => { return { ...favorite, category: category } })).flat(), [favorites])
 
     return (
         <div id = {DOMId} className = 'relative w-full h-min flex flex-col gap-base'>
-            <Conditional value = {Object.keys(processedFavorites).length > 0}>
-                <Map items = {Object.keys(processedFavorites)} callback = {(category, index) => {
-                    let categoryId = DOMId + '-category' + index; return (
-                    <React.Fragment key = {index}>
-                        <FavoritesGroup favorites = {processedFavorites[category]} canEdit = {canEdit} parentId = {categoryId}/>
-                        <Conditional value = {index !== Object.keys(processedFavorites).length - 1}>
-                            <div className = 'transition-colors duration-main border-t-sm border-divider-highlight'/>
-                        </Conditional>
-                    </React.Fragment>
-                )}}/>
+            <Conditional value = {allFavorites.length > 0}>
+                <div id = {DOMId + '-items'} className = 'w-full h-min grid grid-cols-6 justify-center items-center gap-xs'>
+                    <Map items = {allFavorites} callback = {(favorite, index) => {
+                        let favoriteId = DOMId + '-favorite' + index; return (
+                        <Favorite key = {index} item = {favorite} canEdit = {canEdit} parentId = {favoriteId}/>
+                    )}}/>
+                </div>
             </Conditional>
-            <Conditional value = {Object.keys(processedFavorites).length < 1}>
+            <Conditional value = {allFavorites.length < 1}>
                 <Text id ={DOMId + '-notFound'} preset = 'body' classes = '!text-lg text-text-highlight/killed'>
                     No favorites found.
                 </Text>
@@ -140,34 +129,13 @@ const FavoritesPanel = memo(function FavoritesPanel({ favorites, canEdit, parent
     )
 }, (b, a) => b.canEdit === a.canEdit && _.isEqual(b.favorites, a.favorites))
 
-const FavoritesGroup = memo(function FavoritesGroup({ favorites, canEdit, parentId }) {
-    let DOMId = parentId
-    let { rearrangeFavorites } = useDatabase()
-
-    return (
-        <div id = {DOMId + '-items'} className = 'w-full h-min grid grid-cols-6 justify-center items-center gap-xs'>
-            {canEdit && 
-            <Sort items = {favorites} item = {Favorite} itemProps = {{canEdit: canEdit}} onPlace = {onPlace} strategy = {[rectSortingStrategy]} parentId = {DOMId}/>}
-            {!canEdit && 
-            <Map items = {favorites} callback = {(favorite, index) => {
-                let favoriteId = DOMId + '-favorite' + index; return (
-                <Favorite key = {index} item = {favorite} canEdit = {canEdit} parentId = {favoriteId}/>
-            )}}/>}
-        </div>
-    )
-
-    async function onPlace(active, over) {
-        await rearrangeFavorites(active.category, active, over)
-    }
-}, (b, a) => b.canEdit === a.canEdit && _.isEqual(b.favorites, a.favorites))
-
-const Favorite = forwardRef(function Favorite({ item: favorite, canEdit, isDragging, somethingIsDragging, parentId, ...sortProps }, sortRef) {
+const Favorite = memo(function Favorite({ item: favorite, canEdit, parentId }) {
     let DOMId = parentId
     let { removeFromFavorites } = useDatabase()
 
     return (
-        <Link id = {DOMId} to = {'/info?category=' + favorite.category + '&id=' + favorite.id} className = {'group/favorite relative w-full aspect-square flex justify-center items-center' + (isDragging ? ' z-10' : '')} title = {favorite.name} {...sortProps} ref = {sortRef}>
-            <div id = {DOMId + '-image'} className = {'}transition-colors duration-main w-full aspect-square flex justify-center items-center bg-white rounded-full border-base ' + (isDragging ? 'border-primary-highlight' : 'border-primary-main group-hover/favorite:border-primary-highlight') + ' cursor-pointer'}>
+        <Link id = {DOMId} to = {'/info?category=' + favorite.category + '&id=' + favorite.id} className = 'group/favorite relative w-full aspect-square flex justify-center items-center' title = {favorite.name}>
+            <div id = {DOMId + '-image'} className = 'transition-colors duration-main w-full aspect-square flex justify-center items-center bg-white rounded-full border-base border-primary-main group-hover/favorite:border-primary-highlight cursor-pointer'>
                 <Conditional value = {favorite.picture}>
                     <Image id = {DOMId + '-image-image'} external path = {favorite.picture} classes = 'relative w-inscribed aspect-square'>
                     </Image>
@@ -179,7 +147,7 @@ const Favorite = forwardRef(function Favorite({ item: favorite, canEdit, isDragg
                 </Conditional>
             </div>
             <Conditional value = {canEdit}>
-                <XCircleFill id = {DOMId + '-cancel-icon'} className = {'absolute transition-all duration-main -top-2xs -right-2xs w-4 h-4 cursor-pointer scale-1 md:scale-0 text-primary-main hover:text-primary-highlight bg-white rounded-full ' + (!isDragging && !somethingIsDragging ? ' group-hover/favorite:!scale-100' : '')} onClick = {(e) => onRemove(e, favorite)}/>
+                <XCircleFill id = {DOMId + '-cancel-icon'} className = 'absolute transition-all duration-main -top-2xs -right-2xs w-5 h-5 md:w-4 md:h-4 cursor-pointer scale-1 md:scale-0 text-primary-main hover:text-primary-highlight bg-white rounded-full group-hover/favorite:!scale-100' onClick = {(e) => onRemove(e, favorite)}/>
             </Conditional>
         </Link>
     )
@@ -190,6 +158,6 @@ const Favorite = forwardRef(function Favorite({ item: favorite, canEdit, isDragg
         e.nativeEvent.stopImmediatePropagation()
         removeFromFavorites(favorite.category, favorite)
     }
-})
+}, (b, a) => _.isEqual(b.item, a.item) && b.canEdit === a.canEdit)
 
 export default User
