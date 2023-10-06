@@ -2,23 +2,13 @@ import React, { memo, useMemo } from 'react'
 import _ from 'lodash'
 import Map from './map'
 import { CircleFill } from 'react-bootstrap-icons'
-import Text from './text'
-import toDate from '../lib/util/toDate'
 import { useOdds } from '../hooks/useOdds'
+import Text from './text'
+import Conditional from './conditional'
+import toDate from '../lib/util/toDate'
 
 const Graph = memo(function Graph({ lines, parentId }) {
     let DOMId = parentId + '-graph'
-
-    return lines.length > 0 && (
-        <div id = {DOMId} className = 'relative w-full aspect-square flex justify-center items-center'>
-            <GridLines parentId = {DOMId}/>
-            <Lines lines = {lines} parentId = {DOMId}/>
-        </div>
-    )
-}, (b, a) => _.isEqual(b.lines, a.lines))
-
-const Lines = memo(function Lines({ lines, parentId }) {
-    let DOMId = parentId + '-lines'
     let bounds = useMemo(() => { 
         let buffer = 0.15
         let xValues = lines.map(line => line.points).map(line => line.map(point => point.x)).flat().sort((a, b) => a - b)
@@ -40,7 +30,6 @@ const Lines = memo(function Lines({ lines, parentId }) {
             }
         }
     } , [lines])
-    console.log(bounds)
     let linesWithPercentages = useMemo(() => {
         return lines.map(line => { return {
             ...line, 
@@ -80,15 +69,22 @@ const Lines = memo(function Lines({ lines, parentId }) {
             }) 
         }})
     }, [lines, bounds])
+    let midline = useMemo(() => {
+        return {
+            value: 2,
+            percentage: (((2 - bounds.y.min) / bounds.y.range) * 100) + '%'
+        }
+    }, [lines, bounds])
 
-    return (
-        <div id = {DOMId} className = 'relative w-full h-full'>
+    return lines.length > 0 && (
+        <div id = {DOMId} className = 'relative w-full aspect-square flex justify-center items-center'>
             <Map items = {linesWithPercentages} callback = {(line, index) => {
                 var randomMC = require('random-material-color')
                 let color = randomMC.getColor({ shades: ['A200', 'A300'], text: line.name })
                 let lineId = DOMId + '-line' + index; return (
                 <Line key = {index} line = {line} color = {color} parentId = {lineId}/>
             )}}/>
+            <GridLines midline = {midline} parentId = {DOMId}/>
         </div>
     )
 }, (b, a) => _.isEqual(b.lines, a.lines))
@@ -131,7 +127,9 @@ const Point = memo(function Point({ lineName, point, color, parentId }) {
 }, (b, a) => b.lineName === a.lineName && b.color === a.color && _.isEqual(b.point, a.point))
 
 
-const GridLines = memo(function GridLines({ parentId }) {
+const GridLines = memo(function GridLines({ midline, parentId }) {
+    const { getOdds } = useOdds()
+    let odds = useMemo(() => getOdds(midline.value), [midline])
     let DOMId = parentId + '-grid'
     let splits = 5
 
@@ -144,6 +142,15 @@ const GridLines = memo(function GridLines({ parentId }) {
                     <div id = {gridLineId + '-y'} style = {{ top: number * (100 / splits) + '%' }} className = {'absolute left-0 border-divider-highlight/muted border-t-sm w-full'}/>
                 </React.Fragment>
             )}}/>
+            <Conditional value = {Number(midline.percentage.replace('%', '')) > 0}>
+                <div id = {DOMId + '-midline'} style = {{ bottom: midline.percentage }} className = {'absolute left-0 w-full flex items-center gap-base z-0'}>
+                    <div id = {DOMId + '-midline-line0'} className = {'border-primary-main/killed border-t-sm grow'}/>
+                    <Text id = {DOMId + '-midline-text'} preset = 'body' classes = '!font-bold text-primary-main/killed'>
+                        {odds}
+                    </Text>
+                    <div id = {DOMId + '-midline-line1'} className = {'border-primary-main/killed border-t-sm grow'}/>
+                </div>
+            </Conditional>
         </div>
     )
 })
