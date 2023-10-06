@@ -20,6 +20,7 @@ import Results from '../components/results'
 import Image from '../components/image'
 import now from '../lib/util/now'
 import toDate from '../lib/util/toDate'
+import Graph from '../components/graph'
 
 const Info = memo(function Info() {
     let DOMId = 'info'
@@ -175,7 +176,7 @@ const Competition = memo(function Competition({ results, item: competition, even
                 <div id = {DOMId + '-events'} className = 'flex flex-col gap-lg'>
                     <Conditional value = {results?.events?.length > 0}>
                         <Map items = {results?.events} callback = {(event, index) => {
-                            let eventId = DOMId + '-event' + index; return (
+                            let eventId = DOMId + '-events-event' + index; return (
                             <EventItem key = {index} event = {event} events = {events} parentId = {eventId}/>
                         )}}/>
                     </Conditional>
@@ -196,7 +197,7 @@ const Competition = memo(function Competition({ results, item: competition, even
                 <><Conditional value = {results?.competitors?.length > 0}>
                     <div id = {DOMId + '-competitors'} className = 'w-full h-full grid grid-cols-5 md:grid-cols-8 gap-base'>
                         <Map items = {results?.competitors} callback = {(event, index) => {
-                            let competitorId = DOMId + '-competitor' + index; return (
+                            let competitorId = DOMId + '-competitors-competitor' + index; return (
                             <CompetitorItem key = {index} item = {event} parentId = {competitorId}/>
                         )}}/>
                     </div>
@@ -227,7 +228,7 @@ const Competitor = memo(function Competitors({ results, item: competitor, events
                 <div id = {DOMId + '-events'} className = 'flex flex-col gap-lg'>
                     <Conditional value = {results?.events?.length > 0}>
                         <Map items = {results?.events} callback = {(event, index) => {
-                            let eventId = DOMId + '-event' + index; return (
+                            let eventId = DOMId + '-events-event' + index; return (
                             <EventItem key = {index} event = {event} events = {events} parentId = {eventId}/>
                         )}}/>
                     </Conditional>
@@ -256,7 +257,37 @@ const Competitor = memo(function Competitors({ results, item: competitor, events
 
 const Event = memo(function Event({ item: event, results, events, parentId }) {
     let DOMId = parentId
-    let previousMatchups = events.filter(event2 => event2.competitors.includes(event.competitors[0]) && event2.competitors.includes(event.competitors[1]))
+    let previousMatchups = useMemo(() => events.filter(event2 => event2.competitors.includes(event.competitors[0]) && event2.competitors.includes(event.competitors[1])), [events, event])
+    let graphLines = useMemo(() => {
+        let lines = []
+        if (results?.bets?.length > 0) {
+            for (const bet of results?.bets) {
+                for (const value of bet.values) {
+                    for (const outcome of value.outcomes) {
+                        let line = lines.find(line => line.name === ((outcome.competitor ? outcome.competitor.name : outcome.name) + ' ' + bet.name))
+                        if (line) {
+                            line.points.push({
+                                x: value.timestamp,
+                                y: outcome.odds,
+                                ...(bet.key === 'totals' || bet.key === 'spreads' ? { data: { point: outcome.point } } : {})
+                            })
+                        }
+                        else {
+                            lines.push({
+                                name: (outcome.competitor ? outcome.competitor.name : outcome.name) + ' ' + bet.name,
+                                points: [{
+                                    x: value.timestamp,
+                                    y: outcome.odds,
+                                    ...(bet.key === 'totals' || bet.key === 'spreads' ? { data: { point: outcome.point } } : {})
+                                }]
+                            })
+                        }
+                    }
+                }
+            }
+        }
+        return lines
+    }, [results])
     let panelsConfig = [
         {
             category: 'panel',
@@ -266,9 +297,9 @@ const Event = memo(function Event({ item: event, results, events, parentId }) {
             parentId: DOMId + '-events',
             children: 
                 <><Conditional value = {results?.bets?.length > 0}>
-                    <Bets event = {event} bets = {results?.bets} events = {events} parentId = {DOMId}/>
+                    <Bets event = {event} bets = {results?.bets} events = {events} parentId = {DOMId + '-events'}/>
                 </Conditional>
-                <Conditional value = {!event.bets || (event.bets.length < 1)}>
+                <Conditional value = {results?.bets?.length < 1}>
                     <Text id = {DOMId + '-bets-not-found'} preset = 'body' classes = 'text-text-highlight/killed'>
                         No bets found.
                     </Text>
@@ -284,10 +315,17 @@ const Event = memo(function Event({ item: event, results, events, parentId }) {
                     key: 'odds',
                     title: 'Odds',
                     icon: GraphUp,
-                    panelClasses: 'w-full',
+                    panelClasses: 'w-full' + (graphLines.some(line => line.points.length > 1) ? ' !p-0' : ''),
                     parentId: DOMId + '-odds',
                     children: 
-                        <></>
+                        <><Conditional value = {results?.bets?.length > 0 && graphLines.some(line => line.points.length > 1)}>
+                            <Graph lines = {graphLines} parentId = {DOMId + '-odds'}/>
+                        </Conditional>
+                        <Conditional value = {results?.bets?.length < 1 || !graphLines.some(line => line.points.length > 1)}>
+                            <Text id = {DOMId + '-odds-not-found'} preset = 'body' classes = 'text-text-highlight/killed'>
+                                No odds history found.
+                            </Text>
+                        </Conditional></>
                 },
                 ...(previousMatchups.length > 0 ? [{
                     category: 'panel',
@@ -334,7 +372,7 @@ const Title = memo(function Title({ category, item, parentId }) {
                         <Favorite isFavorite = {isFavorite} canEdit classes = 'w-4 h-4' parentId = {DOMId + '-name-name'}/>
                     </div>
                     <div id = {DOMId + '-name-subtitle'} className = 'w-full flex flex-row items-center'>
-                        <Text id = {DOMId + '-name-subtitle-intro'} preset = 'subtitle' classes = 'text-text-highlight/muted'>
+                        <Text id = {DOMId + '-name-subtitle-intro'} preset = 'subtitle' classes = 'text-text-highlight/killed'>
                             Plays&nbsp;{competitor.sport.name}&nbsp;in the&nbsp;
                         </Text>
                         <Map items = {competitor.competitions} callback = {(competition, index) => {
@@ -343,7 +381,7 @@ const Title = memo(function Title({ category, item, parentId }) {
                             let competitionId = DOMId + '-name-subtitle-competition' + index; return (
                             <React.Fragment key = {index}>
                                 <Conditional value = {prefix !== ''}>
-                                    <Text id = {competitionId + '-prefix'} preset = 'subtitle' classes = 'text-text-highlight/muted'>
+                                    <Text id = {competitionId + '-prefix'} preset = 'subtitle' classes = 'text-text-highlight/killed'>
                                         {prefix}&nbsp;
                                     </Text>
                                 </Conditional>
@@ -353,7 +391,7 @@ const Title = memo(function Title({ category, item, parentId }) {
                                     </Text>
                                 </Link>
                                 <Conditional value = {suffix !== ''}>
-                                    <Text id = {competitionId + '-suffix'} preset = 'subtitle' classes = 'text-text-highlight/muted'>
+                                    <Text id = {competitionId + '-suffix'} preset = 'subtitle' classes = 'text-text-highlight/killed'>
                                         {suffix}
                                     </Text>
                                 </Conditional>
@@ -385,7 +423,7 @@ const Title = memo(function Title({ category, item, parentId }) {
                         </Text>
                         <Favorite isFavorite = {isFavorite} canEdit classes = 'w-4 h-4' parentId = {DOMId + '-name'}/>
                     </div>
-                    <Text id = {DOMId + '-name-subtitle'} preset = 'subtitle' classes = 'text-text-highlight/muted'>
+                    <Text id = {DOMId + '-name-subtitle'} preset = 'subtitle' classes = 'text-text-highlight/killed'>
                         Plays&nbsp;{competitions.sport.name}&nbsp;in&nbsp;{competitions.country.name}.
                     </Text>
                 </div>
@@ -401,7 +439,7 @@ const Title = memo(function Title({ category, item, parentId }) {
                         {event.name}
                     </Text>
                     <div id = {DOMId + '-subtitle'} className = 'w-full flex items-center'>
-                        <Text id = {DOMId + '-subtitle-prefix'} preset = 'subtitle' classes = 'text-text-highlight/muted'>
+                        <Text id = {DOMId + '-subtitle-prefix'} preset = 'subtitle' classes = 'text-text-highlight/killed'>
                             {event.is_completed ? 'Played' : 'To be played'}&nbsp;in the&nbsp;
                         </Text>
                         <Link id = {DOMId + '-subtitle-competition'} to = {'/info?category=competitions&id=' + event.competition.id}>
@@ -409,7 +447,7 @@ const Title = memo(function Title({ category, item, parentId }) {
                                 {event.competition.name}
                             </Text>
                         </Link>
-                        <Text id = {DOMId + '-subtitle-date'} preset = 'subtitle' classes = 'text-text-highlight/muted'>
+                        <Text id = {DOMId + '-subtitle-date'} preset = 'subtitle' classes = 'text-text-highlight/killed'>
                             &nbsp;on&nbsp;{toDate(event.start_time)}.
                         </Text>
                     </div>
@@ -441,7 +479,7 @@ const Title = memo(function Title({ category, item, parentId }) {
                                     {event.competitors[0].name}
                                 </Text>
                             </Link>
-                            <Text id = {DOMId + '-competitors-separator'} preset = 'body' classes = '!text-lg text-text-highlight/muted'>
+                            <Text id = {DOMId + '-competitors-separator'} preset = 'body' classes = '!text-lg text-text-highlight/killed'>
                                 &nbsp;{event.name.includes('@') ? '@' : 'v'}&nbsp;
                             </Text>
                             <Link id = {DOMId + '-competitor1-name'} to = {'/info?category=competitors&id=' + event.competitors[1].id}>
@@ -450,7 +488,7 @@ const Title = memo(function Title({ category, item, parentId }) {
                                 </Text>
                             </Link>
                         </div>
-                        <Text id = {DOMId + '-name-date'} preset = 'subtitle' classes = 'text-text-highlight/muted whitespace-nowrap'>
+                        <Text id = {DOMId + '-name-date'} preset = 'subtitle' classes = 'text-text-highlight/killed whitespace-nowrap'>
                             &nbsp;{toDate(event.start_time)}
                         </Text>
                         {Object.keys(event.results).length > 0 && 
