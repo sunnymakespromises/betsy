@@ -11,7 +11,7 @@ import { useMemo } from 'react'
  */
 export default function Button({ preset = 'main', styles, classes, onClick, children, ...extras }) {
     let options = {
-        main: 'transition-all duration-slow flex justify-center items-center bg-reverse-0 rounded-main p-small cursor-pointer',
+        main: 'transition-colors duration-main flex items-center py-2xs px-sm bg-primary-main hover:bg-primary-highlight rounded-base',
     }
 
     let option = useMemo(() => {

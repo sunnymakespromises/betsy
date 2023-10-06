@@ -11,6 +11,7 @@ import toDate from '../lib/util/toDate'
 import { compressPick, expandSlip } from '../lib/util/manipulateBets'
 import now from '../lib/util/now'
 import { default as short } from 'short-uuid'
+import Button from './button'
 
 const SelectSlips = memo(function Select({ expandedPicksToAdd, events, setIsSelecting, parentId }) {
     let DOMId = parentId + '-select-slip'
@@ -30,12 +31,12 @@ const SelectSlips = memo(function Select({ expandedPicksToAdd, events, setIsSele
         createPortal(
             <div id = {DOMId} className = 'absolute top-0 left-0 w-full h-full flex flex-col items-center justify-center bg-black/80 z-30'>
                 <div id = {DOMId + '-container'} className = 'relative w-[90%] md:w-[50%] h-[90%] md:h-[80%] flex flex-col items-center gap-base p-lg bg-base-highlight rounded-base overflow-hidden' ref = {cancelRef}>
-                    <div id = {DOMId + '-add'} className = 'transition-colors duration-main absolute top-0 right-0 m-lg flex items-center self-end py-2xs px-sm bg-primary-main hover:bg-primary-highlight rounded-base cursor-pointer' onClick = {() => createNewCompressedSlip(expandedPicksToAdd)}>
-                        <Plus id = {DOMId + '-add-icon'} className = 'text-xl text-text-primary'/>
-                        <Text id = {DOMId + '-add-text'} preset = 'body' classes = 'text-text-primary'>
-                            New Slip
-                        </Text>
-                    </div>
+                    <Button id = {DOMId + '-new'} preset = 'main' classes = 'absolute top-lg right-lg self-end' onClick = {() => createNewCompressedSlip(expandedPicksToAdd)}>
+                        <Plus id = {DOMId + '-new-icon'} className = 'text-xl text-text-primary'/>
+                            <Text id = {DOMId + '-new-text'} preset = 'body' classes = 'text-text-primary'>
+                                New Slip
+                            </Text>
+                    </Button>
                     <div id = {DOMId + '-slips'} className = 'grow w-full flex flex-col gap-base flex-wrap overflow-hidden'>
                         <Map items = {compressedSlips} callback = {(compressedSlip, index) => {
                             let slipId = DOMId + '-slip' + index; return (
@@ -47,12 +48,12 @@ const SelectSlips = memo(function Select({ expandedPicksToAdd, events, setIsSele
                             </Text>
                         </Conditional>
                     </div>
-                    <div id = {DOMId + '-save'} className = {'transition-colors duration-main h-min flex items-center self-end py-2xs px-sm rounded-base ' + (selectedSlips.length > 0 ? 'bg-primary-main hover:bg-primary-highlight cursor-pointer' : 'bg-base-main')} onClick = {selectedSlips.length > 0 ? () => { addToCompressedSlips(expandedPicksToAdd); setIsSelecting(false)} : null}>
+                    <Button id = {DOMId + '-save'} preset = 'main' classes = {'self-end' + (selectedSlips.length === 0 ? ' !bg-base-main hover:!bg-base-main !cursor-default' : '')} onClick = {selectedSlips.length > 0 ? () => { addToCompressedSlips(expandedPicksToAdd); setIsSelecting(false)} : null}>
                         <Check id = {DOMId + '-save-icon'} className = {'text-xl ' + (selectedSlips.length > 0 ? 'text-text-primary' : 'text-text-highlight/killed')}/>
                         <Text id = {DOMId + '-save-text'} preset = 'body' classes = {(selectedSlips.length > 0 ? 'text-text-primary' : 'text-text-highlight/killed')}>
                             Save
                         </Text>
-                    </div>
+                    </Button>
                 </div>
             </div>
         , containerElement)

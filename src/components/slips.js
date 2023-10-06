@@ -1,5 +1,5 @@
 import React, { memo, useMemo, useState } from 'react'
-import { CaretRightFill, CheckLg, Plus, X } from 'react-bootstrap-icons'
+import { CaretRightFill, Check, Plus, X } from 'react-bootstrap-icons'
 import _ from 'lodash'
 import { useDataContext } from '../contexts/data'
 import { useStore } from '../hooks/useStore'
@@ -17,6 +17,7 @@ import SelectSlips from './selectSlips'
 import Error from './error'
 import toDate from '../lib/util/toDate'
 import { compressSlip, expandSlip, getMostRecentVersionOfPick } from '../lib/util/manipulateBets'
+import Button from './button'
 
 const Slips = memo(function Slips({ compressedSlips, isEditable = false, parentId }) {
     let DOMId = parentId + '-slips'
@@ -63,20 +64,20 @@ const Slip = memo(function Slip({ compressedSlip, events, isEditable, parentId }
                     <div id = {DOMId + '-bar'} className = 'w-full flex justify-between items-center'>
                         <div id = {DOMId + '-bar-actions'} className = 'flex items-center gap-sm'>
                             <Conditional value = {isEditable}>
-                                <div id = {DOMId + '-add'} className = 'transition-colors duration-main flex items-center py-2xs px-sm bg-primary-main hover:bg-primary-highlight rounded-base cursor-pointer' onClick = {() => removeCompressedSlip(true)}>
-                                    <X id = {DOMId + '-add-icon'} className = 'text-xl text-text-primary'/>
-                                    <Text id = {DOMId + '-add-text'} preset = 'body' classes = 'text-text-primary'>
+                                <Button id = {DOMId + '-remove'} preset = 'main' onClick = {() => removeCompressedSlip(true)}>
+                                    <X id = {DOMId + '-remove-icon'} className = 'text-xl text-text-primary'/>
+                                    <Text id = {DOMId + '-remove-text'} preset = 'body' classes = 'text-text-primary'>
                                         Remove
                                     </Text>
-                                </div>
+                                </Button>
                             </Conditional>
                             <Conditional value = {expandedSlip.did_hit === null || isEditable}>
-                                <div id = {DOMId + '-add'} className = 'transition-colors duration-main flex items-center py-2xs px-sm bg-primary-main hover:bg-primary-highlight rounded-base cursor-pointer' onClick = {() => setIsSelecting(true)}>
-                                    <Plus id = {DOMId + '-add-icon'} className = 'text-xl text-text-primary'/>
-                                    <Text id = {DOMId + '-add-text'} preset = 'body' classes = 'text-text-primary'>
+                                <Button id = {DOMId + '-copy'} preset = 'main' onClick = {() => setIsSelecting(true)}>
+                                    <Plus id = {DOMId + '-copy-icon'} className = 'text-xl text-text-primary'/>
+                                    <Text id = {DOMId + '-copy-text'} preset = 'body' classes = 'text-text-primary'>
                                         Copy
                                     </Text>
-                                </div>
+                                </Button>
                             </Conditional>
                         </div>
                         <Text id = {DOMId + '-total-odds'} preset = 'title' classes = {'!font-bold ' + (expandedSlip.did_hit !== null ? (expandedSlip.did_hit === true ? 'text-positive-main' : expandedSlip.did_hit === false ? 'text-negative-main' : 'text-text-main/killed') : 'text-primary-main')}>
@@ -112,7 +113,7 @@ const Slip = memo(function Slip({ compressedSlip, events, isEditable, parentId }
                             <Conditional value = {isEditable}>
                                 <Save expandedSlip = {expandedSlip} wager = {wagerInDollars} odds = {totalOdds.decimal} potentialEarnings = {potentialEarningsInDollars} status = {status} setStatus = {setStatus} wagerIsEmpty = {wagerIsEmpty} removeCompressedSlip = {removeCompressedSlip} parentId = {DOMId + '-bet'}/>
                             </Conditional>
-                            <Text id = {DOMId + '-date'} preset = 'body' classes = {'w-full text-right text-text-main/10'}>
+                            <Text id = {DOMId + '-date'} preset = 'body' classes = {'grow text-right text-text-main/10'}>
                                 {toDate(expandedSlip.timestamp)}
                             </Text>
                         </div>
@@ -164,9 +165,12 @@ const Save = memo(function Save({ expandedSlip, wager, odds, potentialEarnings, 
     const { placeBet } = useDatabase()
 
     return !wagerIsEmpty && (
-        <div id = {DOMId} className = {'group/save transition-all duration-main h-min overflow-hidden cursor-pointer ' + (wagerIsEmpty ? 'max-w-0' : 'max-w-full') + ' !animate-duration-300' +  + (status.status === false ? ' animate-headShake ' : '')} onClick = {() => onAction()}>
-            <CheckLg id = {DOMId + '-icon'} className = {'transition-colors duration-main text-2xl text-primary-main group-hover/save:text-primary-highlight'}/>
-        </div>
+        <Button id = {DOMId} preset = 'main' onClick = {() => onAction()}>
+            <Check id = {DOMId + '-save-icon'} className = 'text-xl text-text-primary'/>
+            <Text id = {DOMId + '-save-text'} preset = 'body' classes = 'text-text-primary'>
+                Save
+            </Text>
+        </Button>
     )
 
     async function onAction() {
