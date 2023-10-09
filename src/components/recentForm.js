@@ -12,7 +12,7 @@ const RecentForm = memo(function RecentForm({ competitor, events, parentId }) {
     let DOMId = parentId + '-form'
     let results = useMemo(() => competitor.events.map(competitorEvent => { 
         return events.find(event => event.id === competitorEvent.id)
-    }).filter(event => event !== null && Object.keys(event.results).length > 0), [competitor, events])
+    }).filter(event => event !== null && Object.keys(event.results).length > 0).sort((a, b) => b.start_time - a.start_time), [competitor, events])
     
     return (
         <div id = {DOMId} className = {'w-full transition-all duration-main'}>
