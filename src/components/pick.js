@@ -44,7 +44,7 @@ const Pick = memo(function Pick({ expandedPick, events, isEditable, isDetailed, 
     let eventName = useMemo(() => {
         if (expandedPick.bet && expandedPick.outcome && expandedPick.event && isDetailed) {
             return (
-                <Link id = {DOMId + '-event-link'} to = {'/info?category=events&id=' + expandedPick.event.id} className = 'max-w-full group/link' onClick = {(e) => { e.stopPropagation()}}>
+                <Link id = {DOMId + '-event-link'} to = {'/info?category=events&id=' + expandedPick.event.id} className = 'max-w-full group/link' onClick = {(e) => { e.stopPropagation() }}>
                     <Conditional value = {expandedPick.event.is_outright}>
                         <Text id = {DOMId + '-event-name'} preset = 'subtitle' classes = {'w-full text-center whitespace-nowrap text-text-main/killed group-hover/link:text-primary-main'}>
                             {expandedPick.event.name}
