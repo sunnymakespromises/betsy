@@ -1,12 +1,12 @@
 import { Routes as RoutesWrapper, Route } from 'react-router-dom'
-import { BoxArrowRight, ClipboardDataFill, CloudFill, FileTextFill, GearFill, HouseFill, KeyFill, PersonCircle, PostcardFill } from 'react-bootstrap-icons'
+import { BoxArrowRight, ClipboardDataFill, CloudFill, GearFill, HouseFill, KeyFill, PersonCircle, PostcardFill, Tools } from 'react-bootstrap-icons'
 import Home from './home'
 import Settings from './settings'
 import Login from './login'
 import Logout from './logout'
 import User from './user'
 import Info from './info'
-import Slips from './slips'
+import Workshop from './workshop'
 import Edit from './edit'
 import Database from './database'
 
@@ -36,10 +36,10 @@ const routes = [
         is_dev: false
     },
     {
-        path: '/slips',
-        title: 'Slips',
-        icon: (props) => <FileTextFill {...props}/>,
-        element: <Slips/>,
+        path: '/workshop',
+        title: 'Workshop',
+        icon: (props) => <Tools {...props}/>,
+        element: <Workshop/>,
         show: true,
         is_dev: false
     },
