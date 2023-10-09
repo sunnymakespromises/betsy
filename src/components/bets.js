@@ -19,7 +19,7 @@ const Bets = memo(function Bets({ event, bets, events, classes, parentId }) {
                     <Bet key = {index} event = {event} bet = {bet} outcomes = {bet.values[bet.values.length - 1].outcomes} events = {events} parentId = {betId} />
                 )}}/>
             ) : (
-                <Text id = {DOMId + '-bets-not-found'} preset = 'body' classes = 'w-full bg-base-main/muted rounded-base p-base text-text-main/killed text-center'>
+                <Text id = {DOMId + '-bets-not-found'} preset = 'body' classes = 'w-full rounded-base p-base text-text-main/killed border-sm border-divider-highlight text-center'>
                     No bets found.
                 </Text>
             )}
