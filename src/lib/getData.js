@@ -1,5 +1,7 @@
 import getTable from './aws/db/getTable'
 import now from './util/now'
+import getItems from './aws/db/getItems'
+import _ from 'lodash'
 
 async function getData(category = null, currentUser = null) {
     const response = {
@@ -75,15 +77,30 @@ async function getData(category = null, currentUser = null) {
 
         if (!category || category === 'recommendations') {
             let events = response.events ? response.events : params.events.sort(await getTable(params.events.table, params.events.attributes))
-            let users = response.users ? response.users : params.events.sort(await getTable(params.users.table, params.users.attributes))
-            response.data.recommendations = getRecommendations(events, users)
+            let users = response.users ? response.users : await getTable(params.users.table, params.users.attributes)
+            response.data.recommendations = await getRecommendations(events, users)
         }
     }
 
-    function getRecommendations(events, users) {
+    async function getRecommendations(events, users) {
         let favoriteEvents = Object.keys(currentUser.favorites).some(category => currentUser.favorites[category]?.length > 0) ? events.filter(event => !event.is_completed && (event.competitors.some(competitor => currentUser.favorites.competitors.some(favorite => favorite.id === competitor.id)) || currentUser.favorites.competitions.some(favorite => favorite.id === event.competition.id))).sort((a, b) => a.start_time - b.start_time) : [] // all of the events that have to do with the user's favorite
         let upcomingEvents = events.filter(event => !event.is_completed && event.start_time < (now() + (60*60*24*3))).sort((a, b) => a.start_time - b.start_time).slice(0, 24)
-        let subscriptionSlips = users.filter(user => currentUser.subscriptions.includes(user.id)).sort((a, b) => b.timestamp - a.timestamp).slice(0, 24)
+        let subscriptionSlips = []
+        for (const user of users.filter(user => currentUser.subscriptions.some(subscription => subscription.id === user.id))) {
+            if (user.slips.length > 0) {
+                let slips = await getItems('slips', user.slips, null)
+                for (const slip of slips) {
+                    subscriptionSlips.push({
+                        user: _.omit(user, 'slips'),
+                        ...slip
+                    })
+                }
+            }
+        }
+        if (subscriptionSlips.length > 0) {
+            subscriptionSlips = subscriptionSlips.sort((a, b) => a.start_time - b.start_time)
+        }
+
         return {
             favorites: favoriteEvents,
             upcoming: upcomingEvents,
