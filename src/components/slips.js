@@ -129,7 +129,7 @@ const Slip = memo(function Slip({ compressedSlip, events, isEditable, parentId }
                             </Conditional>
                             <CaretRightFill id = {DOMId + '-wager-transformation-icon'} className = 'font-bold text-base text-text-highlight/killed'/>
                             <Text id = {DOMId + '-wager-potential-earnings'} preset = 'title' classes = {'!font-bold ' + (expandedSlip.did_hit !== null ? (expandedSlip.did_hit === true ? 'text-positive-main' : expandedSlip.did_hit === false ? 'text-negative-main' : expandedSlip.did_hit === 'voided' ? 'text-text-highlight/killed' : 'text-primary-main') : ' text-primary-main')}>
-                                &nbsp;{potentialEarningsDisplay}&nbsp;
+                                &nbsp;{potentialEarningsDisplay}&nbsp;&nbsp;
                             </Text>
                             <Conditional value = {isEditable}>
                                 <Save expandedSlip = {expandedSlip} wager = {wagerInDollars} odds = {totalOdds.decimal} potentialEarnings = {potentialEarningsInDollars} status = {status} setStatus = {setStatus} wagerIsEmpty = {wagerIsEmpty} removeCompressedSlip = {removeCompressedSlip} parentId = {DOMId + '-bet'}/>
