@@ -17,7 +17,7 @@ import toDate from '../lib/util/toDate'
 import { CircleFill } from 'react-bootstrap-icons'
 import now from '../lib/util/now'
 
-const SearchWithResults = memo(forwardRef(function Search({ searchConfig, onResultClick, closeOnClick = false, preset = 'main', autoFocus = false, showFavorites = false, classes, container, parentId }, ref) {
+const SearchWithResults = memo(forwardRef(function SearchWithResults({ searchConfig, onResultClick, closeOnClick = false, preset = 'main', autoFocus = false, showFavorites = false, classes, container, parentId }, ref) {
     let DOMId = parentId + '-search'
     const search = useSearch(searchConfig)
     const previousInput = usePrevious(search.input)
@@ -59,7 +59,7 @@ const SearchWithResults = memo(forwardRef(function Search({ searchConfig, onResu
     return (
         <div ref = {ref} id = {DOMId} className = {'relative flex flex-col rounded-main' + (classes ? ' ' + classes : '')}>
             <SearchBar {...search} onFocus = {onFocus} autoFocus = {autoFocus} preset = {preset} parentId = {DOMId}/>
-            {containerElement && createPortal(<Results ref = {cancelRef} results = {search.results} hasResults = {search.hasResults} shape = {resultsShape} isExpanded = {isExpanded} onResultClick = {(category, result) => onClick(category, result)} resultIsLink = {!onResultClick} showFavorites = {showFavorites} parentId = {DOMId}/>, containerElement)}
+            {containerElement && isExpanded && createPortal(<Results ref = {cancelRef} results = {search.results} hasResults = {search.hasResults} shape = {resultsShape} isExpanded = {isExpanded} onResultClick = {(category, result) => onClick(category, result)} resultIsLink = {!onResultClick} showFavorites = {showFavorites} parentId = {DOMId}/>, containerElement)}
         </div>
     )
 
