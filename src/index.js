@@ -4,7 +4,6 @@ import { BrowserRouter, useLocation } from 'react-router-dom'
 import { CookiesProvider } from 'react-cookie'
 import { GoogleOAuthProvider } from '@react-oauth/google'
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
-import { DndContext, useSensor, useSensors, KeyboardSensor, MouseSensor, TouchSensor, MeasuringStrategy, pointerWithin } from '@dnd-kit/core'
 import { SyncLoader } from 'react-spinners'
 import { WindowProvider } from './contexts/window'
 import { UserProvider } from './contexts/user'
@@ -38,23 +37,6 @@ function Root() {
     const windowContext = { sm, md, lg, isLandscape }
     const userContext = { currentUser, updateCurrentUser, login, logout }
     const dataContext = { data, updateData }
-    const mouseSensor = useSensor(MouseSensor, {
-        activationConstraint: {
-            distance: 10,
-        }
-    })
-    const touchSensor = useSensor(TouchSensor, {
-        activationConstraint: {
-            delay: 250,
-            tolerance: 5,
-        }
-    })
-    const keyboardSensor = useSensor(KeyboardSensor)
-    const sensors = useSensors(
-        mouseSensor,
-        touchSensor,
-        keyboardSensor,
-    )
     const hasUser = useMemo(() => currentUser !== undefined && currentUser !== null, [currentUser])
 
     return (
@@ -71,8 +53,7 @@ function Root() {
                             className = {'translate-opacity duration-main absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 ' + (isLoading ? 'opacity-100' : 'opacity-0')}
                         />
                         {(!isLoading && (location.pathname === '/login' || data)) && <>
-                        {hasUser && data && <Header currentUser = {currentUser} data = {data} location = {location}/>}
-                        <DndContext sensors = {sensors} autoScroll = {false} collisionDetection = {pointerWithin} measuring = {{droppable: {strategy: MeasuringStrategy.Always, frequency: 300}}}>
+                            {hasUser && data && <Header currentUser = {currentUser} data = {data} location = {location}/>}
                             <div id = 'content' className = 'relative flex flex-col w-full h-full animate-fadeInUp'>
                                 <TransitionGroup component = {null}>
                                     <CSSTransition 
@@ -90,7 +71,6 @@ function Root() {
                                     </CSSTransition>
                                 </TransitionGroup>
                             </div>
-                        </DndContext>
                         </>}
                     </div>
                 </DataProvider>
