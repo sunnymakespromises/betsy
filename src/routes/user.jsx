@@ -54,13 +54,25 @@ const User = memo(function User() {
     const search = useSearch(searchConfig)
     let panelsConfig = useMemo(() => [
         {
-            category: 'panel',
-            key: 'favorites',
-            icon: HeartFill,
-            panelClasses: 'w-full md:w-[20rem] h-min',
-            parentId: DOMId + '-favorites',
-            children: 
-                <FavoritesPanel favorites = {user?.favorites} canEdit = {isCurrentUser} parentId = {DOMId}/>
+            category: 'div',
+            divId: DOMId + '-column1',
+            divClasses: 'grow flex flex-col gap-base md:gap-lg',
+            children: [
+                {
+                    category: 'display',
+                    children:
+                        <Profile user = {user} isCurrentUser = {isCurrentUser} parentId = {DOMId}/>
+                },
+                {
+                    category: 'panel',
+                    key: 'favorites',
+                    icon: HeartFill,
+                    panelClasses: 'w-full md:w-[20rem] h-min',
+                    parentId: DOMId + '-favorites',
+                    children: 
+                        <FavoritesPanel favorites = {user?.favorites} canEdit = {isCurrentUser} parentId = {DOMId}/>
+                }
+            ]
         },
         {
             category: 'panel',
@@ -95,12 +107,10 @@ const User = memo(function User() {
 
     return (
         <Page canScroll DOMId = {DOMId}>
-            {user && <div id = {DOMId} className = 'w-full flex flex-col md:flex-row gap-base md:gap-lg'>
+            {user && 
+            <div id = {DOMId} className = 'w-full flex flex-col md:flex-row gap-base md:gap-lg'>
                 <Helmet><title>User • Betsy</title></Helmet>
-                <Profile user = {user} isCurrentUser = {isCurrentUser} parentId = {DOMId}/>
-                <div id = {DOMId + '-info'} className = 'w-full flex flex-col gap-base md:gap-lg'>
-                    <MultiPanel config = {panelsConfig} parentId = {DOMId}/>
-                </div>
+                <MultiPanel config = {panelsConfig} parentId = {DOMId}/>
             </div>}
         </Page>
     )
