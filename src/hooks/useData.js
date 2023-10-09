@@ -13,16 +13,16 @@ function useData(currentUser) {
     
     useEffect(() => {
         async function start() {
-            await execute(async () => {
-                if (currentUser) {
-                    if (!data) {
+            if (currentUser) {
+                if (!data) {
+                    await execute(async () => {
                         await updateData()
-                    }
-                    else if (!_.isEqual(previousCurrentUser?.favorites, currentUser?.favorites)) {
-                        await updateData('recommendations')
-                    }
+                    })
                 }
-            })
+                else if (!_.isEqual(previousCurrentUser?.favorites, currentUser?.favorites)) {
+                    await updateData('recommendations')
+                }
+            }
         }
         
         start()
