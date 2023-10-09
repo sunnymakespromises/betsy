@@ -62,6 +62,7 @@ export default function getFormattedMoneyAmount(from, to, value, shortened) {
     let amount = value * ((1 / formats[from].multiplier) * formats[to].multiplier)
 
     const magnitudes = { 6: 'K', 9: 'M', 12: 'B', 15: 'T', 18: 'Qa', 21: 'Qi', 24: 'S' }
+    
     function format(pre) {
         let formatted = (pre < 0 ? '-' : '') + (formats[to].symbol.before ? formats[to].symbol.symbol : '') + formats[to].space
         let length = pre.toString().split('.')[0].length
@@ -77,6 +78,7 @@ export default function getFormattedMoneyAmount(from, to, value, shortened) {
             }
         }
         else {
+            pre = pre < 0 ? -1 * pre : pre
             formatted += pre.toLocaleString(formats[to].locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
         }
         return formatted
