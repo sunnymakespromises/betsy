@@ -111,7 +111,7 @@ const Point = memo(function Point({ lineName, point, color, parentId }) {
     return (
         <div id = {DOMId} style = {{ bottom: point.yPercentage, left: point.xPercentage }} className = 'group/point absolute -translate-x-1/2 translate-y-1/2 w-4 h-4 z-10 hover:z-50'>
             <CircleFill id = {DOMId + '-icon'} style = {{ color: color }} className = 'w-full h-full cursor-pointer'/>
-            <div id = {DOMId + '-modal'} className = 'transition-all duration-main absolute top-full left-1/2 -translate-x-1/2 max-h-0 group-hover/point:max-h-min flex flex-col items-center gap-xs mt-xs p-0 group-hover/point:p-base bg-base-highlight rounded-base overflow-hidden shadow-md z-50'>
+            <div id = {DOMId + '-modal'} className = 'transition-all duration-main absolute top-full left-1/2 -translate-x-1/2 max-h-0 group-hover/point:max-h-min flex flex-col items-center gap-xs mt-xs p-0 group-hover/point:p-base bg-base-highlight rounded-base overflow-hidden shadow-md z-50 pointer-events-none'>
                 <Text id = {DOMId + '-modal-date'} preset = 'subtitle' classes = 'whitespace-nowrap text-text-highlight/killed'>
                     {toDate(point.x)}
                 </Text>
