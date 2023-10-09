@@ -16,6 +16,8 @@ import { getUserBy } from '../lib/getUserBy'
 import Slips from '../components/slips'
 import { useSearch } from '../hooks/useSearch'
 import SearchBar from '../components/searchBar'
+import { useCurrency } from '../hooks/useCurrency'
+import { useOdds } from '../hooks/useOdds'
 
 const User = memo(function User() {
     let DOMId = 'user'
@@ -56,7 +58,7 @@ const User = memo(function User() {
         {
             category: 'div',
             divId: DOMId + '-column1',
-            divClasses: 'grow flex flex-col gap-base',
+            divClasses: 'w-min flex flex-col gap-base',
             children: [
                 {
                     category: 'display',
@@ -67,11 +69,23 @@ const User = memo(function User() {
                     category: 'panel',
                     key: 'favorites',
                     icon: HeartFill,
-                    panelClasses: 'w-full md:w-[20rem] h-min',
+                    panelClasses: 'w-full h-min',
                     parentId: DOMId + '-favorites',
                     children: 
-                        <FavoritesPanel favorites = {user?.favorites} canEdit = {isCurrentUser} parentId = {DOMId}/>
-                }
+                        <Favorites favorites = {user?.favorites} canEdit = {isCurrentUser} parentId = {DOMId}/>
+                },
+                ...(user?.slips?.length > 0 ? [{
+                    category: 'div',
+                    divId: DOMId + '-stats',
+                    divClasses: 'w-full',
+                    children: [
+                        {
+                            category: 'display',
+                            children:
+                                <Stats user = {user} parentId = {DOMId}/>
+                        },
+                    ]
+                }] : [])
             ]
         },
         ...(user?.slips?.length > 0 ? [{
@@ -115,7 +129,74 @@ const User = memo(function User() {
     )
 })
 
-const FavoritesPanel = memo(function FavoritesPanel({ favorites, canEdit, parentId }) {
+const Stats = memo(function Stats({ user, parentId }) {
+    let DOMId = parentId + '-favorites'
+    const { getAmount } = useCurrency()
+    const { getOdds } = useOdds()
+    let stats = useMemo(() => {
+        let hits = user.slips.filter(slip => slip.did_hit === true)
+        return [
+            {
+                title: 'Hit Rate',
+                value: hits.length > 0 ? ((hits.length / user.slips.length).toFixed(2) * 100) + '%' : null
+            },
+            {
+                title: 'Net Spend',
+                value: getAmount('dollars', null, user.balances[user.balances.length - 1].value - 10, false).string
+            },
+            {
+                title: 'Payout/Slip',
+                value: hits.length > 0 ? getAmount('dollars', null, user.slips.map(slip => slip.did_hit !== null ? (slip.did_hit ? slip.potential_earnings : -1 * slip.wager) : 0).reduce((a, b) => a + b) / user.slips.length, false).string : null
+            },
+            {
+                title: 'Peak Balance',
+                value: getAmount('dollars', null, Math.max(...user.balances.map(balance => balance.value)), false).string
+            },
+            {
+                title: 'Lowest Balance',
+                value: getAmount('dollars', null, Math.min(...user.balances.map(balance => balance.value)), false).string
+            },
+            {
+                title: 'Longest Odds',
+                value: hits.length > 0 ? getOdds(Math.max(...hits.map(slip => slip.odds), 0)) : null
+            },
+            {
+                title: 'Largest Parlay',
+                value: hits.length > 0 ? Math.max(...hits.map(slip => slip.picks.length), 0) : null
+            },
+            {
+                title: 'Avg Odds/Slip',
+                value: getOdds((user.slips.map(slip => slip.odds).reduce((a, b) => a + b) / user.slips.length))
+            }
+        ]
+    }, [user])
+
+    return (
+        <div id = {DOMId} className = 'relative w-full h-min flex flex-wrap gap-base'>
+            <Map items = {stats} callback = {(stat, index) => {
+                let statId = DOMId + '-stat' + index; return stat.value && (
+                <Stat key = {index} title = {stat.title} value = {stat.value} parentId = {statId}/>
+            )}}/>
+        </div>
+    )
+}, (b, a) => _.isEqual(b.user, a.user))
+
+const Stat = memo(function Stat({ title, value, parentId }) {
+    let DOMId = parentId
+
+    return (
+        <div id = {DOMId} className = 'transition-colors duration-main w-min flex flex-col items-center gap-sm p-base bg-base-highlight rounded-base'>
+            <Text id = {DOMId + '-title'} preset = 'body' classes = 'text-text-highlight whitespace-nowrap'>
+                {title}
+            </Text>
+            <Text id = {DOMId + '-amount'} preset = 'body' classes = 'whitespace-nowrap text-text-highlight !font-bold !text-3xl !text-primary-main'>
+                {value}
+            </Text>
+        </div>
+    )
+})
+
+const Favorites = memo(function Favorites({ favorites, canEdit, parentId }) {
     let DOMId = parentId + '-favorites'
     let allFavorites = useMemo(() => Object.keys(favorites).map(category => favorites[category].map(favorite => { return { ...favorite, category: category } })).flat(), [favorites])
 
@@ -130,7 +211,7 @@ const FavoritesPanel = memo(function FavoritesPanel({ favorites, canEdit, parent
                 </div>
             </Conditional>
             <Conditional value = {allFavorites.length < 1}>
-                <Text id ={DOMId + '-notFound'} preset = 'body' classes = 'text-text-highlight/killed'>
+                <Text id ={DOMId + '-not-found'} preset = 'body' classes = 'text-text-highlight/killed'>
                     No favorites found.
                 </Text>
             </Conditional>
