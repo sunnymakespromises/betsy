@@ -14,10 +14,12 @@ import Conditional from './conditional'
 import Pick from './pick'
 import Input from './input'
 import SelectSlips from './selectSlips'
+import Button from './button'
 import Error from './error'
 import toDate from '../lib/util/toDate'
 import { compressSlip, expandSlip, getMostRecentVersionOfPick } from '../lib/util/manipulateBets'
-import Button from './button'
+import { Link } from 'react-router-dom'
+import Image from './image'
 
 const Slips = memo(function Slips({ compressedSlips, isEditable = false, parentId }) {
     let DOMId = parentId + '-slips'
@@ -63,6 +65,17 @@ const Slip = memo(function Slip({ compressedSlip, events, isEditable, parentId }
                 <div id = {DOMId} className = {'group/slip relative transition-colors duration-main w-full flex flex-col items-center gap-base'}>
                     <div id = {DOMId + '-bar'} className = 'w-full flex justify-between items-center'>
                         <div id = {DOMId + '-bar-actions'} className = 'flex items-center gap-sm'>
+                            {expandedSlip.user && 
+                            <Link id = {DOMId + '-user-image'} to = {'/user?id=' + expandedSlip.user.id} className = 'transition-colors duration-main h-8 aspect-square flex justify-center items-center overflow-hidden rounded-full border-base border-primary-main hover:border-primary-highlight'>
+                                <Conditional value = {!expandedSlip.user.picture}>
+                                    <Text id = {DOMId + '-user-image-text'} preset = 'body' classes = 'text-black/muted'>
+                                        {expandedSlip.user.name?.substr(0, 1)}
+                                    </Text>
+                                </Conditional>
+                                <Conditional value = {expandedSlip.user.picture}>
+                                    <Image id = {DOMId + '-user-image-image'} external path = {expandedSlip.user.picture} classes = 'w-full aspect-square'/>
+                                </Conditional>
+                            </Link>}
                             <Conditional value = {isEditable}>
                                 <Button id = {DOMId + '-remove'} preset = 'main' onClick = {() => removeCompressedSlip(true)}>
                                     <X id = {DOMId + '-remove-icon'} className = 'text-xl text-text-primary'/>
