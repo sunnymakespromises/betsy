@@ -29,7 +29,7 @@ module.exports =  withAnimations({
                 slow: '700ms',
             },
             fontFamily: {
-                main: ['SF Pro', ...defaultTheme.fontFamily.sans],
+                main: ['Inter', ...defaultTheme.fontFamily.sans],
             },
             fontSize: {
                 '2xs': ['0.2rem', {
@@ -187,8 +187,8 @@ module.exports =  withAnimations({
                 divider: {
                     main: '#27272A',
                     highlight: '#1C1C1E',
-                    primary: '#3C81F8',
-                    accent: '#F83878',
+                    primary: '#F83878',
+                    accent: '#3C81F8',
                     positive: '#15E1AE',
                     negative: '#F83878'
                 },
@@ -201,12 +201,12 @@ module.exports =  withAnimations({
                     negative: '#38343A'
                 },
                 primary: {
-                    main: '#448AFF',
-                    highlight: '#82B1FF'
-                },
-                accent: {
                     main: '#FF4081',
                     highlight: '#FF80AB'
+                },
+                accent: {
+                    main: '#448AFF',
+                    highlight: '#82B1FF'
                 },
                 positive: {
                     main: '#1DE9B6',
