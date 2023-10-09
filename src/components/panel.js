@@ -70,7 +70,7 @@ export const MultiPanel = memo(function MultiPanel({ config, parentId, children 
                             <div id = {DOMId + '-bar'} className = 'flex items-center gap-xs'>
                                 <Map items = {panels} callback = {(panel, index) => { return (
                                     <div key = {index} id = {panel.parentId + '-title'} onClick = {() => setCurrentPanel(panel)}>
-                                        <Icon icon = {panel.icon} classes = {'!h-7 !w-7 px-xs ' + (currentPanel.key !== panel.key ? '!text-text-highlight/killed hover:!text-primary-main cursor-pointer' : '')} parentId = {panel.parentId}/>
+                                        <Icon icon = {panel.icon} classes = {'w-8 h-8 px-xs ' + (currentPanel.key !== panel.key ? '!text-text-highlight/killed hover:!text-primary-main cursor-pointer' : '')} parentId = {panel.parentId}/>
                                     </div>
                                 )}}/>
                             </div>

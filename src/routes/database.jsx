@@ -23,7 +23,7 @@ const Database = memo(function Database() {
         return (
             <Page canScroll DOMId = {DOMId}>
                 <Helmet><title>Developer • Betsy</title></Helmet>
-                <div id = {DOMId} className = 'w-full h-full flex flex-col md:flex-row gap-base md:gap-lg'>
+                <div id = {DOMId} className = 'w-full h-full flex flex-col md:flex-row gap-base'>
                     <Stats data = {data} parentId = {DOMId}/>
                     <Logs logs = {data.logs} parentId = {DOMId}/>
                 </div>

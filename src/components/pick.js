@@ -1,6 +1,7 @@
 import React, { memo, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import _ from 'lodash'
+import { useSearchEventsContext } from '../contexts/searchEvents'
 import { useCancelDetector } from '../hooks/useCancelDetector'
 import { useOdds } from '../hooks/useOdds'
 import Conditional from './conditional'
@@ -8,9 +9,14 @@ import Text from './text'
 import Map from './map'
 import SelectSlips from './selectSlips'
 import { compressPick } from '../lib/util/manipulateBets'
+import SearchEvents from './searchEvents'
+import { CheckCircleFill, Circle, Plus } from 'react-bootstrap-icons'
 
 const Pick = memo(function Pick({ expandedPick, events, isEditable, isDetailed, onRemove, classes, parentId }) {
     let DOMId = parentId
+    let compressedPick = compressPick(expandedPick)
+    let searchEventsContext = useSearchEventsContext()
+    let isNewPick = searchEventsContext !== undefined
     let [isExpanded, setIsExpanded] = useState(false)
     let [isSelecting, setIsSelecting] = useState(false)
     const cancelRef = useCancelDetector(() => setIsExpanded(false))
@@ -90,34 +96,62 @@ const Pick = memo(function Pick({ expandedPick, events, isEditable, isDetailed, 
 
     return (
         <>
-            <div id = {DOMId} className = {'group/pick relative transition-colors duration-main w-full flex flex-col justify-center items-center gap-xs p-sm rounded-base border-sm shadow-sm overflow-hidden ' + (isExpanded ? 'border-primary-main' : 'border-divider-highlight') + (expandedPick.did_hit === null ? ' hover:bg-base-main/killed cursor-pointer' : '') + (classes ? ' ' + classes : '')} onClick = {() => expandedPick.did_hit === null ? setIsExpanded(true) : null} ref = {cancelRef}>
+            <div id = {DOMId} className = {'group/pick relative transition-colors duration-main w-full flex flex-col justify-center items-center gap-xs p-sm rounded-base border-sm shadow-sm overflow-hidden ' + (isExpanded ? 'border-primary-main' : 'border-divider-highlight') + (expandedPick.did_hit === null && (isNewPick ? searchEventsContext.canAddPickToSlip(compressedPick) : true) ? ' hover:bg-base-main/killed cursor-pointer' : '') + (classes ? ' ' + classes : '')} onClick = {() => expandedPick.did_hit === null && !isNewPick ? setIsExpanded(true) : isNewPick && searchEventsContext.canAddPickToSlip(compressedPick) ? searchEventsContext.onSelectPick(compressedPick) : null} ref = {cancelRef}>
                 {eventName}
                 <Text id = {DOMId + '-bet-name'} preset = 'subtitle' classes = 'text-text-main/killed'>
                     {expandedPick.bet.name}
                 </Text>
                 {name}
                 <Value value = {expandedPick.outcome.odds} didHit = {expandedPick.did_hit} parentId = {DOMId}/>
-                <div id = {DOMId + '-modal'} className = {'transition-all duration-main absolute top-0 left-0 w-full h-full flex flex-col bg-primary-main z-10 overflow-hidden ' + (isExpanded ? 'opacity-100' : 'opacity-0 pointer-events-none' )}>
-                    <Map items = {options} callback = {(option, index) => {
-                        let optionId = DOMId + '-option' + index; 
-                        return option.condition && (
-                            <React.Fragment key = {index}>
-                                <Option title = {option.title} onClick = {option.onClick} parentId = {optionId}/>
-                                <Conditional value = {index !== options.filter(option => option.condition).length - 1}>
-                                    <div className = 'transition-colors duration-main border-t-sm border-divider-primary'/>
-                                </Conditional>
-                            </React.Fragment>
-                        )
-                    }}/>
-                </div>
+                <Conditional value = {!isNewPick}>
+                    <div id = {DOMId + '-modal'} className = {'transition-all duration-main absolute top-0 left-0 w-full h-full flex flex-col bg-primary-main z-10 overflow-hidden ' + (isExpanded ? 'opacity-100' : 'opacity-0 pointer-events-none' )}>
+                        <Map items = {options} callback = {(option, index) => {
+                            let optionId = DOMId + '-option' + index; 
+                            return option.condition && (
+                                <React.Fragment key = {index}>
+                                    <Option title = {option.title} onClick = {option.onClick} parentId = {optionId}/>
+                                    <Conditional value = {index !== options.filter(option => option.condition).length - 1}>
+                                        <div className = 'transition-colors duration-main border-t-sm border-divider-primary'/>
+                                    </Conditional>
+                                </React.Fragment>
+                            )
+                        }}/>
+                    </div>
+                </Conditional>
+                {isNewPick &&
+                <div id = {DOMId + '-select'} className = 'absolute top-sm right-sm'>
+                    <Conditional value = {!searchEventsContext?.selectedPicks?.includes(compressedPick)}>
+                        <Circle id = {DOMId + '-select-not-selected'} className = {'text-lg ' + (searchEventsContext?.canAddPickToSlip(compressedPick) ? 'text-primary-main' : 'text-text-highlight/killed')}/>
+                    </Conditional>
+                    <Conditional value = {searchEventsContext?.selectedPicks?.includes(compressedPick)}>
+                        <CheckCircleFill id = {DOMId + '-select-selected'} className = 'text-lg text-primary-main'/>
+                    </Conditional>
+                </div>}
             </div>
-            <Conditional value = {isSelecting}>
+            <Conditional value = {isSelecting && !isNewPick}>
                 <SelectSlips expandedPicksToAdd = {[expandedPick]} events = {events} setIsSelecting = {setIsSelecting} parentId = {DOMId}/>
             </Conditional>
         </>
 
     )
 }, (b, a) => b.isEditable === a.isEditable && b.isDetailed === a.isDetailed && b.classes === a.classes && _.isEqual(b.expandedPick, a.expandedPick) && _.isEqual(b.events, a.events))
+
+export const NewPick = memo(function NewPick({ compressedSlip, parentId }) {
+    let DOMId = parentId + '-new-pick'
+    let [isSearching, setIsSearching] = useState(false)
+
+    return (
+        <>
+            <div id = {DOMId} className = {'group/new-pick relative transition-colors duration-main w-full flex flex-col justify-center items-center gap-xs p-sm rounded-base border-sm shadow-sm overflow-hidden hover:bg-base-main/killed cursor-pointer ' + (isSearching ? 'border-primary-main' : 'border-divider-highlight')} onClick = {() => setIsSearching(true)}>
+                <Plus id = {DOMId + '-icon'} className = {'transition-colors duration-main text-3xl ' + (isSearching ? 'text-primary-main' : 'text-text-highlight/killed group-hover/new-pick:text-primary-main')} />
+            </div>
+            <Conditional value = {isSearching}>
+                <SearchEvents compressedSlip = {compressedSlip} setIsSearching = {setIsSearching} parentId = {DOMId}/>
+            </Conditional>
+        </>
+
+    )
+}, (b, a) => b.compressedSlip === a.compressedSlip)
 
 function Option({ title, onClick, parentId }) {
     let DOMId = parentId

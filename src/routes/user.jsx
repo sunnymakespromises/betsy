@@ -56,7 +56,7 @@ const User = memo(function User() {
         {
             category: 'div',
             divId: DOMId + '-column1',
-            divClasses: 'grow flex flex-col gap-base md:gap-lg',
+            divClasses: 'grow flex flex-col gap-base',
             children: [
                 {
                     category: 'display',
@@ -74,19 +74,18 @@ const User = memo(function User() {
                 }
             ]
         },
-        {
+        ...(user?.slips?.length > 0 ? [{
             category: 'panel',
             key: 'slips',
             icon: FileTextFill,
             panelClasses: 'w-full h-min',
             parentId: DOMId + '-slips',
             children: 
-                user && 
-                <div id = {DOMId + '-slips-panel-container'} className = {'flex flex-col gap-base ' + (search.results?.length > 0 ? 'md:gap-lg' : '') }>
+                <div id = {DOMId + '-slips-panel-container'} className = 'flex flex-col gap-base'>
                     <SearchBar {...search} classes = 'w-full' isExpanded = {false} canExpand = {false} parentId = {DOMId}/>
                     <Slips compressedSlips = {search.results?.sort((a, b) => b.timestamp - a.timestamp)} parentId = {DOMId}/>
                 </div>
-        }
+        }] : [])
     ], [user, isCurrentUser, currentUser, search])
 
     useEffect(() => {
@@ -108,7 +107,7 @@ const User = memo(function User() {
     return (
         <Page canScroll DOMId = {DOMId}>
             {user && 
-            <div id = {DOMId} className = 'w-full flex flex-col md:flex-row gap-base md:gap-lg'>
+            <div id = {DOMId} className = 'w-full flex flex-col md:flex-row gap-base'>
                 <Helmet><title>User • Betsy</title></Helmet>
                 <MultiPanel config = {panelsConfig} parentId = {DOMId}/>
             </div>}
@@ -131,7 +130,7 @@ const FavoritesPanel = memo(function FavoritesPanel({ favorites, canEdit, parent
                 </div>
             </Conditional>
             <Conditional value = {allFavorites.length < 1}>
-                <Text id ={DOMId + '-notFound'} preset = 'body' classes = '!text-lg text-text-highlight/killed'>
+                <Text id ={DOMId + '-notFound'} preset = 'body' classes = 'text-text-highlight/killed'>
                     No favorites found.
                 </Text>
             </Conditional>

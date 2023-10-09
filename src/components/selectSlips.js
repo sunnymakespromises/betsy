@@ -30,7 +30,7 @@ const SelectSlips = memo(function Select({ expandedPicksToAdd, events, setIsSele
     return containerElement && (
         createPortal(
             <div id = {DOMId} className = 'absolute top-0 left-0 w-full h-full flex flex-col items-center justify-center bg-black/80 z-30'>
-                <div id = {DOMId + '-container'} className = 'relative w-[90%] md:w-[50%] h-[90%] md:h-[80%] flex flex-col items-center gap-base p-lg bg-base-highlight rounded-base overflow-hidden' ref = {cancelRef}>
+                <div id = {DOMId + '-container'} className = 'relative w-[90%] md:w-[50%] h-[90%] md:h-[80%] flex flex-col items-center gap-base md:gap-lg p-base md:p-lg bg-base-highlight rounded-base overflow-hidden' ref = {cancelRef}>
                     <Button id = {DOMId + '-new'} preset = 'main' classes = 'absolute top-lg right-lg self-end' onClick = {() => createNewCompressedSlip(expandedPicksToAdd)}>
                         <Plus id = {DOMId + '-new-icon'} className = 'text-xl text-text-primary'/>
                             <Text id = {DOMId + '-new-text'} preset = 'body' classes = 'text-text-primary'>
@@ -48,7 +48,7 @@ const SelectSlips = memo(function Select({ expandedPicksToAdd, events, setIsSele
                             </Text>
                         </Conditional>
                     </div>
-                    <Button id = {DOMId + '-save'} preset = 'main' classes = {'self-end' + (selectedSlips.length === 0 ? ' !bg-base-main hover:!bg-base-main !cursor-default' : '')} onClick = {selectedSlips.length > 0 ? () => { addToCompressedSlips(expandedPicksToAdd); setIsSelecting(false)} : null}>
+                    <Button id = {DOMId + '-save'} preset = 'main' classes = {'self-end' + (selectedSlips.length === 0 ? ' !bg-base-main hover:!bg-base-main !cursor-default' : '')} onClick = {selectedSlips.length > 0 ? () => addToCompressedSlips(expandedPicksToAdd) : null}>
                         <Check id = {DOMId + '-save-icon'} className = {'text-xl ' + (selectedSlips.length > 0 ? 'text-text-primary' : 'text-text-highlight/killed')}/>
                         <Text id = {DOMId + '-save-text'} preset = 'body' classes = {(selectedSlips.length > 0 ? 'text-text-primary' : 'text-text-highlight/killed')}>
                             Save
@@ -83,7 +83,7 @@ const SelectSlips = memo(function Select({ expandedPicksToAdd, events, setIsSele
     function addToCompressedSlips(expandedPicks) {
         for (const index of selectedSlipsRef.current) {
             let compressedSlip = compressedSlips[index]
-            if (!compressedSlip.picks.some(compressedPick => expandedPicks.some(expandedPick => compressedPick.split('-')[0] === expandedPick.event.id) && expandedPicks.some(expandedPick => compressedPick.split('-')[1] === expandedPick.bet.key))) {
+            if (!compressedSlip.picks.some(compressedPick => expandedPicks.some(expandedPick => compressedPick.split('-')[0] === expandedPick.event.id && compressedPick.split('-')[1] === expandedPick.bet.key))) {
                 let newCompressedSlip = JSON.parse(JSON.stringify(compressedSlip))
                 newCompressedSlip.picks = [...newCompressedSlip.picks, ...expandedPicks.map(expandedPick => compressPick(expandedPick))]
                 editCompressedSlip(compressedSlip, newCompressedSlip)

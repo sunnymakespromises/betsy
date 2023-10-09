@@ -2,7 +2,7 @@ import React, { memo, useEffect, useMemo, useState } from 'react'
 import Page from '../components/page'
 import { Helmet } from 'react-helmet'
 import { Link, useSearchParams } from 'react-router-dom'
-import { BarChartLineFill, CalendarWeekFill, PeopleFill, Stack, StopwatchFill } from 'react-bootstrap-icons'
+import { ArchiveFill, BarChartLineFill, CalendarWeekFill, PeopleFill, Stack, StopwatchFill } from 'react-bootstrap-icons'
 import _ from 'lodash'
 import { useDataContext } from '../contexts/data'
 import { useDatabase } from '../hooks/useDatabase'
@@ -132,12 +132,12 @@ const Item = memo(function Item({ category, item, data, parentId }) {
     let Element = option.element
 
     return (
-        <div id = {DOMId} className = 'w-full flex flex-col gap-base md:gap-lg'>
+        <div id = {DOMId} className = 'w-full flex flex-col gap-base'>
             <div id = {DOMId + '-bar'} className = 'flex flex-col md:flex-row justify-between items-center gap-sm p-base bg-base-highlight rounded-base'>
                 <Title category = {category} item = {item} parentId = {DOMId}/>
                 {option.hasSearch && <SearchBar {...search} classes = 'w-full md:w-1/2' isExpanded = {false} canExpand = {false} parentId = {DOMId}/>}
             </div>
-            <div id = {DOMId + '-data'} className = 'w-full h-min flex flex-col md:flex-row gap-base md:gap-lg'>
+            <div id = {DOMId + '-data'} className = 'w-full h-min flex flex-col md:flex-row gap-base'>
                 <Element results = {search.results} item = {item} parentId = {DOMId}/>
             </div>
         </div>
@@ -170,7 +170,7 @@ const Competition = memo(function Competition({ results, item: competition, even
             category: 'panel',
             key: 'events',
             icon: CalendarWeekFill,
-            panelClasses: 'w-full md:w-[32rem]',
+            panelClasses: 'w-full md:w-auto md:min-w-[36rem] flex flex-col gap-base',
             parentId: DOMId + '-events',
             children: 
                 <div id = {DOMId + '-events'} className = 'flex flex-col gap-lg'>
@@ -191,7 +191,7 @@ const Competition = memo(function Competition({ results, item: competition, even
             category: 'panel',
             key: 'competitors',
             icon: PeopleFill,
-            panelClasses: 'w-full md:grow md:!w-auto',
+            panelClasses: 'grow flex flex-col gap-base',
             parentId: DOMId + '-competitors',
             children: 
                 <><Conditional value = {results?.competitors?.length > 0}>
@@ -222,7 +222,7 @@ const Competitor = memo(function Competitors({ results, item: competitor, events
             category: 'panel',
             key: 'events',
             icon: CalendarWeekFill,
-            panelClasses: 'w-full md:w-[32rem]',
+            panelClasses: 'w-full md:w-auto md:min-w-[36rem]',
             parentId: DOMId + '-events',
             children: 
                 <div id = {DOMId + '-events'} className = 'flex flex-col gap-lg'>
@@ -290,26 +290,53 @@ const Event = memo(function Event({ item: event, results, events, parentId }) {
     }, [results])
     let panelsConfig = [
         {
-            category: 'panel',
-            key: 'bets',
-            icon: Stack,
-            panelClasses: 'w-full md:w-[32rem]',
-            parentId: DOMId + '-events',
-            children: 
-                <><Conditional value = {results?.bets?.length > 0}>
-                    <Bets event = {event} bets = {results?.bets} events = {events} parentId = {DOMId + '-events'}/>
-                </Conditional>
-                <Conditional value = {results?.bets?.length < 1}>
-                    <Text id = {DOMId + '-bets-not-found'} preset = 'body' classes = 'text-text-highlight/killed'>
-                        No bets found.
-                    </Text>
-                </Conditional></>
+            category: 'div',
+            divId: DOMId + '-column0',
+            divClasses: 'w-full md:w-auto md:min-w-[36rem] flex flex-col gap-base',
+            children: [
+                ...(event.is_completed ? [{
+                    category: 'panel',
+                    key: 'results',
+                    title: 'Results',
+                    icon: BarChartLineFill,
+                    panelClasses: 'w-full',
+                    parentId: DOMId + '-results',
+                    children: 
+                        <Results events = {[event]} parentId = {DOMId + '-results'}/>
+                }] : []),
+                {
+                    category: 'panel',
+                    key: 'bets',
+                    icon: Stack,
+                    panelClasses: '',
+                    parentId: DOMId + '-events',
+                    children: 
+                        <><Conditional value = {results?.bets?.length > 0}>
+                            <Bets event = {event} bets = {results?.bets} events = {events} parentId = {DOMId + '-events'}/>
+                        </Conditional>
+                        <Conditional value = {results?.bets?.length < 1}>
+                            <Text id = {DOMId + '-bets-not-found'} preset = 'body' classes = 'text-text-highlight/killed'>
+                                No bets found.
+                            </Text>
+                        </Conditional></>
+                }
+            ]
         },
         {
             category: 'div',
-            divId: DOMId + '-right',
-            divClasses: 'grow flex flex-col gap-base md:gap-lg',
+            divId: DOMId + '-column1',
+            divClasses: 'grow flex flex-col gap-base',
             children: [
+                ...(previousMatchups.length > 0 ? [{
+                    category: 'panel',
+                    key: 'history',
+                    title: 'History',
+                    icon: ArchiveFill,
+                    panelClasses: 'w-full',
+                    parentId: DOMId + '-history',
+                    children: 
+                        <Results events = {previousMatchups} parentId = {DOMId + '-history'}/>
+                }] : []),
                 {
                     category: 'panel',
                     key: 'odds',
@@ -326,17 +353,7 @@ const Event = memo(function Event({ item: event, results, events, parentId }) {
                                 No odds history found.
                             </Text>
                         </Conditional></>
-                },
-                ...(previousMatchups.length > 0 ? [{
-                    category: 'panel',
-                    key: 'history',
-                    title: 'History',
-                    icon: BarChartLineFill,
-                    panelClasses: 'w-full',
-                    parentId: DOMId + '-history',
-                    children: 
-                        <Results events = {previousMatchups} parentId = {DOMId + '-history'}/>
-                }] : [])
+                }
             ]
         }
     ]
@@ -491,18 +508,6 @@ const Title = memo(function Title({ category, item, parentId }) {
                         <Text id = {DOMId + '-name-date'} preset = 'subtitle' classes = 'text-text-highlight/killed whitespace-nowrap'>
                             &nbsp;{toDate(event.start_time)}
                         </Text>
-                        {Object.keys(event.results).length > 0 && 
-                        <div id = {DOMId + '-scores'} className = 'w-full flex justify-center items-center gap-base'>
-                            <Text id = {DOMId + '-competitor0-score'} preset = 'title' classes = '!font-bold !text-3xl text-text-highlight'>
-                                {event.results.scores.find(score2 => score2.competitor.id === event.competitors[0].id).score}
-                            </Text>
-                            <Text id = {DOMId + '-scores-separator'} preset = 'title' classes = '!font-bold !text-3xl text-text-highlight/killed'>
-                                -
-                            </Text>
-                            <Text id = {DOMId + '-competitor1-score'} preset = 'title' classes = '!font-bold !text-3xl text-text-highlight'>
-                                {event.results.scores.find(score2 => score2.competitor.id === event.competitors[1].id).score}
-                            </Text>
-                        </div>}
                     </div>
                     <Link id = {DOMId + '-competitor1-image'} to = {'/info?category=competitors&id=' + event.competitors[1].id} className = 'transition-colors duration-main h-8 aspect-square flex justify-center items-center bg-white rounded-full border-base border-primary-main hover:border-primary-highlight'>
                         <Conditional value = {!event.competitors[1].picture}>

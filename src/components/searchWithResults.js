@@ -249,7 +249,7 @@ const Result = memo(function Result({ category, item, onClick, isLink, showFavor
             <Link id = {DOMId} to = {category === 'users' ? '/user?id=' + item.id : '/info?category=' + category + '&id=' + item.id} className = 'group/result w-full flex items-center gap-xs' onClick = {() => onClick(category, item)}>
                 {title}
                 <Conditional value = {showFavorites && category !== 'events' && category !== 'users'}>
-                    <Favorite isFavorite = {isFavorite} category = {category} canEdit = {false} item = {item} classes = 'h-3 w-3' parentId = {DOMId}/>
+                    <Favorite isFavorite = {isFavorite} category = {category} canEdit = {false} item = {item} classes = '!text-lg' parentId = {DOMId}/>
                 </Conditional>
             </Link>
             
@@ -259,7 +259,7 @@ const Result = memo(function Result({ category, item, onClick, isLink, showFavor
         <div id = {DOMId} className = 'group/result w-full flex items-center gap-xs cursor-pointer' onClick = {() => onClick(category, item)}>
             {title}
             <Conditional value = {showFavorites && category !== 'events' && category !== 'users'}>
-                <Favorite isFavorite = {isFavorite} category = {category} canEdit = {false} item = {item} iconClasses = '!w-3 !h-3' parentId = {DOMId}/>
+                <Favorite isFavorite = {isFavorite} category = {category} canEdit = {false} item = {item} iconClasses = '!text-lg' parentId = {DOMId}/>
             </Conditional>
         </div>
     )

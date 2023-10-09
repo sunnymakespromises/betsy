@@ -11,7 +11,7 @@ import { useDatabase } from '../hooks/useDatabase'
 import Map from './map'
 import Text from './text'
 import Conditional from './conditional'
-import Pick from './pick'
+import Pick, { NewPick } from './pick'
 import Input from './input'
 import SelectSlips from './selectSlips'
 import Button from './button'
@@ -34,9 +34,14 @@ const Slips = memo(function Slips({ compressedSlips, isEditable = false, parentI
                 )}}/>
             </Conditional>
             <Conditional value = {compressedSlips?.length < 1}>
-                <Text id = {DOMId + '-slips-not-found'} preset = 'body' classes = 'text-text-highlight/killed'>
-                    No slips found.
-                </Text>
+                <Conditional value = {!isEditable}>
+                    <Text id = {DOMId + '-slips-not-found'} preset = 'body' classes = 'text-text-highlight/killed'>
+                        No slips found.
+                    </Text>
+                </Conditional>
+                <Conditional value = {isEditable}>
+                    <NewPick compressedSlip = {null} parentId = {DOMId + '-new-slip'}/>
+                </Conditional>
             </Conditional>
         </div>
     )
@@ -57,7 +62,7 @@ const Slip = memo(function Slip({ compressedSlip, events, isEditable, parentId }
     let wagerInDollars = useMemo(() => getAmount(null, 'dollars', Number(wager) ? Number(wager) : 0, false).value, [totalOdds, wager])
     let [, , removeCompressedSlipFromStore, editCompressedSlip, ] = useStore('user_slips', 'array')
     let [isSelecting, setIsSelecting] = useState(false)
-    let grid = expandedSlip.picks.length >= 3 ? 'grid-cols-3' : expandedSlip.picks.length === 2 ? 'grid-cols-2' : 'grid-cols-1'
+    let grid = (expandedSlip.picks.length + (isEditable ? 1 : 0)) >= 3 ? 'grid-cols-3' : (expandedSlip.picks.length + (isEditable ? 1 : 0)) === 2 ? 'grid-cols-2' : 'grid-cols-1'
 
     if (expandedSlip.picks.length > 0) {
         return (
@@ -102,6 +107,9 @@ const Slip = memo(function Slip({ compressedSlip, events, isEditable, parentId }
                             let expandedPickId = DOMId + '-pick' + index; return (
                             <Pick key = {index} expandedPick = {expandedPick} events = {events} isEditable = {isEditable} isDetailed onRemove = {removeCompressedPick} parentId = {expandedPickId}/>
                         )}}/>
+                        <Conditional value = {isEditable}>
+                            <NewPick compressedSlip = {compressedSlip} parentId = {DOMId + '-picks'}/>
+                        </Conditional>
                     </div>
                     <div id = {DOMId + '-wager'} className = 'w-full h-min flex flex-col gap-sm'>
                         <div id = {DOMId + '-wager-checkout'} className = {'transition-all duration-main flex items-center'}>

@@ -75,7 +75,7 @@ const Header = memo(function Header({ currentUser, data, location }) {
         minimumLength: 3,
         shape: 'array',
         categories: ['competitors', 'competitions', 'events', 'users'],
-        keys: { competitors: [{name: 'name', weight: '2'}, 'competitions.name', 'sport.name'], competitions: [{name: 'name', weight: '2'}, 'sport.name', 'competitors.name'], events: ['name', 'competition.name', 'competitors.name', 'sport.name'], users: ['display_name'] }
+        keys: { competitors: [{name: 'name', weight: '10'}, 'competitions.name', 'sport.name'], competitions: [{name: 'name', weight: '10'}, 'sport.name', 'competitors.name'], events: ['name', 'competition.name', 'competitors.name', 'sport.name'], users: ['display_name'] }
     }}, [data, currentUser.favorites])
 
     if (currentUser) {

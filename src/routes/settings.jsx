@@ -43,7 +43,7 @@ const Settings = memo(function Settings() {
     return (
         <Page DOMId = {DOMId}>
             <Helmet><title>Settings • Betsy</title></Helmet>
-            <div id = {DOMId} className = 'relative w-full h-full flex flex-col md:flex-row gap-base md:gap-lg'>
+            <div id = {DOMId} className = 'relative w-full h-full flex flex-col md:flex-row gap-base'>
                 <MultiPanel config = {panelsConfig} parentId = {DOMId}/>
             </div>
         </Page>
@@ -130,7 +130,7 @@ const Setting = memo(function Setting({ title, icon, settingKey, options, defaul
     return (
         <div id = {DOMId} className = 'w-full flex justify-between items-center gap-base'>
             <div id = {DOMId + '-name'} className = 'w-min flex items-center gap-xs'>
-                <Icon id = {DOMId + '-icon'} className = 'h-4 w-4 text-primary-main'/>
+                <Icon id = {DOMId + '-icon'} className = 'text-xl text-primary-main'/>
                 <Text id = {DOMId + '-title'} preset = 'body' classes = 'text-text-highlight whitespace-nowrap'>
                     {title}
                 </Text>

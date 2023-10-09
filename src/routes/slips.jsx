@@ -12,7 +12,7 @@ const Slips = memo(function Slips() {
     return (
         <Page canScroll parentId = {DOMId}>
             <Helmet><title>Slips • Betsy</title></Helmet>
-            <div id = {DOMId} className = 'w-full h-full flex flex-col gap-base md:gap-lg'>
+            <div id = {DOMId} className = 'w-full h-full flex flex-col gap-base'>
                 <Panel parentId = {DOMId}>
                     <SlipsDisplay compressedSlips = {compressedSlips} isEditable parentId = {DOMId} />
                 </Panel>
