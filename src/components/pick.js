@@ -10,7 +10,8 @@ import Map from './map'
 import SelectSlips from './selectSlips'
 import { compressPick } from '../lib/util/manipulateBets'
 import SearchEvents from './searchEvents'
-import { CheckCircleFill, Circle, Plus } from 'react-bootstrap-icons'
+import { CheckCircleFill, Circle, CircleFill, Plus } from 'react-bootstrap-icons'
+import now from '../lib/util/now'
 
 const Pick = memo(function Pick({ expandedPick, events, isEditable, isDetailed, onRemove, classes, parentId }) {
     let DOMId = parentId
@@ -127,6 +128,9 @@ const Pick = memo(function Pick({ expandedPick, events, isEditable, isDetailed, 
                         <CheckCircleFill id = {DOMId + '-select-selected'} className = 'text-lg text-primary-main'/>
                     </Conditional>
                 </div>}
+                <Conditional value = {expandedPick.did_hit === null && expandedPick.event.start_time < now() && isDetailed}>
+                    <CircleFill id = {DOMId + '-live'} className = 'absolute top-sm left-sm text-sm text-accent-main'/>
+                </Conditional>
             </div>
             <Conditional value = {isSelecting && !isNewPick}>
                 <SelectSlips expandedPicksToAdd = {[expandedPick]} events = {events} setIsSelecting = {setIsSelecting} parentId = {DOMId}/>

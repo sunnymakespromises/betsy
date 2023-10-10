@@ -7,6 +7,7 @@ import Bets from './bets'
 import now from '../lib/util/now'
 import toDate from '../lib/util/toDate'
 import Image from './image'
+import { CircleFill } from 'react-bootstrap-icons'
 
 const Event = memo(function Event({ event, events, parentId }) {
     let DOMId = parentId
@@ -27,11 +28,7 @@ const Title = memo(function Title({ event, parentId }) {
         return (
             <div id = {DOMId} className = 'flex flex-col items-center gap-2xs'>
                 <Conditional value = {isLive}>
-                    <div id = {DOMId + '-live'} className = 'absolute top-0 left-0 bg-accent-main rounded-base p-xs shadow-lg'>
-                        <Text id = {DOMId + '-live-text'} preset = 'subtitle' classes = 'text-text-accent'>
-                            LIVE
-                        </Text>
-                    </div>
+                    <CircleFill id = {DOMId + '-live'} className = 'absolute top-sm left-sm text-sm text-accent-main'/>
                 </Conditional>
                 <Link id = {DOMId + '-competition'} to = {'/info?category=competitions&id=' + event.competition.id}>
                     <Text id = {DOMId + '-competition-text'} preset = 'subtitle' classes = 'text-primary-main hover:text-primary-highlight whitespace-nowrap'>
@@ -53,11 +50,7 @@ const Title = memo(function Title({ event, parentId }) {
         return (
             <div id = {DOMId} className = 'w-min flex justify-center items-center gap-sm'>
                 <Conditional value = {isLive}>
-                    <div id = {DOMId + '-live'} className = 'absolute top-0 left-0 bg-accent-main rounded-base p-xs shadow-lg'>
-                        <Text id = {DOMId + '-live-text'} preset = 'subtitle' classes = 'text-text-accent'>
-                            LIVE
-                        </Text>
-                    </div>
+                    <CircleFill id = {DOMId + '-live'} className = 'absolute top-sm left-sm text-sm text-accent-main'/>
                 </Conditional>
                 <Link id = {DOMId + '-competitor0-image'} to = {'/info?category=competitors&id=' + event.competitors[0].id} className = 'transition-colors duration-main h-8 md:h-8 aspect-square flex justify-center items-center bg-white rounded-full border-base border-primary-main hover:border-primary-highlight'>
                     <Conditional value = {!event.competitors[0].picture}>
