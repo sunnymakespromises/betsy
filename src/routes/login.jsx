@@ -1,10 +1,10 @@
-import { useUserContext } from '../contexts/user'
+import { memo } from 'react'
 import { Helmet } from 'react-helmet'
+import { useUserContext } from '../contexts/user'
 import Text from '../components/text'
 import Image from '../components/image'
 import Page from '../components/page'
 import Map from '../components/map'
-import { memo } from 'react'
 
 export default function Login() {
     let DOMId = 'login'
@@ -12,32 +12,25 @@ export default function Login() {
 
     return (
         <Page DOMId = {DOMId}>
-            <div id = {DOMId} className = 'transition-colors duration-main w-full h-full flex flex-col bg-base-main rounded-main p-main'>
-                <Helmet><title>Login • Betsy</title></Helmet>
-                <div id = {DOMId + '-bar'} className = 'w-min bg-gradient-to-r from-primary-highlight to-accent-highlight bg-clip-text py-micro'>
-                    <Text id = {DOMId + '-title'} preset = 'login-title' classes = '!text-transparent'>
+            <div id = {DOMId} className = 'transition-colors duration-main w-full h-full flex flex-col justify-center items-center p-base md:p-lg'>
+                <div id = {DOMId + '-container'} className = 'w-[50%] h-min flex flex-col gap-base md:gap-lg'>
+                    <Helmet><title>Login • Betsy</title></Helmet>
+                    <Text id = {DOMId + '-title'} preset = 'title' classes = 'w-full text-center !text-7xl !font-bold text-primary-main'>
                         Betsy
                     </Text>
+                    <div id = {DOMId + '-blurbs'} className = 'flex flex-col gap-base'>
+                        <Map items = {blurbs} callback = {(blurb, index) => { 
+                            let blurbId = DOMId + '-blurb' + index; return (
+                            <Blurb key = {index} subtitle = {blurb.subtitle} body = {blurb.body} parentId = {blurbId}/>
+                        )}}/>
+                    </div>
+                    <div id = {DOMId + 'form'} className = 'w-full h-min flex flex-col gap-sm'>
+                        <Map items = {options} callback = {(option, index) => { 
+                            let optionId = DOMId + '-option' + index; return (
+                            <Option key = {index} source = {option.source} image = {option.image} title = {option.title} login = {login} parentId = {optionId}/>
+                        )}}/>
+                    </div>
                 </div>
-                <div id = {DOMId + '-blurbs'} className = 'flex flex-col'>
-                    <Map items = {blurbs} callback = {(blurb, index) => { 
-                        let blurbId = DOMId + '-blurb' + index; return (
-                        <Blurb key = {index} subtitle = {blurb.subtitle} body = {blurb.body} parentId = {blurbId}/>
-                    )}}/>
-                </div>
-                <div id = {DOMId + 'form'} className = 'w-full h-min flex flex-col items-center gap-small'>
-                <Map items = {options} callback = {(option, index) => { 
-                    let optionId = DOMId + '-option' + index; return (
-                    <Option key = {index} source = {option.source} image = {option.image} login = {login} parentId = {optionId}/>
-                )}}/>
-                </div>
-                {/* <Image path = '/images/login-splash.png' classes = 'grow h-full'/> */}
-                {/* <div id = {DOMId + 'intro'} className = 'w-48 h-min flex flex-col items-center'>
-                    <Image path = {'images/logo-black.svg'} classes = 'w-36 mb-tiny aspect-[1.16] animate-tada'/>
-                    <Text preset = 'login-body'>
-                        The #1 free sports betting simulator.
-                    </Text>
-                </div> */}
             </div>
         </Page>
     )
@@ -48,33 +41,33 @@ const Blurb = memo(function Blurb({ subtitle, body, parentId }) {
 
     return (
         <div id = {DOMId} className = 'w-full flex flex-col'>
-            <Text id = {DOMId + '-subtitle'} preset = 'login-subtitle'>
+            <Text id = {DOMId + '-subtitle'} preset = 'title' classes = '!font-bold text-text-main'>
                 {subtitle}
             </Text>
-            <Text id = {DOMId + '-title'} preset = 'login-body'>
+            <Text id = {DOMId + '-title'} preset = 'body' classes = 'text-text-main'>
                 {body}
             </Text>
         </div>
     )
 })
 
-const Option = memo(function Option({ source, image, login, parentId }) {
+const Option = memo(function Option({ source, image, login, title, parentId }) {
     let DOMId = parentId
     
     return (
-        <div id = {DOMId} className = 'transition-colors duration-main w-full h-min flex justify-center items-center gap-small p-small bg-base-main hover:bg-base-highlight rounded-main border-thin border-divider-main shadow-sm md:shadow cursor-pointer' onClick = {() => login(source)}>
-            <Text id = {DOMId + '-sign-in-text'} preset = 'login-option'>
-                Sign in with
+        <div id = {DOMId} className = 'transition-colors duration-main w-full h-min flex justify-center items-center gap-sm p-base bg-primary-main hover:bg-primary-highlight rounded-base border-sm border-divider-primary shadow cursor-pointer' onClick = {() => login(source)}>
+            <Text id = {DOMId + '-sign-in-text'} preset = 'body' classes = 'text-text-primary'>
+                Sign in with {title}
             </Text>
             <Image id = {DOMId + '-image'} path = {image} classes = 'h-full aspect-square'/>
         </div>
     )
-}, (b, a) => b.source === a.source && b.image === a.image)
+}, (b, a) => b.source === a.source && b.image === a.image && b.title === a.title)
 
 const blurbs = [
     {
         subtitle: 'No Risk. All Reward.',
-        body: '100% Free, Fake currency',
+        body: '100% Free, Fake currency [FINISH]',
         image: null
     },
     {
@@ -92,6 +85,7 @@ const blurbs = [
 const options = [
     {
         source: 'google',
+        title: 'Google',
         image: 'images/google-logo.svg'
     }
 ]
