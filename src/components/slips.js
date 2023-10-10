@@ -87,7 +87,7 @@ const Slip = memo(function Slip({ compressedSlip, events, isEditable, parentId }
                                     </Text>
                                 </Button>
                             </Conditional>
-                            <Conditional value = {expandedSlip.did_hit === null || isEditable}>
+                            <Conditional value = {(expandedSlip.did_hit === null || isEditable) && expandedSlip.picks.every(pick => pick.did_hit === null)}>
                                 <Button id = {DOMId + '-copy'} preset = 'main' onClick = {() => setIsSelecting(true)}>
                                     <Plus id = {DOMId + '-copy-icon'} className = 'text-xl text-text-primary'/>
                                     <Text id = {DOMId + '-copy-text'} preset = 'body' classes = 'text-text-primary'>
