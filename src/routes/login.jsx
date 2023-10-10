@@ -13,17 +13,22 @@ export default function Login() {
     return (
         <Page DOMId = {DOMId}>
             <div id = {DOMId} className = 'transition-colors duration-main w-full h-full flex flex-col justify-center items-center p-base md:p-lg'>
-                <div id = {DOMId + '-container'} className = 'w-[50%] h-min flex flex-col gap-base md:gap-lg'>
+                <div id = {DOMId + '-container'} className = 'w-[50%] h-min flex flex-col items-center gap-base md:gap-lg'>
                     <Helmet><title>Login • Betsy</title></Helmet>
-                    <Text id = {DOMId + '-title'} preset = 'title' classes = 'w-full text-center !text-7xl !font-bold text-primary-main'>
-                        Betsy
-                    </Text>
-                    <div id = {DOMId + '-blurbs'} className = 'flex flex-col gap-base'>
+                    <div id = {DOMId + '-title'} className = 'w-min flex flex-col'>
+                        <Text id = {DOMId + '-title-text'} preset = 'title' classes = 'w-full text-center !text-7xl !font-black text-primary-main'>
+                            Betsy
+                        </Text>
+                        <Text id = {DOMId + '-subtitle'} preset = 'body' classes = '!font-bold text-primary-main/muted'>
+                            The world's first free betting simulator!
+                        </Text>
+                    </div>
+                    {/* <div id = {DOMId + '-blurbs'} className = 'w-full flex flex-col gap-base'>
                         <Map items = {blurbs} callback = {(blurb, index) => { 
                             let blurbId = DOMId + '-blurb' + index; return (
                             <Blurb key = {index} subtitle = {blurb.subtitle} body = {blurb.body} parentId = {blurbId}/>
                         )}}/>
-                    </div>
+                    </div> */}
                     <div id = {DOMId + 'form'} className = 'w-full h-min flex flex-col gap-sm'>
                         <Map items = {options} callback = {(option, index) => { 
                             let optionId = DOMId + '-option' + index; return (
@@ -36,26 +41,26 @@ export default function Login() {
     )
 }
 
-const Blurb = memo(function Blurb({ subtitle, body, parentId }) {
-    let DOMId = parentId
+// const Blurb = memo(function Blurb({ subtitle, body, parentId }) {
+//     let DOMId = parentId
 
-    return (
-        <div id = {DOMId} className = 'w-full flex flex-col'>
-            <Text id = {DOMId + '-subtitle'} preset = 'title' classes = '!font-bold text-text-main'>
-                {subtitle}
-            </Text>
-            <Text id = {DOMId + '-title'} preset = 'body' classes = 'text-text-main'>
-                {body}
-            </Text>
-        </div>
-    )
-})
+//     return (
+//         <div id = {DOMId} className = 'w-full flex flex-col'>
+//             <Text id = {DOMId + '-subtitle'} preset = 'title' classes = '!font-bold text-text-main'>
+//                 {subtitle}
+//             </Text>
+//             <Text id = {DOMId + '-title'} preset = 'body' classes = 'text-text-main'>
+//                 {body}
+//             </Text>
+//         </div>
+//     )
+// })
 
 const Option = memo(function Option({ source, image, login, title, parentId }) {
     let DOMId = parentId
     
     return (
-        <div id = {DOMId} className = 'transition-colors duration-main w-full h-min flex justify-center items-center gap-sm p-base bg-primary-main hover:bg-primary-highlight rounded-base border-sm border-divider-primary shadow cursor-pointer' onClick = {() => login(source)}>
+        <div id = {DOMId} className = 'transition-colors duration-main w-full h-min flex justify-center items-center gap-sm p-base bg-primary-main hover:bg-primary-highlight rounded-base shadow cursor-pointer' onClick = {() => login(source)}>
             <Text id = {DOMId + '-sign-in-text'} preset = 'body' classes = 'text-text-primary'>
                 Sign in with {title}
             </Text>
@@ -64,23 +69,23 @@ const Option = memo(function Option({ source, image, login, title, parentId }) {
     )
 }, (b, a) => b.source === a.source && b.image === a.image && b.title === a.title)
 
-const blurbs = [
-    {
-        subtitle: 'No Risk. All Reward.',
-        body: '100% Free, Fake currency [FINISH]',
-        image: null
-    },
-    {
-        subtitle: '[INSERT SUBTITLE]',
-        body: '80+ competitions across the world [FINISH]',
-        image: null
-    },
-    {
-        subtitle: 'Real Lines. Real Time.',
-        body: 'With odds being updated every 15 minutes, Betsy provides live updates [FINISH]',
-        image: null
-    }
-]
+// const blurbs = [
+//     {
+//         subtitle: 'No Risk. All Reward.',
+//         body: 'Betsy is 100% free, using fake currency to simulate real bets.',
+//         image: null
+//     },
+//     {
+//         subtitle: 'No Risk. All Reward.',
+//         body: 'Betsy is 100% free, using fake currency to simulate real bets.',
+//         image: null
+//     },
+//     {
+//         subtitle: 'Real Lines. Real Time.',
+//         body: 'With odds being updated every 15 minutes, Betsy provides live updates on your favorite sporting events.',
+//         image: null
+//     }
+// ]
 
 const options = [
     {
