@@ -35,9 +35,9 @@ const SearchEvents = memo(function SearchEvents({ compressedSlip, setIsSearching
         id: 'search_events',
         filters: {
             live: {
-                title: 'Live Events',
+                title: 'Upcoming Events',
                 icon: (props) => <StopwatchFill {...props}/>,
-                fn: (a) => a.filter(r => r.start_time < now()),
+                fn: (a) => a.filter(r => r.start_time < now() + 60*60*24*3),
                 turnsOff: []
             },
         },
