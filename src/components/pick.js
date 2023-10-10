@@ -137,13 +137,21 @@ const Pick = memo(function Pick({ expandedPick, events, isEditable, isDetailed, 
 }, (b, a) => b.isEditable === a.isEditable && b.isDetailed === a.isDetailed && b.classes === a.classes && _.isEqual(b.expandedPick, a.expandedPick) && _.isEqual(b.events, a.events))
 
 export const NewPick = memo(function NewPick({ compressedSlip, parentId }) {
-    let DOMId = parentId + '-new-pick'
+    let DOMId = parentId + '-new-' + compressedSlip ? 'pick' : 'slip'
     let [isSearching, setIsSearching] = useState(false)
 
     return (
         <>
-            <div id = {DOMId} className = {'group/new-pick relative transition-colors duration-main w-full flex flex-col justify-center items-center gap-xs p-sm rounded-base border-sm shadow-sm overflow-hidden hover:bg-base-main/killed cursor-pointer ' + (isSearching ? 'border-primary-main' : 'border-divider-highlight')} onClick = {() => setIsSearching(true)}>
-                <Plus id = {DOMId + '-icon'} className = {'transition-colors duration-main text-3xl ' + (isSearching ? 'text-primary-main' : 'text-text-highlight/killed group-hover/new-pick:text-primary-main')} />
+            <div id = {DOMId} className = {'group/new-pick relative transition-colors duration-main w-full flex justify-center items-center p-sm rounded-base border-sm shadow-sm overflow-hidden hover:bg-base-main/killed cursor-pointer ' + (isSearching ? 'border-primary-main' : 'border-divider-highlight')} onClick = {() => setIsSearching(true)}>
+                <Conditional value = {compressedSlip}>
+                    <Plus id = {DOMId + '-icon'} className = {'transition-colors duration-main text-3xl ' + (isSearching ? 'text-primary-main' : 'text-text-highlight/killed group-hover/new-pick:text-primary-main')} />
+                </Conditional>
+                <Conditional value = {!compressedSlip}>
+                    <Plus id = {DOMId + '-icon'} className = {'transition-colors duration-main text-3xl ' + (isSearching ? 'text-primary-main' : 'text-text-highlight/killed group-hover/new-pick:text-primary-main')} />
+                    <Text id = {DOMId + '-text'} preset = 'title' classes = {(isSearching ? 'text-primary-main' : 'text-text-highlight/killed group-hover/new-pick:text-primary-main')}>
+                        New
+                    </Text>
+                </Conditional>
             </div>
             <Conditional value = {isSearching}>
                 <SearchEvents compressedSlip = {compressedSlip} setIsSearching = {setIsSearching} parentId = {DOMId}/>

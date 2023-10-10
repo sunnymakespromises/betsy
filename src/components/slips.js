@@ -26,22 +26,20 @@ const Slips = memo(function Slips({ compressedSlips, isEditable = false, parentI
     const { data } = useDataContext()
 
     return (
-        <div id = {DOMId + '-slips'} className = 'w-full h-full flex flex-col gap-lg'>
+        <div id = {DOMId + '-slips'} className = 'w-full h-full flex flex-col gap-base'>
             <Conditional value = {compressedSlips?.length > 0}>
                 <Map items = {compressedSlips} callback = {(compressedSlip, index) => {
                     let compressedSlipId = DOMId + '-slip' + index; return (
                     <Slip key = {index} compressedSlip = {compressedSlip} events = {data.events} isEditable = {isEditable} parentId = {compressedSlipId}/>
                 )}}/>
             </Conditional>
-            <Conditional value = {compressedSlips?.length < 1}>
-                <Conditional value = {!isEditable}>
-                    <Text id = {DOMId + '-slips-not-found'} preset = 'body' classes = 'text-text-highlight/killed'>
-                        No slips found.
-                    </Text>
-                </Conditional>
-                <Conditional value = {isEditable}>
-                    <NewPick compressedSlip = {null} parentId = {DOMId + '-new-slip'}/>
-                </Conditional>
+            <Conditional value = {compressedSlips?.length < 1 && !isEditable}>
+                <Text id = {DOMId + '-slips-not-found'} preset = 'body' classes = 'text-text-highlight/killed'>
+                    No slips found.
+                </Text>
+            </Conditional>
+            <Conditional value = {isEditable}>
+                <NewPick compressedSlip = {null} parentId = {DOMId + '-new-slip'}/>
             </Conditional>
         </div>
     )
