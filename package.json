@@ -3,13 +3,33 @@
     "version": "0.1.0",
     "private": true,
     "dependencies": {
-        "@testing-library/jest-dom": "^5.16.5",
-        "@testing-library/react": "^13.4.0",
-        "@testing-library/user-event": "^13.5.0",
+        "@aws-sdk/client-dynamodb": "^3.345.0",
+        "@aws-sdk/client-s3": "^3.357.0",
+        "@aws-sdk/lib-dynamodb": "^3.345.0",
+        "@dnd-kit/core": "^6.0.8",
+        "@dnd-kit/modifiers": "^6.0.1",
+        "@dnd-kit/sortable": "^7.0.2",
+        "@dnd-kit/utilities": "^3.2.1",
+        "@react-oauth/google": "^0.11.0",
+        "@tabler/icons-react": "^2.23.0",
+        "fractional": "^1.0.0",
+        "fuse.js": "^6.6.2",
+        "jszip": "^3.10.1",
+        "jszip-utils": "^0.1.0",
+        "lodash": "^4.17.21",
+        "random-material-color": "^1.0.5",
         "react": "^18.2.0",
+        "react-bootstrap-icons": "^1.10.3",
+        "react-cookie": "^4.1.1",
         "react-dom": "^18.2.0",
+        "react-easy-crop": "^4.7.4",
+        "react-helmet": "^6.1.0",
+        "react-router-dom": "^6.11.2",
         "react-scripts": "5.0.1",
-        "web-vitals": "^2.1.4"
+        "react-spinners": "^0.13.8",
+        "react-transition-group": "^4.4.5",
+        "short-uuid": "^4.2.2",
+        "tailwind-gradient-mask-image": "^1.0.0"
     },
     "scripts": {
         "start": "react-scripts start",
@@ -36,6 +56,13 @@
         ]
     },
     "devDependencies": {
-        "tailwindcss": "^3.3.2"
+        "animated-tailwindcss": "^4.0.0",
+        "tailwindcss": "^3.3.2",
+        "tw-colors": "^1.2.6"
+    },
+    "browser": {
+        "fs": false,
+        "os": false,
+        "path": false
     }
 }

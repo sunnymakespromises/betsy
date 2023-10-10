@@ -1,3 +1,5 @@
+import { useMemo } from 'react'
+
 /**
  * A <div> representing a button with the given preset and triggers the given onClick function when pressed.
  * @param {string} preset the preset to the applied to the button.
@@ -9,16 +11,21 @@
  */
 export default function Button({ preset = 'main', styles, classes, onClick, children, ...extras }) {
     let options = {
-        'main': 'transition-all ease-in-out w-min h-min hover:scale-[1.03] p-4'
+        main: 'transition-colors duration-main flex items-center py-2xs px-sm bg-primary-main hover:bg-primary-highlight rounded-base',
     }
 
-    const getOption = () => {
-        return options[preset]
-    }
+    let option = useMemo(() => {
+        let presetPath = preset.split('-')
+        let option = options[presetPath[0]]
+        for (const path of presetPath.slice(1)) {
+            option = option[path]
+        }
+        return option ? option : ''
+    }, [preset])
 
     return (
-        <div className = {getOption() + (classes ? ' ' + classes : '') + ' cursor-pointer'} style = {styles} onClick = {onClick} {...extras}>
-            {children ? children : null}
+        <div className = {option + (classes ? ' ' + classes : '') + ' cursor-pointer'} style = {styles} onClick = {onClick} {...extras}>
+            {children && children}
         </div>
     )
 }

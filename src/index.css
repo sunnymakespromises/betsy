@@ -1,55 +1,157 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;700&display=swap');
+
+@layer utilities {
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        transition-duration: 0ms !important;
+    }
+}
+
+html {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+#root {
+    width: 100vw;
+    height: 100vh;
+}
 
 body {
+    width: 100%;
+    height: 100%;
     margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
         'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
         sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
 
+.reactEasyCrop_CropArea {
+    width: 100% !important;
+    height: 100% !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
 @font-face {
-    font-family: 'FOT-UDMarugo_Large Pr6N';
-    src: url('./fonts/light.otf');
+    font-family: 'SF Pro';
+    src: url('./fonts/sf pro/ultralight.ttf');
+    font-weight: 100;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'SF Pro';
+    src: url('./fonts/sf pro/thin.ttf');
+    font-weight: 200;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'SF Pro';
+    src: url('./fonts/sf pro/light.ttf');
     font-weight: 300;
     font-style: normal;
 }
 @font-face {
-    font-family: 'FOT-UDMarugo_Large Pr6N';
-    src: url('./fonts/medium.otf');
+    font-family: 'SF Pro';
+    src: url('./fonts/sf pro/regular.ttf');
+    font-weight: 400;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'SF Pro';
+    src: url('./fonts/sf pro/medium.ttf');
     font-weight: 500;
     font-style: normal;
 }
 @font-face {
-    font-family: 'FOT-UDMarugo_Large Pr6N';
-    src: url('./fonts/medium.otf');
-    font-weight: 500;
-    font-style: normal;
-}
-@font-face {
-    font-family: 'FOT-UDMarugo_Large Pr6N';
-    src: url('./fonts/semi-bold.otf');
-    font-weight: 600;
-    font-style: normal;
-}
-@font-face {
-    font-family: 'FOT-UDMarugo_Large Pr6N';
-    src: url('./fonts/bold.otf');
+    font-family: 'SF Pro';
+    src: url('./fonts/sf pro/bold.ttf');
     font-weight: 700;
     font-style: normal;
 }
 @font-face {
-    font-family: 'FOT-UDMarugo_Large Pr6N';
-    src: url('./fonts/extra-bold.otf');
-    font-weight: 800;
+    font-family: 'SF Pro';
+    src: url('./fonts/sf pro/black.ttf');
+    font-weight: 900;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'GT America Condensed';
+    src: url('./fonts/condensed/ultralight.otf');
+    font-weight: 100;
     font-style: normal;
 }
 @font-face {
-    font-family: 'FOT-UDMarugo_Large Pr6N';
-    src: url('./fonts/black.otf');
+    font-family: 'GT America Condensed';
+    src: url('./fonts/condensed/thin.otf');
+    font-weight: 200;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'GT America Condensed';
+    src: url('./fonts/condensed/light.otf');
+    font-weight: 300;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'GT America Condensed';
+    src: url('./fonts/condensed/regular.otf');
+    font-weight: 400;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'GT America Condensed';
+    src: url('./fonts/condensed/medium.otf');
+    font-weight: 500;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'GT America Condensed';
+    src: url('./fonts/condensed/bold.otf');
+    font-weight: 700;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'GT America Condensed';
+    src: url('./fonts/condensed/black.otf');
     font-weight: 900;
+    font-style: normal;
+}
+
+
+@font-face {
+    font-family: 'Decima';
+    src: url('./fonts/mono/light.otf');
+    font-weight: 300;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'Decima';
+    src: url('./fonts/mono/regular.otf');
+    font-weight: 400;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'Decima';
+    src: url('./fonts/mono/bold.otf');
+    font-weight: 700;
     font-style: normal;
 }
