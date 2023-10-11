@@ -70,7 +70,7 @@ const Results = memo(function Results({ events, parentId }) {
                                     </Conditional></>}
     
                                     <Text id = {betId + '-bet-name'} preset = 'body' classes = 'text-text-highlight whitespace-nowrap'>
-                                        {bet.name}{bet.key === 'totals' || bet.key === 'spreads' ? bet.values[0].point + ' ' : ''}
+                                        {bet.name}{bet.key === 'totals' || bet.key === 'spreads' ? ' ' + bet.values[0].point : ''}
                                     </Text>
 
                                     {bet.key === 'totals' && <>
