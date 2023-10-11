@@ -46,11 +46,11 @@ const Result = memo(function Result({ competitor, event, parentId }) {
                 <Map items = {event.results.scores} callback = {(score, index) => {
                     let scoreId = DOMId + '-modal-scores-score' + index; return (
                     <React.Fragment key = {index}>
-                        <Text id = {scoreId} preset = 'title' classes = {'!font-bold whitespace-nowrap ' + (score.competitor?.id === competitor.id ? 'text-text-highlight' : 'text-text-highlight/killed')}>
+                        <Text id = {scoreId} preset = 'title' classes = {'!font-bold whitespace-nowrap ' + (score.competitor?.id === competitor.id ? 'text-text-highlight' : 'text-text-highlight/muted')}>
                             {score.score}
                         </Text>
                         <Conditional value = {index !== event.results.scores.length - 1}>
-                            <Text id = {scoreId + '-separator'} preset = 'title' classes = {'!font-bold whitespace-nowrap text-text-highlight/killed'}>
+                            <Text id = {scoreId + '-separator'} preset = 'title' classes = {'!font-bold whitespace-nowrap text-text-highlight/muted'}>
                                 &nbsp;-&nbsp;
                             </Text>
                         </Conditional>
