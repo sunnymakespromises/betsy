@@ -40,30 +40,6 @@ const Input = memo(forwardRef(function Input({ value, status, type = 'text', pre
             true: '',
             false: '',
             null: ''
-        },
-        info: {
-            classes: 'transition-all duration-main px-base py-sm font-main font-medium w-full text-base text-text-main bg-base-highlight/muted hover:bg-base-highlight focus:bg-base-highlight rounded-base placeholder:text-text-highlight/killed focus:outline-none z-10',
-            true: '',
-            false: '',
-            null: ''
-        },
-        search: {
-            classes: 'transition-colors duration-main px-main py-smaller font-main font-medium w-full text-sm md:text-sm text-text-main placeholder:text-text-highlight/killed focus:outline-none bg-base-main z-10',
-            true: '',
-            false: '',
-            null: ''
-        },
-        dev: {
-            classes: 'transition-colors duration-main py-small p-main font-main font-medium w-full text-sm md:text-sm text-text-main placeholder:text-text-highlight/killed focus:outline-none bg-base-main z-10',
-            true: '',
-            false: '',
-            null: ''
-        },
-        events: {
-            classes: 'transition-colors duration-main px-main py-smaller font-main font-medium w-full text-sm md:text-sm text-text-main placeholder:text-text-highlight/killed focus:outline-none bg-base-main !border-0 !shadow-none z-10',
-            true: '',
-            false: '',
-            null: ''
         }
     }
 
