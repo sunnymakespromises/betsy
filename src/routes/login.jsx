@@ -20,8 +20,14 @@ export default function Login() {
                             Betsy
                         </Text>
                         <Text id = {DOMId + '-subtitle'} preset = 'body' classes = '!font-bold text-primary-main/muted'>
-                            The world's first free betting simulator!
+                            The first free betting simulator!
                         </Text>
+                        <div id = {DOMId + '-form'} className = 'w-full h-min flex flex-col gap-sm mt-base'>
+                            <Map items = {options} callback = {(option, index) => { 
+                                let optionId = DOMId + '-option' + index; return (
+                                <Option key = {index} source = {option.source} image = {option.image} title = {option.title} login = {login} parentId = {optionId}/>
+                            )}}/>
+                        </div>
                     </div>
                     {/* <div id = {DOMId + '-blurbs'} className = 'w-full flex flex-col gap-base'>
                         <Map items = {blurbs} callback = {(blurb, index) => { 
@@ -29,12 +35,7 @@ export default function Login() {
                             <Blurb key = {index} subtitle = {blurb.subtitle} body = {blurb.body} parentId = {blurbId}/>
                         )}}/>
                     </div> */}
-                    <div id = {DOMId + 'form'} className = 'w-full h-min flex flex-col gap-sm'>
-                        <Map items = {options} callback = {(option, index) => { 
-                            let optionId = DOMId + '-option' + index; return (
-                            <Option key = {index} source = {option.source} image = {option.image} title = {option.title} login = {login} parentId = {optionId}/>
-                        )}}/>
-                    </div>
+                    
                 </div>
             </div>
         </Page>
