@@ -11,7 +11,7 @@ async function getRefreshToken(code, source) {
                 client_secret: process.env.REACT_APP_GOOGLE_OAUTH_CLIENT_SECRET,
                 code: code,
                 grant_type: 'authorization_code',
-                redirect_uri: 'https://main.dn93o0txqbg2u.amplifyapp.com'
+                redirect_uri: 'https://betsy.digital'
             }
             const options = {
                 method: 'POST',
