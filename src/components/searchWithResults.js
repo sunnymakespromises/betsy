@@ -9,7 +9,6 @@ import Text from './text'
 import Conditional from './conditional'
 import Map from './map'
 import SearchBar from './searchBar'
-// import Image from './image'
 import { Link } from 'react-router-dom'
 import { createPortal } from 'react-dom'
 import Image from './image'
@@ -122,17 +121,17 @@ const Result = memo(function Result({ category, item, onClick, isLink, showFavor
         if (category === 'competitors') {
             return (
                 <>
-                    <div id = {DOMId + '-image'} className = 'w-8 h-8 flex justify-center items-center bg-white border-base border-primary-main rounded-full'>
+                    <div id = {DOMId + '-competitor-image'} className = 'w-8 h-8 flex justify-center items-center bg-white border-base border-primary-main rounded-full'>
                         <Conditional value = {item.picture}>
-                            <Image id = {DOMId + '-image-image'} external path = {item.picture} classes = 'w-inscribed aspect-square'/>
+                            <Image id = {DOMId + '-competitor-image-image'} external path = {item.picture} classes = 'w-inscribed aspect-square'/>
                         </Conditional>
                         <Conditional value = {!item.picture}>
-                            <Text id = {DOMId + '-image-text'} preset = 'body' classes = 'text-black/muted p-base text-center'>
+                            <Text id = {DOMId + '-competitor-image-text'} preset = 'body' classes = 'text-black/muted p-base text-center'>
                                 {item.name.substr(0, 1)}
                             </Text>
                         </Conditional>
                     </div>
-                    <Text id = {DOMId + '-name-name'} preset = 'body' classes = 'text-text-highlight'>
+                    <Text id = {DOMId + '-competitor-name-name'} preset = 'body' classes = 'text-text-highlight'>
                         {item.name}
                     </Text>
                 </>
@@ -140,21 +139,21 @@ const Result = memo(function Result({ category, item, onClick, isLink, showFavor
         } else if (category === 'competitions') {
             return (
                 <>
-                    <div id = {DOMId + '-image'} className = 'w-8 h-8 flex justify-center items-center bg-white border-base border-primary-main rounded-full'>
+                    <div id = {DOMId + '-competition-image'} className = 'w-8 h-8 flex justify-center items-center bg-white border-base border-primary-main rounded-full'>
                         <Conditional value = {item.picture}>
-                            <Image id = {DOMId + '-image-image'} external path = {item.picture} classes = 'w-inscribed aspect-square'/>
+                            <Image id = {DOMId + '-competition-image-image'} external path = {item.picture} classes = 'w-inscribed aspect-square'/>
                         </Conditional>
                         <Conditional value = {!item.picture}>
-                            <Text id = {DOMId + '-image-text'} preset = 'body' classes = 'text-black/muted p-base text-center'>
+                            <Text id = {DOMId + '-competition-image-text'} preset = 'body' classes = 'text-black/muted p-base text-center'>
                                 {item.name.substr(0, 1)}
                             </Text>
                         </Conditional>
                     </div>
-                    <div id = {DOMId + '-name'} className = 'flex flex-col gap-2xs'>
-                        <Text id = {DOMId + '-name-name'} preset = 'body' classes = 'text-text-highlight'>
+                    <div id = {DOMId + '-competition-name'} className = 'flex flex-col gap-2xs'>
+                        <Text id = {DOMId + '-competition-name-name'} preset = 'body' classes = 'text-text-highlight'>
                             {item.name}
                         </Text>
-                        <Text id = {DOMId + '-name-subtitle'} preset = 'subtitle' classes = 'text-text-highlight/muted'>
+                        <Text id = {DOMId + '-competition-name-subtitle'} preset = 'subtitle' classes = 'text-text-highlight/muted'>
                             {item.sport.name}&nbsp;•&nbsp;{item.country.name}
                         </Text>
                     </div>
@@ -164,12 +163,12 @@ const Result = memo(function Result({ category, item, onClick, isLink, showFavor
         else if (category === 'events') {
             if (item.is_outright) {
                 return (
-                    <div id = {DOMId + '-info'} className = 'flex items-center gap-2xs'>
-                        <Text id = {DOMId + '-name'} preset = 'body' classes = 'text-text-highlight'>
+                    <div id = {DOMId + '-event-info'} className = 'flex items-center gap-2xs'>
+                        <Text id = {DOMId + '-event-name'} preset = 'body' classes = 'text-text-highlight'>
                             {item.name}
                         </Text>
                         <Conditional value = {now() > item.start_time}>
-                            <CircleFill className = 'w-1 h-1 text-accent-main'/>
+                            <CircleFill id = {DOMId + '-event-is-live'} className = 'w-1 h-1 text-accent-main'/>
                         </Conditional>
                     </div>
                 )
@@ -177,46 +176,46 @@ const Result = memo(function Result({ category, item, onClick, isLink, showFavor
             else {
                 return (
                     <>
-                        <div id = {DOMId + '-image'} className = 'w-8 h-8 flex justify-center items-center bg-white border-base border-primary-main rounded-full'>
+                        <div id = {DOMId + '-event-competitor0-image'} className = 'w-8 h-8 flex justify-center items-center bg-white border-base border-primary-main rounded-full'>
                             <Conditional value = {item.competitors[0].picture}>
-                                <Image id = {DOMId + '-image-image'} external path = {item.competitors[0].picture} classes = 'w-inscribed aspect-square'/>
+                                <Image id = {DOMId + '-event-competitor0-image-image'} external path = {item.competitors[0].picture} classes = 'w-inscribed aspect-square'/>
                             </Conditional>
                             <Conditional value = {!item.competitors[0].picture}>
-                                <Text id = {DOMId + '-image-text'} preset = 'body' classes = 'text-black/muted p-base text-center'>
+                                <Text id = {DOMId + '-event-competitor0-image-text'} preset = 'body' classes = 'text-black/muted p-base text-center'>
                                     {item.competitors[0].name.substr(0, 1)}
                                 </Text>
                             </Conditional>
                         </div>
-                        <div id = {DOMId + '-info'} className = 'flex flex-col gap-2xs overflow-hidden'>
-                            <div id = {DOMId + '-info-top-bar'} className = 'flex items-center gap-2xs'>
-                                <Text id = {DOMId + '-info-competition'} preset = 'subtitle' classes = 'text-text-highlight/muted whitespace-nowrap'>
+                        <div id = {DOMId + '-event-info'} className = 'flex flex-col gap-2xs overflow-hidden'>
+                            <div id = {DOMId + '-event-info-top-bar'} className = 'flex items-center gap-2xs'>
+                                <Text id = {DOMId + '-event-info-competition'} preset = 'subtitle' classes = 'text-text-highlight/muted whitespace-nowrap'>
                                     {item.competition.name}
                                 </Text>
                                 <Conditional value = {now() > item.start_time}>
-                                    <CircleFill className = 'w-1 h-1 text-accent-main'/>
+                                    <CircleFill id = {DOMId + '-event-is-live'} className = 'w-1 h-1 text-accent-main'/>
                                 </Conditional>
                             </div>
-                            <div id = {DOMId + '-info-name'} className = 'group/info w-full flex items-center'>
-                                <Text id = {DOMId + '-info-competitor0-name'} preset = 'body' classes = 'text-text-highlight whitespace-nowrap overflow-hidden text-ellipsis'>
+                            <div id = {DOMId + '-event-info-name'} className = 'group/info w-full flex items-center'>
+                                <Text id = {DOMId + '-event-info-competitor0-name'} preset = 'body' classes = 'text-text-highlight whitespace-nowrap overflow-hidden text-ellipsis'>
                                     {item.competitors[0].name}
                                 </Text>
-                                <Text id = {DOMId + '-info-competitors-separator'} preset = 'body' classes = 'text-text-highlight w-min flex'>
+                                <Text id = {DOMId + '-event-info-competitors-separator'} preset = 'body' classes = 'text-text-highlight w-min flex'>
                                     &nbsp;{item.name.includes('@') ? '@' : 'v'}&nbsp;
                                 </Text>
-                                <Text id = {DOMId + '-info-competitor1-name-name'} preset = 'body' classes = 'text-text-highlight whitespace-nowrap overflow-hidden text-ellipsis'>
+                                <Text id = {DOMId + '-event-info-competitor1-name-name'} preset = 'body' classes = 'text-text-highlight whitespace-nowrap overflow-hidden text-ellipsis'>
                                     {item.competitors[1].name}
                                 </Text>
                             </div>
-                            <Text id = {DOMId + '-info-date'} preset = 'subtitle' classes = 'text-text-highlight/muted whitespace-nowrap'>
+                            <Text id = {DOMId + '-event-info-date'} preset = 'subtitle' classes = 'text-text-highlight/muted whitespace-nowrap'>
                                 {toDate(item.start_time)}
                             </Text>
                         </div>
-                        <div id = {DOMId + '-image'} className = 'w-8 h-8 flex justify-center items-center bg-white border-base border-primary-main rounded-full'>
+                        <div id = {DOMId + '-event-competitor1-image'} className = 'w-8 h-8 flex justify-center items-center bg-white border-base border-primary-main rounded-full'>
                             <Conditional value = {item.competitors[1].picture}>
-                                <Image id = {DOMId + '-image-image'} external path = {item.competitors[1].picture} classes = 'w-inscribed aspect-square'/>
+                                <Image id = {DOMId + '-event-competitor1-image-image'} external path = {item.competitors[1].picture} classes = 'w-inscribed aspect-square'/>
                             </Conditional>
                             <Conditional value = {!item.competitors[1].picture}>
-                                <Text id = {DOMId + '-image-text'} preset = 'body' classes = 'text-black/muted p-base text-center'>
+                                <Text id = {DOMId + '-event-competitor1-image-text'} preset = 'body' classes = 'text-black/muted p-base text-center'>
                                     {item.competitors[1].name.substr(0, 1)}
                                 </Text>
                             </Conditional>
@@ -229,9 +228,9 @@ const Result = memo(function Result({ category, item, onClick, isLink, showFavor
             return (
                 <>
                     <Conditional value = {item.picture}>
-                        <Image id = {DOMId + '-image-image'} external path = {item.picture} classes = 'w-8 h-8 border-base border-primary-main rounded-full'/>
+                        <Image id = {DOMId + '-user-image'} external path = {item.picture} classes = 'w-8 h-8 border-base border-primary-main rounded-full'/>
                     </Conditional>
-                    <Text id = {DOMId + '-name'} preset = 'body' classes = 'text-text-highlight'>
+                    <Text id = {DOMId + '-user-name'} preset = 'body' classes = 'text-text-highlight'>
                         {item.display_name}
                     </Text>
                 </>

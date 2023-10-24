@@ -7,8 +7,6 @@ import Text from './text'
 import { CalendarWeekFill, HeartFill, PeopleFill, Search, SortAlphaDown, Stack, Stars, StopwatchFill, TrophyFill } from 'react-bootstrap-icons'
 import now from '../lib/util/now'
 import SearchWithResults from './searchWithResults'
-// import Image from './image'
-// import { useFavorite } from '../hooks/useFavorite'
 
 const Header = memo(function Header({ currentUser, data, location }) {
     let DOMId = 'header'

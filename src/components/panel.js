@@ -1,6 +1,5 @@
 import React, { memo, useEffect, useMemo, useState } from 'react'
 import _ from 'lodash'
-import { default as Icon } from './titleIcon'
 import { useWindowContext } from '../contexts/window'
 import Map from './map'
 
@@ -12,6 +11,15 @@ const Panel = memo(function Panel({ classes, children, parentId }) {
         </div>
     )
 }, (b, a) => b.classes === a.classes && _.isEqual(b.children, a.children))
+
+const Icon = memo(function Icon({ icon, classes, parentId }) {
+    let DOMId = parentId
+    let Icon = icon ? icon : null
+    
+    return (
+        icon && <Icon id = {DOMId + '-icon'} className = {'transition-colors duration-main h-4 aspect-square text-primary-main' + (classes ? ' ' + classes : '')}/>
+    )
+}, (b, a) => b.classes === a.classes && _.isEqual(b.icon, a.icon))
 
 export const MultiPanel = memo(function MultiPanel({ config, parentId, children }) {
     let [currentPanel, setCurrentPanel] = useState()
